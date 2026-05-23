@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Neighborhood.Services.Application\Neighborhood.Services.Application.csproj" />
     <ProjectReference Include="..\Neighborhood.Services.Infrastructure\Neighborhood.Services.Infrastructure.csproj" />
   </ItemGroup>
