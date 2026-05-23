@@ -1,3 +1,5 @@
+using Neighborhood.Services.Application;
+
 namespace Neighborhood.Services.API
 {
     public class Program
@@ -9,6 +11,8 @@ namespace Neighborhood.Services.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            //injecting Application Dependency 
+            builder.Services.AddApplication();
 
             var app = builder.Build();
 
