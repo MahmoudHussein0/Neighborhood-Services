@@ -23,6 +23,7 @@ namespace Neighborhood.Services.API
             builder.Services.AddApplication();
 
 
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -32,6 +33,8 @@ namespace Neighborhood.Services.API
 
             app.UseAuthorization();
 
+            //app.MapHub<ChatHub>("/chattt");
+            //app.MapHub<NotificationHub>("/notf");
 
             app.MapControllers();
 

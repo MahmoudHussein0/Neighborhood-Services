@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Messages\Queries\" />
+    <Folder Include="Newsletter\" />
+    <Folder Include="Notifications\Commands\" />
+    <Folder Include="Notifications\DTOs\" />
+    <Folder Include="Notifications\Queries\" />
     <Folder Include="Disputes\Commands\" />
     <Folder Include="Disputes\DTOs\" />
     <Folder Include="Disputes\Interfaces\" />
@@ -27,6 +35,14 @@
     <Folder Include="SupportTickets\Interfaces\" />
     <Folder Include="SupportTickets\Services\" />
     <Folder Include="SupportTickets\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\Messages\Queries\" />
+    <Folder Include="Modules\Newsletter\" />
+    <Folder Include="Modules\Notifications\Commands\" />
+    <Folder Include="Modules\Notifications\DTOs\" />
+    <Folder Include="Modules\Notifications\Queries\" />
   </ItemGroup>
 
 </Project>
