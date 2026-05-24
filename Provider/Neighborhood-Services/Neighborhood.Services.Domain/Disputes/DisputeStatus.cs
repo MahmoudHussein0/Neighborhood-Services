@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.Disputes
 {
-    internal class DisputeStatus
+    public enum DisputeStatus
     {
+        Open = 1,
+        UnderReview = 2,
+        Resolved = 3
     }
 }

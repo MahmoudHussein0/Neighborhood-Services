@@ -8,11 +8,9 @@ namespace Neighborhood.Services.Application.Reviews.Interfaces
     public interface IReviewRepository
     {
         Task AddAsync(Review review);
-
-        Task<Review?> GetByIdAsync(int id);
-
         Task<List<Review>> GetAllAsync();
-
+        Task<Review?> GetByIdAsync(int id);
+        Task SoftDeleteAsync(int id);        // handles IsDeleted = true directly
         Task SaveChangesAsync();
     }
 }

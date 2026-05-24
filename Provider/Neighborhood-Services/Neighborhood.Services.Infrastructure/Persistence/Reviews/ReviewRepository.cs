@@ -32,4 +32,11 @@ public class ReviewRepository : IReviewRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task SoftDeleteAsync(int id)
+    {
+        await _context.Reviews
+       .Where(r => r.Id == id)
+       .ExecuteUpdateAsync(s => s.SetProperty(r => r.IsDeleted, true));
+    }
 }

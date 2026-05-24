@@ -34,4 +34,11 @@ public class StaffRepository : IStaffRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task SetActiveAsync(int id, bool isActive)
+    {
+        await _context.Staffs
+            .Where(s => s.Id == id)
+            .ExecuteUpdateAsync(s => s.SetProperty(r => r.IsActive, isActive));
+    }
 }

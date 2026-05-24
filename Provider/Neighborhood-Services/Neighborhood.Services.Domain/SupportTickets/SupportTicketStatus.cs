@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.SupportTickets
 {
-    internal class TicketStatus
+    public enum SupportTicketStatus
     {
+        Open = 1,
+        InProgress = 2,
+        WaitingOnCustomer = 3,
+        Resolved = 4
     }
 }

@@ -13,14 +13,7 @@ public class StaffService : IStaffService
         _staffRepository = staffRepository;
     }
 
-    public async Task CreateAsync(CreateStaffDto dto)
-    {
-        var staff = new Staff();
-
-        await _staffRepository.AddAsync(staff);
-
-        await _staffRepository.SaveChangesAsync();
-    }
+  
 
     public async Task<List<StaffDto>> GetAllAsync()
     {
@@ -53,6 +46,23 @@ public class StaffService : IStaffService
         };
     }
 
+   
+
+   
+    public async Task CreateAsync(CreateStaffDto dto)
+    {
+        var staff = new Staff(
+            dto.UserId,
+            (StaffRole)dto.Role,
+            isActive: true,              // default
+            dto.CreatedByStaffId,
+            createdAt: DateTime.UtcNow   // default
+        );
+
+        await _staffRepository.AddAsync(staff);
+        await _staffRepository.SaveChangesAsync();
+    }
+
     public async Task ActivateAsync(int id)
     {
         var staff = await _staffRepository.GetByIdAsync(id);
@@ -60,9 +70,7 @@ public class StaffService : IStaffService
         if (staff is null)
             throw new Exception("Staff not found");
 
-        staff.Activate();
-
-        await _staffRepository.SaveChangesAsync();
+        await _staffRepository.SetActiveAsync(id, true);
     }
 
     public async Task DeactivateAsync(int id)
@@ -72,8 +80,6 @@ public class StaffService : IStaffService
         if (staff is null)
             throw new Exception("Staff not found");
 
-        staff.Deactivate();
-
-        await _staffRepository.SaveChangesAsync();
+        await _staffRepository.SetActiveAsync(id, false);
     }
 }

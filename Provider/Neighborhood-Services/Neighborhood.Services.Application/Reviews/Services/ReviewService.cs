@@ -15,24 +15,36 @@ public class ReviewService : IReviewService
 
     public async Task CreateReviewAsync(CreateReviewDto dto)
     {
-        // Validation
+        // Validation lives here, not on the entity
         if (dto.Rating < 1 || dto.Rating > 5)
-        {
             throw new Exception("Rating must be between 1 and 5");
-        }
 
-        // Create Entity
+        // Defaults are set here, not in the constructor
         var review = new Review(
-     dto.BookingId,
-     dto.ReviewerId,
-     dto.RevieweeId,
-     dto.Rating,
-     dto.Comment
- );
+            dto.BookingId,
+            dto.ReviewerId,
+            dto.RevieweeId,
+            dto.Rating,
+            dto.Comment,
+            status: ReviewStatus.Pending,   // default
+            createdAt: DateTime.UtcNow,     // default
+            isDeleted: false                // default
+        );
 
-        // Save
         await _reviewRepository.AddAsync(review);
+        await _reviewRepository.SaveChangesAsync();
+    }
 
+    public async Task DeleteAsync(int id)
+    {
+        var review = await _reviewRepository.GetByIdAsync(id);
+
+        if (review is null)
+            throw new Exception("Review not found");
+
+        // Soft delete: build a new state or use a separate method on repo
+        // Since the entity is pure, handle this via repository or EF directly
+        await _reviewRepository.SoftDeleteAsync(id);
         await _reviewRepository.SaveChangesAsync();
     }
 
@@ -69,17 +81,5 @@ public class ReviewService : IReviewService
             Comment = review.Comment,
             CreatedAt = review.CreatedAt
         };
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var review = await _reviewRepository.GetByIdAsync(id);
-
-        if (review is null)
-            throw new Exception("Review not found");
-
-        review.Delete();
-
-        await _reviewRepository.SaveChangesAsync();
     }
 }

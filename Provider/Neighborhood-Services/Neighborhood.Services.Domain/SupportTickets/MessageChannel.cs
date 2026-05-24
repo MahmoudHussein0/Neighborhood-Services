@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.SupportTickets
 {
-    internal class MessageChannel
+    public enum MessageChannel
     {
+        Chat = 1,
+        Mail = 2
     }
 }
