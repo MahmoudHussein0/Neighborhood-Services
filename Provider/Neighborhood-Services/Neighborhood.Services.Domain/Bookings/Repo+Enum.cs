@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Application
+namespace Neighborhood.Services.Domain.Bookings
 {
-    internal class DependencyInjection
+    internal class Class1
     {
     }
 }

@@ -1,0 +1,16 @@
+﻿using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Domain.Conversation;
+using Neighborhood.Services.Domain.Message;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Neighborhood.Services.Application.Conversations
+{
+    public interface IConversationRepository:IGenericRepository<Conversation,int>
+    {
+        Task<Conversation> GetByUserId(string userId);
+        public Task<Message> GetLastMessage(int roomId);
+
+    }
+}
