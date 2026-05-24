@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.Bookings
 {
-    internal class Class1
+    public  enum BookingType
     {
+        Direct,
+        Bidding
     }
 }
