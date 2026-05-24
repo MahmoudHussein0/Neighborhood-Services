@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Reviews
 {
-    internal class ReviewConfigurations
+    internal class Class1
     {
     }
 }

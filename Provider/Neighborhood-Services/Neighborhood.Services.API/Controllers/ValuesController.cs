@@ -5,7 +5,7 @@ namespace Neighborhood.Services.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DisputesController : ControllerBase
+    public class ValuesController : ControllerBase
     {
     }
 }
