@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.Shared
 {
-    internal class BaseEntity
+    public class BaseEntity
     {
     }
 }
