@@ -10,6 +10,9 @@ namespace Neighborhood.Services.Domain.Conversation
     public class Conversation :BaseEntity<int>
     {
        //Foriegn Key
+       /// <summary>
+       /// updattteee
+       /// </summary>
         public int BookingId { get; set; }
 
         //Foriegn key

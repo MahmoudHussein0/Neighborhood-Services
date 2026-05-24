@@ -7,6 +7,7 @@ namespace Neighborhood.Services.Domain.Newsletter
 {
     public class Newsletter:BaseEntity<int>
     {
+        //updatteeee
 public string email {  get; set; }
         public DateTime subscribedAt { get; set; }
     }
