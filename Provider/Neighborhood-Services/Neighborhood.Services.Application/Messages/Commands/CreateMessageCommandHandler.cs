@@ -1,12 +1,13 @@
-﻿using Neighborhood.Services.Application.Modules.Messages.DTOs;
-using Neighborhood.Services.Domain.Conversation;
+﻿using Neighborhood.Services.Domain.Conversation;
 using Neighborhood.Services.Domain.Message;
-using Neighborhood.Services.Application.Modules.Conversations;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Neighborhood.Services.Application.Messages;
+using Neighborhood.Services.Application.Conversations;
+using Neighborhood.Services.Application.Messages.DTOs;
 
-namespace Neighborhood.Services.Application.Modules.Messages.Commands
+namespace Neighborhood.Services.Application.Messages.Commands
 {
     public class CreateMessageCommandHandler
     {

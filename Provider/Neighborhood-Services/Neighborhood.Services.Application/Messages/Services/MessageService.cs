@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Neighborhood.Services.Application.Modules.Messages.Services.MessageService;
-using Neighborhood.Services.Application.Modules.Conversations;
+using static Neighborhood.Services.Application.Messages.Services.MessageService;
+using Neighborhood.Services.Application.Messages;
+using Neighborhood.Services.Application.Conversations;
 
-namespace Neighborhood.Services.Application.Modules.Messages.Services
+namespace Neighborhood.Services.Application.Messages.Services
 {
     public class MessageService
     {

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Application.Modules.Conversations
+namespace Neighborhood.Services.Application.Conversations
 {
     public interface IConversationRepository:IGenericRepository<Conversation,int>
     {

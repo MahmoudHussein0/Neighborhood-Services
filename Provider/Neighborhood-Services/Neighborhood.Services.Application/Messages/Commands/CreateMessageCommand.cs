@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using MediatR;
-using Neighborhood.Services.Application.Modules.Messages.DTOs;
+using Neighborhood.Services.Application.Messages.DTOs;
 
-namespace Neighborhood.Services.Application.Modules.Messages.Commands
+namespace Neighborhood.Services.Application.Messages.Commands
 {
     public class CreateMessageCommand: IRequest<MessageCreatedDto>
     {

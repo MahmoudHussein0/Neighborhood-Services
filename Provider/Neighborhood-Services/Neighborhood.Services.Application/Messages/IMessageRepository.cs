@@ -6,7 +6,7 @@ using Neighborhood.Services.Domain.Message;
 using Neighborhood.Services.Application.Shared;
 
 
-namespace Neighborhood.Services.Application.Modules.Messages
+namespace Neighborhood.Services.Application.Messages
 {
     public interface IMessageRepository:IGenericRepository<Message,int>
     {

@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Messages\Queries\" />
+    <Folder Include="Newsletter\" />
+    <Folder Include="Notifications\Commands\" />
+    <Folder Include="Notifications\DTOs\" />
+    <Folder Include="Notifications\Queries\" />
     <Folder Include="Disputes\Commands\" />
     <Folder Include="Disputes\DTOs\" />
     <Folder Include="Disputes\Interfaces\" />
