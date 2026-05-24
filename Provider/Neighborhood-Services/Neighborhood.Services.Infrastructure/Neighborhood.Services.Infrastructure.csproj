@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Neighborhood.Services.Domain\Neighborhood.Services.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Persistence\Context\" />
-  </ItemGroup>
-
 </Project>
