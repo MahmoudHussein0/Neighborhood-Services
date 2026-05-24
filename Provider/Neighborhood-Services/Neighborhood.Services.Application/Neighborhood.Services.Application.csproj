@@ -14,4 +14,19 @@
     <ProjectReference Include="..\Neighborhood.Services.Domain\Neighborhood.Services.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Disputes\Commands\" />
+    <Folder Include="Disputes\DTOs\" />
+    <Folder Include="Disputes\Interfaces\" />
+    <Folder Include="Disputes\Services\" />
+    <Folder Include="Disputes\Queries\" />
+    <Folder Include="Staffs\Commands\" />
+    <Folder Include="Staffs\Queries\" />
+    <Folder Include="SupportTickets\Commands\" />
+    <Folder Include="SupportTickets\DTOs\" />
+    <Folder Include="SupportTickets\Interfaces\" />
+    <Folder Include="SupportTickets\Services\" />
+    <Folder Include="SupportTickets\Queries\" />
+  </ItemGroup>
+
 </Project>
