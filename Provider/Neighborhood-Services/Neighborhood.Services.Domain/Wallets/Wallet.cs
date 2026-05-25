@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.Transactions;
 
 namespace Neighborhood.Services.Domain.Wallets

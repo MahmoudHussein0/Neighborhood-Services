@@ -29,19 +29,11 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Invoices
             builder.HasOne(x => x.Customer)
                 .WithMany()
                 .HasForeignKey(x => x.CustomerId)
-<<<<<<< Updated upstream
-                .OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.Technician)
-                .WithMany()
-                .HasForeignKey(x => x.TechnicianId)
-                .OnDelete(DeleteBehavior.Cascade);
-=======
                 .OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.Technician)
                 .WithMany()
                 .HasForeignKey(x => x.TechnicianId)
                 .OnDelete(DeleteBehavior.NoAction);
->>>>>>> Stashed changes
             builder.Property(x => x.PaidAt);
             builder.Property(x => x.VoidedAt);
             builder.Property(x => x.IssuedAt);

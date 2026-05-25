@@ -21,7 +21,7 @@ namespace Neighborhood.Services.Domain.ServiceRequests
         public ServiceRequestStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public Point Location { get; set; } = null!;
+        public Point Location { get; set; }
 
         //------------ Foreign Keys
         public int CustomerId { get; set; }
