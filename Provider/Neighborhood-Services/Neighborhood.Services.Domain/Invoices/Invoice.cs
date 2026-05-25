@@ -1,7 +1,7 @@
 ﻿using Neighborhood.Services.Domain.Shared;
 namespace Neighborhood.Services.Domain.Invoices
 {
-    public class Invoice : BaseEntity
+    public class Invoice : BaseEntity<int>
     {
         public int BookingId { get; set; }
         public int TransactionId { get; set; }

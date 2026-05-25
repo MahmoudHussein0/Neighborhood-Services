@@ -1,0 +1,65 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Neighborhood.Services.Domain.SupportTickets;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Configurations
+{
+    public class SupportTicketConfiguration : IEntityTypeConfiguration<SupportTicket>
+    {
+        public void Configure(EntityTypeBuilder<SupportTicket> builder)
+        {
+            builder.ToTable("SupportTickets");
+
+            builder.HasKey(t => t.Id);
+
+            builder.Property(t => t.Id)
+                .UseIdentityColumn();
+
+            builder.Property(t => t.UserId)
+                .IsRequired();
+
+            builder.Property(t => t.BookingId)
+                .IsRequired(false);
+
+            builder.Property(t => t.Subject)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            builder.Property(t => t.Status)
+                .IsRequired()
+                .HasConversion<int>();
+
+            builder.Property(t => t.IsDeleted)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            builder.Property(t => t.CreatedAt)
+                .IsRequired();
+
+            builder.Property(t => t.UpdatedAt)
+                .IsRequired();
+
+            // One SupportTicket → Many SupportMessages
+            builder.HasMany(t => t.Messages)
+                .WithOne(m => m.Ticket)
+                .HasForeignKey(m => m.TicketId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Soft delete filter
+            builder.HasQueryFilter(t => !t.IsDeleted);
+
+            builder.HasIndex(t => t.UserId)
+                .HasDatabaseName("IX_SupportTickets_UserId");
+
+            builder.HasIndex(t => t.BookingId)
+                .HasDatabaseName("IX_SupportTickets_BookingId");
+
+            builder.HasIndex(t => t.Status)
+                .HasDatabaseName("IX_SupportTickets_Status");
+        }
+    }
+
+}

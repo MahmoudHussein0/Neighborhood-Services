@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
 using NetTopologySuite.Geometries;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
 
 namespace Neighborhood.Services.Domain.ApplicationUser
 {
     public class ApplicationUser : IdentityUser
-    { 
+    {
         public ApplicationUserRole ApplicationUserRole { get; set; }
         public string FullName { get; set; } = string.Empty;
         public int Age { get; set; }
@@ -18,6 +15,5 @@ namespace Neighborhood.Services.Domain.ApplicationUser
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
     }
 }

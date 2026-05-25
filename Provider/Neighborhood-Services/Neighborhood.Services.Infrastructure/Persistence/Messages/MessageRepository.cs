@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Neighborhood.Services.Application.Modules.Messages;
+//using Neighborhood.Services.Application.Modules.Messages;
 using Neighborhood.Services.Domain.Message;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Messages

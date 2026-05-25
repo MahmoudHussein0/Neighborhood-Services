@@ -2,7 +2,7 @@
 using Neighborhood.Services.Domain.Wallets;
 namespace Neighborhood.Services.Domain.Escrows
 {
-    public class Escrow : BaseEntity
+    public class Escrow : BaseEntity<int>
     {
         public int BookingId { get; set; }
         public int WalletId { get; set; }

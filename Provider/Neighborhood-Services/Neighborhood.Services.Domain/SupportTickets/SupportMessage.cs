@@ -56,15 +56,6 @@ namespace Neighborhood.Services.Domain.SupportTickets
         }
 
 
-        //public void MarkAsRead()
-        //{
-        //    ReadAt = DateTime.UtcNow;
-        //}
-
-
-        //public void Delete()
-        //{
-        //    IsDeleted = true;
-        //}
+   
     }
 }

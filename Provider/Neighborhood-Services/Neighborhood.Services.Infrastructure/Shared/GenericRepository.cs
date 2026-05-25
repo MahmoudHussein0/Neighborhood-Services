@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Neighborhood.Services.Application.Shared;
 using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.Infrastructure.Shared
 {
