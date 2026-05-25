@@ -53,34 +53,5 @@ public class SupportTicket
     }
 
 
-    public void MarkInProgress()
-    {
-        Status = SupportTicketStatus.InProgress;
-
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-
-    public void Resolve()
-    {
-        Status = SupportTicketStatus.Resolved;
-
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-
-    public void WaitingCustomer()
-    {
-        Status = SupportTicketStatus.WaitingOnCustomer;
-
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-
-    public void Delete()
-    {
-        IsDeleted = true;
-
-        UpdatedAt = DateTime.UtcNow;
-    }
+    
 }

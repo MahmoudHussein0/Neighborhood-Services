@@ -18,11 +18,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="AgentLogs\Commands\" />
+    <Folder Include="AgentLogs\DTOs\" />
+    <Folder Include="AgentLogs\Queries\" />
+    <Folder Include="AiAnalysises\Commands\" />
+    <Folder Include="AiAnalysises\DTOs\" />
+    <Folder Include="AiAnalysises\Queries\" />
+    <Folder Include="BookingImages\Commands\" />
+    <Folder Include="BookingImages\DTOs\" />
+    <Folder Include="BookingImages\Queries\" />
+    <Folder Include="CancellationPolicies\Commands\" />
+    <Folder Include="CancellationPolicies\DTOs\" />
+    <Folder Include="CancellationPolicies\Queries\" />
     <Folder Include="Messages\Queries\" />
+    <Folder Include="NewFolder\" />
     <Folder Include="Newsletter\" />
     <Folder Include="Notifications\Commands\" />
     <Folder Include="Notifications\DTOs\" />
     <Folder Include="Notifications\Queries\" />
+    <Folder Include="Offers\Commands\" />
+    <Folder Include="Offers\DTOs\" />
+    <Folder Include="Offers\Queries\" />
+    <Folder Include="RecurringBookings\Commands\" />
+    <Folder Include="RecurringBookings\DTOs\" />
+    <Folder Include="RecurringBookings\Queries\" />
+    <Folder Include="ServiceRequests\Commands\" />
+    <Folder Include="ServiceRequests\DTOs\" />
+    <Folder Include="ServiceRequests\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,11 @@ using Neighborhood.Services.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
+//using Neighborhood.Services.Application.Modules.Messages;
+using Neighborhood.Services.Domain.Message;
+
+
+
 namespace Neighborhood.Services.Infrastructure.Persistence.Messages
 {
     public class MessageRepository:GenericRepository<Message,int>

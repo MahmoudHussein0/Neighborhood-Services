@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Jose;
 using Neighborhood.Services.Application.Messages;
 using Neighborhood.Services.Application.Messages.DTOs;
+using Neighborhood.Services.Application.Messages.Commands;
 
 namespace Neighborhood.Services.API.Hubs
 {
