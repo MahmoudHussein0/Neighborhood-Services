@@ -10,11 +10,11 @@ namespace Neighborhood.Services.Domain.Categories
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<ProblemType> ProblemTypes { get; set; }
-        public ICollection<TechnicianCategory> TechnicianCategory { get; set; }
+        public ICollection<TechnicianCategory> TechnicianCategories { get; set; }
         public Category()
         {
             ProblemTypes = new HashSet<ProblemType>();
-            TechnicianCategory =  new HashSet<TechnicianCategory>();
+            TechnicianCategories =  new HashSet<TechnicianCategory>();
         }
     }
 }

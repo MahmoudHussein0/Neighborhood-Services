@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Neighborhood.Services.Application.Shared;
 using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.Infrastructure.Shared
 {
@@ -18,12 +19,15 @@ namespace Neighborhood.Services.Infrastructure.Shared
         }
 
 
-        public IQueryable<T> Table => _context.Set<T>().AsNoTracking();
+         public IQueryable<T> Table => _context.Set<T>().AsNoTracking();
+
 
             public virtual async Task AddAsync(T entity)
             {
                 await _context.Set<T>().AddAsync(entity);
             }
+
+
 
             public virtual async Task DeleteAsync(TKey id)
             {
@@ -33,20 +37,30 @@ namespace Neighborhood.Services.Infrastructure.Shared
                     _context.Set<T>().Remove(entity);
                 }
             }
+
+
+
             public virtual async Task<IReadOnlyList<T>> GetAllAsync()
             {
                 return await _context.Set<T>().AsNoTracking().ToListAsync();
             }
+
+
+
             public virtual async Task<T> GetByIdAsync(TKey id)
             {
                 return await _context.Set<T>().FindAsync(id);
             }
+
+
             public virtual Task UpdateAsync(T entity)
             {
                 _context.Set<T>().Update(entity);
                 return Task.CompletedTask;
             }
-            public async Task<IEnumerable<T>> GetByConditionAsync(
+
+
+            public virtual async Task<IEnumerable<T>> GetByConditionAsync(
                 Expression<Func<T, bool>> expression,
                 string? includeProperties = null,
                 bool trackChanges = true)

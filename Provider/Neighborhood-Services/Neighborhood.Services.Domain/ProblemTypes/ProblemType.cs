@@ -11,6 +11,7 @@ namespace Neighborhood.Services.Domain.ProblemTypes
         public string Description { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
