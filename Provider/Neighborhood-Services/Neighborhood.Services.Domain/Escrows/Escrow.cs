@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Domain.Shared;
+﻿using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.Wallets;
 namespace Neighborhood.Services.Domain.Escrows
 {
@@ -11,5 +12,6 @@ namespace Neighborhood.Services.Domain.Escrows
         public DateTime HeldAt { get; set; } = DateTime.UtcNow;
         public DateTime? ReleasedAt { get; set; }
         public Wallet Wallet { get; set; } = null!;
+        public Booking Booking { get; set; } = null!;
     }
 }

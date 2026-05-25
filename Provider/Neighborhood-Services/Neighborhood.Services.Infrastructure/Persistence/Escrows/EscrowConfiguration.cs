@@ -19,6 +19,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Escrows
                 .WithMany()
                 .HasForeignKey(e => e.WalletId)
                 .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(e => e.Booking)
+                .WithOne()
+                .HasForeignKey(e => e.BookingId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
