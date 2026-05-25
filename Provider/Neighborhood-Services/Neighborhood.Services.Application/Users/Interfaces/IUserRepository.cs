@@ -1,5 +1,5 @@
 ﻿using Neighborhood.Services.Application.Shared;
-using Neighborhood.Services.Domain.ApplicationUser;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using System;
 using System.Collections.Generic;
 using System.Text;

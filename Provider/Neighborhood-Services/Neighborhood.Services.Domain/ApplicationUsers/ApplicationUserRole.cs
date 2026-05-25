@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Domain.ApplicationUser
+namespace Neighborhood.Services.Domain.ApplicationUsers
 {
     public enum ApplicationUserRole
     {
