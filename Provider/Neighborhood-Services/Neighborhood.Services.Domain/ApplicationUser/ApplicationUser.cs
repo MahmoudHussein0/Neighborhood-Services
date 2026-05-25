@@ -19,5 +19,14 @@ namespace Neighborhood.Services.Domain.ApplicationUser
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        
+    
+        //Nav Props added by Arwa
+        public ICollection<Message.Message> Messages { get; set; } = new List<Message.Message>();
+        public ICollection<Notifications.Notification> Notifications { get; set; } = new List<Notifications.Notification> ();
+        //End of Arwa Additions
+
+
+
     }
 }

@@ -3,6 +3,7 @@ using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Domain.RecurringBookings;
 using Neighborhood.Services.Domain.ServiceRequests;
+using Neighborhood.Services.Domain.Conversation;
 
 namespace Neighborhood.Services.Domain.Bookings
 {
@@ -52,7 +53,7 @@ namespace Neighborhood.Services.Domain.Bookings
         //public Invoice? Invoice { get; set; }
         //public Dispute? Dispute { get; set; }
         //public Review? Review { get; set; }
-        //public Conversation? Conversation { get; set; }
+        public Conversation.Conversation? Conversation { get; set; }
         //public SupportTicket? SupportTicket { get; set; }
     }
 }

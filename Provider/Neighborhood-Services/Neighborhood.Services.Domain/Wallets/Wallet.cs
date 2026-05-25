@@ -3,7 +3,7 @@ using Neighborhood.Services.Domain.Transactions;
 
 namespace Neighborhood.Services.Domain.Wallets
 {
-    public class Wallet : BaseEntity
+    public class Wallet : BaseEntity<int>
     {
         public string UserId { get; set; }
         public decimal Balance { get; set; }

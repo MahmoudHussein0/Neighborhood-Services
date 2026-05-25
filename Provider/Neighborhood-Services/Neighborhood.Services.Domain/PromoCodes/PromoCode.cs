@@ -1,7 +1,7 @@
 ﻿using Neighborhood.Services.Domain.Shared;
 namespace Neighborhood.Services.Domain.PromoCodes
 {
-    public class PromoCode : BaseEntity
+    public class PromoCode : BaseEntity<int>
     {
         public string Code { get; set; } = string.Empty;
         public decimal DiscountPercentage { get; set; }

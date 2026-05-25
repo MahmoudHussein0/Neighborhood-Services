@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
-using Neighborhood.Services.Application.Modules.Messages.Commands;
+using Neighborhood.Services.Application.Messages.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
