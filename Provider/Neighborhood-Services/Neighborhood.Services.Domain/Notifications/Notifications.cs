@@ -16,7 +16,9 @@ namespace Neighborhood.Services.Domain.Notifications
         public DateTime createdAt { get; set; }
 
         //Nav Prop: User
-     
+        public ApplicationUser.ApplicationUser User { set; get; } = new ApplicationUser.ApplicationUser();
+
+
 
 
     }

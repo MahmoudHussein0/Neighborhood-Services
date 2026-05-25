@@ -15,6 +15,7 @@ using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.SupportTickets;
 using Neighborhood.Services.Domain.Technicians;
 using System.Drawing;
+using Neighborhood.Services.Domain.Conversation;
 
 namespace Neighborhood.Services.Domain.Bookings
 {

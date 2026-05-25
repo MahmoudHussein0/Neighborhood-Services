@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Neighborhood.Services.Application.Modules.Conversations;
+using Neighborhood.Services.Application.Conversations;
 using Neighborhood.Services.Domain.Conversation;
 using Neighborhood.Services.Domain.Message;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Conversations
 {

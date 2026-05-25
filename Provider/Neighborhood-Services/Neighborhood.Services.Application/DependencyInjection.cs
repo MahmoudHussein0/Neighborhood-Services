@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application
 {
-    internal class DependencyInjection
+    public class DependencyInjection
     {
     }
 }
