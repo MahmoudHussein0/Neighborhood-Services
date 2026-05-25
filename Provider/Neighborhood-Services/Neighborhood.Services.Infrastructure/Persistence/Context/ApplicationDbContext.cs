@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Shared;
-using Neighborhood.Services.Domain.ApplicationUser;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Conversation;
 using Neighborhood.Services.Domain.Disputes;
 using Neighborhood.Services.Domain.Reviews;
