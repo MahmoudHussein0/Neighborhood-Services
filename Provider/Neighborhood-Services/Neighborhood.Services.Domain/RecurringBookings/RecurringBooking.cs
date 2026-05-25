@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.Customers;
+using Neighborhood.Services.Domain.ProblemTypes;
+using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.Technicians;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Neighborhood.Services.Domain.RecurringBookings
 {
-    public class RecurringBooking
+    public class RecurringBooking :BaseEntity<int>
     {
         //------------------------ Self Prop 
-        public int Id { get; set; }
         public string Address { get; set; } = string.Empty;
         public RecurringPattern Pattern { get; set; }
         public int? DayOfWeek { get; set; }
@@ -21,5 +25,11 @@ namespace Neighborhood.Services.Domain.RecurringBookings
         public int CustomerId { get; set; }
         public int TechnicianId { get; set; }
         public int ProblemTypeId { get; set; }
+
+        // Nav 
+        public Customer Customer { get; set; } = null!;
+        public Technician Technician { get; set; } = null!;
+        public ProblemType ProblemType { get; set; } = null!;
+        public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
     }
 }
