@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.Escrows;
-namespace Neighborhood.Services.Infrastructure.Escrows
+namespace Neighborhood.Services.Infrastructure.Persistence.Escrows
 {
     public class EscrowConfiguration : IEntityTypeConfiguration<Escrow>
     {

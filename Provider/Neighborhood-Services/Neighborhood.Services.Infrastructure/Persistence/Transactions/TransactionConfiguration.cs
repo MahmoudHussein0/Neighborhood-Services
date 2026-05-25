@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.Transactions;
-namespace Neighborhood.Services.Infrastructure.Transactions
+namespace Neighborhood.Services.Infrastructure.Persistence.Transactions
 {
     public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
     {

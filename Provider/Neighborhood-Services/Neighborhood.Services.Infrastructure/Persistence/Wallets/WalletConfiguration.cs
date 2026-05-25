@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.Wallets;
-namespace Neighborhood.Services.Infrastructure.Wallets
+namespace Neighborhood.Services.Infrastructure.Persistence.Wallets
 {
     public class WalletConfiguration : IEntityTypeConfiguration<Wallet>
     {
