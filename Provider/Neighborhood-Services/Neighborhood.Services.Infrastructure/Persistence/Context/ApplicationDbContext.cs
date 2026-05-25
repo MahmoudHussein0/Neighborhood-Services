@@ -37,6 +37,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Context
             base.OnModelCreating(Modelbuilder);
             Modelbuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
-      
+
+
     }
 }

@@ -1,15 +1,27 @@
 ﻿using Neighborhood.Services.Domain.AiAnalyses;
+using Neighborhood.Services.Domain.ApplicationUser;
 using Neighborhood.Services.Domain.BookingImages;
+using Neighborhood.Services.Domain.Customers;
+using Neighborhood.Services.Domain.Disputes;
+using Neighborhood.Services.Domain.Escrows;
+using Neighborhood.Services.Domain.Invoices;
 using Neighborhood.Services.Domain.Offers;
+using Neighborhood.Services.Domain.ProblemTypes;
+using Neighborhood.Services.Domain.PromoCodes;
 using Neighborhood.Services.Domain.RecurringBookings;
+using Neighborhood.Services.Domain.Reviews;
 using Neighborhood.Services.Domain.ServiceRequests;
+using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.SupportTickets;
+using Neighborhood.Services.Domain.Technicians;
+using System.Drawing;
 
 namespace Neighborhood.Services.Domain.Bookings
 {
-    public class Booking
+    public class Booking :BaseEntity<int>
     {
         //----- Self Prop
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public BookingType BookingType { get; set; }
         public string Description { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
@@ -21,9 +33,11 @@ namespace Neighborhood.Services.Domain.Bookings
         public DateTime? ConfirmedAt { get; set; }
         public string? CancellationReason { get; set; }
         public DateTime? CancelledAt { get; set; }
-        public bool IsDeleted { get; set; }
+        //public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public Point Location { get; set; }
 
         // ---------------Foreign Keys 
         public int CustomerId { get; set; }
@@ -33,26 +47,29 @@ namespace Neighborhood.Services.Domain.Bookings
         public int? ServiceRequestId { get; set; }
         public int? PromoCodeId { get; set; }
         public int? RecurringBookingId { get; set; }
-        public int? CancelledBy { get; set; }
+        public string? CancelledBy { get; set; }
+
+
 
         // Navigation Properties
-        //public Customer Customer { get; set; }
-        //public Technician Technician { get; set; }
-        //public ProblemType ProblemType { get; set; }
+        public Customer Customer { get; set; } = null!;
+        public Technician Technician { get; set; } = null!;
+        public ProblemType ProblemType { get; set; }= null!;
         public Offer? Offer { get; set; }
         public ServiceRequest? ServiceRequest { get; set; }
-        //public PromoCode? PromoCode { get; set; }
+        public PromoCode? PromoCode { get; set; }
         public RecurringBooking? RecurringBooking { get; set; }
-        //public User? CancelledByUser { get; set; }
+        public Neighborhood.Services.Domain.ApplicationUser.ApplicationUser? CancelledByUser { get; set; }
 
         public ICollection<BookingImage> BookingImages { get; set; } = new HashSet<BookingImage>();
-        //public ICollection<PromoCodeUsage> PromoCodeUsages { get; set; }
+        public ICollection<PromoCodeUsage> PromoCodeUsages { get; set; } = new HashSet<PromoCodeUsage>();
         public AiAnalysis? AiAnalysis { get; set; }
-        //public Escrow? Escrow { get; set; }
-        //public Invoice? Invoice { get; set; }
-        //public Dispute? Dispute { get; set; }
-        //public Review? Review { get; set; }
-        //public Conversation? Conversation { get; set; }
-        //public SupportTicket? SupportTicket { get; set; }
+        public Escrow? Escrow { get; set; }
+        public Invoice? Invoice { get; set; }
+        public Dispute? Dispute { get; set; }
+        public Review? Review { get; set; }
+        public Neighborhood.Services.Domain.Conversation.Conversation? Conversation { get; set; }
+        public SupportTicket? SupportTicket { get; set; }
+        //--
     }
 }
