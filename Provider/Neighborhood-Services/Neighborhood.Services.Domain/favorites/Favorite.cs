@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Domain.favorites
 {
-    public class favorites :BaseEntity<int>
+    public class Favorite :BaseEntity<int>
     {
         public int UserId;
         public int TechnicianId;

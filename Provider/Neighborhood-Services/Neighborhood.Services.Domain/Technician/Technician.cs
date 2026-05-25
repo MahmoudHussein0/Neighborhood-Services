@@ -1,4 +1,13 @@
-﻿using Neighborhood.Services.Domain.TechnicianPhotos;
+﻿using Neighborhood.Services.Domain.AvailabilityExceptions;
+using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.favorites;
+using Neighborhood.Services.Domain.Invoices;
+using Neighborhood.Services.Domain.Offers;
+using Neighborhood.Services.Domain.RecurringBookings;
+using Neighborhood.Services.Domain.TechnicianPhotos;
+using Neighborhood.Services.Domain.TechnicionCategories;
+using Neighborhood.Services.Domain.TechnicionsAvailability;
+using Neighborhood.Services.Domain.TechnicionsPricing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,5 +33,23 @@ namespace Neighborhood.Services.Domain.Technicians
 
         public ICollection<TechnicianPhoto> TechnicianPhotos { get; set; } 
             = new List<TechnicianPhoto>();
+        public ICollection<TechnicianAvailability> TechnicianAvailabilities { get; set; } =
+            new List<TechnicianAvailability>();
+        public ICollection<AvailabilityException> AvailabilityExceptions { get; set; } =
+            new List<AvailabilityException>();
+        public ICollection<Offer> Offers { get; set; } 
+            = new List<Offer>();
+        public ICollection<Booking> Bookings { get; set; } 
+            = new List<Booking>();
+        public ICollection<TechnicianCategory> TechnicianCategories { get; set; } 
+            = new List<TechnicianCategory>();
+        public ICollection<TechnicianPricing> TechnicianPricings { get; set; } =
+            new List<TechnicianPricing>();
+        public ICollection<RecurringBooking> RecurringBookings { get; set; } =
+            new List<RecurringBooking>();
+        public ICollection<Favorite> Favorites { get; set; } =
+            new List<Favorite>();
+        public ICollection<Invoice> Invoices { get; set; } =
+            new List<Invoice>();
     }
 }
