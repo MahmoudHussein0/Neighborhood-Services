@@ -36,6 +36,7 @@ using Neighborhood.Services.Domain.TechnicionsPricing;
 using Neighborhood.Services.Domain.Transactions;
 using Neighborhood.Services.Domain.Wallets;
 using System.Reflection;
+using Neighborhood.Services.Domain.favorites;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Context
 {
@@ -82,6 +83,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Context
         public DbSet<TechnicianPricing> TechnicianPricings { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
