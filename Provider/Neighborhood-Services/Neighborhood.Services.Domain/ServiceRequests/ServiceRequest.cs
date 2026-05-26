@@ -6,7 +6,7 @@ using Neighborhood.Services.Domain.ProblemTypes;
 using Neighborhood.Services.Domain.Shared;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using NetTopologySuite.Geometries;
 using System.Text;
 
 namespace Neighborhood.Services.Domain.ServiceRequests

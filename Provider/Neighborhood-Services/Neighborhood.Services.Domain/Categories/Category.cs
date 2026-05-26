@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Domain.ProblemTypes;
+using Neighborhood.Services.Domain.ServiceRequests;
 using Neighborhood.Services.Domain.TechnicionCategories;
 namespace Neighborhood.Services.Domain.Categories
 {
@@ -16,5 +17,8 @@ namespace Neighborhood.Services.Domain.Categories
             ProblemTypes = new HashSet<ProblemType>();
             TechnicianCategories =  new HashSet<TechnicianCategory>();
         }
+
+        //
+        public ICollection<ServiceRequest> ServiceRequests { get; set; } = new HashSet<ServiceRequest>();
     }
 }

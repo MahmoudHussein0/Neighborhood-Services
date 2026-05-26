@@ -34,7 +34,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             .HasColumnType("geography");
 
             builder.HasOne(b => b.Customer)
-            .WithMany(c => c.Booking)
+            .WithMany(c => c.Bookings)
             .HasForeignKey(b => b.CustomerId)
             .OnDelete(DeleteBehavior.NoAction);
 

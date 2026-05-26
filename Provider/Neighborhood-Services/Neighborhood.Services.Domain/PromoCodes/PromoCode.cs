@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Domain.Shared;
+﻿using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.Shared;
 namespace Neighborhood.Services.Domain.PromoCodes
 {
 
@@ -15,5 +16,7 @@ namespace Neighborhood.Services.Domain.PromoCodes
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<PromoCodeUsage> Usages { get; set; } = new List<PromoCodeUsage>();
+        //
+        public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
     }
 }

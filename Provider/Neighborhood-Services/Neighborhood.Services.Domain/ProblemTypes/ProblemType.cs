@@ -1,5 +1,6 @@
 ﻿using Neighborhood.Services.Domain.Categories;
 using Neighborhood.Services.Domain.HistoricalPrices;
+using Neighborhood.Services.Domain.ServiceRequests;
 using Neighborhood.Services.Domain.TechnicionsPricing;
 
 namespace Neighborhood.Services.Domain.ProblemTypes
@@ -22,5 +23,7 @@ namespace Neighborhood.Services.Domain.ProblemTypes
             TechnicionPricing = new HashSet<TechnicianPricing>();
             HistoricalPricing = new HashSet<HistoricalPrice>();
         }
+        //
+        public ICollection<ServiceRequest> ServiceRequests { get; set; } = new HashSet<ServiceRequest>();
     }
 }
