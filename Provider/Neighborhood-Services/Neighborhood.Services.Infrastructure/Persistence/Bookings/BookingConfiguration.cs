@@ -14,7 +14,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             builder.HasKey(b => b.Id);
 
 
-            builder.HasQueryFilter(b => !b.IsDeleted);
+            //builder.HasQueryFilter(b => !b.IsDeleted);
 
             builder.Property(b => b.EstimatedPrice)
             .HasColumnType("decimal(18,2)");

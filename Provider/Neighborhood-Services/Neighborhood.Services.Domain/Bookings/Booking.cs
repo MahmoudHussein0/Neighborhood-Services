@@ -63,7 +63,7 @@ namespace Neighborhood.Services.Domain.Bookings
         public Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser? CancelledByUser { get; set; }
 
         public ICollection<BookingImage> BookingImages { get; set; } = new HashSet<BookingImage>();
-        public ICollection<PromoCodeUsage> PromoCodeUsages { get; set; } = new HashSet<PromoCodeUsage>();
+        public PromoCodeUsage? PromoCodeUsages { get; set; }
         public AiAnalysis? AiAnalysis { get; set; }
         public Escrow? Escrow { get; set; }
         public Invoice? Invoice { get; set; }
