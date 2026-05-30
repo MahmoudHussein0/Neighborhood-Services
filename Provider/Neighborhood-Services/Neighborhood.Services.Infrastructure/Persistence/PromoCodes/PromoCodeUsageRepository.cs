@@ -10,14 +10,15 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
         {
         }
 
-        public Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId)
+        => await GetByConditionAsync(u => u.UserId == userId, includeProperties: "PromoCode");
 
-        public Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId)
+        public async Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId)
         {
-            throw new NotImplementedException();
+            var res = await GetByConditionAsync(pu =>
+                pu.UserId == userId &&
+                pu.PromoCodeId == promoCodeId);  
+            return res.Any();
         }
     }
 }
