@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Messages
 
         //default Values
           
-        builder.Property(e=>e.createdAt).HasDefaultValue(DateTime.UtcNow);
+       // builder.Property(e=>e.createdAt).HasDefaultValue(DateTime.UtcNow);
 
         builder.Property(e => e.isRead).HasDefaultValue(false);
 

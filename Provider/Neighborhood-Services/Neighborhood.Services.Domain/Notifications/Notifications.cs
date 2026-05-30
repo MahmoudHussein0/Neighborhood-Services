@@ -5,14 +5,19 @@ namespace Neighborhood.Services.Domain.Notifications
 {
     public class Notification : BaseEntity<int>
     {
-        public int UserId { get; set; }
-        public NotificationTypes type { get; set; }
-        public string message { get; set; }
-        public int refrenceId { get; set; }
-        public bool isRead { get; set; }
-        public NotificationChannels channel { get; set; }
+        public string UserId { get; set; } = string.Empty;
+       public NotificationTypes type { get; set; }
+      public string message { get; set; }
+      public int refrenceId { get; set; }
+     public bool isRead { get; set; }
+     public NotificationChannels channel { get; set; }
         public DateTime createdAt { get; set; }
 
-        public ApplicationUser User { set; get; } = new ApplicationUser();
+        //Nav Prop: User
+        public ApplicationUser User { set; get; } = null;
+
+
+
+
     }
 }

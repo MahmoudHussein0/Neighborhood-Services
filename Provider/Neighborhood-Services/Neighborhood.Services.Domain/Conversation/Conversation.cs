@@ -18,7 +18,7 @@ namespace Neighborhood.Services.Domain.Conversation
         public int BookingId { get; set; }
 
         //Foriegn key
-        public int ServiceRequestId { set; get; }
+       // public int ServiceRequestId { get; }
         public DateTime createdAt { get; set; }
         public Message.Message lastMessage => Messages.ToList().Last()??new Message.Message();
 
@@ -26,9 +26,9 @@ namespace Neighborhood.Services.Domain.Conversation
 
         //Nav propbs:
         //public ServiceRequest ServiceRequest {set; get;}
-        public ServiceRequest ServiceRequest { get; set; } =new ServiceRequest();
+       // public ServiceRequest ServiceRequest { get; set; } =null;
         //public Booking Booking {set; get;}
-        public Booking Booking {  get; set; }=new Booking();
+        public Booking Booking {  get; set; }=null;
         public ICollection <Message.Message> Messages { get; set; } = new List<Message.Message> ();
     }
 }

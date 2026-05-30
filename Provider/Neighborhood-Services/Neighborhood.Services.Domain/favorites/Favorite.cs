@@ -6,11 +6,15 @@ namespace Neighborhood.Services.Domain.favorites
 {
     public class Favorite : BaseEntity<int>
     {
-        public int UserId;
-        public int TechnicianId;
-        public DateTime addedAt = DateTime.Now;
+        public string UserId { set; get; }
+        public int TechnicianId { set; get; }
+        public DateTime addedAt { get; } = DateTime.Now;
 
-        public ApplicationUser User { get; set; } = new ApplicationUser();
-        public Technician Technician { get; set; } = new Technician();
+        //Nav probs
+        public ApplicationUser User { get; set; } = null;
+        //public User
+        //public Technician
+        public Technician Technician { get; set; } = null;
+
     }
 }
