@@ -29,7 +29,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Disputes.Configuratio
 
             builder.Property(d => d.DisputeType)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(d => d.Reason)
                 .IsRequired()
@@ -41,7 +41,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Disputes.Configuratio
 
             builder.Property(d => d.Status)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(d => d.CreatedAt)
                 .IsRequired();

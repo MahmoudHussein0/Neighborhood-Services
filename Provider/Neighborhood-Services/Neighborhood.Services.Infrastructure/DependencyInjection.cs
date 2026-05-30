@@ -22,6 +22,7 @@ using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Reviews.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.Transactions.Interfaces;
@@ -49,6 +50,7 @@ using Neighborhood.Services.Infrastructure.Persistence.PromoCodes;
 using Neighborhood.Services.Infrastructure.Persistence.RecurringBookings;
 using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
+using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability;
@@ -92,6 +94,8 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
+            services.AddScoped<IStaffRepository, StaffRepository>(); // ← add this
+
 
             services.AddScoped<IPromoCodeRepository, PromoCodeRepository>();
             services.AddScoped<IPromoCodeUsageRepository, PromoCodeUsageRepository>();

@@ -1,26 +1,28 @@
-﻿namespace Neighborhood.Services.Domain.Disputes;
+﻿using Neighborhood.Services.Domain.Shared;
 
-public class Dispute
+namespace Neighborhood.Services.Domain.Disputes;
+
+public class Dispute :BaseEntity<int>
 {
-    public int Id { get; private set; }
+    
 
-    public int BookingId { get; private set; }
+    public int BookingId { get; set; }
 
-    public int RaisedBy { get; private set; }
+    public int RaisedBy { get;  set; }
 
-    public int? ResolvedByStaffId { get; private set; }
+    public int? ResolvedByStaffId { get;  set; }
 
-    public DisputeType DisputeType { get; private set; }
+    public DisputeType DisputeType { get;  set; }
 
-    public string Reason { get; private set; }
+    public string Reason { get;  set; }
 
-    public string? Resolution { get; private set; }
+    public string? Resolution { get;  set; }
 
-    public DisputeStatus Status { get; private set; }
+    public DisputeStatus Status { get;  set; }
 
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get;  set; }
 
-    public DateTime? ResolvedAt { get; private set; }
+    public DateTime? ResolvedAt { get; set; }
 
 
     // Empty Constructor For EF

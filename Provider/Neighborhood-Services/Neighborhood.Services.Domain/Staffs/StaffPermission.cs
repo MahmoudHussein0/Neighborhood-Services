@@ -1,15 +1,17 @@
-﻿namespace Neighborhood.Services.Domain.Staffs
+﻿using Neighborhood.Services.Domain.Shared;
+
+namespace Neighborhood.Services.Domain.Staffs
 {
-    public class StaffPermission
+    public class StaffPermission: BaseEntity<int>
     {
-        public int Id { get; private set; }
+      
 
-        public int StaffId { get; private set; }
+        public int StaffId { get; set; }
 
-        public PermissionType Permission { get; private set; }
+        public PermissionType Permission { get;  set; }
 
 
         // Navigation Property
-        public Staff Staff { get; private set; }
+        public Staff Staff { get;  set; }
     }
 }

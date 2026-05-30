@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
 
             builder.Property(t => t.Status)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(t => t.IsDeleted)
                 .IsRequired()

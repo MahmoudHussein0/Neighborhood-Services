@@ -2,17 +2,20 @@
 using Neighborhood.Services.Application.Reviews.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Reviews;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
+using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
 {
-    public class ReviewRepository : IReviewRepository
+    public class ReviewRepository : GenericRepository<Review, int>, IReviewRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ReviewRepository(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public ReviewRepository(ApplicationDbContext context) : base(context)
+        
+            {
+                _context = context;
+            }
 
         // ── Queries ────────────────────────────────────────────────────────────
 

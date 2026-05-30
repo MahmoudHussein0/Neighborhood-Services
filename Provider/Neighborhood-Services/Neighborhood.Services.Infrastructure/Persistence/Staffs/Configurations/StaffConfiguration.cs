@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configrations
+namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configurations
 {
     public class StaffConfiguration : IEntityTypeConfiguration<Staff>
     {
@@ -23,7 +23,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configrations
 
             builder.Property(s => s.Role)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(s => s.IsActive)
                 .IsRequired()
