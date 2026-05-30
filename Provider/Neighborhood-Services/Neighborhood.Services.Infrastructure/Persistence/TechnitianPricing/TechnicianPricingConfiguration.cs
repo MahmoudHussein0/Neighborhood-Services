@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing
 
 
             builder.HasOne(TP => TP.Technician)
-                    .WithMany()
+                    .WithMany(t=>t.TechnicianPricings)
                     .HasForeignKey(TP => TP.TechnicianId)
                     .OnDelete(DeleteBehavior.NoAction);
 

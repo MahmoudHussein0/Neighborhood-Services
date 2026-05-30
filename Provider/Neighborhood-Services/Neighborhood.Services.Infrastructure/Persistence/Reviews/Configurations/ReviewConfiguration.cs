@@ -50,7 +50,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Configuration
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Soft delete filter — IsDeleted reviews are invisible by default
-            builder.HasQueryFilter(r => !r.IsDeleted);
+            //builder.HasQueryFilter(r => !r.IsDeleted);
             //This way the unique constraint is on (BookingId + ReviewerId) together — 
             //meaning the same person can't review the same booking twice,
             //but both the customer and the technician can each leave their own review. That's exactly the business rule you need

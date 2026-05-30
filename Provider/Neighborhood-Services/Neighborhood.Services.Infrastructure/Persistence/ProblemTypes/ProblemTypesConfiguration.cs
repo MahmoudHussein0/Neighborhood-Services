@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
                    .HasDefaultValue(false);
 
 
-            builder.HasQueryFilter(PT => !PT.IsDeleted);
+            //builder.HasQueryFilter(PT => !PT.IsDeleted);
 
             builder.Property(PT => PT.CreatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");

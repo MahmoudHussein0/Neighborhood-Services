@@ -29,7 +29,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailabilit
                   Day => Enum.Parse<DayOfWeek>(Day));
 
             builder.HasOne(TA => TA.Technician)
-                   .WithMany()
+                   .WithMany(t=>t.TechnicianAvailabilities)
                    .HasForeignKey(TA => TA.TechnicianId)
                    .OnDelete(DeleteBehavior.Cascade);
 

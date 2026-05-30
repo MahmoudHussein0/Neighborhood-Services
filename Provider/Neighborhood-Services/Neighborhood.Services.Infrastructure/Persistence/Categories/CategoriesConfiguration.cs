@@ -18,7 +18,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Categories
             builder.Property(C => C.IsDeleted)
                           .HasDefaultValue(false);
 
-            builder.HasQueryFilter(C => !C.IsDeleted);
+            //builder.HasQueryFilter(C => !C.IsDeleted);
 
             builder.Property(C => C.CreatedAt)
                          .HasDefaultValueSql("GETUTCDATE()");
