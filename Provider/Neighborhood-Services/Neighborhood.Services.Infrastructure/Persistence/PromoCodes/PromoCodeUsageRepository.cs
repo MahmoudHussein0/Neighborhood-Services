@@ -9,5 +9,15 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
         public PromoCodeUsageRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        public Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
