@@ -14,7 +14,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             builder.HasKey(b => b.Id);
 
 
-            builder.HasQueryFilter(b => !b.IsDeleted);
+            //builder.HasQueryFilter(b => !b.IsDeleted);
 
             builder.Property(b => b.EstimatedPrice)
             .HasColumnType("decimal(18,2)");
@@ -34,7 +34,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             .HasColumnType("geography");
 
             builder.HasOne(b => b.Customer)
-            .WithMany(c => c.Booking)
+            .WithMany(c => c.Bookings)
             .HasForeignKey(b => b.CustomerId)
             .OnDelete(DeleteBehavior.NoAction);
 

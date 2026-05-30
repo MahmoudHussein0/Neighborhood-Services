@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.Message;
+using Neighborhood.Services.Domain.ServiceRequests;
+using Neighborhood.Services.Domain.Bookings;
 
 
 namespace Neighborhood.Services.Domain.Conversation
@@ -24,7 +26,9 @@ namespace Neighborhood.Services.Domain.Conversation
 
         //Nav propbs:
         //public ServiceRequest ServiceRequest {set; get;}
+        public ServiceRequest ServiceRequest { get; set; } =new ServiceRequest();
         //public Booking Booking {set; get;}
-        public ICollection <Message.Message> Messages= new List<Message.Message> ();
+        public Booking Booking {  get; set; }=new Booking();
+        public ICollection <Message.Message> Messages { get; set; } = new List<Message.Message> ();
     }
 }

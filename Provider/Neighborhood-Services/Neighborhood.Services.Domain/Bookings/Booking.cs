@@ -1,5 +1,5 @@
 ﻿using Neighborhood.Services.Domain.AiAnalyses;
-using Neighborhood.Services.Domain.ApplicationUser;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Customers;
 using Neighborhood.Services.Domain.Disputes;
@@ -14,7 +14,8 @@ using Neighborhood.Services.Domain.ServiceRequests;
 using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.SupportTickets;
 using Neighborhood.Services.Domain.Technicians;
-using System.Drawing;
+using NetTopologySuite.Geometries;
+using Neighborhood.Services.Domain.Conversation;
 
 namespace Neighborhood.Services.Domain.Bookings
 {
@@ -59,10 +60,10 @@ namespace Neighborhood.Services.Domain.Bookings
         public ServiceRequest? ServiceRequest { get; set; }
         public PromoCode? PromoCode { get; set; }
         public RecurringBooking? RecurringBooking { get; set; }
-        public Neighborhood.Services.Domain.ApplicationUser.ApplicationUser? CancelledByUser { get; set; }
+        public Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser? CancelledByUser { get; set; }
 
         public ICollection<BookingImage> BookingImages { get; set; } = new HashSet<BookingImage>();
-        public ICollection<PromoCodeUsage> PromoCodeUsages { get; set; } = new HashSet<PromoCodeUsage>();
+        public PromoCodeUsage? PromoCodeUsages { get; set; }
         public AiAnalysis? AiAnalysis { get; set; }
         public Escrow? Escrow { get; set; }
         public Invoice? Invoice { get; set; }
