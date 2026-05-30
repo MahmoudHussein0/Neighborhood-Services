@@ -9,5 +9,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
         public PromoCodeUsageRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        public async Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId)
+        => await GetByConditionAsync(u => u.UserId == userId, includeProperties: "PromoCode");
+
+        public async Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId)
+        {
+            var res = await GetByConditionAsync(pu =>
+                pu.UserId == userId &&
+                pu.PromoCodeId == promoCodeId);  
+            return res.Any();
+        }
     }
 }
