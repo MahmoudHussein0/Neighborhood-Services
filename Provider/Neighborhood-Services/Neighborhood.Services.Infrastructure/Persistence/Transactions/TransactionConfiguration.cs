@@ -29,6 +29,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Transactions
                 .WithMany()
                 .HasForeignKey(t => t.PaymentMethodId)
                 .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(t => t.ToWallet)
+            .WithMany(w => w.IncomingTransactions)
+            .HasForeignKey(t => t.ToWalletId)
+            .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

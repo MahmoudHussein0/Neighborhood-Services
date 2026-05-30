@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Customers
             builder.HasOne<ApplicationUser>()
                 .WithOne(u => u.Customer)
                 .HasForeignKey<Customer>(c => c.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

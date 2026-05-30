@@ -44,7 +44,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(b => b.ProblemType)
-            .WithMany(p => p.Bookings)
+            .WithMany()
             .HasForeignKey(b => b.ProblemTypeId)
             .OnDelete(DeleteBehavior.NoAction);
 
