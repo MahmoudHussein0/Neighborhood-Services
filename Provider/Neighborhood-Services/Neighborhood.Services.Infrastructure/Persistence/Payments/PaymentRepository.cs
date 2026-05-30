@@ -9,5 +9,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Payments
         public PaymentRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        public async Task<IEnumerable<PaymentMethod>> GetByUserIdAsync(string userId)
+        => await GetByConditionAsync(p => p.UserId == userId);
     }
 }

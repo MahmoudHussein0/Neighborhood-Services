@@ -4,7 +4,7 @@ namespace Neighborhood.Services.Application.Wallets.Interfaces
 {
     public interface IWalletRepository : IGenericRepository<Wallet, int>
     {
-        Task<Wallet?> GetByUserIdAsync(int userId);
+        Task<Wallet?> GetByUserIdAsync(string userId);
         Task UpdateBalanceAsync(int walletId, decimal newBalance);
     }
 }
