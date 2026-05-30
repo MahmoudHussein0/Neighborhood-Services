@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Neighborhood.Services.Domain.TechnicionsPricing;
+using Neighborhood.Services.Domain.TechniciansPricing;
 using System;
 using System.Collections.Generic;
 using System.Text;

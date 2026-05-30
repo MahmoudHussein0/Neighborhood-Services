@@ -1,13 +1,12 @@
-﻿using Neighborhood.Services.Domain.Technicians;
+﻿using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.Technicians;
 
 namespace Neighborhood.Services.Domain.AvilabilitiesException
 {
-    public class AvailabilityException
+    public class AvailabilityException :BaseEntity<int>
     {
-        public int Id { get; set; }
         public int TechnicianId { get; set; }
         public DateOnly Date { get; set; }
-        public bool  isDeleted { get; set; }
         public bool IsAvailable { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }

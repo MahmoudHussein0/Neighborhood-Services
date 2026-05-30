@@ -7,5 +7,6 @@ namespace Neighborhood.Services.Application.Shared
     public interface IUnitOfWork
     {
         Task<int> SaveChangesAsync();
+
     }
 }
