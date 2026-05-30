@@ -14,7 +14,7 @@ namespace Neighborhood.Services.Domain.RecurringBookings
         //------------------------ Self Prop 
         public string Address { get; set; } = string.Empty;
         public RecurringPattern Pattern { get; set; }
-        public int? DayOfWeek { get; set; }
+        public DayOfWeek? DayOfWeek { get; set; }
         public int? DayOfMonth { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly? EndDate { get; set; }

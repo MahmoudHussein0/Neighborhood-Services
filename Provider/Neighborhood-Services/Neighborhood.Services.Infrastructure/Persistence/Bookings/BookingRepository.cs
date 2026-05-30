@@ -5,6 +5,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Bookings

@@ -1,5 +1,5 @@
 ﻿using Neighborhood.Services.Application.Users.Interfaces;
-using Neighborhood.Services.Domain.ApplicationUser;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;

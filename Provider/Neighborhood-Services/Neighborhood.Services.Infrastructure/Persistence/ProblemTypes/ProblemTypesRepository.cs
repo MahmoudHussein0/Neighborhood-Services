@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Domain.ProblemTypes;
+﻿using Neighborhood.Services.Application.ProblemTypes;
+using Neighborhood.Services.Domain.ProblemTypes;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
 {
-    public  class ProblemTypesRepository : GenericRepository<ProblemType , int>
+    public  class ProblemTypesRepository : GenericRepository<ProblemType , int>  , IProblemTypeRepository
     {
 
         public ProblemTypesRepository(ApplicationDbContext context):base(context)
@@ -16,18 +17,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
 
 
 
-        public override async  Task DeleteAsync(int id)
-        {
-            var problemType = await GetByIdAsync(id);
-            if( problemType is not null)
-            {
-                problemType.IsDeleted = true;
-
-               await UpdateAsync(problemType);
-            }
-        }
-
-
+       
 
 
     }

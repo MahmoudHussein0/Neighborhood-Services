@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Identity.Client.RP;
 using Neighborhood.Services.Domain.HistoricalPrices;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,12 @@ namespace Neighborhood.Services.Infrastructure.Persistence.HistoricalPrices
             builder.Property(HP => HP.Region)
                    .HasMaxLength(250)
                    .IsRequired();
+
+            builder.Property(HP => HP.IsDeleted)
+                   .HasDefaultValue(false);
+
+
+            builder.HasQueryFilter(HP => ! HP.IsDeleted);
 
             builder.Property(HP => HP.CreatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");

@@ -1,17 +1,17 @@
 ﻿using Neighborhood.Services.Domain.Categories;
 using Neighborhood.Services.Domain.HistoricalPrices;
-using Neighborhood.Services.Domain.TechnicionsPricing;
+using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.TechniciansPricing;
+using Neighborhood.Services.Domain.ServiceRequests;
 
 namespace Neighborhood.Services.Domain.ProblemTypes
 {
-    public class ProblemType
+    public class ProblemType :BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
-        public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
@@ -22,5 +22,7 @@ namespace Neighborhood.Services.Domain.ProblemTypes
             TechnicionPricing = new HashSet<TechnicianPricing>();
             HistoricalPricing = new HashSet<HistoricalPrice>();
         }
+        //
+        public ICollection<ServiceRequest> ServiceRequests { get; set; } = new HashSet<ServiceRequest>();
     }
 }

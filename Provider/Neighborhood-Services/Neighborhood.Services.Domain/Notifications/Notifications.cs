@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Shared;
 
 namespace Neighborhood.Services.Domain.Notifications
 {
-    public class Notification: BaseEntity<int>
+    public class Notification : BaseEntity<int>
     {
         public string UserId { get; set; } = string.Empty;
        public NotificationTypes type { get; set; }
@@ -16,7 +14,7 @@ namespace Neighborhood.Services.Domain.Notifications
         public DateTime createdAt { get; set; }
 
         //Nav Prop: User
-        public ApplicationUser.ApplicationUser User { set; get; } = null;
+        public ApplicationUser User { set; get; } = null;
 
 
 

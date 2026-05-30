@@ -38,7 +38,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Configuration
 
             builder.Property(r => r.Status)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(r => r.CreatedAt)
                 .IsRequired();
@@ -51,10 +51,12 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Configuration
 
             // Soft delete filter — IsDeleted reviews are invisible by default
             builder.HasQueryFilter(r => !r.IsDeleted);
-
-            builder.HasIndex(r => r.BookingId)
+            //This way the unique constraint is on (BookingId + ReviewerId) together — 
+            //meaning the same person can't review the same booking twice,
+            //but both the customer and the technician can each leave their own review. That's exactly the business rule you need
+            builder.HasIndex(r => new { r.BookingId, r.ReviewerId })
                 .IsUnique()
-                .HasDatabaseName("IX_Reviews_BookingId"); // one review per booking
+                .HasDatabaseName("IX_Reviews_BookingId_ReviewerId");
 
             builder.HasIndex(r => r.ReviewerId)
                 .HasDatabaseName("IX_Reviews_ReviewerId");

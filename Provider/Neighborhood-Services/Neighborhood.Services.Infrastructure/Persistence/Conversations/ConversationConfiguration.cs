@@ -20,7 +20,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Conversations
                    .OnDelete(DeleteBehavior.NoAction);
 
             //Relation with Service Request
-            builder.HasOne(e=>e.ServiceRequest).WithOne<ServiceRequests>(e=>e.)
+            //builder.HasOne(e=>e.ServiceRequest).WithOne<ServiceRequests>(e=>e.)
         }
     }
 }

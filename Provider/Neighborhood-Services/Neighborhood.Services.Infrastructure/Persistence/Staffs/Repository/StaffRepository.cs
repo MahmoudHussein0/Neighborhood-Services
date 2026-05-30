@@ -2,14 +2,16 @@
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Domain.Staffs;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
+using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
 {
-    public class StaffRepository : IStaffRepository
+    public class StaffRepository :GenericRepository<Staff, int>, IStaffRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public StaffRepository(IApplicationDbContext context)
+        public StaffRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }

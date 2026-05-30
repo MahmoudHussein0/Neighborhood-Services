@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configrations
+namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configurations
 {
     public class StaffPermissionConfiguration : IEntityTypeConfiguration<StaffPermission>
     {
@@ -23,7 +23,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configrations
 
             builder.Property(p => p.Permission)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             // Prevent duplicate permissions for the same staff member
             builder.HasIndex(p => new { p.StaffId, p.Permission })

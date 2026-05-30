@@ -6,7 +6,7 @@ using Neighborhood.Services.Domain.ProblemTypes;
 using Neighborhood.Services.Domain.Shared;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using NetTopologySuite.Geometries;
 using System.Text;
 
 namespace Neighborhood.Services.Domain.ServiceRequests
@@ -21,7 +21,7 @@ namespace Neighborhood.Services.Domain.ServiceRequests
         public ServiceRequestStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public Point Location { get; set; } = null!;
+        public Point Location { get; set; }
 
         //------------ Foreign Keys
         public int CustomerId { get; set; }

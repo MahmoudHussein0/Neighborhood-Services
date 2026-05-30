@@ -82,7 +82,7 @@ namespace Neighborhood.Services.API.Hubs
             var userId = Context.UserIdentifier;
 
             MessageCreatedDto savedMessage = await _mediator.Send(new CreateMessageCommand() {
-            SenderId =int.Parse(userId) ,ConversationId=roomId,content=message});
+            SenderId =userId ,ConversationId=roomId,content=message});
                    
 
             await Clients.Group(roomId.ToString()).SendAsync("ReceiveMessage",savedMessage);

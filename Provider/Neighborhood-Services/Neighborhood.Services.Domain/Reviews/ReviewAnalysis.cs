@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Neighborhood.Services.Domain.Shared;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Neighborhood.Services.Domain.Reviews
 {
-    public class ReviewAnalysis
+    public class ReviewAnalysis:BaseEntity<int>
     {
-        public int Id { get; private set; }
-
+      
         public int ReviewId { get; private set; }
 
         public ReviewSentiment Sentiment { get; private set; }

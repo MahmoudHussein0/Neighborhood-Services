@@ -14,6 +14,7 @@ namespace Neighborhood.Services.Domain.Transactions
         public string Currency { get; set; } = "EGP";
         public TransactionType Type { get; set; }
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public int? OriginalTransactionId { get; set; }
         public Wallet? FromWallet { get; set; }
         public Wallet? ToWallet { get; set; }

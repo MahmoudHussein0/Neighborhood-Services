@@ -11,7 +11,7 @@ namespace Neighborhood.Services.Application.Messages.Commands
         //foriegn key
         public int ConversationId { get; set; }
         //foriegn Key
-        public int SenderId { get; set; }
+        public string SenderId { get; set; }
         public string content { get; set; }
         public bool isRead { get; set; }
 

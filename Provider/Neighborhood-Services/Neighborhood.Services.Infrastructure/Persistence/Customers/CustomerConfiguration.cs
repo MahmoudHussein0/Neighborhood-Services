@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Neighborhood.Services.Domain.ApplicationUser;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Customers;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Customers
             builder.HasOne<ApplicationUser>()
                 .WithOne(u => u.Customer)
                 .HasForeignKey<Customer>(c => c.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

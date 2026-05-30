@@ -1,18 +1,16 @@
-﻿using Neighborhood.Services.Application.Disputes.Interfaces;
-using Neighborhood.Services.Application.Shared;
+﻿using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Application.Disputes.Interfaces;
 using Neighborhood.Services.Domain.Disputes;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
+using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Disputes.Repository
 {
-    public class DisputeRepository : IDisputeRepository
+    public class DisputeRepository : GenericRepository<Dispute, int>, IDisputeRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DisputeRepository(IApplicationDbContext context)
+        public DisputeRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }

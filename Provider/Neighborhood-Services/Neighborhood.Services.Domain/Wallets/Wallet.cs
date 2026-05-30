@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.Transactions;
 
 namespace Neighborhood.Services.Domain.Wallets
@@ -7,7 +8,9 @@ namespace Neighborhood.Services.Domain.Wallets
     {
         public string UserId { get; set; }
         public decimal Balance { get; set; }
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public ApplicationUser User { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<Transaction> OutgoingTransactions { get; set; } = new HashSet<Transaction>();
         public ICollection<Transaction> IncomingTransactions { get; set; } = new HashSet<Transaction>();
     }

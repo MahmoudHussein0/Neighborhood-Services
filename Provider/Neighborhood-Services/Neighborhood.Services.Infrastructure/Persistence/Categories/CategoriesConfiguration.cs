@@ -26,7 +26,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Categories
             builder.HasMany(C => C.ProblemTypes)
                             .WithOne(P => P.Category)
                             .HasForeignKey(P => P.CategoryId)
-                            .OnDelete( DeleteBehavior.Cascade);
+                            .OnDelete( DeleteBehavior.NoAction);
 
 
             builder.HasMany(C => C.TechnicianCategories)

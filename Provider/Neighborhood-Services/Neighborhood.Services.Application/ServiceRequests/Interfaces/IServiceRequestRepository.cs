@@ -2,8 +2,8 @@
 using Neighborhood.Services.Domain.ServiceRequests;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
+using Point = NetTopologySuite.Geometries.Point;
 
 namespace Neighborhood.Services.Application.ServiceRequests.Interfaces
 {

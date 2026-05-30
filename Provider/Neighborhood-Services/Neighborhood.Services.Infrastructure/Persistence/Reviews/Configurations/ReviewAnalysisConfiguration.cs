@@ -23,7 +23,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Configuration
 
             builder.Property(a => a.Sentiment)
                 .IsRequired()
-                .HasConversion<int>();
+                .HasConversion<string>();
 
             builder.Property(a => a.IsFlagged)
                 .IsRequired()

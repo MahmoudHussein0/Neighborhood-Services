@@ -15,8 +15,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.CancellationPolicies
             builder.Property(cp => cp.PenaltyPct)
             .HasColumnType("decimal(5,2)");
 
-            builder.Property(cp => cp.PenaltyPct)
-                .HasColumnType("decimal(5,2)");
+            //builder.Property(cp => cp.PenaltyPct)
+            //    .HasColumnType("decimal(5,2)");
+            builder.Property(cp => cp.AppliesTo).HasConversion<string>();
         }
     }
 }

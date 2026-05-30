@@ -1,16 +1,18 @@
-﻿namespace Neighborhood.Services.Domain.Staffs;
+﻿using Neighborhood.Services.Domain.Shared;
 
-public class Staff
+namespace Neighborhood.Services.Domain.Staffs;
+
+public class Staff:BaseEntity<int>
 {
-    public int Id { get; private set; }
-    public int UserId { get; private set; }
-    public StaffRole Role { get; private set; }
-    public bool IsActive { get; private set; }
-    public int? CreatedByStaffId { get; private set; }
-    public DateTime CreatedAt { get; private set; }
+   
+    public int UserId { get; set; }
+    public StaffRole Role { get; set; }
+    public bool IsActive { get;  set; }
+    public int? CreatedByStaffId { get;  set; }
+    public DateTime CreatedAt { get;  set; }
 
     // Navigation Property
-    public ICollection<StaffPermission> Permissions { get; private set; }
+    public ICollection<StaffPermission> Permissions { get;  set; }
 
     // Empty Constructor For EF Core
     private Staff() { }

@@ -1,18 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Domain.SupportTickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
+using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository
 {
-    public class SupportMessageRepository : ISupportMessageRepository
+    public class SupportMessageRepository : GenericRepository<SupportMessage, int>, ISupportMessageRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public SupportMessageRepository(IApplicationDbContext context)
+        public SupportMessageRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }

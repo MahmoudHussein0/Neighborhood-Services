@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using NetTopologySuite.Geometries;
-
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Neighborhood.Services.Domain.Payments;
 using Neighborhood.Services.Domain.SupportTickets;
 using Neighborhood.Services.Domain.PromoCodes;
@@ -15,7 +13,7 @@ using Neighborhood.Services.Domain.Wallets;
 
 
 
-namespace Neighborhood.Services.Domain.ApplicationUser
+namespace Neighborhood.Services.Domain.ApplicationUsers
 {
     public class ApplicationUser : IdentityUser
     {

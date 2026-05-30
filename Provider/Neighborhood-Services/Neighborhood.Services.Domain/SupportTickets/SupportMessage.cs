@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neighborhood.Services.Domain.Shared;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,27 +7,25 @@ namespace Neighborhood.Services.Domain.SupportTickets
 {
     
 
-    public class SupportMessage
+    public class SupportMessage:BaseEntity<int>
     {
-        public int Id { get; private set; }
+        
 
-        public int TicketId { get; private set; }
+        public int TicketId { get; set; }
 
-        public int SenderId { get; private set; }
+        public int SenderId { get; set; }
 
-        public string Message { get; private set; }
+        public string Message { get; set; }
 
-        public MessageChannel Channel { get; private set; }
+        public MessageChannel Channel { get; set; }
 
-        public bool IsDeleted { get; private set; }
+        public DateTime? ReadAt { get; set; }
 
-        public DateTime? ReadAt { get; private set; }
-
-        public DateTime CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; set; }
 
 
         // Navigation Property
-        public SupportTicket Ticket { get; private set; }
+        public SupportTicket Ticket { get; set; }
 
 
         // Empty Constructor For EF

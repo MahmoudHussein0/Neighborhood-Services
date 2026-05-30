@@ -1,24 +1,24 @@
-﻿using System;
+﻿using Neighborhood.Services.Domain.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Neighborhood.Services.Domain.Reviews
 {
-    public class Review
+    public class Review:BaseEntity<int>
     {
-        public int Id { get; private set; }
-        public int BookingId { get; private set; }
-        public int ReviewerId { get; private set; }
-        public int RevieweeId { get; private set; }
-        public int Rating { get; private set; }
-        public string Comment { get; private set; }
-        public bool IsDeleted { get; private set; }
-        public ReviewStatus Status { get; private set; }
-        public DateTime CreatedAt { get; private set; }
+        
+        public int BookingId { get; set; }
+        public int ReviewerId { get; set; }
+        public int RevieweeId { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public ReviewStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Navigation Property
-        public ReviewAnalysis Analysis { get; private set; }
+        public ReviewAnalysis Analysis { get;  set; }
 
         // Empty Constructor For EF Core
         private Review() { }

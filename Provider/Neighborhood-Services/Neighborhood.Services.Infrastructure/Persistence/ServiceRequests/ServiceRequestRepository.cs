@@ -4,8 +4,9 @@ using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
 {
