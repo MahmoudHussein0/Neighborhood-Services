@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Neighborhood.Services.Domain.TechnicionCategories;
+using Neighborhood.Services.Domain.TechnicianCategories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,13 +15,13 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnicianCategories
             builder.HasOne(TC => TC.Technician)
                    .WithMany()
                    .HasForeignKey(TC => TC.TechnicianId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
 
             builder.HasOne(TC => TC.Category)
                    .WithMany(C => C.TechnicianCategories)
                    .HasForeignKey(TC => TC.CategoryId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasIndex(TC => new { TC.TechnicianId, TC.CategoryId })
                     .IsUnique();

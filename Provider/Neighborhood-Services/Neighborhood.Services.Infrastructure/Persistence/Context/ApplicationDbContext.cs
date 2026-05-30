@@ -30,13 +30,14 @@ using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Domain.SupportTickets;
 using Neighborhood.Services.Domain.TechnicianPhotos;
 using Neighborhood.Services.Domain.Technicians;
-using Neighborhood.Services.Domain.TechnicionCategories;
-using Neighborhood.Services.Domain.TechnicionsAvailability;
-using Neighborhood.Services.Domain.TechnicionsPricing;
+
 using Neighborhood.Services.Domain.Transactions;
 using Neighborhood.Services.Domain.Wallets;
 using System.Reflection;
 using Neighborhood.Services.Domain.favorites;
+using Neighborhood.Services.Domain.TechniciansPricing;
+using Neighborhood.Services.Domain.TechnicianCategories;
+using Neighborhood.Services.Domain.TechniciansAvailability;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Context
 {

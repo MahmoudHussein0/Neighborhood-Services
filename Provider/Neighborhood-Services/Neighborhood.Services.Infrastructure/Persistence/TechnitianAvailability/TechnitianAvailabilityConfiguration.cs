@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Neighborhood.Services.Domain.TechnicionsAvailability;
+using Neighborhood.Services.Domain.TechniciansAvailability;
 
 
 namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability

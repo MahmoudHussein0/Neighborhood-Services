@@ -1,14 +1,13 @@
 ﻿using Neighborhood.Services.Domain.ProblemTypes;
+using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Domain.TechnicianCategories;
 using Neighborhood.Services.Domain.ServiceRequests;
-using Neighborhood.Services.Domain.TechnicionCategories;
 namespace Neighborhood.Services.Domain.Categories
 {
-    public class Category
+    public class Category :BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
-        public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<ProblemType> ProblemTypes { get; set; }
         public ICollection<TechnicianCategory> TechnicianCategories { get; set; }
@@ -18,7 +17,6 @@ namespace Neighborhood.Services.Domain.Categories
             TechnicianCategories =  new HashSet<TechnicianCategory>();
         }
 
-        //
         public ICollection<ServiceRequest> ServiceRequests { get; set; } = new HashSet<ServiceRequest>();
     }
 }

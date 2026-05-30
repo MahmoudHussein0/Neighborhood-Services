@@ -17,10 +17,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesExceptio
             builder.Property(AE => AE.Reason)
                     .HasMaxLength(250);
 
-            builder.Property(AE => AE.isDeleted)
+            builder.Property(AE => AE.IsDeleted)
                     .HasDefaultValue(false);
 
-            builder.HasQueryFilter(AE => !AE.isDeleted);
+            builder.HasQueryFilter(AE => !AE.IsDeleted);
 
 
             builder.Property(AE => AE.CreatedAt)
@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesExceptio
             builder.HasOne(AE => AE.Technician)
                     .WithMany()
                     .HasForeignKey(AE => AE.TechnicianId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasIndex(AE => AE.TechnicianId);
         }

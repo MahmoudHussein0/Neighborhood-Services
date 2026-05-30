@@ -4,10 +4,11 @@ using Neighborhood.Services.Domain.favorites;
 using Neighborhood.Services.Domain.Invoices;
 using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Domain.RecurringBookings;
+using Neighborhood.Services.Domain.TechnicianCategories;
 using Neighborhood.Services.Domain.TechnicianPhotos;
-using Neighborhood.Services.Domain.TechnicionCategories;
-using Neighborhood.Services.Domain.TechnicionsAvailability;
-using Neighborhood.Services.Domain.TechnicionsPricing;
+using Neighborhood.Services.Domain.TechniciansAvailability;
+using Neighborhood.Services.Domain.TechniciansPricing;
+
 
 namespace Neighborhood.Services.Domain.Technicians
 {
