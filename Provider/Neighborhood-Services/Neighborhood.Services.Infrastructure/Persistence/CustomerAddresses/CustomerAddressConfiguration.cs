@@ -39,7 +39,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.CustomerAddresses
             builder.HasOne(ca => ca.Customer)
                 .WithMany(c => c.CustomerAddresses)
                 .HasForeignKey(ca => ca.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

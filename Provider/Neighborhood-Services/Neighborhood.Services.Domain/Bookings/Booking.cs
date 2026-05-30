@@ -68,7 +68,7 @@ namespace Neighborhood.Services.Domain.Bookings
         public Escrow? Escrow { get; set; }
         public Invoice? Invoice { get; set; }
         public Dispute? Dispute { get; set; }
-        public Review? Review { get; set; }
+        public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
         public Neighborhood.Services.Domain.Conversation.Conversation? Conversation { get; set; }
         public SupportTicket? SupportTicket { get; set; }
         //--

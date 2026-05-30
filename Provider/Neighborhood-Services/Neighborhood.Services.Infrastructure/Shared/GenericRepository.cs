@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Domain.Shared;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using Neighborhood.Services.Application.Shared;
-using Microsoft.EntityFrameworkCore;
-using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.Infrastructure.Shared
 {
@@ -29,18 +30,18 @@ namespace Neighborhood.Services.Infrastructure.Shared
 
 
 
-            public virtual async Task DeleteAsync(TKey id)
+        public virtual async Task DeleteAsync(TKey id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if (entity is BaseEntity<TKey> baseEntity)
             {
-                var entity = await _context.Set<T>().FindAsync(id);
-                if (entity != null)
-                {
-                    _context.Set<T>().Remove(entity);
-                }
+                baseEntity.IsDeleted = true;
+                _context.Set<T>().Update(entity);
             }
+        }
 
 
-
-            public virtual async Task<IReadOnlyList<T>> GetAllAsync()
+        public virtual async Task<IReadOnlyList<T>> GetAllAsync()
             {
                 return await _context.Set<T>().AsNoTracking().ToListAsync();
             }
