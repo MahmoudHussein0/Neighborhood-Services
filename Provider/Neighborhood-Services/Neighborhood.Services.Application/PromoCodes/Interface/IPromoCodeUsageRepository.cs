@@ -4,7 +4,7 @@ namespace Neighborhood.Services.Application.PromoCodes.Interface
 {
     public interface IPromoCodeUsageRepository : IGenericRepository<PromoCodeUsage, int>
     {
-        Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId);
-        Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId);
+        Task<bool> HasUserUsedPromoAsync(string userId, int promoCodeId);
+        Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(string userId);
     }
 }

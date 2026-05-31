@@ -6,5 +6,7 @@ namespace Neighborhood.Services.Application.Wallets.Interfaces
     {
         Task<Wallet?> GetByUserIdAsync(string userId);
         Task UpdateBalanceAsync(int walletId, decimal newBalance);
+        Task CreditAsync(int walletId, decimal amount);
+        Task DebitAsync(int walletId, decimal amount);
     }
 }

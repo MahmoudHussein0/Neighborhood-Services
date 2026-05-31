@@ -15,7 +15,7 @@ namespace Neighborhood.Services.Domain.PromoCodes
         public DateTime ExpiresAt { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public ICollection<PromoCodeUsage> Usages { get; set; } = new List<PromoCodeUsage>();
+        public ICollection<PromoCodeUsage> Usages { get; set; } = new HashSet<PromoCodeUsage>();
         //
         public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
     }
