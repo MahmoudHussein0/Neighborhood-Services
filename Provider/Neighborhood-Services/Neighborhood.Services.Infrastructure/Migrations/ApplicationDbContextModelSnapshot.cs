@@ -1126,7 +1126,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.Property<string>("ProviderToken")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -1226,6 +1227,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("PromoCodes");
                 });
 
@@ -1252,8 +1256,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<DateTime>("UsedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -1262,7 +1267,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasIndex("BookingId")
                         .IsUnique();
 
-                    b.HasIndex("PromoCodeId");
+                    b.HasIndex("PromoCodeId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("PromoCodeUsages");
                 });
@@ -1926,6 +1932,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FromWalletId");
+
+                    b.HasIndex("OriginalTransactionId");
 
                     b.HasIndex("PaymentMethodId");
 
