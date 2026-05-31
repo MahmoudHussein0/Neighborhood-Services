@@ -1,7 +1,9 @@
 
+using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
 using Neighborhood.Services.Infrastructure;
+using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.API
 {
@@ -15,7 +17,8 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
-
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
                       builder.Services.AddEndpointsApiExplorer();
