@@ -19,14 +19,15 @@ namespace Neighborhood.Services.Application.Wallets.Commands.TopUpWallet
         }
         public async Task<WalletResponseDto> Handle(TopUpWalletCommand request, CancellationToken cancellationToken)
         {
+            if (request.Amount <= 0)
+                throw new InvalidOperationException("Top-up amount must be greater than zero.");
+
+            if (request.PaymentMethodId <= 0)
+                throw new InvalidOperationException("A valid payment method is required.");
+
             var wallet = await _walletRepository.GetByIdAsync(request.WalletId)
             ?? throw new KeyNotFoundException($"Wallet with ID {request.WalletId} not found.");
 
-            // Update wallet balance
-            var newBalance = wallet.Balance + request.Amount;
-            await _walletRepository.UpdateBalanceAsync(wallet.Id, newBalance);
-
-            // Record the transaction
             var transaction = new Transaction
             {
                 ToWalletId = wallet.Id,
@@ -42,9 +43,9 @@ namespace Neighborhood.Services.Application.Wallets.Commands.TopUpWallet
             {
                 Id = wallet.Id,
                 UserId = wallet.UserId,
-                Balance = newBalance,
+                Balance = wallet.Balance,
                 CreatedAt = wallet.CreatedAt,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = wallet.UpdatedAt
             };
         }
     }

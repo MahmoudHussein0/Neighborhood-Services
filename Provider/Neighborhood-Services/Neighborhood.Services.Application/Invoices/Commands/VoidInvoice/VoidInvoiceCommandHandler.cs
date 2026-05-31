@@ -24,6 +24,9 @@ namespace Neighborhood.Services.Application.Invoices.Commands.VoidInvoice
             if (invoice.Status == InvoiceStatus.Voided)
                 throw new InvalidOperationException($"Invoice with ID {request.InvoiceId} is already voided.");
 
+            if (invoice.Status is InvoiceStatus.Paid or InvoiceStatus.Refunded)
+                throw new InvalidOperationException("Only unpaid invoices can be voided.");
+
             await _invoiceRepository.VoidAsync(request.InvoiceId);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

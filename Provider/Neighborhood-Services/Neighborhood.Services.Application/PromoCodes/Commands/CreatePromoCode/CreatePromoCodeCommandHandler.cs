@@ -18,14 +18,28 @@ namespace Neighborhood.Services.Application.PromoCodes.Commands.CreatePromoCode
 
         public async Task<PromoCodeResponseDto> Handle(CreatePromoCodeCommand request, CancellationToken cancellationToken)
         {
-            var exists = await _promoCodeRepository.GetByCodeAsync(request.Code);
+            var normalizedCode = request.Code.Trim();
+
+            if (string.IsNullOrWhiteSpace(normalizedCode))
+                throw new InvalidOperationException("Promo code is required.");
+
+            if (request.DiscountPercentage <= 0 || request.DiscountPercentage > 100)
+                throw new InvalidOperationException("Discount percentage must be between 0 and 100.");
+
+            if (request.MaxUses <= 0)
+                throw new InvalidOperationException("Max uses must be greater than zero.");
+
+            if (request.ExpiresAt <= DateTime.UtcNow)
+                throw new InvalidOperationException("Promo code expiration date must be in the future.");
+
+            var exists = await _promoCodeRepository.GetByCodeAsync(normalizedCode);
 
             if (exists is not null)
-                throw new InvalidOperationException($"Promo Code with code {request.Code} already exists.");
+                throw new InvalidOperationException($"Promo Code with code {normalizedCode} already exists.");
 
             var promoCode = new PromoCode
             {
-                Code = request.Code,
+                Code = normalizedCode,
                 DiscountPercentage = request.DiscountPercentage,
                 MaxUses = request.MaxUses,
                 ExpiresAt = request.ExpiresAt,

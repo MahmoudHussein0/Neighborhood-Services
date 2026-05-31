@@ -38,26 +38,33 @@ namespace Neighborhood.Services.Application.Escrows.Commands.RefundEscrow
             if (escrow.Status != EscrowStatus.Held)
                 throw new InvalidOperationException("Escrow is not in Held status");
 
+            if (escrow.Amount <= 0)
+                throw new InvalidOperationException("Escrow amount must be greater than zero.");
+
             var customerWallet = await _walletRepository.GetByUserIdAsync(
                 escrow.Booking.Customer.ApplicationUserId)
                 ?? throw new KeyNotFoundException("Customer wallet not found");
 
-            await _escrowRepository.RefundAsync(request.EscrowId);
+            var refundedAt = DateTime.UtcNow;
 
-            await _transactionRepository.AddAsync(new Transaction
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                FromWalletId = escrow.WalletId,
-                ToWalletId = customerWallet.Id,
-                PaymentMethodId = null,
-                Amount = escrow.Amount,
-                Fee = 0,
-                Currency = "EGP",
-                Type = TransactionType.Refund,
-                Status = TransactionStatus.Completed,
-                CreatedAt = DateTime.UtcNow
-            });
+                await _walletRepository.CreditAsync(customerWallet.Id, escrow.Amount);
+                await _escrowRepository.RefundAsync(request.EscrowId);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _transactionRepository.AddAsync(new Transaction
+                {
+                    FromWalletId = escrow.WalletId,
+                    ToWalletId = customerWallet.Id,
+                    PaymentMethodId = null,
+                    Amount = escrow.Amount,
+                    Fee = 0,
+                    Currency = "EGP",
+                    Type = TransactionType.Refund,
+                    Status = TransactionStatus.Completed,
+                    CreatedAt = refundedAt
+                });
+            }, cancellationToken);
 
             return new EscrowResponseDto
             {
@@ -67,7 +74,7 @@ namespace Neighborhood.Services.Application.Escrows.Commands.RefundEscrow
                 Amount = escrow.Amount,
                 Status = EscrowStatus.Refunded,
                 HeldAt = escrow.HeldAt,
-                ReleasedAt = DateTime.UtcNow
+                ReleasedAt = refundedAt
             };
         }
     }
