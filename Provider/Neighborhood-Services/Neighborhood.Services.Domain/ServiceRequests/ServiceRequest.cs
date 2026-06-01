@@ -19,6 +19,8 @@ namespace Neighborhood.Services.Domain.ServiceRequests
         public string? Image { get; set; }
         public decimal Budget { get; set; }
         public ServiceRequestStatus Status { get; set; }
+        // Customer's desired service time (technicians may counter-propose in their offer)
+        public DateTime ScheduledAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
         public Point Location { get; set; }

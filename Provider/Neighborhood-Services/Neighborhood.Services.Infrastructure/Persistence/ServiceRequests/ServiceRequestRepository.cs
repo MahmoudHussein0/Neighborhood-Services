@@ -32,8 +32,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
                 .Where(sr => sr.CustomerId == customerId && !sr.IsDeleted)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(Point location, double radiusInMeters)
+        public async Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters)
         {
+            var location = new Point(longitude, latitude) { SRID = 4326 };
             return await _context.ServiceRequests
                 .Where(sr => sr.Status == ServiceRequestStatus.Open
                     && !sr.IsDeleted
