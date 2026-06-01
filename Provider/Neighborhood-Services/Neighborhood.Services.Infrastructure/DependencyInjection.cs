@@ -1,11 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Application.AgentLogs.Interfaces;
 using Neighborhood.Services.Application.AiAnalysises.Interface;
+using Neighborhood.Services.Application.AvilabilitiesException;
 using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
+<<<<<<< HEAD
+=======
+using Neighborhood.Services.Application.Categories;
+using Neighborhood.Services.Application.Conversations;
+>>>>>>> 95eca3d6b98319c71763fd73f9bb786a2fd9ab75
 using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Disputes.Interfaces;
@@ -14,6 +22,7 @@ using Neighborhood.Services.Application.HistoricalPrices;
 using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Payments.Interfaces;
+using Neighborhood.Services.Application.ProblemTypes;
 using Neighborhood.Services.Application.PromoCodes.Interface;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Reviews.Interfaces;
@@ -21,14 +30,19 @@ using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
+using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Application.TechnitianAvailability;
+using Neighborhood.Services.Application.TechnitianPricing;
 using Neighborhood.Services.Application.Transactions.Interfaces;
+using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
 using Neighborhood.Services.Infrastructure.Persistence.AiAnalysises;
 using Neighborhood.Services.Infrastructure.Persistence.BookingImages;
 using Neighborhood.Services.Infrastructure.Persistence.Bookings;
 using Neighborhood.Services.Infrastructure.Persistence.CancellationPolicies;
+using Neighborhood.Services.Infrastructure.Persistence.Categories;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.CustomerAddresses;
 using Neighborhood.Services.Infrastructure.Persistence.Customers;
@@ -44,9 +58,12 @@ using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
+using Neighborhood.Services.Infrastructure.Persistence.TechnicianPhotos;
 using Neighborhood.Services.Infrastructure.Persistence.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.Transactions;
+using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
+using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure
@@ -67,6 +84,7 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IOfferRepository, OfferRepository>();
             services.AddScoped<IRecurringBookingRepository, RecurringBookingRepository>();
             services.AddScoped<ICancellationPolicyRepository, CancellationPolicyRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             //--
             services.AddScoped<IWalletRepository, WalletRepository>();
@@ -76,9 +94,10 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-            //services.AddScoped<ITechnicianAvailabilityRepository, TechnicianAvailabilityRepository>();
-            //services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
-            //services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
+            services.AddScoped<ITechnicianAvailabilityRepository, TechnitianAvailabilityRepository>();
+            services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
+            services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
+            services.AddScoped<ITechnicianPhotoRepository, TechnicianPhotoRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
             services.AddScoped<IStaffRepository, StaffRepository>(); // ← add this
@@ -89,8 +108,8 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             //services.AddScoped<INewsletterRepository, NewsletterRepository>();
 
-            //services.AddScoped<ICategoryRepository, CategoryRepository>();
-            //services.AddScoped<IProblemTypeRepository, ProblemTypeRepository>();
+            services.AddScoped<ICategoryRepository, CategoriesRepository>();
+            services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IDisputeRepository, DisputeRepository>();
             //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
@@ -102,11 +121,17 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
              configuration.GetConnectionString("DefaultConnection"),
                 o => o.UseNetTopologySuite()
                 ));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             return services;
         }

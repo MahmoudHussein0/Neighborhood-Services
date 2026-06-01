@@ -1,12 +1,14 @@
-﻿using Neighborhood.Services.Application.Shared;
+using Microsoft.AspNetCore.Identity;
+using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.ApplicationUsers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using NetTopologySuite.Geometries;
 
 namespace Neighborhood.Services.Application.Users.Interfaces
 {
-    public interface IUserRepository : IGenericRepository<ApplicationUser,string>
+    public interface IUserRepository : IGenericRepository<ApplicationUser, string>
     {
+        Task<IdentityResult> CreateAsync(ApplicationUser user, string password);
+        Task<List<ApplicationUser>> GetUsersByRoleAsync(ApplicationUserRole role);
+        Task<List<ApplicationUser>> GetNearbyUsersAsync(Point location, double distanceInMeters);
     }
 }

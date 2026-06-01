@@ -23,6 +23,8 @@ namespace Neighborhood.Services.API
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
+            builder.Services.AddHttpContextAccessor();
+
 
             var app = builder.Build();
 
