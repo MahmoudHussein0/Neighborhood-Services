@@ -24,8 +24,8 @@ using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
-using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
+using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
@@ -54,13 +54,14 @@ using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
-using Neighborhood.Services.Infrastructure.Persistence.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.TechnicianPhotos;
+using Neighborhood.Services.Infrastructure.Persistence.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing;
 using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
+using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
@@ -120,6 +121,8 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
+
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
