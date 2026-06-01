@@ -25,6 +25,7 @@ using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
@@ -54,6 +55,7 @@ using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.Technicians;
+using Neighborhood.Services.Infrastructure.Persistence.TechnicianPhotos;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing;
 using Neighborhood.Services.Infrastructure.Persistence.Transactions;
@@ -92,6 +94,7 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
+            services.AddScoped<ITechnicianPhotoRepository, TechnicianPhotoRepository>();
             //services.AddScoped<ITechnicianAvailabilityRepository, TechnicianAvailabilityRepository>();
             //services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             //services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
