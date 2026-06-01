@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Conversation;
 using Neighborhood.Services.Domain.Message;
 using System;
@@ -9,8 +10,13 @@ namespace Neighborhood.Services.Application.Conversations
 {
     public interface IConversationRepository:IGenericRepository<Conversation,int>
     {
-        Task<Conversation> GetByUserId(string userId);
+        public Task<Conversation> GetByUserId(string userId);
+        public Task<Conversation> GetByBookingId(int bookingId);
         public Task<Message> GetLastMessage(int roomId);
+
+        public Task<ApplicationUser> GetTechnician(int roomId);
+        public Task<ApplicationUser> GetClient(int roomId);
+
 
     }
 }

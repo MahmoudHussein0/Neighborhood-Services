@@ -14,6 +14,7 @@ using Neighborhood.Services.Application.Escrows.Interfaces;
 using Neighborhood.Services.Application.HistoricalPrices;
 using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Application.Messages;
+using Neighborhood.Services.Application.Newsletter;
 using Neighborhood.Services.Application.Notifications;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Payments.Interfaces;
@@ -43,6 +44,7 @@ using Neighborhood.Services.Infrastructure.Persistence.HistoricalPrices;
 using Neighborhood.Services.Infrastructure.Persistence.Invoices;
 using Neighborhood.Services.Infrastructure.Persistence.Messages;
 using Neighborhood.Services.Infrastructure.Persistence.Newsletters;
+using Neighborhood.Services.Infrastructure.Persistence.Notifications;
 using Neighborhood.Services.Infrastructure.Persistence.Offers;
 using Neighborhood.Services.Infrastructure.Persistence.Payments;
 using Neighborhood.Services.Infrastructure.Persistence.ProblemTypes;
@@ -109,9 +111,17 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
             services.AddScoped<IHistoricalPriceRepository, HistoricalPriceRepository>();
 
-            //services.AddScoped<IConversationRepository, ConversationRepository>();
-            //services.AddScoped<IMessageRepository, MessageRepository>();
-            //services.AddScoped<INotificationRepository, NotificationRepository>();
+            //Arwa's
+            services.AddScoped<IConversationRepository, ConversationRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<INotificationsRepository, NotificationsRepoisitory>();
+            services.AddScoped<INewsletterRepository, NewsletterRepository>();
+            //services.AddScoped<IFavoriteRepository, FavoritRepository>();
+
+
+            //End of Arwa's
+
+
             services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
 

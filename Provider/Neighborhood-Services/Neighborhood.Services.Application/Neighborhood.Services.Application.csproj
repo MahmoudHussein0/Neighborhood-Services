@@ -33,7 +33,6 @@
     <Folder Include="CancellationPolicies\Queries\" />
     <Folder Include="Messages\Queries\" />
     <Folder Include="NewFolder\" />
-    <Folder Include="Newsletter\" />
     <Folder Include="Notifications\Commands\" />
     <Folder Include="Notifications\DTOs\" />
     <Folder Include="Notifications\Queries\" />
