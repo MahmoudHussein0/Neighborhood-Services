@@ -12,18 +12,20 @@ namespace Neighborhood.Services.Application.SupportTickets.Handlers
     {
         private readonly ISupportTicketRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUser;
 
-        public CreateSupportTicketCommandHandler(ISupportTicketRepository repository, IUnitOfWork unitOfWork)
+        public CreateSupportTicketCommandHandler(ISupportTicketRepository repository, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<SupportTicketDto> Handle(CreateSupportTicketCommand request, CancellationToken cancellationToken)
         {
             var ticket = new SupportTicket
             {
-                UserId = request.UserId,
+                UserId = _currentUser.UserId,
                 BookingId = request.BookingId,
                 Subject = request.Subject,
                 Status = SupportTicketStatus.Open,

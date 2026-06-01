@@ -11,18 +11,20 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
     {
         private readonly IStaffRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUser;
 
-        public CreateStaffCommandHandler(IStaffRepository repository, IUnitOfWork unitOfWork)
+        public CreateStaffCommandHandler(IStaffRepository repository, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<StaffDto> Handle(CreateStaffCommand request, CancellationToken cancellationToken)
         {
             var staff = new Staff
             {
-                UserId = request.UserId,
+                UserId = _currentUser.UserId,
                 Role = request.Role,
                 IsActive = true,
                 CreatedByStaffId = request.CreatedByStaffId,
