@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Application.AgentLogs.Interfaces;
 using Neighborhood.Services.Application.AiAnalysises.Interface;
 using Neighborhood.Services.Application.AvilabilitiesException;
@@ -135,6 +137,10 @@ namespace Neighborhood.Services.Infrastructure
              configuration.GetConnectionString("DefaultConnection"),
                 o => o.UseNetTopologySuite()
                 ));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             return services;
         }
