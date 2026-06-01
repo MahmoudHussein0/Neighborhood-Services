@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 using MediatR;
 using Neighborhood.Services.Application.Messages.DTOs;
 
@@ -15,6 +13,6 @@ namespace Neighborhood.Services.Application.Messages.Commands
         public string content { get; set; }
         public bool isRead { get; set; }
 
-        public DateTime createdAt = DateTime.UtcNow;
+        public DateTime createdAt;
     }
 }

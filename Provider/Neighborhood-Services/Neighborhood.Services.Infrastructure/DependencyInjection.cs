@@ -3,18 +3,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Neighborhood.Services.Application.AgentLogs.Interfaces;
 using Neighborhood.Services.Application.AiAnalysises.Interface;
+using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
 using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
-using Neighborhood.Services.Application.Conversations;
+using Neighborhood.Services.Application.Categories.Interfaces;
 using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Disputes.Interfaces;
 using Neighborhood.Services.Application.Escrows.Interfaces;
-using Neighborhood.Services.Application.HistoricalPrices;
+using Neighborhood.Services.Application.HistoricalPrices.Interfaces;
 using Neighborhood.Services.Application.Invoices.Interfaces;
-using Neighborhood.Services.Application.Messages;
-using Neighborhood.Services.Application.Notifications;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Payments.Interfaces;
 using Neighborhood.Services.Application.PromoCodes.Interface;
@@ -25,6 +24,8 @@ using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
+using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
@@ -33,19 +34,16 @@ using Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesException;
 using Neighborhood.Services.Infrastructure.Persistence.BookingImages;
 using Neighborhood.Services.Infrastructure.Persistence.Bookings;
 using Neighborhood.Services.Infrastructure.Persistence.CancellationPolicies;
+using Neighborhood.Services.Infrastructure.Persistence.Categories;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
-using Neighborhood.Services.Infrastructure.Persistence.Conversations;
 using Neighborhood.Services.Infrastructure.Persistence.CustomerAddresses;
 using Neighborhood.Services.Infrastructure.Persistence.Customers;
 using Neighborhood.Services.Infrastructure.Persistence.Disputes.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.Escrows;
 using Neighborhood.Services.Infrastructure.Persistence.HistoricalPrices;
 using Neighborhood.Services.Infrastructure.Persistence.Invoices;
-using Neighborhood.Services.Infrastructure.Persistence.Messages;
-using Neighborhood.Services.Infrastructure.Persistence.Newsletters;
 using Neighborhood.Services.Infrastructure.Persistence.Offers;
 using Neighborhood.Services.Infrastructure.Persistence.Payments;
-using Neighborhood.Services.Infrastructure.Persistence.ProblemTypes;
 using Neighborhood.Services.Infrastructure.Persistence.PromoCodes;
 using Neighborhood.Services.Infrastructure.Persistence.RecurringBookings;
 using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
@@ -58,15 +56,12 @@ using Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing;
 using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static  IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             // Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -89,9 +84,10 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-            //services.AddScoped<ITechnicianAvailabilityRepository, TechnicianAvailabilityRepository>();
-            //services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
-            //services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
+
+            services.AddScoped<ITechnicianAvailabilityRepository, TechnitianAvailabilityRepository>();
+            services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
+            services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
             services.AddScoped<IStaffRepository, StaffRepository>(); // ← add this
@@ -102,7 +98,7 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             //services.AddScoped<INewsletterRepository, NewsletterRepository>();
 
-            //services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoriesRepository>();
             //services.AddScoped<IProblemTypeRepository, ProblemTypeRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IDisputeRepository, DisputeRepository>();
@@ -117,10 +113,7 @@ namespace Neighborhood.Services.Infrastructure
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
-             configuration.GetConnectionString("DefaultConnection"),
-                o => o.UseNetTopologySuite()
-                ));
-
+            configuration.GetConnectionString("DefaultConnection"), o => o.UseNetTopologySuite()));
             return services;
         }
     }

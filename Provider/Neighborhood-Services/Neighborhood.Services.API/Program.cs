@@ -18,11 +18,14 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
-                      builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
+
+
+           
 
             var app = builder.Build();
 

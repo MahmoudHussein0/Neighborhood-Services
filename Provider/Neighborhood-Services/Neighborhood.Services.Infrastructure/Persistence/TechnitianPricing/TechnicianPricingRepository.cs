@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Application.TechnitianPricing;
+﻿using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Domain.TechniciansPricing;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
@@ -13,7 +14,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing
         public TechnicianPricingRepository(ApplicationDbContext context):base(context)
         {}
 
-
-       
+        public async Task<bool> IsExistsAsync(int technicianId, int problemTypeId )
+        => await   _context.TechnicianPricings.AnyAsync( TP => TP.TechnicianId == technicianId && TP.ProblemTypeId == problemTypeId);
+        
     }
 }
