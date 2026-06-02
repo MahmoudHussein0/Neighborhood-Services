@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Neighborhood.Services.Application.Favorites.DTOs;
-using Neighborhood.Services.Application.Newsletter;
-using Neighborhood.Services.Application.Newsletter.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;

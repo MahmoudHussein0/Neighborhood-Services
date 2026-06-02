@@ -6,7 +6,7 @@ using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
-using Neighborhood.Services.Application.TechnitianAvailability;
+using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
 using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Domain.ServiceRequests;
 

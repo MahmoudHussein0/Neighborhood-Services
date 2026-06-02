@@ -10,6 +10,7 @@ using Neighborhood.Services.Application.Bookings.Commands.ConfirmBookingCommands
 using Neighborhood.Services.Application.Bookings.Commands.CreateBookingCommands;
 using Neighborhood.Services.Application.Bookings.Queries.GetAllBookingsQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingByIdQuery;
+using Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByCustomerQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByStatusQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByTechnicianQuery;
@@ -91,7 +92,15 @@ namespace Neighborhood.Services.API.Bookings
             return Ok(result);
         }
 
-        // GET /api/bookings/customer/{customerId}
+        // GET /api/bookings/mine  (authenticated customer or technician — their own bookings)
+        [HttpGet("mine")]
+        public async Task<IActionResult> GetMine()
+        {
+            var result = await _mediator.Send(new GetMyBookingsQuery());
+            return Ok(result);
+        }
+
+        // GET /api/bookings/customer/{customerId}  (admin)
         [HttpGet("customer/{customerId:int}")]
         public async Task<IActionResult> GetByCustomer(int customerId)
         {

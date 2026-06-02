@@ -8,16 +8,6 @@
 
   <ItemGroup>
 
-    <Compile Remove="NewFolder\**" />
-    <Compile Remove="Newsletter\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <EmbeddedResource Remove="Newsletter\**" />
-    <None Remove="NewFolder\**" />
-    <None Remove="Newsletter\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-
     <PackageReference Include="Mapster" Version="10.0.7" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />
