@@ -44,7 +44,7 @@ namespace Neighborhood.Services.Domain.ApplicationUsers
             new List<Notification>();
 
         public Customer Customer { get; set; } = null!;
-        public Staff Staff { get; set; } = null!;
+        public Staff? Staff { get; set; } = null!;
         public Technician Technician { get; set; } = null!;
         public Wallet? Wallet { get; set; } = null!;
 
