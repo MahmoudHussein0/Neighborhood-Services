@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Neighborhood.Services.Application.Bookings.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,7 +19,7 @@ namespace Neighborhood.Services.Application
 
             // Mapster
             //services.AddMapster();
-
+            services.AddScoped<IPriceEstimationService, PriceEstimationService>();
             return services;
         }
     }

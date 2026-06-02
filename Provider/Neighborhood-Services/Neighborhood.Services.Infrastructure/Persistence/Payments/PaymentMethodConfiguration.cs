@@ -8,13 +8,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Payments
         public void Configure(EntityTypeBuilder<PaymentMethod> builder)
         {
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.UserId);
+            builder.Property(p => p.UserId)
+                .IsRequired();
             builder.Property(p => p.PaymentType)
                 .HasConversion<string>();
             builder.Property(p => p.PaymentProvider)
                 .HasConversion<string>();
             builder.Property(p => p.CreatedAt);
-            builder.Property(p => p.ProviderToken);
+            builder.Property(p => p.ProviderToken)
+                .HasMaxLength(500)
+                .IsRequired();
             builder.Property(p => p.LastFourDigits)
                 .HasMaxLength(4)
                 .IsRequired(false);

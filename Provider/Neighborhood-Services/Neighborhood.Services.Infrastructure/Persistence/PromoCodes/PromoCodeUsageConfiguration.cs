@@ -12,6 +12,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
             builder.Property(pu => pu.UserId);
             builder.Property(pu => pu.BookingId);
             builder.Property(pu => pu.UsedAt);
+            builder.HasIndex(pu => new { pu.PromoCodeId, pu.UserId })
+                .IsUnique();
+            builder.HasIndex(pu => pu.BookingId)
+                .IsUnique();
             builder.HasOne(pu => pu.PromoCode)
                 .WithMany(p=>p.Usages)
                 .HasForeignKey(pu => pu.PromoCodeId)

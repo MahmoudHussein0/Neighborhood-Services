@@ -11,7 +11,7 @@ namespace Neighborhood.Services.Application.SupportTickets.Interfaces
         Task<SupportTicket?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<SupportTicket?> GetByIdWithMessagesAsync(int id, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<SupportTicket>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task<IReadOnlyList<SupportTicket>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<SupportTicket>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<SupportTicket>> GetByStatusAsync(SupportTicketStatus status, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<SupportTicket>> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken = default);
 

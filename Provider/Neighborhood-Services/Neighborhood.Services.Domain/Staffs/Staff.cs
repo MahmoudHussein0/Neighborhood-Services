@@ -5,7 +5,7 @@ namespace Neighborhood.Services.Domain.Staffs;
 public class Staff:BaseEntity<int>
 {
    
-    public int UserId { get; set; }
+    public string UserId { get; set; }
     public StaffRole Role { get; set; }
     public bool IsActive { get;  set; }
     public int? CreatedByStaffId { get;  set; }
@@ -15,11 +15,11 @@ public class Staff:BaseEntity<int>
     public ICollection<StaffPermission> Permissions { get;  set; }
 
     // Empty Constructor For EF Core
-    private Staff() { }
+    public Staff() { }
 
     // Main Constructor
     public Staff(
-        int userId,
+        string userId,
         StaffRole role,
         bool isActive,
         int? createdByStaffId,
