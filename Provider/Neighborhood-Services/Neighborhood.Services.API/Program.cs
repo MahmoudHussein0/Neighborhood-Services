@@ -62,10 +62,6 @@ namespace Neighborhood.Services.API
             var app = builder.Build();
 
 
-
-           
-
-            var app = builder.Build();
             //Arwa///
 
             //Mapping Notification Hub

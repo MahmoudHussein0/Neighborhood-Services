@@ -6,7 +6,7 @@ using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.PromoCodes.Interface;
 using Neighborhood.Services.Application.Shared;
-using Neighborhood.Services.Application.TechnitianAvailability;
+using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.PromoCodes;
 using NetTopologySuite.Geometries;

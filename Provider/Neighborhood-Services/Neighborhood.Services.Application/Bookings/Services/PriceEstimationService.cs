@@ -1,4 +1,4 @@
-﻿using Neighborhood.Services.Application.ProblemTypes;
+﻿using Neighborhood.Services.Application.ProblemTypes.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
