@@ -18,7 +18,8 @@ using Neighborhood.Services.Application.Escrows.Interfaces;
 using Neighborhood.Services.Application.HistoricalPrices;
 using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Application.Messages;
-using Neighborhood.Services.Application.Newsletter;
+using Neighborhood.Services.Infrastructure.Persistence.Conversations;
+using Neighborhood.Services.Infrastructure.Persistence.Newsletters;
 using Neighborhood.Services.Application.Notifications;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Payments.Interfaces;
@@ -51,7 +52,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Escrows;
 using Neighborhood.Services.Infrastructure.Persistence.HistoricalPrices;
 using Neighborhood.Services.Infrastructure.Persistence.Invoices;
 using Neighborhood.Services.Infrastructure.Persistence.Messages;
-using Neighborhood.Services.Infrastructure.Persistence.Newsletters;
+using Neighborhood.Services.Application.Newsletter;
 using Neighborhood.Services.Infrastructure.Persistence.Notifications;
 using Neighborhood.Services.Infrastructure.Persistence.Offers;
 using Neighborhood.Services.Infrastructure.Persistence.Payments;
@@ -112,7 +113,7 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<INewsletterRepository, NewsletterRepository>();
 
             services.AddScoped<ICategoryRepository, CategoriesRepository>();
-            services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
+           // services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IDisputeRepository, DisputeRepository>();
             //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
@@ -143,6 +144,7 @@ namespace Neighborhood.Services.Infrastructure
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddHttpContextAccessor();
 
             return services;
         }

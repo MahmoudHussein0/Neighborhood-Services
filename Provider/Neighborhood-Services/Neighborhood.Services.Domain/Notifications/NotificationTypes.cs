@@ -11,6 +11,7 @@ namespace Neighborhood.Services.Domain.Notifications
         review,
         dispute,
         support,
-        systemm
+        system,
+        general
     }
 }

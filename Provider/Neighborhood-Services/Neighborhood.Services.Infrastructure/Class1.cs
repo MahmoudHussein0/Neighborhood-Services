@@ -1,4 +1,6 @@
-﻿namespace Neighborhood.Services.Infrastructure
+﻿
+
+namespace Neighborhood.Services.Infrastructure
 {
     public class Class1
     {

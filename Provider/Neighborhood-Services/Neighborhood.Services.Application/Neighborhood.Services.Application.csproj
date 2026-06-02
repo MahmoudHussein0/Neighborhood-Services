@@ -16,7 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Newsletter\INewsletterRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />
     <!--<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />-->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
@@ -42,11 +47,11 @@
     <Folder Include="Messages\Queries\" />
     <Folder Include="NewFolder\" />
     <Folder Include="NewFolder\" />
-    <Folder Include="Newsletter\" />
     <Folder Include="NewFolder\" />
-    <Folder Include="Newsletter\" />
-    <Folder Include="Notifications\Commands\" />
     <Folder Include="Notifications\DTOs\" />
+    <Folder Include="Notifications\Push&amp;inApp\Commands\" />
+    <Folder Include="Notifications\Push&amp;inApp\DTOs\" />
+    <Folder Include="Notifications\Push&amp;inApp\Queries\" />
     <Folder Include="Notifications\Queries\" />
     <Folder Include="Offers\Commands\" />
     <Folder Include="Offers\DTOs\" />

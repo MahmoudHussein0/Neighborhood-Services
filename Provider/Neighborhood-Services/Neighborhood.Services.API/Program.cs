@@ -29,10 +29,21 @@ namespace Neighborhood.Services.API
             builder.Services.AddHttpContextAccessor();
 
 
+
+
             var app = builder.Build();
 
+            //Arwa///
+
+            //Mapping Notification Hub
+            app.MapHub<Neighborhood.Services.Application.Notifications.Services.NotificationHub>("/notificationHub");
+            //app.MapHub<ChatHub>("/chattt");
+            //app.MapHub<NotificationHub>("/notf");
+
+            //END OF ARWA
+
             // Configure the HTTP request pipeline.
-            if(app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -42,8 +53,7 @@ namespace Neighborhood.Services.API
             app.UseExceptionHandler();
             app.UseAuthorization();
 
-            //app.MapHub<ChatHub>("/chattt");
-            //app.MapHub<NotificationHub>("/notf");
+           
 
             app.MapControllers();
 
