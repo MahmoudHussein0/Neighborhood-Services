@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using MediatR;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.ProblemTypes.DTOs;
 using Neighborhood.Services.Application.ProblemTypes.Interface;
 using System;
@@ -19,14 +20,9 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
         }
         public async Task<ProblemTypeDetailsDto> Handle(GetProblemTypeByIdQuery request, CancellationToken cancellationToken)
         {
-           var problemTypes = await  _problemTypeRepo.GetByConditionAsync(
-                P => P.Id == request.Id, "Category,TechnicionPricing");
-
-          var problemType =  problemTypes.FirstOrDefault();
-
-         if (problemType is null) throw new Exception("ProblemType not found");
-            
-         return    problemType.Adapt<ProblemTypeDetailsDto>();
+           var problemType = (await  _problemTypeRepo.GetByConditionAsync(P => P.Id == request.Id, "Category,TechnicionPricing")).FirstOrDefault();
+           if (problemType is null) throw new NotFoundException("ProblemType" , request.Id);
+           return  problemType.Adapt<ProblemTypeDetailsDto>();
 
         }
     }

@@ -47,6 +47,7 @@
     <Folder Include="ServiceRequests\Commands\" />
     <Folder Include="ServiceRequests\DTOs\" />
     <Folder Include="ServiceRequests\Queries\" />
+    <Folder Include="TechnitianCategory\DTOs\" />
   </ItemGroup>
 
 </Project>
