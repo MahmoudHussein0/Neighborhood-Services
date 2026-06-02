@@ -9,11 +9,8 @@ using Neighborhood.Services.Application.AvilabilitiesException;
 using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
-<<<<<<< HEAD
-=======
 using Neighborhood.Services.Application.Categories;
 using Neighborhood.Services.Application.Conversations;
->>>>>>> 95eca3d6b98319c71763fd73f9bb786a2fd9ab75
 using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Disputes.Interfaces;
@@ -66,6 +63,10 @@ using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Shared;
+using Neighborhood.Services.Infrastructure.Persistence.ProblemTypes;
+using Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability;
+using Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesException;
+using Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing;
 
 namespace Neighborhood.Services.Infrastructure
 {
@@ -130,9 +131,9 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
 
             return services;
         }

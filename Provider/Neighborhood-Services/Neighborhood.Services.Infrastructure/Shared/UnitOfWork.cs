@@ -1,10 +1,7 @@
-<<<<<<< HEAD
-﻿using Neighborhood.Services.Application.Shared;
 
-=======
 using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Shared;
->>>>>>> 95eca3d6b98319c71763fd73f9bb786a2fd9ab75
+
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 
 namespace Neighborhood.Services.Infrastructure.Shared
