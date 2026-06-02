@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.Staffs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configurations
 {
@@ -19,7 +16,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Configurations
                 .UseIdentityColumn();
 
             builder.Property(s => s.UserId)
-                .IsRequired();
+             .IsRequired()
+             .HasMaxLength(450); // ← add this — 450 is the standard Identity FK length
 
             builder.Property(s => s.Role)
                 .IsRequired()

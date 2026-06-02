@@ -1,15 +1,12 @@
 ﻿using Neighborhood.Services.Domain.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Domain.SupportTickets
 {
-    
 
-    public class SupportMessage:BaseEntity<int>
+
+    public class SupportMessage : BaseEntity<int>
     {
-        
+
 
         public int TicketId { get; set; }
 
@@ -29,7 +26,7 @@ namespace Neighborhood.Services.Domain.SupportTickets
 
 
         // Empty Constructor For EF
-        private SupportMessage()
+        public SupportMessage()
         {
         }
 
@@ -55,6 +52,6 @@ namespace Neighborhood.Services.Domain.SupportTickets
         }
 
 
-   
+
     }
 }

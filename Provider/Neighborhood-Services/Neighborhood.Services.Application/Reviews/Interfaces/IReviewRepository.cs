@@ -9,11 +9,12 @@ namespace Neighborhood.Services.Application.Reviews.Interfaces
     {
         // ── Queries ────────────────────────────────────────────────────────────
         Task<Review?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task<Review?> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken = default);
+       // Task<Review?> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Review>> GetAllAsync(CancellationToken cancellationToken = default); 
         Task<IReadOnlyList<Review>> GetByReviewerIdAsync(int reviewerId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Review>> GetByRevieweeIdAsync(int revieweeId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Review>> GetByStatusAsync(ReviewStatus status, CancellationToken cancellationToken = default);
-        Task<IReadOnlyList<Review>> GetFlaggedAsync(CancellationToken cancellationToken = default);
+      //  Task<IReadOnlyList<Review>> GetFlaggedAsync(CancellationToken cancellationToken = default);
         Task<bool> ExistsByBookingIdAsync(int bookingId, CancellationToken cancellationToken = default);
 
         // ── Commands ───────────────────────────────────────────────────────────

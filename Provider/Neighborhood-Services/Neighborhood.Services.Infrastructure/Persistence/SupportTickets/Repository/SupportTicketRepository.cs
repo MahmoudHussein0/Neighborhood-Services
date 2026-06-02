@@ -37,7 +37,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<SupportTicket>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<SupportTicket>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _context.SupportTickets
                 .Where(t => t.UserId == userId)

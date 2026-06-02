@@ -1,36 +1,35 @@
 ﻿using Neighborhood.Services.Domain.Shared;
-using Neighborhood.Services.Domain.SupportTickets;
 
 namespace Neighborhood.Services.Domain.SupportTickets;
 
-public class SupportTicket: BaseEntity<int> 
+public class SupportTicket : BaseEntity<int>
 {
-   public int UserId { get;  set; }
+    public string UserId { get; set; }
 
-    public int? BookingId { get;  set; }
+    public int? BookingId { get; set; }
 
-    public string Subject { get;  set; }
+    public string Subject { get; set; }
 
     public SupportTicketStatus Status { get; set; }
 
-    public DateTime CreatedAt { get;set; }
+    public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
 
     // Navigation Property
-    public ICollection<SupportMessage> Messages { get;set; }
+    public ICollection<SupportMessage> Messages { get; set; }
 
 
     // Empty Constructor For EF
-    private SupportTicket()
+    public SupportTicket()
     {
     }
 
 
     // Main Constructor
     public SupportTicket(
-        int userId,
+        string userId,
         int? bookingId,
         string subject)
     {
@@ -50,5 +49,5 @@ public class SupportTicket: BaseEntity<int>
     }
 
 
-    
+
 }

@@ -10,10 +10,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
         {
         }
 
-        public async Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<PromoCodeUsage>> GetByUserIdAsync(string userId)
         => await GetByConditionAsync(u => u.UserId == userId, includeProperties: "PromoCode");
 
-        public async Task<bool> HasUserUsedPromoAsync(int userId, int promoCodeId)
+        public async Task<bool> HasUserUsedPromoAsync(string userId, int promoCodeId)
         {
             var res = await GetByConditionAsync(pu =>
                 pu.UserId == userId &&

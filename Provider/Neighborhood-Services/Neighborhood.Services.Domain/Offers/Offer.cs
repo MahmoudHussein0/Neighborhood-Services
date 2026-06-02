@@ -15,6 +15,8 @@ namespace Neighborhood.Services.Domain.Offers
         public int EstimatedDuration { get; set; }
         public string Message { get; set; } = string.Empty;
         public OfferStatus Status { get; set; }
+        // Technician's proposed service time (may differ from the customer's desired time)
+        public DateTime ScheduledAt { get; set; }
         public DateTime CreatedAt { get; set; }
 
         //----- Foreign Keys

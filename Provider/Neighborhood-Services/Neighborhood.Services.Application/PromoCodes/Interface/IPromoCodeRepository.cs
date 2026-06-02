@@ -6,6 +6,6 @@ namespace Neighborhood.Services.Application.PromoCodes.Interface
     {
         Task<PromoCode?> GetByCodeAsync (string code);
         Task<bool> IsValidAsync (string code);
-        Task IncrementUsageAsync(int promoCodeId);
+        Task<bool> TryIncrementUsageAsync(int promoCodeId);
     }
 }

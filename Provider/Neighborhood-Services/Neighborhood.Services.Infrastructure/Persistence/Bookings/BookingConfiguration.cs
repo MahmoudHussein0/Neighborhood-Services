@@ -72,6 +72,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             .WithMany()
             .HasForeignKey(b => b.CancelledBy)
             .OnDelete(DeleteBehavior.NoAction);
+            builder.HasIndex(b => new { b.TechnicianId, b.ScheduledAt })
+            .IsUnique()
+            .HasFilter("[Status] != 'Cancelled'");
         }
     }
 }

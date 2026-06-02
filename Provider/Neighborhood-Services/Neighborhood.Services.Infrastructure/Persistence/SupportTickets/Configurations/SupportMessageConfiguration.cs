@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.SupportTickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Configurations
 {
@@ -32,9 +29,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
                 .IsRequired()
                 .HasConversion<string>();
 
-            builder.Property(m => m.IsDeleted)
-                .IsRequired()
-                .HasDefaultValue(false);
+            
 
             builder.Property(m => m.ReadAt)
                 .IsRequired(false);

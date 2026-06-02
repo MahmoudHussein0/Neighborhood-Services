@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.SupportTickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Configurations
 {
@@ -18,9 +15,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
             builder.Property(t => t.Id)
                 .UseIdentityColumn();
 
-            builder.Property(t => t.UserId)
-                .IsRequired();
-
+            builder.Property(s => s.UserId)
+     .IsRequired()
+     .HasMaxLength(450); // ← add this — 450 is the standard Identity FK length
             builder.Property(t => t.BookingId)
                 .IsRequired(false);
 
@@ -32,9 +29,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
                 .IsRequired()
                 .HasConversion<string>();
 
-            builder.Property(t => t.IsDeleted)
-                .IsRequired()
-                .HasDefaultValue(false);
+           
 
             builder.Property(t => t.CreatedAt)
                 .IsRequired();
