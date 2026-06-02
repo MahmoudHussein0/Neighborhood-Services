@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+
     <Compile Remove="NewFolder\**" />
     <Compile Remove="Newsletter\**" />
     <EmbeddedResource Remove="NewFolder\**" />
@@ -16,14 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Newsletter\Commands\CreateNewsletterCommand.cs" />
-    <Compile Include="Newsletter\Commands\DeleteNewsletterCommand.cs" />
-    <Compile Include="Newsletter\INewsletterRepository.cs" />
-    <Compile Include="Newsletter\Queries\GetAllNewsQ.cs" />
-    <Compile Include="Newsletter\Queries\GetByIdNewsQ.cs" />
-  </ItemGroup>
 
-  <ItemGroup>
+    <PackageReference Include="Mapster" Version="10.0.7" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />
     <!--<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.10" />-->
@@ -56,13 +51,12 @@
     <Folder Include="Newsletter\NewFolder\" />
     <Folder Include="Notifications\DTOs\" />
     <Folder Include="Notifications\Queries\" />
-    <Folder Include="Offers\Commands\" />
     <Folder Include="Offers\DTOs\" />
     <Folder Include="Offers\Queries\" />
-    <Folder Include="RecurringBookings\Commands\" />
     <Folder Include="RecurringBookings\DTOs\" />
     <Folder Include="RecurringBookings\Queries\" />
     <Folder Include="ServiceRequests\Queries\" />
+    <Folder Include="TechnitianCategory\DTOs\" />
     <Folder Include="Users\Services\" />
   </ItemGroup>
 

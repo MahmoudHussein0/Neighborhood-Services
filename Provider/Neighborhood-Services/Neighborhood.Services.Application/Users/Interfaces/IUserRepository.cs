@@ -8,6 +8,8 @@ namespace Neighborhood.Services.Application.Users.Interfaces
     public interface IUserRepository : IGenericRepository<ApplicationUser, string>
     {
         Task<IdentityResult> CreateAsync(ApplicationUser user, string password);
+        Task<ApplicationUser?> GetByEmailAsync(string email);
+        Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
         Task<List<ApplicationUser>> GetUsersByRoleAsync(ApplicationUserRole role);
         Task<List<ApplicationUser>> GetNearbyUsersAsync(Point location, double distanceInMeters);
     }

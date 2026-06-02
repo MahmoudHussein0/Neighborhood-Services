@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,8 +14,10 @@ using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Disputes.Interfaces;
 using Neighborhood.Services.Application.Escrows.Interfaces;
+
 using Neighborhood.Services.Application.Favorites;
 using Neighborhood.Services.Application.HistoricalPrices;
+
 using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Application.Messages;
 using Neighborhood.Services.Application.Newsletter;
@@ -84,10 +86,17 @@ namespace Neighborhood.Services.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            // Unit of Work
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    o => o.UseNetTopologySuite()));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //  repositories
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingImageRepository, BookingImageRepository>();
             services.AddScoped<IAiAnalysisRepository, AiAnalysisRepository>();
@@ -98,7 +107,6 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<ICancellationPolicyRepository, CancellationPolicyRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
-            //--
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IEscrowRepository, EscrowRepository>();
@@ -106,14 +114,14 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
+
             services.AddScoped<ITechnicianAvailabilityRepository, TechnitianAvailabilityRepository>();
             services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
             services.AddScoped<ITechnicianPhotoRepository, TechnicianPhotoRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
-            services.AddScoped<IStaffRepository, StaffRepository>(); // ← add this
-
+            services.AddScoped<IStaffRepository, StaffRepository>();
 
             services.AddScoped<IPromoCodeRepository, PromoCodeRepository>();
             services.AddScoped<IPromoCodeUsageRepository, PromoCodeUsageRepository>();
@@ -121,7 +129,8 @@ namespace Neighborhood.Services.Infrastructure
             //services.AddScoped<INewsletterRepository, NewsletterRepository>();
 
             services.AddScoped<ICategoryRepository, CategoriesRepository>();
-           // services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
+
+            services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IDisputeRepository, DisputeRepository>();
             //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
@@ -141,18 +150,11 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
 
+
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(
-             configuration.GetConnectionString("DefaultConnection"),
-                o => o.UseNetTopologySuite()
-                ));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-            services.AddHttpContextAccessor();
 
             return services;
         }

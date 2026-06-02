@@ -30,7 +30,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing
 
 
             builder.HasOne(TP => TP.Technician)
-                    .WithMany(t=>t.TechnicianPricings)
+                    .WithMany(TP => TP.TechnicianPricings)
                     .HasForeignKey(TP => TP.TechnicianId)
                     .OnDelete(DeleteBehavior.NoAction);
 
@@ -42,9 +42,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing
                    .OnDelete(DeleteBehavior.NoAction);
 
 
-            builder.HasIndex(TP => TP.TechnicianId);
+            builder.HasIndex(TP => new { TP.TechnicianId , TP.ProblemTypeId})
+                   .IsUnique();
 
-            builder.HasIndex(TP => TP.ProblemTypeId);
         }
     }
 }

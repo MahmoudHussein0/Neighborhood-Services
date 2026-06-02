@@ -4,9 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Application.Categories
+namespace Neighborhood.Services.Application.Categories.Interfaces
 {
     public  interface ICategoryRepository : IGenericRepository<Category  , int>
     {
+
+
+        Task<bool> IsNameExistsAsync(string name);
+       
     }
 }

@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Application.ProblemTypes
+namespace Neighborhood.Services.Application.ProblemTypes.Interface
 {
     public  interface IProblemTypeRepository : IGenericRepository<ProblemType , int>
     {
+        Task<bool> IsExistsAsync(string name , int categoryId );
     }
 }

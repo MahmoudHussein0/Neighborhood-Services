@@ -9,6 +9,7 @@ namespace Neighborhood.Services.Domain.Offers
         Pending,
         Accepted,
         Rejected,
-        Expired
+        Expired,
+        Withdrawn
     }
 }
