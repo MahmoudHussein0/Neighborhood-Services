@@ -9,38 +9,55 @@ using Neighborhood.Services.Application.Notifications;
 using Neighborhood.Services.Domain.Notifications;
 using Neighborhood.Services.Application.Shared;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Notifications
 {
-    public class NotificationsRepoisitory: GenericRepository<Message, int>,INotificationsRepository
+    public class NotificationsRepoisitory : GenericRepository<Notification, int>, INotificationsRepository
     {
         public NotificationsRepoisitory(ApplicationDbContext context) : base(context) { }
 
-        IQueryable<Notification> IGenericRepository<Notification, int>.Table => throw new NotImplementedException();
-
-        public Task AddAsync(Notification entity)
+        public async Task<List<Notification>> GetAllAsync(string currentUserId)
         {
-            throw new NotImplementedException();
+            return await _context.Notifications
+            .Where(n => n.UserId == currentUserId)
+            .OrderByDescending(n => n.createdAt)
+            .ToListAsync();
         }
 
-        public Task<IEnumerable<Notification>> GetByConditionAsync(Expression<Func<Notification, bool>> expression, string? includeProperties = null, bool trackChanges = true)
+        public async Task<List<Notification>> GetUnRead(string currentUserId)
         {
-            throw new NotImplementedException();
+            return await _context.Notifications
+                .Where(n =>n.isRead==false).
+                OrderByDescending(n => n.createdAt).
+                ToListAsync();
         }
 
-        public Task UpdateAsync(Notification entity)
+        public async Task<List<Notification>> GetRead(string currentUserId)
         {
-            throw new NotImplementedException();
+            return await _context.Notifications
+                .Where(n => n.isRead == true).
+                OrderByDescending(n => n.createdAt).
+                ToListAsync();
+
         }
 
-        Task<IReadOnlyList<Notification>> IGenericRepository<Notification, int>.GetAllAsync()
+
+        public async Task MarkAllAsReadAsync(string userId)
         {
-            throw new NotImplementedException();
+            var notifications = await _context.Notifications.Where(n => n.UserId == userId && !n.isRead).ToListAsync();
+            notifications.ForEach(n => n.isRead = true);
+            await _context.SaveChangesAsync();
         }
 
-        Task<Notification> IGenericRepository<Notification, int>.GetByIdAsync(int id)
+        public async Task MarkAsReadAsync(int notificationId)
         {
-            throw new NotImplementedException();
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                notification.isRead = true;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Message\" />
-    <Folder Include="Controllers\Notification\" />
     <Folder Include="Controllers\Newsletter\" />
   </ItemGroup>
 

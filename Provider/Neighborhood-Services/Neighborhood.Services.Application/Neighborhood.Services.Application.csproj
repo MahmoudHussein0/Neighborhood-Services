@@ -49,9 +49,6 @@
     <Folder Include="NewFolder\" />
     <Folder Include="NewFolder\" />
     <Folder Include="Notifications\DTOs\" />
-    <Folder Include="Notifications\Push&amp;inApp\Commands\" />
-    <Folder Include="Notifications\Push&amp;inApp\DTOs\" />
-    <Folder Include="Notifications\Push&amp;inApp\Queries\" />
     <Folder Include="Notifications\Queries\" />
     <Folder Include="Offers\Commands\" />
     <Folder Include="Offers\DTOs\" />
