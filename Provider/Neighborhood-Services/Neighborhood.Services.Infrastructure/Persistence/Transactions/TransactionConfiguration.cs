@@ -10,6 +10,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Transactions
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Amount)
                 .HasColumnType("decimal(18,2)");
+            builder.HasIndex(t => t.FromWalletId);
+            builder.HasIndex(t => t.ToWalletId);
+            builder.HasIndex(t => t.PaymentMethodId);
+            builder.HasIndex(t => t.OriginalTransactionId);
             builder.Property(t => t.Fee)
                 .HasColumnType("decimal(18,2)")
                 .HasDefaultValue(0);

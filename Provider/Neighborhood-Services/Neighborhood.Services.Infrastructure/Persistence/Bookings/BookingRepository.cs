@@ -74,6 +74,26 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
                     && !b.IsDeleted);
         }
 
+        public async Task<bool> HasOverlappingConfirmedBookingAsync(int technicianId, DateTime start, DateTime end, int? excludeBookingId = null)
+        {
+            // Pull the technician's confirmed bookings that have a duration set,
+            // then evaluate interval overlap in memory (small per-technician set, avoids
+            // EF translation issues with nullable date arithmetic).
+            var confirmed = await _context.Bookings
+                .Where(b => b.TechnicianId == technicianId
+                    && b.Status == BookingStatus.Confirmed
+                    && !b.IsDeleted
+                    && b.DurationMinutes != null
+                    && (excludeBookingId == null || b.Id != excludeBookingId))
+                .Select(b => new { b.ScheduledAt, b.DurationMinutes })
+                .ToListAsync();
+
+            // Two intervals [s1,e1) and [s2,e2) overlap when s1 < e2 && s2 < e1
+            return confirmed.Any(b =>
+                b.ScheduledAt < end &&
+                start < b.ScheduledAt.AddMinutes(b.DurationMinutes!.Value));
+        }
+
         public async Task<Booking?> GetBookingWithEscrowAsync(int bookingId)
         {
             return await _context.Bookings

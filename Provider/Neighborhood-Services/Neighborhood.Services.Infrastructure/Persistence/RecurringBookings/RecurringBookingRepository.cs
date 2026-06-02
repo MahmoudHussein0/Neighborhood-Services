@@ -24,7 +24,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.RecurringBookings
         public async Task<IEnumerable<RecurringBooking>> GetActiveRecurringBookingsAsync()
         {
             return await _context.RecurringBookings
-                .Where(rb => rb.IsActive && !rb.IsDeleted)
+                .Where(rb => rb.Status == RecurringBookingStatus.Active && !rb.IsDeleted)
                 .ToListAsync();
         }
         public async Task<RecurringBooking?> GetRecurringBookingWithDetailsAsync(int recurringBookingId)
@@ -47,7 +47,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.RecurringBookings
         public async Task<IEnumerable<RecurringBooking>> GetDueRecurringBookingsAsync(DateOnly date)
         {
             return await _context.RecurringBookings
-                .Where(rb => rb.IsActive
+                .Where(rb => rb.Status == RecurringBookingStatus.Active
                     && !rb.IsDeleted
                     && (rb.EndDate == null || rb.EndDate >= date))
                 .ToListAsync();

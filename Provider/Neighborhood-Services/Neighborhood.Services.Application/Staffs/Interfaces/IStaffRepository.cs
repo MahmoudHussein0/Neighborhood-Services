@@ -1,7 +1,4 @@
 ﻿using Neighborhood.Services.Domain.Staffs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.Staffs.Interfaces
 {
@@ -9,11 +6,11 @@ namespace Neighborhood.Services.Application.Staffs.Interfaces
     {
         // ── Queries ────────────────────────────────────────────────────────────
         Task<Staff?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task<Staff?> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+        Task<Staff?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Staff>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Staff>> GetByRoleAsync(StaffRole role, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Staff>> GetActiveAsync(CancellationToken cancellationToken = default);
-        Task<bool> ExistsByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+        Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken = default);
         Task<bool> HasPermissionAsync(int staffId, PermissionType permission, CancellationToken cancellationToken = default);
 
         // ── Commands ───────────────────────────────────────────────────────────

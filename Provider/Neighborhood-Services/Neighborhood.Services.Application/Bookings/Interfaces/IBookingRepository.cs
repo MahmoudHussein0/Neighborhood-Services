@@ -17,6 +17,9 @@ namespace Neighborhood.Services.Application.Bookings.Interface
 
         Task<Booking?> GetActiveBookingForTechnicianAsync(int technicianId, DateTime scheduledAt);
 
+        // True if the technician has a confirmed booking whose time window overlaps [start, end)
+        Task<bool> HasOverlappingConfirmedBookingAsync(int technicianId, DateTime start, DateTime end, int? excludeBookingId = null);
+
         Task<Booking?> GetBookingWithEscrowAsync(int bookingId);
     }
 }

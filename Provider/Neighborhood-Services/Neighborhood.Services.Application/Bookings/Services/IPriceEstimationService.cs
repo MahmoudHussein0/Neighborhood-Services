@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Bookings.Services
 {
-    public interface IPriceEstimationService
+    public interface IPriceEstimationService 
     {
         Task<decimal> EstimateAsync(int problemTypeId);
 

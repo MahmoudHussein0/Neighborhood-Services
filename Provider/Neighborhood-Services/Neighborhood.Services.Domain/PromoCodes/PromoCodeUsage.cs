@@ -5,7 +5,7 @@ namespace Neighborhood.Services.Domain.PromoCodes
     public class PromoCodeUsage : BaseEntity<int>
     {
         public int PromoCodeId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; } = null!;
         public int BookingId { get; set; }
         public DateTime UsedAt { get; set; } = DateTime.UtcNow;
         public PromoCode PromoCode { get; set; } = null!;

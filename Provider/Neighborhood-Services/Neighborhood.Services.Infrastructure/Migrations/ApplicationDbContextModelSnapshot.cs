@@ -328,7 +328,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StaffId")
+                    b.Property<int?>("StaffId")
                         .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -343,7 +343,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("WalletId")
+                    b.Property<int?>("WalletId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -493,6 +493,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("EstimatedPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -555,7 +558,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[ServiceRequestId] IS NOT NULL");
 
-                    b.HasIndex("TechnicianId");
+                    b.HasIndex("TechnicianId", "ScheduledAt")
+                        .IsUnique()
+                        .HasFilter("[Status] != 'Cancelled'");
 
                     b.ToTable("Bookings");
                 });
@@ -1070,6 +1075,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ServiceRequestId")
                         .HasColumnType("int");
 
@@ -1126,7 +1134,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.Property<string>("ProviderToken")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -1226,6 +1235,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("PromoCodes");
                 });
 
@@ -1252,8 +1264,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<DateTime>("UsedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -1262,7 +1275,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasIndex("BookingId")
                         .IsUnique();
 
-                    b.HasIndex("PromoCodeId");
+                    b.HasIndex("PromoCodeId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("PromoCodeUsages");
                 });
@@ -1279,6 +1293,15 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("AgreedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CancelledBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -1291,11 +1314,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<int?>("DayOfWeek")
                         .HasColumnType("int");
 
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -1310,8 +1333,15 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TechnicianId")
                         .HasColumnType("int");
+
+                    b.Property<TimeOnly>("TimeOfDay")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -1468,6 +1498,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.Property<int>("ProblemTypeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1927,6 +1960,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.HasIndex("FromWalletId");
 
+                    b.HasIndex("OriginalTransactionId");
+
                     b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("ToWalletId");
@@ -2066,15 +2101,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 {
                     b.HasOne("Neighborhood.Services.Domain.Staffs.Staff", "Staff")
                         .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StaffId");
 
                     b.HasOne("Neighborhood.Services.Domain.Wallets.Wallet", "Wallet")
                         .WithMany()
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WalletId");
 
                     b.Navigation("Staff");
 

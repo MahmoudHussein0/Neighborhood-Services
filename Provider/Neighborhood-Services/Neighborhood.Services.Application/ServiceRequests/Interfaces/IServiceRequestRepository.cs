@@ -11,8 +11,7 @@ namespace Neighborhood.Services.Application.ServiceRequests.Interfaces
     {
         Task<ServiceRequest?> GetServiceRequestWithDetailsAsync(int serviceRequestId);
         Task<IEnumerable<ServiceRequest>> GetCustomerServiceRequestsAsync(int customerId);
-        Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(Point location, double radiusInMeters);
-
+        Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters);
         Task<ServiceRequest?> GetServiceRequestWithOffersAsync(int serviceRequestId);
     }
 }
