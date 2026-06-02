@@ -1,11 +1,12 @@
-﻿using Neighborhood.Services.Domain.Conversation;
+﻿using Neighborhood.Services.Application.Conversations;
+using Neighborhood.Services.Application.Messages;
+using Neighborhood.Services.Application.Messages.DTOs;
+using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Domain.Conversation;
 using Neighborhood.Services.Domain.Message;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Neighborhood.Services.Application.Messages;
-using Neighborhood.Services.Application.Conversations;
-using Neighborhood.Services.Application.Messages.DTOs;
 
 namespace Neighborhood.Services.Application.Messages.Commands
 {
@@ -13,11 +14,14 @@ namespace Neighborhood.Services.Application.Messages.Commands
     {
         private readonly IMessageRepository _messageRepository;
         private readonly IConversationRepository _conversationRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateMessageCommandHandler(IMessageRepository messageRepository, IConversationRepository conversationRepository)
+
+        public CreateMessageCommandHandler(IMessageRepository messageRepository, IConversationRepository conversationRepository,IUnitOfWork unitOfWork)
         {
             _messageRepository = messageRepository;
             _conversationRepository = conversationRepository;
+            _unitOfWork= unitOfWork;
             //user id to verify authorization
         }
 
@@ -42,19 +46,29 @@ namespace Neighborhood.Services.Application.Messages.Commands
 
             }
 
-            //if it doesn't exist
+            //if it doesn't exist then create the conversation
             if (conv == null)
             {
-                conv = new Conversation();
-                conv.Messages = new List<Message>();
+               
+                conv = new Conversation
+                {
+                    BookingId = request.BookingId,
+                    createdAt = DateTime.UtcNow,
+                    //Booking = await selbook,
+                    Messages = new List<Message>()
+
+
+                };
                 conv.Messages.Add(msg);
                 await _conversationRepository.AddAsync(conv);
 
             }
-
             await _messageRepository.AddAsync(msg);
+            
+            await _unitOfWork.SaveChangesAsync();
+            //sending notifications
 
-            return new MessageCreatedDto() { senderId = request.SenderId ,content=request.content};
+            return new MessageCreatedDto() { senderId = request.SenderId ,content=request.content,BookingId=conv.BookingId};
             //return msg.Id;
         }
     }

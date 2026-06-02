@@ -10,7 +10,7 @@ namespace Neighborhood.Services.Application.Conversations.Queries
     {
     }
 
-    public class GetAllConvQHandler : IRequestHandler<GetAllConvQDto, List<ConversationSelectedDto>>
+    public class GetAllConvQHandler : IRequestHandler<IRequest<List<ConversationSelectedDto>>, List<ConversationSelectedDto>>
     {
         private readonly IConversationRepository _convrepository;
 
@@ -18,7 +18,7 @@ namespace Neighborhood.Services.Application.Conversations.Queries
         {
             _convrepository = convrepository;
         }
-        public async Task <List<ConversationSelectedDto>> Handle(GetAllConvQDto request, CancellationToken cancellationToken)
+        public async Task <List<ConversationSelectedDto>> Handle(IRequest<List<ConversationSelectedDto>> request, CancellationToken cancellationToken)
         {
             var items = await _convrepository.GetAllAsync();
             return items.Select(item => new ConversationSelectedDto

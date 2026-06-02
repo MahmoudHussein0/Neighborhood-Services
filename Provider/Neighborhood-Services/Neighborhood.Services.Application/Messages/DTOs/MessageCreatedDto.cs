@@ -9,5 +9,7 @@ namespace Neighborhood.Services.Application.Messages.DTOs
         public string scss_msg = "Message Created Successfully!";
         public string senderId;
         public string content;
+
+        public int BookingId { set; get; }
     }
 }
