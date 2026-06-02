@@ -22,6 +22,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Users
             return await _userManager.CreateAsync(user, password);
         }
 
+        public async Task<ApplicationUser?> GetByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
+        }
+
         public override async Task UpdateAsync(ApplicationUser user)
         {
             var result = await _userManager.UpdateAsync(user);
