@@ -8,7 +8,7 @@ namespace Neighborhood.Services.Domain.favorites
     {
         public string UserId { set; get; }
         public int TechnicianId { set; get; }
-        public DateTime addedAt { get; } = DateTime.Now;
+        public DateTime addedAt { get; } 
 
         //Nav probs
         public ApplicationUser User { get; set; } = null;

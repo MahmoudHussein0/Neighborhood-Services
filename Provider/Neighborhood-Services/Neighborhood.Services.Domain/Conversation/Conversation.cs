@@ -18,8 +18,8 @@ namespace Neighborhood.Services.Domain.Conversation
         public int BookingId { get; set; }
 
         //Foriegn key
-       // public int ServiceRequestId { get; }
-        public DateTime createdAt { get; set; }
+        // public int ServiceRequestId { get; }
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
         public Message.Message lastMessage => Messages.ToList().Last()??new Message.Message();
 
 

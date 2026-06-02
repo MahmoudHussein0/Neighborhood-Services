@@ -17,6 +17,7 @@ namespace Neighborhood.Services.API.Middlewares
             _logger.LogError(exception, "An exception occurred: {Message}", exception.Message);
             var problemDetails = exception switch
             {
+
                 NotFoundException => new ProblemDetails
                 {
                     Status = StatusCodes.Status404NotFound,

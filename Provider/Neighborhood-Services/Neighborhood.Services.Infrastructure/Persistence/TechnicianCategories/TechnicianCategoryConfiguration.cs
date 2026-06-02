@@ -13,7 +13,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnicianCategories
         {
 
             builder.HasOne(TC => TC.Technician)
-                   .WithMany(t=>t.TechnicianCategories)
+                   .WithMany(TC => TC.TechnicianCategories)
                    .HasForeignKey(TC => TC.TechnicianId)
                    .OnDelete(DeleteBehavior.NoAction);
 

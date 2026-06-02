@@ -16,7 +16,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Newsletters
            
            builder.Property(e=>e.email).IsRequired();
 
-           builder.Property(e => e.subscribedAt).HasDefaultValueSql("GETUTCDATE()");
+           builder.Property(e => e.subscribedAt)
+                  .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

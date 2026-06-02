@@ -17,6 +17,7 @@ namespace Neighborhood.Services.Domain.Categories
             TechnicianCategories =  new HashSet<TechnicianCategory>();
         }
 
+
         public ICollection<ServiceRequest> ServiceRequests { get; set; } = new HashSet<ServiceRequest>();
     }
 }

@@ -53,7 +53,7 @@ namespace Neighborhood.Services.Application.Shared
         DbSet<HistoricalPrice> HistoricalPrices { get; }
         DbSet<Invoice> Invoices { get; }
         DbSet<Message> Messages { get; }
-        DbSet<Newsletter> Newsletters { get; }
+        DbSet<Domain.Newsletter.Newsletter> Newsletters { get; }
         DbSet<Notification> Notifications { get; }
         DbSet<Offer> Offers { get; }
         DbSet<PaymentMethod> PaymentMethods { get; }

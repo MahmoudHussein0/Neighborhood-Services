@@ -20,6 +20,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.PromoCodes
                 .WithMany(p=>p.Usages)
                 .HasForeignKey(pu => pu.PromoCodeId)
                 .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(pu => pu.Booking)
                .WithOne(b=>b.PromoCodeUsages)
                .HasForeignKey<PromoCodeUsage>(pu => pu.BookingId)

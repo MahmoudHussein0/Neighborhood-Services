@@ -18,11 +18,19 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Neighborhood.Services.Application\Neighborhood.Services.Application.csproj" />
     <ProjectReference Include="..\Neighborhood.Services.Infrastructure\Neighborhood.Services.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\Message\" />
+    <Folder Include="Controllers\Newsletter\" />
   </ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ using Neighborhood.Services.Domain.Message;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Messages
 {
-    public class MessageRepository:GenericRepository<Message,int>
+    public class MessageRepository:GenericRepository<Message,int>,IMessageRepository
     {
         public MessageRepository(ApplicationDbContext context) : base(context){}
 
@@ -27,6 +27,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Messages
             return _context.Messages.FirstOrDefault(e => e.ConversationId.ToString() == convId);
         }
 
+        public Task<List<Message>> GetByConversationIdAsync(string conversationId, int skip, int limit)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     }

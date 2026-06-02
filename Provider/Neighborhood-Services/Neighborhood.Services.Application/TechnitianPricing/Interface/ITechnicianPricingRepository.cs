@@ -4,9 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Application.TechnitianPricing
+namespace Neighborhood.Services.Application.TechnitianPricing.Interface
 {
     public interface ITechnicianPricingRepository : IGenericRepository<TechnicianPricing , int>
     {
+
+        Task<bool> IsExistsAsync(int technicianId, int problemTypeId);
+
+
+
     }
 }

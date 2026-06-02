@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Application.Categories;
+﻿using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Application.Categories.Interfaces;
 using Neighborhood.Services.Domain.Categories;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
@@ -13,7 +14,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Categories
     {
         public CategoriesRepository( ApplicationDbContext context):base(context)
         {}
-        
-       
+
+        public async Task<bool> IsNameExistsAsync(string name)
+         => await  _context.Categories.AnyAsync(c => c.Name.ToLower().Contains(name.ToLower()));
     }
 }

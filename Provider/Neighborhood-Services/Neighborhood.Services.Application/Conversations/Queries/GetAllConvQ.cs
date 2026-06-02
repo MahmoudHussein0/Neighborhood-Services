@@ -1,0 +1,40 @@
+﻿using MediatR;
+using Neighborhood.Services.Application.Conversations.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Neighborhood.Services.Application.Conversations.Queries
+{
+    public class GetAllConvQDto: IRequest<List<ConversationSelectedDto>>
+    {
+    }
+
+    public class GetAllConvQHandler : IRequestHandler<IRequest<List<ConversationSelectedDto>>, List<ConversationSelectedDto>>
+    {
+        private readonly IConversationRepository _convrepository;
+
+        public GetAllConvQHandler(IConversationRepository convrepository)
+        {
+            _convrepository = convrepository;
+        }
+        public async Task <List<ConversationSelectedDto>> Handle(IRequest<List<ConversationSelectedDto>> request, CancellationToken cancellationToken)
+        {
+            var items = await _convrepository.GetAllAsync();
+            return items.Select(item => new ConversationSelectedDto
+            {
+                Id = item.Id,
+                BookingId=item.BookingId,
+                LastMessage=item.lastMessage.content })
+                .ToList();
+        }
+    }
+
+
+}
+
+//          public int Id { get; set; }
+//public int BookingId { get; set; }
+//public string scssmsg { get; } = "Conversation Selected";
+//public string LastMessage { set; get; }
+
