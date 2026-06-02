@@ -43,10 +43,8 @@
     <Folder Include="Notifications\Commands\" />
     <Folder Include="Notifications\DTOs\" />
     <Folder Include="Notifications\Queries\" />
-    <Folder Include="Offers\Commands\" />
     <Folder Include="Offers\DTOs\" />
     <Folder Include="Offers\Queries\" />
-    <Folder Include="RecurringBookings\Commands\" />
     <Folder Include="RecurringBookings\DTOs\" />
     <Folder Include="RecurringBookings\Queries\" />
     <Folder Include="ServiceRequests\Queries\" />

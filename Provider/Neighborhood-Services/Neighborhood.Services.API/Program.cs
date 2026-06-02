@@ -2,18 +2,22 @@
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
 using Neighborhood.Services.Infrastructure;
+using Neighborhood.Services.Infrastructure.Persistence.Seeding;
 
 namespace Neighborhood.Services.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.Converters.Add(
+                        new System.Text.Json.Serialization.JsonStringEnumConverter()));
             builder.Services.AddSignalR();
 
             builder.Services.AddApplication();
@@ -27,6 +31,12 @@ namespace Neighborhood.Services.API
 
 
             var app = builder.Build();
+
+            // Seed dev/test data on startup (migrates + seeds if empty)
+            using (var scope = app.Services.CreateScope())
+            {
+                await DbSeeder.SeedAsync(scope.ServiceProvider);
+            }
 
             // Configure the HTTP request pipeline.
             if(app.Environment.IsDevelopment())
