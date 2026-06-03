@@ -39,6 +39,8 @@ using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
+using Neighborhood.Services.Application.Invoices.Services;
+using Neighborhood.Services.Application.Payments.Gateways;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
 using Neighborhood.Services.Infrastructure.Persistence.AiAnalysises;
@@ -77,6 +79,8 @@ using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
+using Neighborhood.Services.Infrastructure.Services.Invoices;
+using Neighborhood.Services.Infrastructure.Services.Payments;
 using Neighborhood.Services.Infrastructure.Shared;
 
 
@@ -155,6 +159,9 @@ namespace Neighborhood.Services.Infrastructure
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IInvoicePdfService, InvoicePdfService>();
+            services.AddScoped<IPaymentGatewayService, PaymentGatewayService>();
+            services.Configure<PaymentGatewayOptions>(configuration.GetSection("PaymentGateway"));
 
 
             services.AddScoped<ITechnicianCategoryRepository, TechnicianCategoryRepository>();
