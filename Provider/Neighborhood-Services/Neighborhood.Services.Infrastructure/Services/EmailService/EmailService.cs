@@ -1,28 +1,38 @@
-﻿using Microsoft.Extensions.Options;
-using MimeKit;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using MimeKit;
 using MimeKit.Text;
-
+using Neighborhood.Services.Application.Shared.Email;
+using Neighborhood.Services.Domain.ProblemTypes;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
-using Neighborhood.Services.Domain.ProblemTypes;
-using Neighborhood.Services.Application.Shared.Email;
 
 namespace Neighborhood.Services.Infrastructure.Services.EmailService
 {
+    
     public class EmailService:IEmailService
     {
         private readonly EmailConfiguration _config;
         private readonly EmailContentHelper _contentHelper;
+        private readonly IWebHostEnvironment _environment;
+
         public EmailService(IOptions<EmailConfiguration> config,
-        EmailContentHelper contentHelper)
+       // EmailContentHelper contentHelper,
+        IWebHostEnvironment _environment
+
+        )
         {
             _config = config.Value;
-            _contentHelper = contentHelper;
+            _contentHelper = new EmailContentHelper(_environment);
         }
+        
+
         public async Task SendEmailAsync(EmailMessageDto message)
         {
 
@@ -67,7 +77,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
         }
     
 
-    public async Task SendEmailVerificationEmailAsync(string EmailReceiver,
+    public async Task <EmailSendingResult>SendEmailVerificationEmailAsync(string EmailReceiver,
         string ConfirmationURL,string title="Confirm your email", IEnumerable<EmailAttachmentDto>? emailAttachments=null!)
         {
             string genratedHTML = _contentHelper.BuildVerificationEmailContent(ConfirmationURL,null!);
@@ -111,6 +121,10 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_config.Username, _config.Password);
                 await client.SendAsync(email);
+                return new EmailSendingResult()
+                {
+                    To = EmailReceiver
+                };
             }
             finally
             {
@@ -119,10 +133,10 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
 
         }
 
-        public async Task SendPasswordResetEmailAsync(string EmailReceiver,
+        public async Task<EmailSendingResult> SendPasswordResetEmailAsync(string EmailReceiver,
        string PasswordResetURL, string title = "Reset Your Password", IEnumerable<EmailAttachmentDto>? emailAttachments = null!)
         {
-            string genratedHTML = _contentHelper.BuildVerificationEmailContent(PasswordResetURL, null!);
+            string genratedHTML = _contentHelper.BuildPasswordResetMailContent(PasswordResetURL, null!);
             EmailMessageDto message = new EmailMessageDto()
             {
                 To = MailboxAddress.Parse(EmailReceiver),
@@ -163,19 +177,23 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_config.Username, _config.Password);
                 await client.SendAsync(email);
+                return new EmailSendingResult()
+                {
+                    To = EmailReceiver
+                };
             }
             finally
             {
                 await client.DisconnectAsync(true);
             }
-
+            
         }
 
-        public async Task SendBookingVerificationEmainAsync(
+        public async Task<EmailSendingResult> SendBookingVerificationEmainAsync(
             string EmailReceiver,
      int BookingId,
      DateTime Time,
-     ProblemType Problem, 
+     string Problem, 
      string TechnicianName, 
      string title = "Booking is Verified", 
      IEnumerable<EmailAttachmentDto>? emailAttachments = null!)
@@ -214,18 +232,44 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             email.Body = bodyBuilder.ToMessageBody();
             using var client = new MailKit.Net.Smtp.SmtpClient();
 
+            if (string.IsNullOrWhiteSpace(_config.SmtpServer))
+                throw new InvalidOperationException("EmailHost configuration is missing");
+            if (_config.Port<0)
+                throw new InvalidOperationException("Invalid Port configuration");
+            if (string.IsNullOrWhiteSpace(_config.Username))
+                throw new InvalidOperationException("EmailUsername configuration is missing");
+            if (string.IsNullOrWhiteSpace(_config.Password))
+                throw new InvalidOperationException("EmailPassword configuration is missing");
+
+
             try
             {
-                await client.ConnectAsync(_config.SmtpServer, _config.Port,
-        _config.EnableSsl);
+               await client.ConnectAsync(_config.SmtpServer, _config.Port,_config.EnableSsl);
+                //client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_config.Username, _config.Password);
                 await client.SendAsync(email);
+                return new EmailSendingResult()
+                {
+
+                    To = EmailReceiver,
+
+                    content = message.HtmlContent,
+
+
+
+                };
+
             }
+        
+            
             finally
             {
                 await client.DisconnectAsync(true);
+                
+               
             }
+           
 
         }
 

@@ -92,7 +92,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             int BookingId,
             string TechnicianName,
             DateTime Time,
-            ProblemType Problem, 
+            string Problem, 
             Dictionary<string, string> placeholders = null!)
         {
             var template = _templates["BookingVerificationTemplate"];
@@ -100,7 +100,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             template = template.Replace("{{TechnicianName}}", TechnicianName);
 
             template = template.Replace("{{Time}}", Time.ToString());
-            template = template.Replace("{{Problem}}", Problem.ToString());
+            template = template.Replace("{{Problem}}", Problem);
 
 
 
