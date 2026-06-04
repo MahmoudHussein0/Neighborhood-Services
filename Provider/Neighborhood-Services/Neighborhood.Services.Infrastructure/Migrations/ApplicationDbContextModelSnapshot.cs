@@ -194,6 +194,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TokensUsed")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("AgentLogs");

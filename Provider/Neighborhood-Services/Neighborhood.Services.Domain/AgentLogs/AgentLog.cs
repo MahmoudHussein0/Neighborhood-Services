@@ -14,6 +14,7 @@ namespace Neighborhood.Services.Domain.AgentLogs
         public AgentLogReferenceType ReferenceType { get; set; }
         public DateTime CreatedAt { get; set; }
         public int? ReferenceId { get; set; }
+        public int? TokensUsed { get; set; }
 
 
     }
