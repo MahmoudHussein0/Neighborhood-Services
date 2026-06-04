@@ -26,7 +26,8 @@ namespace Neighborhood.Services.Application.AgentLogs.Commands
                 Output = request.Output,
                 ReferenceType = request.ReferenceType,
                 ReferenceId = request.ReferenceId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                 TokensUsed = request.TokensUsed
             };
 
             await _agentLogRepository.AddAsync(log);

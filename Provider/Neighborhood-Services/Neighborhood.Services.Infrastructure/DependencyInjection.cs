@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using Neighborhood.Services.Application.AgentLogs.Interfaces;
+using Neighborhood.Services.Application.AI.Interfaces;
 using Neighborhood.Services.Application.AiAnalysises.Interface;
 using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
 using Neighborhood.Services.Application.BookingImages.Interface;
@@ -77,6 +79,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
+using Neighborhood.Services.Infrastructure.Services.AI;
 using Neighborhood.Services.Infrastructure.Shared;
 
 
@@ -166,6 +169,14 @@ namespace Neighborhood.Services.Infrastructure
             services.AddHangfireServer();
             services.AddScoped<RecurringBookingGeneratorService>();
             services.AddScoped<ServiceRequestExpiryService>();
+            //Kernl
+            services.AddSingleton(sp => {
+                var apiKey = configuration["OpenAI:ApiKey"];
+                return Kernel.CreateBuilder()
+                    .AddOpenAIChatCompletion("gpt-4o", apiKey!)
+                    .Build();
+            });
+            services.AddScoped<IAiClient, SemanticKernelClient>();
             return services;
         }
     }

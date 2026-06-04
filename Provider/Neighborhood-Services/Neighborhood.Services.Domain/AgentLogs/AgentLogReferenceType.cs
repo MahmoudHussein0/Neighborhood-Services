@@ -9,6 +9,7 @@ namespace Neighborhood.Services.Domain.AgentLogs
         Booking,
         Dispute,
         Review,
-        Technician
+        Technician,
+        ServiceRequest
     }
 }

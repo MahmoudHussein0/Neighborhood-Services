@@ -13,7 +13,7 @@ using NetTopologySuite.Geometries;
 namespace Neighborhood.Services.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260603020359_init")]
+    [Migration("20260604175729_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -196,6 +196,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<string>("ReferenceType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TokensUsed")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
