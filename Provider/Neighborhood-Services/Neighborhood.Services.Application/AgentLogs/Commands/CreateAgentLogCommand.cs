@@ -13,5 +13,6 @@ namespace Neighborhood.Services.Application.AgentLogs.Commands
         public string Output { get; set; } = string.Empty;
         public AgentLogReferenceType ReferenceType { get; set; }
         public int? ReferenceId { get; set; }
+        public int? TokensUsed { get; set; }
     }
 }

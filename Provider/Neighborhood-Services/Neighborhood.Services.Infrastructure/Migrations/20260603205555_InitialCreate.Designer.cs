@@ -13,8 +13,13 @@ using NetTopologySuite.Geometries;
 namespace Neighborhood.Services.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:Provider/Neighborhood-Services/Neighborhood.Services.Infrastructure/Migrations/20260603205555_InitialCreate.Designer.cs
     [Migration("20260603205555_InitialCreate")]
     partial class InitialCreate
+========
+    [Migration("20260604175729_init")]
+    partial class init
+>>>>>>>> 6eb0965e532a50a5ecc8a7dcaf9f0df96d5a3a98:Provider/Neighborhood-Services/Neighborhood.Services.Infrastructure/Migrations/20260604175729_init.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,6 +201,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<string>("ReferenceType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TokensUsed")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

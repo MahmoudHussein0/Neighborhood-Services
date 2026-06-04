@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Offers.Interfaces;
@@ -154,6 +155,7 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
                 WalletId = customerWallet.Id,
                 Amount = booking.EstimatedPrice
             }, cancellationToken);
+            await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
 
             return booking.Id;
         }
