@@ -29,6 +29,7 @@ using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Reviews.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Shared.Email;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
@@ -77,6 +78,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
+using Neighborhood.Services.Infrastructure.Services.EmailService;
 using Neighborhood.Services.Infrastructure.Shared;
 
 
@@ -144,8 +146,8 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<INotificationsRepository, NotificationsRepoisitory>();
             services.AddScoped<INewsletterRepository, NewsletterRepository>();
             services.AddScoped<IFavoritesRepository, FavoritesRepository>();
-
-
+            services.AddScoped<IEmailService, EmailService>();
+            services.Configure<EmailConfiguration>(configuration.GetSection("EmailSettings"));
             //End of Arwa's
 
 

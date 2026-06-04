@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
 using Neighborhood.Services.Domain.ProblemTypes;
+using Neighborhood.Services.Application.Shared.Email;
 
 namespace Neighborhood.Services.Infrastructure.Services.EmailService
 {
-    public class EmailService
+    public class EmailService:IEmailService
     {
         private readonly EmailConfiguration _config;
         private readonly EmailContentHelper _contentHelper;

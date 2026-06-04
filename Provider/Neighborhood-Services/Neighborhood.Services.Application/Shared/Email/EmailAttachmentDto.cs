@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Infrastructure.Services.EmailService
+namespace Neighborhood.Services.Application.Shared.Email
 {
     public class EmailAttachmentDto
     {

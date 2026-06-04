@@ -20,6 +20,7 @@ namespace Neighborhood.Services.Application
             // Mapster
             //services.AddMapster();
             services.AddScoped<IPriceEstimationService, PriceEstimationService>();
+
             return services;
         }
     }

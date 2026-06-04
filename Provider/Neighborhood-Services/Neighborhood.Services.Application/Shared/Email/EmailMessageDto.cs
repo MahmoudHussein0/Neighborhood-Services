@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neighborhood.Services.Infrastructure.Services.EmailService
+namespace Neighborhood.Services.Application.Shared.Email
 {
     public class EmailMessageDto
     {
@@ -14,8 +14,8 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
         public string Subject { get; set; } = string.Empty;
         public string HtmlContent { get; set; }
         public IEnumerable<EmailAttachmentDto>? Attachments { get; set; }
-        
-        
+
+
 
         //Constructor
         //public EmailMessageDto(

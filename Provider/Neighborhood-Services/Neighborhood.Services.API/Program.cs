@@ -1,5 +1,6 @@
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Neighborhood.Services.API.Middlewares;
@@ -8,8 +9,8 @@ using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
 using Neighborhood.Services.Infrastructure.Services;
+using Neighborhood.Services.Infrastructure.Services.EmailService;
 using System.Text;
-using Microsoft.AspNetCore.Hosting;
 
 
 namespace Neighborhood.Services.API
@@ -21,7 +22,8 @@ namespace Neighborhood.Services.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            //Email config: Moved to Infra
+           //builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.Converters.Add(
