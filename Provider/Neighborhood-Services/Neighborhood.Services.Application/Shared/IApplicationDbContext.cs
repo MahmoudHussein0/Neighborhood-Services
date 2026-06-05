@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Domain.AgentLogs;
 using Neighborhood.Services.Domain.AiAnalyses;
 using Neighborhood.Services.Domain.AvilabilitiesException;
+using Neighborhood.Services.Domain.Chatbot;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.CancellationPolicies;
@@ -75,6 +76,8 @@ namespace Neighborhood.Services.Application.Shared
         DbSet<TechnicianPricing> TechnicianPricings { get; }
         DbSet<Transaction> Transactions { get; }
         DbSet<Wallet> Wallets { get; }
+        DbSet<ChatbotSession> ChatbotSessions { get; }
+        DbSet<ChatbotMessage> ChatbotMessages { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

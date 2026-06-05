@@ -5,6 +5,7 @@ using Neighborhood.Services.Domain.AgentLogs;
 using Neighborhood.Services.Domain.AiAnalyses;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.AvilabilitiesException;
+using Neighborhood.Services.Domain.Chatbot;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.CancellationPolicies;
@@ -85,6 +86,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Context
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<ChatbotSession> ChatbotSessions { get; set; }
+        public DbSet<ChatbotMessage> ChatbotMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

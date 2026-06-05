@@ -31,12 +31,17 @@
     </PackageReference>
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.77.0" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+    <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 
   </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SeedData\Knowledge\**\*.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
