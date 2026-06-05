@@ -32,6 +32,21 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Users
             return await _userManager.CheckPasswordAsync(user, password);
         }
 
+        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        public async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        }
+
         public override async Task UpdateAsync(ApplicationUser user)
         {
             var result = await _userManager.UpdateAsync(user);

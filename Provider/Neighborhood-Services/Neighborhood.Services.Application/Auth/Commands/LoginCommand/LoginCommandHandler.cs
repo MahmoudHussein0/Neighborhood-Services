@@ -1,9 +1,9 @@
 using MediatR;
+using Neighborhood.Services.Application.Auth.DTOs;
 using Neighborhood.Services.Application.Shared;
-using Neighborhood.Services.Application.Users.DTOs;
 using Neighborhood.Services.Application.Users.Interfaces;
 
-namespace Neighborhood.Services.Application.Users.Commands.LoginCommand
+namespace Neighborhood.Services.Application.Auth.Commands
 {
     public class LoginCommandHandler(IUserRepository userRepository, IJwtTokenService jwtTokenService) : IRequestHandler<LoginCommand, AuthResponseDTO>
     {

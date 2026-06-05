@@ -1,4 +1,4 @@
-namespace Neighborhood.Services.Application.Users.DTOs
+namespace Neighborhood.Services.Application.Auth.DTOs
 {
     public class AuthResponseDTO
     {

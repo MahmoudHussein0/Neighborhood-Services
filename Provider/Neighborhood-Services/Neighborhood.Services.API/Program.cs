@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.IdentityModel.Tokens;
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
@@ -20,6 +21,21 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Frontend", policy =>
+                {
+                    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+                    if (allowedOrigins.Length > 0)
+                    {
+                        policy.WithOrigins(allowedOrigins)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    }
+                });
+            });
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -31,9 +47,30 @@ namespace Neighborhood.Services.API
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
+                        NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier,
+                        RoleClaimType = System.Security.Claims.ClaimTypes.Role,
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var authorizationHeader = context.Request.Headers.Authorization.ToString();
+                            if (string.IsNullOrWhiteSpace(authorizationHeader) ||
+                                !authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                context.Token = context.Request.Cookies["access_token"];
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
                 });
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
@@ -55,6 +92,7 @@ namespace Neighborhood.Services.API
 
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
+            app.UseCors("Frontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
