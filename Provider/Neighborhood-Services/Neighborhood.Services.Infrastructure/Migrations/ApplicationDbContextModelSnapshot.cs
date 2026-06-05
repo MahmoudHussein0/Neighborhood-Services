@@ -616,7 +616,12 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -1166,7 +1171,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1181,10 +1190,15 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<decimal>("MinPrice")
                         .HasColumnType("DECIMAL(18,2)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameAr")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -1900,7 +1914,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.HasIndex("ProblemTypeId");
 
-                    b.HasIndex("TechnicianId");
+                    b.HasIndex("TechnicianId", "ProblemTypeId")
+                        .IsUnique();
 
                     b.ToTable("TechnicianPricings");
                 });

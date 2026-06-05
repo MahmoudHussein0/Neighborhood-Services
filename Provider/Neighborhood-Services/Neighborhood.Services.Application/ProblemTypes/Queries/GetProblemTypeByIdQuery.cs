@@ -8,11 +8,16 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
 {
     public  class GetProblemTypeByIdQuery : IRequest<ProblemTypeDetailsDto>
     {
+
+        public string Lang  { get; set; }
         public int  Id { get; set; }
-        public GetProblemTypeByIdQuery(int id)
+
+        public GetProblemTypeByIdQuery(string lang, int id)
         {
+            Lang = lang;
             Id = id;
         }
+
 
     }
 }

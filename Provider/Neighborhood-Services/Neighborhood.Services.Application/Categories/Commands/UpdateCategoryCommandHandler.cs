@@ -28,15 +28,19 @@ namespace Neighborhood.Services.Application.Categories.Commands
             if (category is null) 
                 throw new NotFoundException("Category" , request.Id);
 
-           var isExists =  await _categoryRepo.IsNameExistsAsync(request.Name);
+           var isExists =  await _categoryRepo.IsNameExistsAsync(request.NameEn , request.NameAr);
 
-            if(isExists && category.Name != request.Name)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{"Name", new[] { "Category already exists"} }});
+            if (isExists && category.NameEn != request.NameEn && category.NameAr != request.NameAr)
+                throw new ValidationException("Category already exists");
 
+            if(!string.IsNullOrWhiteSpace(request.NameEn))
+                 category.NameEn = request.NameEn;
 
-            category.Name = request.Name;
-            category.Icon = request.Icon;
+            if (!string.IsNullOrWhiteSpace(request.NameAr))
+                category.NameAr = request.NameAr;
+
+            if (!string.IsNullOrWhiteSpace(request.Icon))
+                 category.Icon = request.Icon;
 
            await _categoryRepo.UpdateAsync(category);
            await _unitOfWork.SaveChangesAsync();

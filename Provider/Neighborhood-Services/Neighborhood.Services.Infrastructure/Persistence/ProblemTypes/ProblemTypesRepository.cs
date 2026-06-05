@@ -15,8 +15,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
         public ProblemTypesRepository(ApplicationDbContext context) : base(context)
         { }
 
-        public async Task<bool> IsExistsAsync(string name , int categoryId )
-        => await _context.ProblemTypes.AnyAsync( P => P.Name.ToLower().Contains(name.ToLower()) && P.CategoryId == categoryId);
+        public async Task<bool> IsExistsAsync(string nameAr , string nameEn , int categoryId )
+        => await _context.ProblemTypes.AnyAsync( P => (  EF.Functions.Like( P.NameEn.ToLower() , nameEn.ToLower())  || EF.Functions.Like(P.NameAr.ToLower(), nameAr.ToLower()))  && P.CategoryId == categoryId);
 
     }
 }

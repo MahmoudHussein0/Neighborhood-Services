@@ -8,6 +8,13 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Queries
 {
     public class GetAvabilityExceptionForSpecificTechQuery : IRequest<IReadOnlyList<AvailiabilityExceptionDTO>>
     {
+      
+
         public int  TechnicianId { get; set; }
+
+        public GetAvabilityExceptionForSpecificTechQuery(int technicianId)
+        {
+            TechnicianId = technicianId;
+        }
     }
 }

@@ -8,19 +8,20 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
 {
     public class GetAllProblemTypesQuery  : IRequest< IReadOnlyList<ProblemTypeDto>>
     {
-     
+
+        public string Lang  { get; set; }
         public string? SearchTerm  { get; set; }
 
         public decimal?  MinPrice { get; set; }
         public decimal?  MaxPrice { get; set; }
 
-        public GetAllProblemTypesQuery(string? searchTerm = null , decimal? minPrice = null , decimal? maxPrice = null )
+        public GetAllProblemTypesQuery(string lang, string? searchTerm, decimal? minPrice, decimal? maxPrice)
         {
+            Lang = lang;
             SearchTerm = searchTerm;
             MinPrice = minPrice;
             MaxPrice = maxPrice;
         }
-
 
     }
 }

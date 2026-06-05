@@ -12,9 +12,14 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
         public void Configure(EntityTypeBuilder<ProblemType> builder)
         {
 
-            builder.Property(PT => PT.Name)
+            builder.Property(PT => PT.NameEn)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(255);
+
+
+            builder.Property(PT => PT.NameAr)
+                 .IsRequired()
+                 .HasMaxLength(255);
 
 
             builder.Property(PT => PT.MinPrice)

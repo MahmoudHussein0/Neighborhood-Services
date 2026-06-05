@@ -30,26 +30,24 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             if (category is null)
                 throw new NotFoundException("Category" , request.CategoryId);
 
-            if (await _problemTypeRepo.IsExistsAsync(request.Name, request.CategoryId))
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "Name", new[] { "This problem already assigned to this category." }}});
+            if (await _problemTypeRepo.IsExistsAsync(request.NameEn , request.NameAr, request.CategoryId))
+                throw new ValidationException("This problem already assigned to this category.");
 
             if (request.MinPrice <= 0)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "MinPrice", new[] { "MinPrice must be greater than zero." }}});
+                throw new ValidationException("MinPrice must be greater than zero.");
 
             if (request.MaxPrice <= 0)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "MaxPrice", new[] { "MaxPrice must be greater than zero." }}});
+                throw new ValidationException("MaxPrice must be greater than zero.");
 
             if (request.MinPrice >= request.MaxPrice)
-                    throw new ValidationException(new Dictionary<string, string[]>
-                 {{ "PriceRange", new[] { "MinPrice must be less than MaxPrice." }}});
+                    throw new ValidationException("MinPrice must be less than MaxPrice.");
 
             var problemType = new ProblemType()
             {
-                Name = request.Name , 
-                Description = request.Description ,
+                NameEn = request.NameEn , 
+                NameAr = request.NameAr , 
+                DescriptionEn = request.DescriptionEn ,
+                DescriptionAr = request.DescriptionAr ,
                 MinPrice = request.MinPrice,
                 MaxPrice = request.MaxPrice ,
                 CategoryId = request.CategoryId

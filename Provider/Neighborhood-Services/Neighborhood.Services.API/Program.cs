@@ -1,14 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
-
-using System.Text;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
+using StackExchange.Redis;
+using System.Text;
 
 
 namespace Neighborhood.Services.API
@@ -31,6 +32,32 @@ namespace Neighborhood.Services.API
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (actionContext =>
+                {
+                    var errors = actionContext.ModelState.Where(M => M.Value.Errors.Count() > 0)
+                             .SelectMany(M => M.Value.Errors)
+                             .Select(E => !(string.IsNullOrEmpty(E.Exception?.Message)) ?  E.Exception.Message  : E.ErrorMessage )
+                             .ToArray();
+                    return new BadRequestObjectResult(new
+                    {
+                        StatusCod = 400 ,
+                        Errors = errors
+                    });
+                });
+            });
+
+
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
+            {
+                var connection =   builder.Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(connection);
+            });
+
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -46,13 +73,12 @@ namespace Neighborhood.Services.API
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
                     };
                 });
-            builder.Services.AddAuthorization();
 
+            builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
-
             builder.Services.AddHttpContextAccessor();
 
 

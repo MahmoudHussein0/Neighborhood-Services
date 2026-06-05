@@ -7,6 +7,7 @@ using Neighborhood.Services.Application.AiAnalysises.Interface;
 using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
 using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Cache;
 using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
 using Neighborhood.Services.Application.Categories.Interfaces;
 using Neighborhood.Services.Application.Conversations;
@@ -33,11 +34,13 @@ using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
+using Neighborhood.Services.Application.TechnitianCategory.Interface;
 using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Infrastructure.Cache;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
 using Neighborhood.Services.Infrastructure.Persistence.AiAnalysises;
 using Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesException;
@@ -66,6 +69,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
+using Neighborhood.Services.Infrastructure.Persistence.TechnicianCategories;
 using Neighborhood.Services.Infrastructure.Persistence.TechnicianPhotos;
 using Neighborhood.Services.Infrastructure.Persistence.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailability;
@@ -112,8 +116,8 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
+            services.AddScoped<ITechnicianCategoryRepository, TechnicianCategoryRepository>();
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-
             services.AddScoped<ITechnicianAvailabilityRepository, TechnitianAvailabilityRepository>();
             services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
@@ -142,6 +146,7 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<INewsletterRepository, NewsletterRepository>();
             services.AddScoped<IFavoritesRepository, FavoritesRepository>();
 
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             //End of Arwa's
 

@@ -1,0 +1,72 @@
+[
+  {
+    "NameEn": "Cleaners",
+    "NameAr": "عمال النظافة",
+    "Icon": "🧹"
+  },
+  {
+    "NameEn": "Handymen",
+    "NameAr": "فنيون متعددو المهام",
+    "Icon": "🔨"
+  },
+  {
+    "NameEn": "Landscapers",
+    "NameAr": "تنسيق الحدائق",
+    "Icon": "🌱"
+  },
+  {
+    "NameEn": "Movers",
+    "NameAr": "خدمات نقل الأثاث",
+    "Icon": "📦"
+  },
+  {
+    "NameEn": "Plumbers",
+    "NameAr": "سباكون",
+    "Icon": "🔧"
+  },
+  {
+    "NameEn": "Electrical pros",
+    "NameAr": "فنيون كهرباء",
+    "Icon": "💡"
+  },
+  {
+    "NameEn": "Painters",
+    "NameAr": "دهانون",
+    "Icon": "🎨"
+  },
+  {
+    "NameEn": "HVAC pros",
+    "NameAr": "فنيو التكييف والتبريد",
+    "Icon": "❄️"
+  },
+  {
+    "NameEn": "Contractors",
+    "NameAr": "مقاولون",
+    "Icon": "🏗️"
+  },
+  {
+    "NameEn": "Pool & spa",
+    "NameAr": "المسابح والجاكوزي",
+    "Icon": "🏊"
+  },
+  {
+    "NameEn": "Roofing",
+    "NameAr": "أعمال الأسقف",
+    "Icon": "🏠"
+  },
+  {
+    "NameEn": "Windows & doors",
+    "NameAr": "النوافذ والأبواب",
+    "Icon": "🚪"
+  },
+  {
+    "NameEn": "Concrete & masonry",
+    "NameAr": "الخرسانة والبناء",
+    "Icon": "🧱"
+  },
+  {
+    "NameEn": "Exterminators",
+    "NameAr": "مكافحة الحشرات",
+    "Icon": "🕷️"
+  }
+]

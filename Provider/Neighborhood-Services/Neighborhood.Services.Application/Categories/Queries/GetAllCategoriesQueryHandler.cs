@@ -16,13 +16,21 @@ namespace Neighborhood.Services.Application.Categories.Queries
 
         public async Task<IReadOnlyList<CategoryDto>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-          var categories =( await  _categoryRepo.GetByConditionAsync(
-                c =>
-                !c.IsDeleted &&
-                (string.IsNullOrWhiteSpace(request.SearchTerm) || c.Name.ToLower().Contains(request.SearchTerm.ToLower()))
+            var lang = request.Lang.ToLower();
+            var categories =( await  _categoryRepo.GetByConditionAsync(
+                c => (!c.IsDeleted)  &&
+                ( lang == "en" ? (string.IsNullOrEmpty(request.SearchTerm)) ||  (c.NameEn.ToLower().Contains(request.SearchTerm)) : (string.IsNullOrEmpty(request.SearchTerm)) || (c.NameAr.ToLower().Contains(request.SearchTerm) ))
                 )).OrderByDescending(c => c.CreatedAt);
 
-           return  categories.Adapt<IReadOnlyList<CategoryDto>>();
+
+            var categoriesDto = categories.Select(c => new CategoryDto()
+            {
+                Name = lang == "en" ? c.NameEn : c.NameAr,
+                Icon = c.Icon,
+                Id = c.Id
+             }).ToList();
+
+           return categoriesDto;
         }
     }
 }

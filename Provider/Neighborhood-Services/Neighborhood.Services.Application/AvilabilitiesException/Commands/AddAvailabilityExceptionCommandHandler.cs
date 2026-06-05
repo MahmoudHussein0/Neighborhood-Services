@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.AvilabilitiesException;
 using System;
@@ -25,16 +26,14 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
             if( request.StartTime.HasValue || request.EndTime.HasValue)
             {
                 if( !request.StartTime.HasValue  || !request.EndTime.HasValue)
-                    throw new Exception("Both StartTime and EndTime must be provided.");
+                throw new ValidationException("Both StartTime and EndTime must be provided.");
 
                 if (request.EndTime <= request.StartTime)
-                throw new Exception("End Time must be greater than Start Time");
-
+                    throw new ValidationException("End Time must be greater than Start Time.");
             }
 
-
             if(await _exceptionRepo.IsDateExists(request.TechnicianId , request.Date ) )
-                throw new Exception( "An exception already exists for this date.");
+            throw new ValidationException("An exception already exists for this date.");
 
 
             var availiabilityException = new AvailabilityException()

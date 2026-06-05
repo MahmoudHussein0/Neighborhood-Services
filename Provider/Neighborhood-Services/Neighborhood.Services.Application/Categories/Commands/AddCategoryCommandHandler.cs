@@ -20,17 +20,16 @@ namespace Neighborhood.Services.Application.Categories.Commands
         public async Task<int> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
         {
 
-           var result =  await _categoryRepo.IsNameExistsAsync(request.Name);
+           var result =  await _categoryRepo.IsNameExistsAsync(request.NameEn , request.NameAr);
 
             if (result)
-            throw new ValidationException(new Dictionary<string, string[]>
-                {{"Name",new[] { "Category already exists"}}});
-
+                throw new ValidationException("Category already exists");
 
             var category = new Category()
             {
-                Name = request.Name,
-                Icon = request.Icon,
+                NameEn = request.NameEn!,
+                NameAr = request.NameAr!,
+                Icon = request.Icon!,
             };
 
            await  _categoryRepo.AddAsync(category);

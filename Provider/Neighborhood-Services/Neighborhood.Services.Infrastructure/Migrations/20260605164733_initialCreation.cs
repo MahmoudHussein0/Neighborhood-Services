@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 namespace Neighborhood.Services.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,7 +69,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NameAr = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
@@ -86,7 +87,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    subscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    subscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -120,7 +121,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Role = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedByStaffId = table.Column<int>(type: "int", nullable: true),
@@ -164,8 +165,10 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    NameAr = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MinPrice = table.Column<decimal>(type: "DECIMAL(18,2)", nullable: false),
                     MaxPrice = table.Column<decimal>(type: "DECIMAL(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -307,8 +310,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    StaffId = table.Column<int>(type: "int", nullable: false),
-                    WalletId = table.Column<int>(type: "int", nullable: false),
+                    StaffId = table.Column<int>(type: "int", nullable: true),
+                    WalletId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -331,8 +334,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         name: "FK_AspNetUsers_Staffs_StaffId",
                         column: x => x.StaffId,
                         principalTable: "Staffs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -413,7 +415,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentProvider = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProviderToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProviderToken = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     LastFourDigits = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: true),
                     ExpiryMonth = table.Column<int>(type: "int", nullable: true),
                     ExpiryYear = table.Column<int>(type: "int", nullable: true),
@@ -522,6 +524,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScheduledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Location = table.Column<Point>(type: "geography", nullable: false),
@@ -618,10 +621,15 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     Pattern = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DayOfWeek = table.Column<int>(type: "int", nullable: true),
                     DayOfMonth = table.Column<int>(type: "int", nullable: true),
+                    TimeOfDay = table.Column<TimeOnly>(type: "time", nullable: false),
+                    DurationMinutes = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AgreedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CancelledBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CancelledAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     TechnicianId = table.Column<int>(type: "int", nullable: false),
                     ProblemTypeId = table.Column<int>(type: "int", nullable: false),
@@ -795,6 +803,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     EstimatedDuration = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScheduledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ServiceRequestId = table.Column<int>(type: "int", nullable: false),
                     TechnicianId = table.Column<int>(type: "int", nullable: false),
@@ -825,6 +834,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ScheduledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DurationMinutes = table.Column<int>(type: "int", nullable: true),
                     EstimatedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FinalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -1051,7 +1061,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PromoCodeId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BookingId = table.Column<int>(type: "int", nullable: false),
                     UsedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -1109,14 +1119,14 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     BookingId = table.Column<int>(type: "int", nullable: true),
                     Subject = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1199,7 +1209,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1333,9 +1343,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 filter: "[ServiceRequestId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_TechnicianId",
+                name: "IX_Bookings_TechnicianId_ScheduledAt",
                 table: "Bookings",
-                column: "TechnicianId");
+                columns: new[] { "TechnicianId", "ScheduledAt" },
+                unique: true,
+                filter: "[Status] != 'Cancelled'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Conversations_BookingId",
@@ -1469,6 +1481,12 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PromoCodes_Code",
+                table: "PromoCodes",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PromoCodeUsages_ApplicationUserId",
                 table: "PromoCodeUsages",
                 column: "ApplicationUserId");
@@ -1480,9 +1498,10 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PromoCodeUsages_PromoCodeId",
+                name: "IX_PromoCodeUsages_PromoCodeId_UserId",
                 table: "PromoCodeUsages",
-                column: "PromoCodeId");
+                columns: new[] { "PromoCodeId", "UserId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecurringBookings_CustomerId",
@@ -1642,9 +1661,10 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 column: "ProblemTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TechnicianPricings_TechnicianId",
+                name: "IX_TechnicianPricings_TechnicianId_ProblemTypeId",
                 table: "TechnicianPricings",
-                column: "TechnicianId");
+                columns: new[] { "TechnicianId", "ProblemTypeId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Technicians_ApplicationUserId",
@@ -1662,6 +1682,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 name: "IX_Transactions_FromWalletId",
                 table: "Transactions",
                 column: "FromWalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_OriginalTransactionId",
+                table: "Transactions",
+                column: "OriginalTransactionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_PaymentMethodId",
@@ -1715,8 +1740,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                 table: "AspNetUsers",
                 column: "WalletId",
                 principalTable: "Wallets",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

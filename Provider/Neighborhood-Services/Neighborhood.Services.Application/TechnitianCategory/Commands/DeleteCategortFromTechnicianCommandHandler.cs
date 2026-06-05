@@ -5,19 +5,19 @@ using Neighborhood.Services.Application.TechnitianCategory.Interface;
 
 namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 {
-    public class RemoveCategortFromTechnicianCommandHandler : IRequestHandler<RemoveCategortFromTechnicianCommand, bool>
+    public class DeleteCategortFromTechnicianCommandHandler : IRequestHandler<DeleteCategortFromTechnicianCommand, bool>
     {
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITechnicianCategoryRepository _technicianCategoryRepo;
 
 
-        public RemoveCategortFromTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo, IUnitOfWork unitOfWork)
+        public DeleteCategortFromTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo, IUnitOfWork unitOfWork)
         {
             _technicianCategoryRepo = technicianCategoryRepo;
             _unitOfWork = unitOfWork;
         }
-        public async  Task<bool> Handle(RemoveCategortFromTechnicianCommand request, CancellationToken cancellationToken)
+        public async  Task<bool> Handle(DeleteCategortFromTechnicianCommand request, CancellationToken cancellationToken)
         {
             var techCategories = await _technicianCategoryRepo.GetByConditionAsync(TC => TC.TechnicianId == request.TechnicianId && TC.CategoryId == request.CategoryId);
             var techCategory = techCategories.FirstOrDefault();

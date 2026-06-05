@@ -46,7 +46,7 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
             {
                 type = NotificationTypes.booking,
                 message = $"You have a new booking request from client {booking.CustomerId}" +
-                $"on service of type {booking.ProblemType.Name} at Address {booking.Location.ToString()} "
+                $"on service of type {booking.ProblemType.NameEn} at Address {booking.Location.ToString()} "
                 ,
                 channel = NotificationChannels.push,
                 createdAt = DateTime.UtcNow,

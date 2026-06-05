@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
 {
-    internal class AddAvailabilityExceptionCommand : IRequest<int>
+    public class AddAvailabilityExceptionCommand : IRequest<int>
     {
         public int TechnicianId { get; set; }
         public DateOnly Date { get; set; }

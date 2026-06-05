@@ -19,9 +19,20 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Queries
         }
         public async Task<IReadOnlyList<CategoryDto>> Handle(GetTechnicianCategoryQuery request, CancellationToken cancellationToken)
         {
-            return (await _technicianCategoryRepo.GetByConditionAsync(TC => TC.TechnicianId == request.TechnicianId , "Category"))
+
+            var lang = request.Lang.ToLower() ?? "en";  
+
+            return (await _technicianCategoryRepo.GetByConditionAsync( 
+                
+                                TC =>
+                                (!TC.IsDeleted)
+                                &&
+                                TC.TechnicianId == request.TechnicianId , "Category")
+                )
+
                 .Select(TC => new CategoryDto {
-                  Name = TC.Category.Name ,
+                  Id = TC.CategoryId,
+                  Name =  lang == "en" ?  TC.Category.NameEn : TC.Category.NameAr,
                   Icon = TC.Category.Icon
             }).ToList();
         }

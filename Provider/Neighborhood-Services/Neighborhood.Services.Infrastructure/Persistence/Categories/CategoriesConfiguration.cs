@@ -11,9 +11,13 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Categories
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.Property(C => C.Name)
+            builder.Property(C => C.NameEn)
                    .IsRequired()     
                    .HasMaxLength(50);
+
+            builder.Property(C => C.NameAr)
+                 .IsRequired()
+                 .HasMaxLength(50);
 
             builder.Property(C => C.IsDeleted)
                           .HasDefaultValue(false);

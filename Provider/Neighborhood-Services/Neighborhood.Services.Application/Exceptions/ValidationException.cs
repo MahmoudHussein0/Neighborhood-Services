@@ -13,8 +13,7 @@ namespace Neighborhood.Services.Application.Exceptions
             Errors = new Dictionary<string, string[]>();
         }
 
-        public ValidationException(IDictionary<string, string[]> errors)
-            : base("One or more validation errors occurred.")
+        public ValidationException(IDictionary<string, string[]> errors): base("One or more validation errors occurred.")
         {
             Errors = errors;
         }

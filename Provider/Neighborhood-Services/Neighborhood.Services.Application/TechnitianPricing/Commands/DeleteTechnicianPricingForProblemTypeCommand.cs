@@ -5,8 +5,14 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 {
-    public class RemoveTechnicianPricingForProblemTypeCommand : IRequest<bool>
+    public class DeleteTechnicianPricingForProblemTypeCommand : IRequest<bool>
     {
+    
         public int  Id { get; set; }
+        public DeleteTechnicianPricingForProblemTypeCommand(int id)
+        {
+            Id = id;
+        }
+
     }
 }

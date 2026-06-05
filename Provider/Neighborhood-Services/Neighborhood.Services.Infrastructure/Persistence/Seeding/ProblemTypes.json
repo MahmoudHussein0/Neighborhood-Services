@@ -1,0 +1,506 @@
+[
+  {
+    "NameEn": "House Cleaning",
+    "NameAr": "تنظيف المنازل",
+    "DescriptionEn": "Professional deep cleaning or regular maintenance for your entire home, including bedrooms, bathrooms, kitchen, and living areas.",
+    "DescriptionAr": "خدمة تنظيف عميق أو دوري للمنزل بالكامل، بما يشمل غرف النوم والحمامات والمطبخ وغرف المعيشة.",
+    "MinPrice": 500,
+    "MaxPrice": 2500,
+    "CategoryId": 1
+  },
+  {
+    "NameEn": "Carpet Cleaning",
+    "NameAr": "تنظيف السجاد",
+    "DescriptionEn": "Deep steam cleaning and stain removal treatment for rugs and carpets to restore freshness and eliminate allergens.",
+    "DescriptionAr": "تنظيف عميق بالبخار وإزالة البقع من السجاد والموكيت لاستعادة النظافة والتخلص من مسببات الحساسية.",
+    "MinPrice": 300,
+    "MaxPrice": 1200,
+    "CategoryId": 1
+  },
+  {
+    "NameEn": "Junk Removal",
+    "NameAr": "إزالة المخلفات",
+    "DescriptionEn": "Eco-friendly disposal and hauling services for old furniture, appliances, debris, and unwanted clutter from your property.",
+    "DescriptionAr": "خدمات نقل والتخلص من الأثاث القديم والأجهزة والمخلفات بطريقة آمنة وصديقة للبيئة.",
+    "MinPrice": 400,
+    "MaxPrice": 2000,
+    "CategoryId": 1
+  },
+  {
+    "NameEn": "Pressure Washing",
+    "NameAr": "الغسيل بالضغط العالي",
+    "DescriptionEn": "High-pressure water cleaning for exterior surfaces such as driveways, sidewalks, decks, and building facades to remove dirt and mold.",
+    "DescriptionAr": "تنظيف الأسطح الخارجية باستخدام المياه عالية الضغط لإزالة الأتربة والعفن من الممرات والواجهات.",
+    "MinPrice": 350,
+    "MaxPrice": 1500,
+    "CategoryId": 1
+  },
+  {
+    "NameEn": "Appliance Repair or Maintenance",
+    "NameAr": "إصلاح وصيانة الأجهزة المنزلية",
+    "DescriptionEn": "Professional repair and maintenance services for refrigerators, washing machines, ovens, and other household appliances.",
+    "DescriptionAr": "خدمات احترافية لإصلاح وصيانة الثلاجات والغسالات والأفران وغيرها من الأجهزة المنزلية.",
+    "MinPrice": 50.0,
+    "MaxPrice": 250.0,
+    "CategoryId": 2
+  },
+  {
+    "NameEn": "Lock Installation and Repair",
+    "NameAr": "تركيب وإصلاح الأقفال",
+    "DescriptionEn": "Secure lock installation, rekeying, and repair services for residential or commercial doors to enhance your security.",
+    "DescriptionAr": "خدمات تركيب وإعادة برمجة وإصلاح الأقفال للأبواب السكنية والتجارية لتعزيز الأمان.",
+    "MinPrice": 40.0,
+    "MaxPrice": 180.0,
+    "CategoryId": 2
+  },
+  {
+    "NameEn": "Furniture Assembly",
+    "NameAr": "تركيب الأثاث",
+    "DescriptionEn": "Expert assembly for all types of furniture, including beds, desks, chairs, and complex multi-piece sets.",
+    "DescriptionAr": "تجميع وتركيب احترافي لجميع أنواع الأثاث بما في ذلك الأسرة والمكاتب والكراسي والمجموعات المعقدة.",
+    "MinPrice": 35.0,
+    "MaxPrice": 150.0,
+    "CategoryId": 2
+  },
+  {
+    "NameEn": "Holiday Lighting Installation and Removal",
+    "NameAr": "تركيب وإزالة إضاءة المناسبات",
+    "DescriptionEn": "Complete service for designing, installing, and safely removing festive holiday lights and decorations for your home.",
+    "DescriptionAr": "خدمة متكاملة لتصميم وتركيب وإزالة إضاءة وزينة المناسبات والأعياد بطريقة آمنة.",
+    "MinPrice": 120.0,
+    "MaxPrice": 600.0,
+    "CategoryId": 2
+  },
+  {
+    "NameEn": "Lawn Mowing and Trimming",
+    "NameAr": "قص وتهذيب المسطحات الخضراء",
+    "DescriptionEn": "Professional mowing, edging, and trimming services to keep your lawn neat, healthy, and perfectly manicured.",
+    "DescriptionAr": "خدمات احترافية لقص وتهذيب الحشائش للحفاظ على الحديقة مرتبة وصحية وجميلة.",
+    "MinPrice": 40.0,
+    "MaxPrice": 120.0,
+    "CategoryId": 3
+  },
+  {
+    "NameEn": "Tree Trimming and Removal",
+    "NameAr": "تشذيب وإزالة الأشجار",
+    "DescriptionEn": "Expert branch trimming, shaping, and safe removal of dead or hazardous trees to protect your property.",
+    "DescriptionAr": "تشذيب وتشكيل الأغصان وإزالة الأشجار الميتة أو الخطرة بشكل آمن لحماية الممتلكات.",
+    "MinPrice": 150.0,
+    "MaxPrice": 850.0,
+    "CategoryId": 3
+  },
+  {
+    "NameEn": "Sprinkler and Irrigation System Repair and Maintenance",
+    "NameAr": "إصلاح وصيانة أنظمة الري والرش",
+    "DescriptionEn": "Comprehensive repair of broken heads, leak detection, timer programming, and seasonal maintenance for irrigation systems.",
+    "DescriptionAr": "إصلاح شامل لرؤوس الرش التالفة واكتشاف التسربات وبرمجة المؤقتات والصيانة الدورية لأنظمة الري.",
+    "MinPrice": 75.0,
+    "MaxPrice": 300.0,
+    "CategoryId": 3
+  },
+  {
+    "NameEn": "Full Service Lawn Care",
+    "NameAr": "العناية المتكاملة بالحدائق",
+    "DescriptionEn": "All-in-one seasonal lawn maintenance including fertilization, weed control, aeration, and regular cleanup.",
+    "DescriptionAr": "خدمات متكاملة للعناية بالحدائق تشمل التسميد ومكافحة الحشائش والتهوية والتنظيف الدوري.",
+    "MinPrice": 200.0,
+    "MaxPrice": 600.0,
+    "CategoryId": 3
+  },
+  {
+    "NameEn": "Packing and Unpacking",
+    "NameAr": "التغليف وفك التغليف",
+    "DescriptionEn": "Professional packing and unpacking services to ensure your items are safely boxed, labeled, and unpacked at your new location.",
+    "DescriptionAr": "خدمات احترافية لتغليف وفك تغليف الأغراض مع ضمان ترتيبها ونقلها بأمان.",
+    "MinPrice": 150,
+    "MaxPrice": 600,
+    "CategoryId": 4
+  },
+  {
+    "NameEn": "Long Distance Moving",
+    "NameAr": "النقل لمسافات طويلة",
+    "DescriptionEn": "Secure and reliable cross-state or long-distance transportation for all your household or office belongings.",
+    "DescriptionAr": "خدمات نقل آمنة وموثوقة للمنازل والمكاتب عبر مسافات طويلة.",
+    "MinPrice": 1200,
+    "MaxPrice": 5000,
+    "CategoryId": 4
+  },
+  {
+    "NameEn": "Furniture Moving and Heavy Lifting",
+    "NameAr": "نقل الأثاث ورفع الأحمال الثقيلة",
+    "DescriptionEn": "Expert handling, lifting, and rearranging of heavy furniture pieces, appliances, and bulky items.",
+    "DescriptionAr": "نقل ورفع وإعادة ترتيب الأثاث الثقيل والأجهزة والأغراض كبيرة الحجم باحترافية.",
+    "MinPrice": 100,
+    "MaxPrice": 450,
+    "CategoryId": 4
+  },
+  {
+    "NameEn": "Piano Moving",
+    "NameAr": "نقل البيانو",
+    "DescriptionEn": "Specialized moving service for upright and grand pianos using protective padding and heavy-duty equipment.",
+    "DescriptionAr": "خدمة متخصصة لنقل البيانو باستخدام معدات حماية وتجهيزات مخصصة.",
+    "MinPrice": 250,
+    "MaxPrice": 800,
+    "CategoryId": 4
+  },
+  {
+    "NameEn": "Emergency Plumbing",
+    "NameAr": "سباكة الطوارئ",
+    "DescriptionEn": "24/7 urgent plumbing services for leaks, burst pipes, and flooding emergencies.",
+    "DescriptionAr": "خدمات سباكة طارئة على مدار الساعة للتعامل مع التسربات وانفجار المواسير والفيضانات.",
+    "MinPrice": 150.0,
+    "MaxPrice": 600.0,
+    "CategoryId": 5
+  },
+  {
+    "NameEn": "Water Heater Repair or Maintenance",
+    "NameAr": "إصلاح وصيانة سخانات المياه",
+    "DescriptionEn": "Professional repair, flushing, and maintenance for tank and tankless water heaters.",
+    "DescriptionAr": "إصلاح وصيانة وتنظيف سخانات المياه التقليدية والفورية.",
+    "MinPrice": 80.0,
+    "MaxPrice": 350.0,
+    "CategoryId": 5
+  },
+  {
+    "NameEn": "Septic System Repair, Maintenance or Inspection",
+    "NameAr": "إصلاح وصيانة وفحص أنظمة الصرف الصحي",
+    "DescriptionEn": "Full inspection, pumping, and repair services for residential septic systems.",
+    "DescriptionAr": "خدمات الفحص والشفط والإصلاح الكاملة لأنظمة الصرف الصحي المنزلية.",
+    "MinPrice": 200.0,
+    "MaxPrice": 1200.0,
+    "CategoryId": 5
+  },
+  {
+    "NameEn": "Plumbing Pipe Repair",
+    "NameAr": "إصلاح مواسير السباكة",
+    "DescriptionEn": "Fixing frozen, cracked, or leaking water and sewer pipes with durable materials.",
+    "DescriptionAr": "إصلاح مواسير المياه والصرف المتشققة أو المتسربة باستخدام مواد عالية الجودة.",
+    "MinPrice": 100.0,
+    "MaxPrice": 500.0,
+    "CategoryId": 5
+  },
+  {
+    "NameEn": "Electrical and Wiring Repair",
+    "NameAr": "إصلاح الأعطال الكهربائية والأسلاك",
+    "DescriptionEn": "Professional repair services for faulty electrical wiring, short circuits, and flickering lights to ensure safety.",
+    "DescriptionAr": "خدمات احترافية لإصلاح مشاكل الأسلاك الكهربائية والدوائر القصيرة وأضواء الوميض لضمان السلامة.",
+    "MinPrice": 50.0,
+    "MaxPrice": 250.0,
+    "CategoryId": 6
+  },
+  {
+    "NameEn": "Switch and Outlet Installation",
+    "NameAr": "تركيب المفاتيح والأفياش الكهربائية",
+    "DescriptionEn": "Installation and replacement of modern wall switches, dimmers, and electrical outlets (smart or standard).",
+    "DescriptionAr": "تركيب واستبدال مفاتيح الحائط الحديثة ومفاتيح الإضاءة المتغيرة (الديمر) والأفياش الذكية أو العادية.",
+    "MinPrice": 30.0,
+    "MaxPrice": 120.0,
+    "CategoryId": 6
+  },
+  {
+    "NameEn": "Wiring Installation",
+    "NameAr": "تمديد الأسلاك الكهربائية",
+    "DescriptionEn": "Complete or partial electrical wiring installation for new constructions, home renovations, or additions.",
+    "DescriptionAr": "تركيب تمديدات كهربائية كاملة أو جزئية للمباني الجديدة أو أعمال التجديد أو الإضافات.",
+    "MinPrice": 500.0,
+    "MaxPrice": 2500.0,
+    "CategoryId": 6
+  },
+  {
+    "NameEn": "Generator Installation",
+    "NameAr": "تركيب المولدات الكهربائية",
+    "DescriptionEn": "Expert installation of backup and whole-house generators, including transfer switch setup for uninterrupted power.",
+    "DescriptionAr": "تركيب احترافي للمولدات الاحتياطية ومولدات المنازل مع إعداد مفتاح التحويل لضمان استمرار الكهرباء.",
+    "MinPrice": 400.0,
+    "MaxPrice": 1800.0,
+    "CategoryId": 6
+  },
+  {
+    "NameEn": "Wallpaper Installation or Repair",
+    "NameAr": "تركيب أو إصلاح ورق الحائط",
+    "DescriptionEn": "Professional installation of luxury and standard wallpapers, as well as seamless repair of tears and peeling sections.",
+    "DescriptionAr": "تركيب ورق حائط فاخر أو عادي مع إصلاح التمزقات أو التقشير بطريقة احترافية.",
+    "MinPrice": 500.0,
+    "MaxPrice": 3500.0,
+    "CategoryId": 7
+  },
+  {
+    "NameEn": "Interior Painting",
+    "NameAr": "دهان داخلي للمنازل",
+    "DescriptionEn": "Full-service interior wall, ceiling, and trim painting using high-quality, low-VOC eco-friendly paints.",
+    "DescriptionAr": "خدمة دهان كاملة للجدران والأسقف والديكورات باستخدام دهانات عالية الجودة وصديقة للبيئة منخفضة الانبعاثات.",
+    "MinPrice": 1200.0,
+    "MaxPrice": 8000.0,
+    "CategoryId": 7
+  },
+  {
+    "NameEn": "Exterior Painting",
+    "NameAr": "دهان خارجي للمباني",
+    "DescriptionEn": "Complete exterior house painting including surface power washing, scraping, priming, and weather-resistant coating.",
+    "DescriptionAr": "دهان شامل للواجهات الخارجية مع تنظيف الأسطح وإزالة الطلاء القديم وطبقة حماية مقاومة للعوامل الجوية.",
+    "MinPrice": 3000.0,
+    "MaxPrice": 15000.0,
+    "CategoryId": 7
+  },
+  {
+    "NameEn": "Fence Painting",
+    "NameAr": "دهان الأسوار",
+    "DescriptionEn": "Protective painting and staining for wooden, vinyl, or metal fences to prevent weather damage and enhance curb appeal.",
+    "DescriptionAr": "دهان وحماية الأسوار الخشبية أو المعدنية أو البلاستيكية لتحسين الشكل العام وحمايتها من التلف.",
+    "MinPrice": 400.0,
+    "MaxPrice": 2000.0,
+    "CategoryId": 7
+  },
+  {
+    "NameEn": "Duct and Vent Cleaning",
+    "NameAr": "تنظيف مجاري الهواء والتهوية",
+    "DescriptionEn": "Professional cleaning of air ducts and vents to improve indoor air quality and HVAC efficiency.",
+    "DescriptionAr": "تنظيف احترافي لقنوات الهواء والمخارج لتحسين جودة الهواء وكفاءة أنظمة التكييف.",
+    "MinPrice": 150.0,
+    "MaxPrice": 350.0,
+    "CategoryId": 8
+  },
+  {
+    "NameEn": "Heating System Installation or Replacement",
+    "NameAr": "تركيب أو استبدال أنظمة التدفئة",
+    "DescriptionEn": "Complete installation or replacement of residential heating systems, furnaces, or heat pumps.",
+    "DescriptionAr": "تركيب أو استبدال أنظمة التدفئة المنزلية مثل الأفران أو المضخات الحرارية.",
+    "MinPrice": 2500.0,
+    "MaxPrice": 6000.0,
+    "CategoryId": 8
+  },
+  {
+    "NameEn": "Heating System Repair or Maintenance",
+    "NameAr": "صيانة وإصلاح أنظمة التدفئة",
+    "DescriptionEn": "Routine maintenance, seasonal tune-ups, and emergency repairs for all types of heating systems.",
+    "DescriptionAr": "صيانة دورية وإصلاحات طارئة لأنظمة التدفئة المختلفة لضمان الأداء الجيد.",
+    "MinPrice": 80.0,
+    "MaxPrice": 300.0,
+    "CategoryId": 8
+  },
+  {
+    "NameEn": "Fireplace and Chimney Cleaning or Repair",
+    "NameAr": "تنظيف وإصلاح المدافئ والمداخن",
+    "DescriptionEn": "Inspection, soot removal, and repair services for fireplaces and chimneys to ensure safety and performance.",
+    "DescriptionAr": "فحص وتنظيف وإصلاح المدافئ والمداخن لإزالة السخام وضمان السلامة والأداء.",
+    "MinPrice": 120.0,
+    "MaxPrice": 450.0,
+    "CategoryId": 8
+  },
+  {
+    "NameEn": "General Carpentry",
+    "NameAr": "أعمال النجارة العامة",
+    "DescriptionEn": "Professional carpentry services including wood repair, custom shelving, framing, and trim installation.",
+    "DescriptionAr": "خدمات نجارة احترافية تشمل إصلاح الأخشاب والأرفف المخصصة والهياكل وتركيب الديكورات الخشبية.",
+    "MinPrice": 150.0,
+    "MaxPrice": 1200.0,
+    "CategoryId": 9
+  },
+  {
+    "NameEn": "Home Remodeling",
+    "NameAr": "تجديد وإعادة تصميم المنازل",
+    "DescriptionEn": "Complete home renovation and remodeling services for kitchens, bathrooms, and living spaces.",
+    "DescriptionAr": "خدمات تجديد شاملة للمنازل تشمل المطابخ والحمامات وغرف المعيشة.",
+    "MinPrice": 5000.0,
+    "MaxPrice": 45000.0,
+    "CategoryId": 9
+  },
+  {
+    "NameEn": "Demolition Services",
+    "NameAr": "أعمال الهدم",
+    "DescriptionEn": "Safe and efficient residential demolition, debris removal, and site clearing services.",
+    "DescriptionAr": "هدم آمن وسريع للمباني السكنية مع إزالة المخلفات وتنظيف الموقع.",
+    "MinPrice": 800.0,
+    "MaxPrice": 6000.0,
+    "CategoryId": 9
+  },
+  {
+    "NameEn": "Water Damage Cleanup and Restoration",
+    "NameAr": "تنظيف وإصلاح أضرار المياه",
+    "DescriptionEn": "Emergency water extraction, drying, dehumidification, and full restoration of water-damaged areas.",
+    "DescriptionAr": "خدمات طوارئ لسحب المياه والتجفيف وإعادة ترميم المناطق المتضررة من تسرب المياه.",
+    "MinPrice": 1200.0,
+    "MaxPrice": 8500.0,
+    "CategoryId": 9
+  },
+  {
+    "NameEn": "Swimming Pool Repair",
+    "NameAr": "إصلاح حمامات السباحة",
+    "DescriptionEn": "Professional repair services for swimming pools, including leak detection, pump fixing, and structural restoration.",
+    "DescriptionAr": "خدمات احترافية لإصلاح حمامات السباحة تشمل كشف التسربات، إصلاح المضخات، وترميم البنية.",
+    "MinPrice": 150,
+    "MaxPrice": 1200,
+    "CategoryId": 10
+  },
+  {
+    "NameEn": "Hot Tub and Spa Repair",
+    "NameAr": "إصلاح أحواض الاستحمام الساخنة والسبا",
+    "DescriptionEn": "Expert troubleshooting and repair for hot tubs and jacuzzis, covering heaters, jets, and control panels.",
+    "DescriptionAr": "إصلاح احترافي لأحواض الجاكوزي والسبا يشمل السخانات، النفاثات، ولوحات التحكم.",
+    "MinPrice": 100,
+    "MaxPrice": 800,
+    "CategoryId": 10
+  },
+  {
+    "NameEn": "Swimming Pool Cleaning, Maintenance, and Inspection",
+    "NameAr": "تنظيف وصيانة وفحص حمامات السباحة",
+    "DescriptionEn": "Comprehensive pool servicing including water testing, chemical balancing, vacuuming, and safety inspections.",
+    "DescriptionAr": "خدمات شاملة لحمامات السباحة تشمل فحص المياه، موازنة المواد الكيميائية، التنظيف، وفحوصات الأمان.",
+    "MinPrice": 80,
+    "MaxPrice": 300,
+    "CategoryId": 10
+  },
+  {
+    "NameEn": "Hot Tub and Spa Cleaning and Maintenance",
+    "NameAr": "تنظيف وصيانة أحواض السبا والجاكوزي",
+    "DescriptionEn": "Routine cleaning, draining, sanitizing, and filter replacement services tailored for hot tubs and spas.",
+    "DescriptionAr": "تنظيف وصيانة دورية لأحواض السبا تشمل التفريغ، التعقيم، واستبدال الفلاتر.",
+    "MinPrice": 60,
+    "MaxPrice": 200,
+    "CategoryId": 10
+  },
+  {
+    "NameEn": "Gutter Cleaning and Maintenance",
+    "NameAr": "تنظيف وصيانة المزاريب",
+    "DescriptionEn": "Professional cleaning of rain gutters and downspouts, removing leaves, debris, and checking for proper water flow and drainage blockages.",
+    "DescriptionAr": "تنظيف احترافي للمزاريب ومجاري تصريف المياه مع إزالة الأوراق والمخلفات وفحص تدفق المياه.",
+    "MinPrice": 150,
+    "MaxPrice": 350,
+    "CategoryId": 11
+  },
+  {
+    "NameEn": "Roof Repair or Maintenance",
+    "NameAr": "إصلاح وصيانة الأسطح (الأسقف)",
+    "DescriptionEn": "Fixing minor roof leaks, replacing broken or missing shingles, sealing flashing, and performing routine inspections to prolong roof life.",
+    "DescriptionAr": "إصلاح تسربات الأسقف، واستبدال القرميد التالف، وإجراء صيانة دورية لإطالة عمر السقف.",
+    "MinPrice": 250,
+    "MaxPrice": 800,
+    "CategoryId": 11
+  },
+  {
+    "NameEn": "Duct and Vent Installation or Removal",
+    "NameAr": "تركيب أو إزالة مجاري التهوية",
+    "DescriptionEn": "Installation, replacement, or removal of roof vents, exhaust fans, and attic ventilation systems to ensure optimal airflow and moisture control.",
+    "DescriptionAr": "تركيب أو استبدال أو إزالة فتحات التهوية ومراوح العادم وأنظمة التهوية لضمان تدفق الهواء بشكل مثالي.",
+    "MinPrice": 200,
+    "MaxPrice": 600,
+    "CategoryId": 11
+  },
+  {
+    "NameEn": "Roof Installation or Replacement",
+    "NameAr": "تركيب أو استبدال الأسقف",
+    "DescriptionEn": "Complete removal of the old roofing system and full installation of a new high-quality roof using modern shingles, tiles, or metal sheets.",
+    "DescriptionAr": "إزالة السقف القديم بالكامل وتركيب سقف جديد باستخدام القرميد أو البلاط أو المعادن الحديثة.",
+    "MinPrice": 3500,
+    "MaxPrice": 12000,
+    "CategoryId": 11
+  },
+  {
+    "NameEn": "Garage Door Repair",
+    "NameAr": "إصلاح أبواب الجراج",
+    "DescriptionEn": "Professional repair services for garage doors, including spring replacement, opener repair, and track realignment.",
+    "DescriptionAr": "إصلاح أبواب الجراج يشمل استبدال النوابض، إصلاح المحرك، وضبط المسارات.",
+    "MinPrice": 500,
+    "MaxPrice": 3500,
+    "CategoryId": 12
+  },
+  {
+    "NameEn": "Window Repair",
+    "NameAr": "إصلاح النوافذ",
+    "DescriptionEn": "Expert repair for broken glass, damaged frames, leaky seals, and stubborn window mechanisms.",
+    "DescriptionAr": "إصلاح النوافذ الزجاجية المكسورة، الإطارات التالفة، وتسربات الهواء.",
+    "MinPrice": 300,
+    "MaxPrice": 1500,
+    "CategoryId": 12
+  },
+  {
+    "NameEn": "Window Treatment Installation or Repair",
+    "NameAr": "تركيب أو إصلاح ستائر النوافذ",
+    "DescriptionEn": "Installation and repair of blinds, shades, shutters, and drapes to enhance privacy and light control.",
+    "DescriptionAr": "تركيب وإصلاح الستائر والستائر الدوارة والشاتر لتعزيز الخصوصية والتحكم في الإضاءة.",
+    "MinPrice": 200,
+    "MaxPrice": 1200,
+    "CategoryId": 12
+  },
+  {
+    "NameEn": "Door Installation",
+    "NameAr": "تركيب الأبواب",
+    "DescriptionEn": "Complete installation services for interior and exterior doors, including frames, hinges, and locks.",
+    "DescriptionAr": "تركيب الأبواب الداخلية والخارجية مع الإطارات والمفصلات والأقفال.",
+    "MinPrice": 800,
+    "MaxPrice": 5000,
+    "CategoryId": 12
+  },
+  {
+    "NameEn": "Concrete Repair and Maintenance",
+    "NameAr": "إصلاح وصيانة الخرسانة",
+    "DescriptionEn": "Professional repair of cracks, potholes, and surface damage in concrete driveways, sidewalks, and foundations to restore durability.",
+    "DescriptionAr": "إصلاح التشققات والحفر وأضرار الأسطح الخرسانية في الممرات والأرصفة والأساسات.",
+    "MinPrice": 150,
+    "MaxPrice": 800,
+    "CategoryId": 13
+  },
+  {
+    "NameEn": "Concrete Installation",
+    "NameAr": "تركيب الخرسانة",
+    "DescriptionEn": "Complete installation services for new concrete structures, including pouring driveways, patios, walkways, and slabs with professional finishing.",
+    "DescriptionAr": "تنفيذ أعمال الخرسانة الجديدة مثل الممرات والباحات والأرصفة مع التشطيب الاحترافي.",
+    "MinPrice": 1200,
+    "MaxPrice": 5000,
+    "CategoryId": 13
+  },
+  {
+    "NameEn": "Stucco Application",
+    "NameAr": "تطبيق اللياسة الخارجية (الستوكو)",
+    "DescriptionEn": "Expert application of traditional or synthetic stucco for exterior walls, providing a durable, weather-resistant, and attractive finish.",
+    "DescriptionAr": "تطبيق اللياسة الخارجية التقليدية أو الصناعية للأسطح الخارجية لتوفير حماية ومظهر جمالي.",
+    "MinPrice": 2500,
+    "MaxPrice": 7500,
+    "CategoryId": 13
+  },
+  {
+    "NameEn": "Masonry Construction Services",
+    "NameAr": "أعمال البناء بالطوب والحجر",
+    "DescriptionEn": "High-quality brick, block, and stone construction for walls, chimneys, outdoor fireplaces, and decorative landscape features.",
+    "DescriptionAr": "بناء الطوب والبلوك والحجر للجدران والمداخن والمدافئ الخارجية والتشطيبات الديكورية.",
+    "MinPrice": 800,
+    "MaxPrice": 4500,
+    "CategoryId": 13
+  },
+  {
+    "NameEn": "Rodent and Animal Removal",
+    "NameAr": "إزالة القوارض والحيوانات",
+    "DescriptionEn": "Professional removal of mice, rats, squirrels, and other unwanted wild animals from your property, including sealing entry points.",
+    "DescriptionAr": "إزالة القوارض والحيوانات غير المرغوب فيها مع سد مداخلها بشكل احترافي.",
+    "MinPrice": 150,
+    "MaxPrice": 450,
+    "CategoryId": 14
+  },
+  {
+    "NameEn": "Termite Control Services",
+    "NameAr": "مكافحة النمل الأبيض",
+    "DescriptionEn": "Comprehensive termite inspection, localized treatment, and full property barriers to eliminate colonies and protect wooden structures.",
+    "DescriptionAr": "فحص وعلاج شامل للنمل الأبيض مع حماية المباني الخشبية ومنع عودته.",
+    "MinPrice": 500,
+    "MaxPrice": 2500,
+    "CategoryId": 14
+  },
+  {
+    "NameEn": "Bed Bug Extermination",
+    "NameAr": "إبادة بق الفراش",
+    "DescriptionEn": "Advanced heat and chemical treatments to completely eradicate bed bugs from mattresses, furniture, and bedrooms with follow-up inspection.",
+    "DescriptionAr": "إبادة بق الفراش باستخدام الحرارة والمواد الكيميائية مع متابعة لضمان القضاء التام.",
+    "MinPrice": 300,
+    "MaxPrice": 1200,
+    "CategoryId": 14
+  },
+  {
+    "NameEn": "Pest Control Services",
+    "NameAr": "خدمات مكافحة الحشرات",
+    "DescriptionEn": "General pest control targeting common household insects like ants, spiders, roaches, and wasps. Available for one-time or seasonal maintenance.",
+    "DescriptionAr": "مكافحة عامة للحشرات المنزلية مثل النمل والعناكب والصراصير والدبابير.",
+    "MinPrice": 80,
+    "MaxPrice": 250,
+    "CategoryId": 14
+  }
+]

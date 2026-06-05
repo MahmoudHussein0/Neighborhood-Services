@@ -10,5 +10,11 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Queries
     {
         public int  TechnicianId { get; set; }
 
+        public GetTechAvailabilityForTechnicianQuery(int technicianId)
+        {
+            TechnicianId = technicianId;
+        }
+
+
     }
 }

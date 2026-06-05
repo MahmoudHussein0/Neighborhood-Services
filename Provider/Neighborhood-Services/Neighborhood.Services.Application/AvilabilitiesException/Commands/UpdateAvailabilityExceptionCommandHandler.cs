@@ -34,18 +34,18 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
             if (request.StartTime.HasValue || request.EndTime.HasValue)
             {
                 if (!request.StartTime.HasValue || !request.EndTime.HasValue)
-                    throw new Exception("Both StartTime and EndTime must be provided.");
+                    throw new ValidationException("Both StartTime and EndTime must be provided.");
+
+
 
                 if (request.EndTime <= request.StartTime)
-                    throw new Exception("End Time must be greater than Start Time");
-
+                    throw new ValidationException("End Time must be greater than Start Time.");
             }
 
 
             if (await _exceptionRepo.IsDateExists(exception.TechnicianId, request.Date, request.Id))
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                    {{ "Date", new[] { "An exception already exists for this date." }}});}
+                throw new ValidationException("An exception already exists for this date.");}
 
             exception.Date = request.Date;
             exception.StartTime = request.StartTime;

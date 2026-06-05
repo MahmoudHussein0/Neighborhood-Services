@@ -8,6 +8,6 @@ namespace Neighborhood.Services.Application.ProblemTypes.Interface
 {
     public  interface IProblemTypeRepository : IGenericRepository<ProblemType , int>
     {
-        Task<bool> IsExistsAsync(string name , int categoryId );
+        Task<bool> IsExistsAsync(string nameEn , string nameAr , int categoryId );
     }
 }

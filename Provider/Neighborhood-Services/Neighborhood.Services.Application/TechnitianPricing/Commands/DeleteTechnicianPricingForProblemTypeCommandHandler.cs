@@ -5,18 +5,18 @@ using Neighborhood.Services.Application.TechnitianPricing.Interface;
 
 namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 {
-    internal class RemoveTechnicianPricingForProblemTypeCommandHandler : IRequestHandler<RemoveTechnicianPricingForProblemTypeCommand , bool>
+    internal class DeleteTechnicianPricingForProblemTypeCommandHandler : IRequestHandler<DeleteTechnicianPricingForProblemTypeCommand , bool>
     {
         private readonly ITechnicianPricingRepository _pricingRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveTechnicianPricingForProblemTypeCommandHandler(ITechnicianPricingRepository pricingRepo, IUnitOfWork unitOfWork)
+        public DeleteTechnicianPricingForProblemTypeCommandHandler(ITechnicianPricingRepository pricingRepo, IUnitOfWork unitOfWork)
         {
             _pricingRepo = pricingRepo;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(RemoveTechnicianPricingForProblemTypeCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteTechnicianPricingForProblemTypeCommand request, CancellationToken cancellationToken)
         {
             var pricing = await _pricingRepo.GetByIdAsync(request.Id);
 

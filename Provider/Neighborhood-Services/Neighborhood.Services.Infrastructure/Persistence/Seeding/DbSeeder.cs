@@ -14,6 +14,7 @@ using Neighborhood.Services.Domain.TechniciansAvailability;
 using Neighborhood.Services.Domain.Wallets;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using NetTopologySuite.Geometries;
+using System.Text.Json;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
 {
@@ -35,6 +36,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
                 return;
 
             var problemTypes = await SeedReferenceDataAsync(context);
+
             var (customers, technicians) = await SeedAccountsAsync(context, userManager);
             await SeedBookingDomainAsync(context, customers, technicians, problemTypes);
 
@@ -44,24 +46,60 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
         // ---------- Categories + Problem types ----------
         private static async Task<List<ProblemType>> SeedReferenceDataAsync(ApplicationDbContext context)
         {
-            var plumbing = new Category { Name = "Plumbing", Icon = "🔧", CreatedAt = DateTime.UtcNow };
-            var electrical = new Category { Name = "Electrical", Icon = "💡", CreatedAt = DateTime.UtcNow };
-            var cleaning = new Category { Name = "Cleaning", Icon = "🧹", CreatedAt = DateTime.UtcNow };
-            context.Categories.AddRange(plumbing, electrical, cleaning);
-            await context.SaveChangesAsync();
+            //var plumbing = new Category { Name = "Plumbing", Icon = "🔧", CreatedAt = DateTime.UtcNow };
+            //var electrical = new Category { Name = "Electrical", Icon = "💡", CreatedAt = DateTime.UtcNow };
+            //var cleaning = new Category { Name = "Cleaning", Icon = "🧹", CreatedAt = DateTime.UtcNow };
+            //context.Categories.AddRange(plumbing, electrical, cleaning);
+            //await context.SaveChangesAsync();
 
-            var problemTypes = new List<ProblemType>
+            //var problemTypes = new List<ProblemType>
+            //{
+            //    new() { Name = "Leak Repair", Description = "Fix a leaking pipe or faucet", MinPrice = 100, MaxPrice = 300, CategoryId = plumbing.Id, CreatedAt = DateTime.UtcNow },
+            //    new() { Name = "Pipe Installation", Description = "Install new piping", MinPrice = 200, MaxPrice = 500, CategoryId = plumbing.Id, CreatedAt = DateTime.UtcNow },
+            //    new() { Name = "Wiring", Description = "Electrical wiring work", MinPrice = 150, MaxPrice = 400, CategoryId = electrical.Id, CreatedAt = DateTime.UtcNow },
+            //    new() { Name = "Deep Clean", Description = "Full apartment deep cleaning", MinPrice = 80, MaxPrice = 200, CategoryId = cleaning.Id, CreatedAt = DateTime.UtcNow }
+            //};
+            //context.ProblemTypes.AddRange(problemTypes);
+            //await context.SaveChangesAsync();
+
+            //return problemTypes;
+
+
+            if (!context.Categories.Any())
             {
-                new() { Name = "Leak Repair", Description = "Fix a leaking pipe or faucet", MinPrice = 100, MaxPrice = 300, CategoryId = plumbing.Id, CreatedAt = DateTime.UtcNow },
-                new() { Name = "Pipe Installation", Description = "Install new piping", MinPrice = 200, MaxPrice = 500, CategoryId = plumbing.Id, CreatedAt = DateTime.UtcNow },
-                new() { Name = "Wiring", Description = "Electrical wiring work", MinPrice = 150, MaxPrice = 400, CategoryId = electrical.Id, CreatedAt = DateTime.UtcNow },
-                new() { Name = "Deep Clean", Description = "Full apartment deep cleaning", MinPrice = 80, MaxPrice = 200, CategoryId = cleaning.Id, CreatedAt = DateTime.UtcNow }
-            };
-            context.ProblemTypes.AddRange(problemTypes);
-            await context.SaveChangesAsync();
+                var categoriesDate = await File.ReadAllTextAsync("../Neighborhood.Services.Infrastructure/Persistence/Seeding/Categories.json");
+                var categories = JsonSerializer.Deserialize<List<Category>>(categoriesDate);
+
+                if (categories.Count > 0)
+                {
+                    foreach (var category in categories)
+                        await context.AddAsync(category);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+
+            var ProblemTypeDate = await File.ReadAllTextAsync("../Neighborhood.Services.Infrastructure/Persistence/Seeding/ProblemTypes.json");
+            var problemTypes = JsonSerializer.Deserialize<List<ProblemType>>(ProblemTypeDate);
+            if (!context.ProblemTypes.Any())
+            {
+                if (problemTypes.Count > 0)
+                {
+                    foreach (var problemType in problemTypes)
+                        await context.AddAsync(problemType);
+                    await context.SaveChangesAsync();
+                }
+            }
 
             return problemTypes;
         }
+
+
+
+
+
+
+
 
         // ---------- Accounts ----------
         private static async Task<(List<Customer> customers, List<Technician> technicians)> SeedAccountsAsync(

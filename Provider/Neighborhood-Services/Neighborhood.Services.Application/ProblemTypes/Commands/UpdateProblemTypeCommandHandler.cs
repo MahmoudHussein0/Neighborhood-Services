@@ -31,19 +31,23 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
 
 
             if (request.MinPrice <= 0)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "MinPrice", new[] { "MinPrice must be greater than zero." }}});
+                throw new ValidationException("MinPrice must be greater than zero.");
 
             if (request.MaxPrice <= 0)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{"MaxPrice", new[] { "MaxPrice must be greater than zero." }}});
+                throw new ValidationException("MaxPrice must be greater than zero.");
 
             if (request.MinPrice >= request.MaxPrice)
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "PriceRange", new[] { "MinPrice must be less than MaxPrice." } } });
+                throw new ValidationException("MinPrice must be less than MaxPrice.");
 
 
-            problemType.Description = request.Description;
+            if(!string.IsNullOrWhiteSpace(request.DescriptionEn))
+                    problemType.DescriptionEn = request.DescriptionEn;
+
+
+
+            if (!string.IsNullOrWhiteSpace(request.DescriptionAr))
+                problemType.DescriptionAr = request.DescriptionAr;
+
             problemType.MinPrice = request.MinPrice;
             problemType.MaxPrice = request.MaxPrice;
 
