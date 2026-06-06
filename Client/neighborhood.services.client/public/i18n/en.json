@@ -1,0 +1,13 @@
+{
+    "navbar": {
+        "home": "Home",
+        "link": "Link",
+        "dropDown": "Dropdown",
+        "action": "Action",
+        "anotherAction": "Another action",
+        "somethingElseHere": "Something else here",
+        "disabled": "Disabled",
+        "search": "Search",
+        "lang": "Language"
+    }
+}

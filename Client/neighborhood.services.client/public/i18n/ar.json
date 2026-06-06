@@ -1,0 +1,13 @@
+{
+    "navbar": {
+        "home": "الرئيسية",
+        "link": "رابط",
+        "dropDown": "القائمة المنسدلة",
+        "action": "إجراء",
+        "anotherAction": "إجراء آخر",
+        "somethingElseHere": "شيء آخر هنا",
+        "disabled": "معطل",
+        "search": "بحث",
+        "lang": "اللغه"
+    }
+}

@@ -210,7 +210,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BookingId")
+                    b.Property<int?>("BookingId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ConfidenceScore")
@@ -239,7 +239,8 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookingId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[BookingId] IS NOT NULL");
 
                     b.ToTable("AiAnalyses");
                 });
@@ -632,6 +633,66 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatbotSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatbotSessionId");
+
+                    b.ToTable("ChatbotMessages");
+                });
+
+            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatbotSessions");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>
@@ -2113,8 +2174,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", "Booking")
                         .WithOne("AiAnalysis")
                         .HasForeignKey("Neighborhood.Services.Domain.AiAnalyses.AiAnalysis", "BookingId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Booking");
                 });
@@ -2224,6 +2284,17 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("ServiceRequest");
 
                     b.Navigation("Technician");
+                });
+
+            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotMessage", b =>
+                {
+                    b.HasOne("Neighborhood.Services.Domain.Chatbot.ChatbotSession", "ChatbotSession")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatbotSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatbotSession");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>
@@ -2729,6 +2800,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("ServiceRequests");
 
                     b.Navigation("TechnicianCategories");
+                });
+
+            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotSession", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>

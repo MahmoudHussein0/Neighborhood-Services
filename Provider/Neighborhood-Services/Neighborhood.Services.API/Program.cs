@@ -9,6 +9,7 @@ using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
+using Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge;
 using StackExchange.Redis;
 using Neighborhood.Services.Infrastructure.Services;
 
@@ -103,6 +104,10 @@ namespace Neighborhood.Services.API
             using (var scope = app.Services.CreateScope())
             {
                 await DbSeeder.SeedAsync(scope.ServiceProvider);
+
+                // Seed Qdrant knowledge base from JSON files
+                var knowledgeSeeder = scope.ServiceProvider.GetRequiredService<KnowledgeSeeder>();
+                await knowledgeSeeder.SeedAsync(app.Environment.ContentRootPath);
             }
 
 
