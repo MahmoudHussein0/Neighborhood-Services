@@ -27,7 +27,7 @@ namespace Neighborhood.Services.Application.Conversations.Queries
             {
                 Id = item.Id,
                 BookingId = item.BookingId,
-                LastMessage = item.lastMessage.content
+              LastMessage = item.Messages.Count>0?item.lastMessage.content:"no mssgs yet"
             };
         
         }

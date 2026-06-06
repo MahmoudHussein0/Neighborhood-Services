@@ -45,6 +45,11 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Users
             builder.HasIndex(u => u.RefferalCode)
                 .IsUnique()
                 .HasFilter("[RefferalCode] IS NOT NULL AND [RefferalCode] <> ''");
+
+        
+        
+        
         }
+
     }
 }

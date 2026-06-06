@@ -25,6 +25,7 @@ using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Application.Messages;
 using Neighborhood.Services.Application.Newsletter;
 using Neighborhood.Services.Application.Notifications;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Payments.Interfaces;
 using Neighborhood.Services.Application.ProblemTypes.Interface;
@@ -33,6 +34,7 @@ using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Reviews.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Shared.Email;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
@@ -86,10 +88,12 @@ using Neighborhood.Services.Infrastructure.Persistence.Transactions;
 using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
+using Neighborhood.Services.Infrastructure.Services.EmailService;
 using Neighborhood.Services.Infrastructure.Services.Invoices;
 using Neighborhood.Services.Infrastructure.Services.Payments;
 using Neighborhood.Services.Infrastructure.Services.AI;
 using Neighborhood.Services.Infrastructure.Shared;
+using Neighborhood.Services.Infrastructure.Services.NotificationService;
 using Qdrant.Client;
 
 
@@ -157,9 +161,13 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<INotificationsRepository, NotificationsRepoisitory>();
             services.AddScoped<INewsletterRepository, NewsletterRepository>();
             services.AddScoped<IFavoritesRepository, FavoritesRepository>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
+            services.Configure<EmailConfiguration>(configuration.GetSection("EmailSettings"));
             //End of Arwa's
 
 

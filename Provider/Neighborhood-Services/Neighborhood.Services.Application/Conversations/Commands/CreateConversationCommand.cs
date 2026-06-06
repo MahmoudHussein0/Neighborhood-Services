@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure.Core;
+using MediatR;
 using Microsoft.Identity.Client;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.DTOs;
@@ -38,7 +39,13 @@ namespace Neighborhood.Services.Application.Conversations.Commands
 
         public async Task<ConversationCreatedDto> Handle(CreateConversationCommandDTO request, CancellationToken cancellationToken)
         {
-            var selbook=_bookrepository.GetByIdAsync(request.BookingId);
+            //worst perfofrmance at high loads (blocking)
+        //    var selbook= _bookrepository.GetByIdAsync(request.BookingId);
+        //    if ( selbook.Result == null) { return null; }
+
+            //better (non blocking)
+
+            var selbook = await _bookrepository.GetByIdAsync(request.BookingId);
             if (selbook == null) { return null; }
             // var bb =_bookrepository.GetBookingWithDetailsAsync(request.BookingId);
 
@@ -46,7 +53,7 @@ namespace Neighborhood.Services.Application.Conversations.Commands
             {
                 BookingId = request.BookingId,
                 createdAt = DateTime.UtcNow,
-                Booking = await selbook,
+                Booking = selbook,
                 Messages = new List<Message>()
 
 
@@ -57,8 +64,8 @@ namespace Neighborhood.Services.Application.Conversations.Commands
             return new ConversationCreatedDto
             {
                 BookingId = request.BookingId,
-                ClientId = selbook.Result.CustomerId,
-                TechnicianId = selbook.Result.TechnicianId,
+                ClientId = selbook.CustomerId,
+                TechnicianId = selbook.TechnicianId,
                
                 CreatedAt=Conversation.createdAt
 

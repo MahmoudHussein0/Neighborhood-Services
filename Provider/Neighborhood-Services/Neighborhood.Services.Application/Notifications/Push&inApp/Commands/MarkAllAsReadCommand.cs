@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Notifications.Push_inApp.Commands
 {
-
+    //for one user
     public class MarkAllAsReadCommandDto: IRequest
     {
         public string userId { set; get; }

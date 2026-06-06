@@ -4,6 +4,8 @@ using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Conversations.DTOs;
 using Neighborhood.Services.Application.Conversations.Queries;
 using Neighborhood.Services.Domain.Bookings;
+using Microsoft.AspNetCore.Hosting;
+
 
 namespace Neighborhood.Services.API.Controllers.Conversation
 {
@@ -11,6 +13,8 @@ namespace Neighborhood.Services.API.Controllers.Conversation
     [ApiController]
     public class ConversationController : ControllerBase
     {
+        
+
         private IMediator _mediator;
         public ConversationController(IMediator mediator)
         {
@@ -22,6 +26,7 @@ namespace Neighborhood.Services.API.Controllers.Conversation
         public async Task<IActionResult> Create([FromBody] CreateConversationCommandDTO command)
         {
             var result = await _mediator.Send(command);
+            if (result == null) { return Ok("error"); }
 
             return Ok(result);
 
@@ -35,7 +40,7 @@ namespace Neighborhood.Services.API.Controllers.Conversation
             var result = await _mediator.Send(new GetAllConvQDto());
             if (result.Count == 0)
             {
-                return NotFound("No Conversations yet");
+                return Ok("No Conversations yet");
 
             }
             return Ok(result);
@@ -46,7 +51,7 @@ namespace Neighborhood.Services.API.Controllers.Conversation
         public async Task<ActionResult<ConversationSelectedDto>> GetConvById(int id)
         {
            ConversationSelectedDto? result= await _mediator.Send(new GetByIdConvQDto(){id=id});
-            if (result==null) { return NotFound($"No Conversations with id {id}"); }
+            if (result==null) { return Ok($"No Conversations with id {id}"); }
             return result;
         }
 
