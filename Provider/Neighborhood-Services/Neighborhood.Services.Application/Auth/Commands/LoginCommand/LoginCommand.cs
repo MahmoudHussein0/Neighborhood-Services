@@ -1,7 +1,7 @@
 using MediatR;
-using Neighborhood.Services.Application.Users.DTOs;
+using Neighborhood.Services.Application.Auth.DTOs;
 
-namespace Neighborhood.Services.Application.Users.Commands.LoginCommand
+namespace Neighborhood.Services.Application.Auth.Commands
 {
     public class LoginCommand : IRequest<AuthResponseDTO>
     {
