@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Neighborhood.Services.Application.AI.Interfaces;
+using Neighborhood.Services.Application.Bookings.Services;
 using Neighborhood.Services.Application.Chatbot.DTOs;
 using Neighborhood.Services.Application.Chatbot.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
@@ -19,17 +21,29 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
         private readonly IAiClient _aiClient;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPriceEstimationService _priceEstimationService;
+        private readonly ILogger<SendChatMessageCommandHandler> _logger;
+
+        // Minimum cosine similarity for the problem-type classifier to be trusted.
+        // Below this, the user's message isn't clearly about any specific service —
+        // we skip the price lookup and let the chatbot fall back to general RAG answer.
+        private const float ClassifierConfidenceThreshold = 0.5f;
+
         public SendChatMessageCommandHandler(IChatbotRepository chatbotRepository,
                                                 IVectorMemory vectorMemory,
                                                 IAiClient aiClient,
                                                 IUnitOfWork unitOfWork,
-                                                ICurrentUserService currentUserService)
+                                                ICurrentUserService currentUserService,
+                                                IPriceEstimationService priceEstimationService,
+                                                ILogger<SendChatMessageCommandHandler> logger)
         {
             _chatbotRepository= chatbotRepository;
             _memory= vectorMemory;
             _aiClient= aiClient;
             _unitOfWork= unitOfWork;
             _currentUserService= currentUserService;
+            _priceEstimationService = priceEstimationService;
+            _logger = logger;
         }
 
         public async Task<ChatReplyDto> Handle(SendChatMessageCommand request, CancellationToken cancellationToken)
@@ -60,22 +74,75 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
                 await _chatbotRepository.AddAsync(session);
             }
             // Guest (userId == null, no SessionId) → session stays null, nothing persisted
-            // SYSTEM PROMPT 
-            // 3. Pull relevant knowledge from Qdrant for the user's message
-            // 3. Pull relevant knowledge from Qdrant for the user's message
+
+            // 3. RAG: pull general platform knowledge for the user's message.
             var knowledge = await _memory.SearchAsync("platform-knowledge", request.Message, topK: 3);
             var context = string.Join("\n", knowledge);
 
-            // 4. Build the system prompt with the retrieved context
+            // 4. Classify the message against the problem-types collection.
+            //    If the top hit is confident enough, ask Alaa's price service for a
+            //    grounded estimate (uses HistoricalPrices + region) and inject it
+            //    into the prompt as authoritative pricing context.
+            //    If low confidence or anything fails, we silently skip — the chatbot
+            //    falls back to whatever pricing info RAG retrieved.
+            string? priceContext = null;
+            try
+            {
+                var hits = await _memory.SearchDetailedAsync("problem-types", request.Message, topK: 1);
+                var top = hits.FirstOrDefault();
+
+                if (top is null)
+                {
+                    _logger.LogInformation("Chatbot classifier: no hits for '{Message}'", request.Message);
+                }
+                else
+                {
+                    var hasId = top.Fields.TryGetValue("problemTypeId", out var idStr);
+                    _logger.LogInformation(
+                        "Chatbot classifier: top score={Score:F3} (threshold={Threshold}) hasId={HasId} idStr={IdStr}",
+                        top.Score, ClassifierConfidenceThreshold, hasId, idStr);
+
+                    if (top.Score >= ClassifierConfidenceThreshold
+                        && hasId
+                        && int.TryParse(idStr, out var problemTypeId))
+                    {
+                        var estimate = await _priceEstimationService.EstimateAsync(problemTypeId, request.Region);
+                        var regionPart = string.IsNullOrWhiteSpace(request.Region)
+                            ? "(general average)"
+                            : $"(based on {request.Region})";
+                        priceContext = $"Estimated price for this service: ~{estimate:0.##} EGP {regionPart}.";
+                        _logger.LogInformation("Chatbot classifier: injected priceContext='{PriceContext}'", priceContext);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Price lookup is a nice-to-have — never fail the chat over it.
+                _logger.LogWarning(ex, "Chatbot classifier/price lookup failed; falling back to RAG only.");
+            }
+
+            // 5. Build the system prompt. RAG context is unchanged. If we have a grounded
+            //    estimate, we hoist it to the TOP as a strict pricing directive so the model
+            //    doesn't default to the wider range that's also present inside Context.
+            var pricingDirective = priceContext is null ? "" : $"""
+
+                === AUTHORITATIVE PRICING (use this exact number when the user asks about price) ===
+                {priceContext}
+                When the user asks about price, you MUST use the number above and mention the region if given.
+                Do NOT quote the wider min-max range from the Context section instead. Phrase it as approximate
+                (e.g. "around X EGP, depending on your specifics"), never as a fixed quote.
+                ===============================================================================
+                """;
+
             var systemPrompt = $"""
                   You are the booking assistant for "Neighborhood Services", a home services marketplace in Egypt.
                   Your job is to help customers understand the services, prices, and HOW to book.
-
+                  {pricingDirective}
                   Guidelines:
                   - Answer using the context below when relevant. If it doesn't contain the answer, say you're not sure and suggest contacting support.
                   - When a user wants to book, GUIDE them step by step (choose a service, pick a technician, choose a time, confirm) and tell them to use the booking page to complete it. Do NOT claim you booked anything yourself.
                   - If a user who is not logged in wants to book or do account actions, tell them they need to log in first.
-                  - When asked about prices, give the range/estimate from the context.
+                  - When asked about prices and no AUTHORITATIVE PRICING block is present above, use the price range from the context. Phrase estimates as approximate.
                   - If the user writes in Arabic, reply in Arabic. If in English, reply in English. Keep replies concise and friendly.
 
                   Context:

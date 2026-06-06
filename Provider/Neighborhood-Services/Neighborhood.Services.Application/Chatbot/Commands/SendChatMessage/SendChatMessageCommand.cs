@@ -10,5 +10,10 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
 
         // The user's message
         public string Message { get; set; } = string.Empty;
+
+        // Optional: user's region (city), e.g. "Alexandria" / "Cairo".
+        // Sent by the frontend from the logged-in user's saved address. Null for guests.
+        // Used by the price estimation service to give a localized estimate.
+        public string? Region { get; set; }
     }
 }
