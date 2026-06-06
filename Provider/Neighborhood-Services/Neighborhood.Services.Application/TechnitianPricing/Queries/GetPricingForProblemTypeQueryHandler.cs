@@ -18,7 +18,7 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Queries
         {
 
 
-            var lang = request.Lang.ToLower() ?? "en";
+            var lang = request.Lang.ToLower();
             var pricing = await _technicianPricingRepo.GetByConditionAsync(TP => (!TP.IsDeleted)  &&  TP.TechnicianId == request.TechnicianId, "ProblemType");
 
             if (pricing == null || !pricing.Any())

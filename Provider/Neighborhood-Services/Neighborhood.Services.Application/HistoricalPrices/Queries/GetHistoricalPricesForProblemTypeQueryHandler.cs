@@ -19,7 +19,7 @@ namespace Neighborhood.Services.Application.HistoricalPrices.Queries
         {
 
 
-            var lang = request.Lang ?? "en";
+            var lang = request.Lang.ToLower();
             return  (await _historicalRepository.GetByConditionAsync(HP => HP.ProblemTypeId == request.ProblemTypeId, "ProblemType"))
                 .OrderByDescending(HP => HP.CreatedAt)
                 .Select(HP => new HistoricalPricingDto

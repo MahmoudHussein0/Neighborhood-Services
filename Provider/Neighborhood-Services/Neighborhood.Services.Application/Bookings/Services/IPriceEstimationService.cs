@@ -6,7 +6,7 @@ namespace Neighborhood.Services.Application.Bookings.Services
 {
     public interface IPriceEstimationService 
     {
-        Task<decimal> EstimateAsync(int problemTypeId);
+        Task<decimal> EstimateAsync(int problemTypeId , string region);
 
     }
 }

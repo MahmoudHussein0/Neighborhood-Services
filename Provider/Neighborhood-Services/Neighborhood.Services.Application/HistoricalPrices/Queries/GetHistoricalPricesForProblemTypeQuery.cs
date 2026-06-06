@@ -9,12 +9,15 @@ namespace Neighborhood.Services.Application.HistoricalPrices.Queries
     public  class GetHistoricalPricesForProblemTypeQuery : IRequest<IReadOnlyList<HistoricalPricingDto>>
     {
 
+
         public string Lang { get; set; }
         public int ProblemTypeId { get; set; }
 
-        public GetHistoricalPricesForProblemTypeQuery(int problemTypeId)
+        public GetHistoricalPricesForProblemTypeQuery(string lang, int problemTypeId)
         {
+            Lang = lang;
             ProblemTypeId = problemTypeId;
         }
+
     }
 }
