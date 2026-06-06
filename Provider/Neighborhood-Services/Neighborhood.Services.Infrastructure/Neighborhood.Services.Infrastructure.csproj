@@ -34,6 +34,7 @@
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="StackExchange.Redis" Version="3.0.47-preview" />
+    <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 
   </ItemGroup>

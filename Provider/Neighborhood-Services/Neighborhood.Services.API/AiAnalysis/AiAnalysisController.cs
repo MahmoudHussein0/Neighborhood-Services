@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.AiAnalysises.Commands.AnalyzeBooking;
 
+using Neighborhood.Services.Application.AiAnalysises.Queries.GetAnalysisByBooking;
+
+
 namespace Neighborhood.Services.API.AiAnalysis
 {
     [Route("api/[controller]")]
@@ -20,5 +23,16 @@ namespace Neighborhood.Services.API.AiAnalysis
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
+        // Retrieve a previously saved analysis for a booking
+        [HttpGet("{bookingId:int}")]
+        public async Task<IActionResult> GetByBooking(int bookingId)
+        {
+            var result = await _mediator.Send(new GetAnalysisByBookingQuery { BookingId = bookingId });
+            if (result is null)
+                return NotFound($"No analysis found for booking {bookingId}.");
+            return Ok(result);
+        }
+
     }
 }

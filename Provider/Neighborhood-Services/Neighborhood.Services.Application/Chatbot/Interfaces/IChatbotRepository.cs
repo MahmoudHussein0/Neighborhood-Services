@@ -9,5 +9,8 @@ namespace Neighborhood.Services.Application.Chatbot.Interfaces
     public interface IChatbotRepository : IGenericRepository<ChatbotSession,int>
     {
         Task<ChatbotSession?> GetSessionWithMessagesAsync(int sessionId);
+
+        // All sessions for a user, newest first (no messages — just for listing)
+        Task<List<ChatbotSession>> GetUserSessionsAsync(string userId);
     }
 }

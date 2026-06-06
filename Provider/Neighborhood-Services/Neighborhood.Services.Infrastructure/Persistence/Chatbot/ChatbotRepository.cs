@@ -22,5 +22,13 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Chatbot
                 .Include(s => s.Messages.OrderBy(m => m.CreatedAt))
                 .FirstOrDefaultAsync(s => s.Id == sessionId && !s.IsDeleted);
         }
+
+        public async Task<List<ChatbotSession>> GetUserSessionsAsync(string userId)
+        {
+            return await _context.ChatbotSessions
+                .Where(s => s.UserId == userId && !s.IsDeleted)
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+        }
     }
 }
