@@ -10,5 +10,6 @@ namespace Neighborhood.Services.Application.Payments.Gateways
         public PaymentProvider Provider { get; set; }
         public int? PaymentMethodId { get; set; }
         public int? WalletId { get; set; }
+        public string? MerchantOrderId { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neighborhood.Services.Domain.Invoices;
 namespace Neighborhood.Services.Infrastructure.Persistence.Invoices
@@ -25,6 +25,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Invoices
             builder.HasOne(x => x.Transaction)
                 .WithOne()
                 .HasForeignKey<Invoice>(x => x.TransactionId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.Customer)
                 .WithMany(c=>c.Invoices)

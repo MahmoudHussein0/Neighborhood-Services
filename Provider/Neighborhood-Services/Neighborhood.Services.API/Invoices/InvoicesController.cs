@@ -1,13 +1,16 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.Invoices.Commands.VoidInvoice;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByBookingId;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByCustomerId;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoicesByTechnicianId;
 using Neighborhood.Services.Application.Invoices.Services;
+using Neighborhood.Services.Application.Invoices.Commands.CreateInvoice;
 
 namespace Neighborhood.Services.API.Invoices
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class InvoicesController : ControllerBase
@@ -42,10 +45,19 @@ namespace Neighborhood.Services.API.Invoices
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{invoiceId:int}/void")]
         public async Task<IActionResult> VoidInvoice(int invoiceId)
         {
             var result = await _mediator.Send(new VoidInvoiceCommand { InvoiceId = invoiceId });
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateInvoiceCommand command)
+        {
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
 

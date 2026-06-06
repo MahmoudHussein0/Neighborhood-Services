@@ -1,12 +1,12 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Transactions.DTOs;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 namespace Neighborhood.Services.Application.Transactions.Queries.GetTransactionsByWalletId
 {
-    public class GetTrancsactionsByWalletIdQueryHandler : IRequestHandler<GetTransactionsByWalletIdQuery, IEnumerable<TransactionResponseDto>>
+    public class GetTransactionsByWalletIdQueryHandler : IRequestHandler<GetTransactionsByWalletIdQuery, IEnumerable<TransactionResponseDto>>
     {
         private readonly ITransactionRepository _transactionRepository;
-        public GetTrancsactionsByWalletIdQueryHandler(ITransactionRepository transactionRepository)
+        public GetTransactionsByWalletIdQueryHandler(ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
         }

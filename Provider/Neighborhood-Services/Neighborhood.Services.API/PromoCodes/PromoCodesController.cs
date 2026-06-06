@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.PromoCodes.Commands.ApplyPromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.CreatePromoCode;
@@ -9,6 +10,7 @@ using Neighborhood.Services.Application.Shared;
 
 namespace Neighborhood.Services.API.PromoCodes
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PromoCodesController : ControllerBase
@@ -36,6 +38,7 @@ namespace Neighborhood.Services.API.PromoCodes
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePromoCodeCommand command)
         {
@@ -55,6 +58,7 @@ namespace Neighborhood.Services.API.PromoCodes
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{promoCodeId:int}")]
         public async Task<IActionResult> Delete(int promoCodeId)
         {

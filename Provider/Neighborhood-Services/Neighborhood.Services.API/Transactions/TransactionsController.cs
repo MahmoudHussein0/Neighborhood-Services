@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Transactions.Commands.CreateTransaction;
@@ -9,6 +10,7 @@ using Neighborhood.Services.Domain.Transactions;
 
 namespace Neighborhood.Services.API.Transactions
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionsController : ControllerBase
@@ -41,6 +43,7 @@ namespace Neighborhood.Services.API.Transactions
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("type/{type}")]
         public async Task<IActionResult> GetByType(TransactionType type)
         {
@@ -48,6 +51,7 @@ namespace Neighborhood.Services.API.Transactions
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTransactionCommand command)
         {
