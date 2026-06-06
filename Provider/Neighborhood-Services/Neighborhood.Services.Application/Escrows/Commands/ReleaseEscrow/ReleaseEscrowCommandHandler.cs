@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using Neighborhood.Services.Application.Escrows.DTOs;
 using Neighborhood.Services.Application.Escrows.Interfaces;
@@ -7,8 +7,10 @@ using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Transactions.Commands.CreateTransaction;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
+using Neighborhood.Services.Application.Invoices.Interfaces;
 using Neighborhood.Services.Domain.Escrows;
 using Neighborhood.Services.Domain.Transactions;
+using Neighborhood.Services.Domain.Invoices;
 namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
 {
     public class ReleaseEscrowCommandHandler : IRequestHandler<ReleaseEscrowCommand, EscrowResponseDto>
@@ -16,12 +18,19 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
         private readonly IEscrowRepository _escrowRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IWalletRepository _walletRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public ReleaseEscrowCommandHandler(IEscrowRepository escrowRepository, ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWork unitOfWork)
+        public ReleaseEscrowCommandHandler(
+            IEscrowRepository escrowRepository, 
+            ITransactionRepository transactionRepository, 
+            IWalletRepository walletRepository, 
+            IInvoiceRepository invoiceRepository,
+            IUnitOfWork unitOfWork)
         {
             _escrowRepository = escrowRepository;
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
+            _invoiceRepository = invoiceRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<EscrowResponseDto> Handle(ReleaseEscrowCommand request, CancellationToken cancellationToken)
@@ -46,7 +55,8 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
             {
                 await _walletRepository.CreditAsync(technicianWallet.Id, escrow.Amount);
                 await _escrowRepository.ReleaseAsync(request.EscrowId);
-                await _transactionRepository.AddAsync(new Transaction
+                
+                var transaction = new Transaction
                 {
                     FromWalletId = escrow.WalletId,
                     ToWalletId = technicianWallet.Id,
@@ -57,7 +67,26 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
                     Type = TransactionType.Transfer,
                     Status = TransactionStatus.Completed,
                     CreatedAt = releasedAt
-                });
+                };
+                
+                await _transactionRepository.AddAsync(transaction);
+
+                var invoice = new Invoice
+                {
+                    BookingId = escrow.BookingId,
+                    CustomerId = escrow.Booking.CustomerId,
+                    TechnicianId = escrow.Booking.TechnicianId,
+                    Amount = escrow.Amount,
+                    Tax = 0,
+                    TotalAmount = escrow.Amount,
+                    Transaction = transaction,
+                    Status = InvoiceStatus.Paid,
+                    IssuedAt = releasedAt,
+                    PaidAt = releasedAt
+                };
+                
+                await _invoiceRepository.AddAsync(invoice);
+
             }, cancellationToken);
 
             return new EscrowResponseDto

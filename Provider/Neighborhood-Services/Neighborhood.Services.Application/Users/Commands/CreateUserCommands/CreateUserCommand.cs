@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
 {
-    internal class CreateUserCommand : IRequest<String>
+    public class CreateUserCommand : IRequest<String>
     {
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

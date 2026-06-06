@@ -1,11 +1,11 @@
-﻿using Neighborhood.Services.Domain.Invoices;
+using Neighborhood.Services.Domain.Invoices;
 namespace Neighborhood.Services.Application.Invoices.DTOs
 {
     public class InvoiceResponseDto
     {
         public int Id { get; set; }
         public int BookingId { get; set; }
-        public int TransactionId { get; set; }
+        public int? TransactionId { get; set; }
         public int CustomerId { get; set; }
         public int TechnicianId { get; set; }
         public decimal Amount { get; set; }

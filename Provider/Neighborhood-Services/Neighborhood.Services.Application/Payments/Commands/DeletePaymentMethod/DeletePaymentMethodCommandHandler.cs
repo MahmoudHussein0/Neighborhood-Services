@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Payments.Interfaces;
 using Neighborhood.Services.Application.Shared;
 namespace Neighborhood.Services.Application.Payments.Commands.DeletePaymentMethod
@@ -18,6 +18,10 @@ namespace Neighborhood.Services.Application.Payments.Commands.DeletePaymentMetho
         {
             var paymentMethod = await _paymentRepository.GetByIdAsync(request.PaymentMethodId)
                 ?? throw new KeyNotFoundException($"Payment method with ID {request.PaymentMethodId} not found.");
+
+            //only the owner can delete their own payment method
+            if (paymentMethod.UserId != request.UserId)
+                throw new UnauthorizedAccessException("You are not allowed to delete this payment method.");
 
             await _paymentRepository.DeleteAsync(request.PaymentMethodId);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

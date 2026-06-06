@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Escrows.DTOs;
 using Neighborhood.Services.Application.Escrows.Interfaces;
 using Neighborhood.Services.Application.Shared;
@@ -54,7 +54,7 @@ namespace Neighborhood.Services.Application.Escrows.Commands.RefundEscrow
 
                 await _transactionRepository.AddAsync(new Transaction
                 {
-                    FromWalletId = escrow.WalletId,
+                    FromWalletId = null,             // Money comes from the escrow hold, not a wallet
                     ToWalletId = customerWallet.Id,
                     PaymentMethodId = null,
                     Amount = escrow.Amount,

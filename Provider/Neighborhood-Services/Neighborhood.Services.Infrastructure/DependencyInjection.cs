@@ -45,6 +45,8 @@ using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
+using Neighborhood.Services.Application.Invoices.Services;
+using Neighborhood.Services.Application.Payments.Gateways;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Infrastructure.Cache;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
@@ -87,6 +89,8 @@ using Neighborhood.Services.Infrastructure.Persistence.Users;
 using Neighborhood.Services.Infrastructure.Persistence.Wallets;
 using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Services.EmailService;
+using Neighborhood.Services.Infrastructure.Services.Invoices;
+using Neighborhood.Services.Infrastructure.Services.Payments;
 using Neighborhood.Services.Infrastructure.Services.AI;
 using Neighborhood.Services.Infrastructure.Shared;
 using Neighborhood.Services.Infrastructure.Services.NotificationService;
@@ -171,8 +175,14 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
 
 
+            services.AddHttpClient();
+
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IInvoicePdfService, InvoicePdfService>();
+            services.AddHttpClient<IPaymentGatewayService, PaymentGatewayService>();
+            services.Configure<PaymentGatewayOptions>(configuration.GetSection("PaymentGateway"));
+            services.AddScoped<IGeocodingService, GeocodingService>();
 
 
             services.AddScoped<ITechnicianCategoryRepository, TechnicianCategoryRepository>();
@@ -187,25 +197,25 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<KnowledgeSeeder>();
             //Kernl
             services.AddSingleton(sp => {
-                var apiKey = configuration["OpenAI:ApiKey"];
+                var apiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";
                 return Kernel.CreateBuilder()
-                    .AddOpenAIChatCompletion("gpt-4o", apiKey!)
+                    .AddOpenAIChatCompletion("gpt-4o", apiKey)
                     .Build();
             });
             services.AddScoped<IAiClient, SemanticKernelClient>();
             // AI 
             // --- Qdrant / RAG ---
             // 1- Embedding generator (text -> vector). Uses the same OpenAI key.
-            var openAiKey = configuration["OpenAI:ApiKey"];
+            var openAiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";
                 #pragma warning disable SKEXP0010
-                 services.AddOpenAIEmbeddingGenerator("text-embedding-3-small", openAiKey!);
+                 services.AddOpenAIEmbeddingGenerator("text-embedding-3-small", openAiKey);
                 #pragma warning restore SKEXP0010
 
             // 2- Qdrant client (talks to your cloud cluster over gRPC)
-            var qdrantEndpoint = configuration["Qdrant:Endpoint"];
-            var qdrantApiKey = configuration["Qdrant:ApiKey"];
+            var qdrantEndpoint = configuration["Qdrant:Endpoint"] ?? "https://dummy.qdrant.io";
+            var qdrantApiKey = configuration["Qdrant:ApiKey"] ?? "dummy-key";
             services.AddSingleton(sp => new QdrantClient(
-                host: new Uri(qdrantEndpoint!).Host,
+                host: new Uri(qdrantEndpoint).Host,
                 https: true,
                 apiKey: qdrantApiKey));
 

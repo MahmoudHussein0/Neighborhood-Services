@@ -3,13 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage;
+
 using Neighborhood.Services.Application.Chatbot.Queries.GetMySessions;
 using Neighborhood.Services.Application.Chatbot.Queries.GetSessionMessages;
+
 
 namespace Neighborhood.Services.API.Chatbot
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [AllowAnonymous]
+
     public class ChatbotController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -18,9 +23,11 @@ namespace Neighborhood.Services.API.Chatbot
             _mediator = mediator;
         }
 
+
         // Send a message — works for guests and logged-in users
         [HttpPost]
         [AllowAnonymous]
+
         public async Task<IActionResult> SendMessage([FromBody] SendChatMessageCommand command)
         {
             var result = await _mediator.Send(command);

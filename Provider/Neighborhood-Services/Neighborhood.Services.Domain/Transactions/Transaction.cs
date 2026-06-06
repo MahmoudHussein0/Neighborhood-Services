@@ -1,7 +1,6 @@
-﻿using Neighborhood.Services.Domain.Payments;
+using Neighborhood.Services.Domain.Payments;
 using Neighborhood.Services.Domain.Shared;
 using Neighborhood.Services.Domain.Wallets;
-using Neighborhood.Services.Domain.Payments;
 namespace Neighborhood.Services.Domain.Transactions
 {
     public class Transaction : BaseEntity<int>

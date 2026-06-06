@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.AiAnalysises.Commands.AnalyzeBooking;
+
 using Neighborhood.Services.Application.AiAnalysises.Queries.GetAnalysisByBooking;
+
 
 namespace Neighborhood.Services.API.AiAnalysis
 {
@@ -31,5 +33,6 @@ namespace Neighborhood.Services.API.AiAnalysis
                 return NotFound($"No analysis found for booking {bookingId}.");
             return Ok(result);
         }
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using NetTopologySuite.Geometries;
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace Neighborhood.Services.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260604195655_changingprop")]
+    partial class changingprop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -620,12 +623,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("NameAr")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("NameEn")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -633,66 +631,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChatbotSessionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatbotSessionId");
-
-                    b.ToTable("ChatbotMessages");
-                });
-
-            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotSession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatbotSessions");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>
@@ -1235,11 +1173,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("DescriptionAr")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DescriptionEn")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1254,15 +1188,10 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Property<decimal>("MinPrice")
                         .HasColumnType("DECIMAL(18,2)");
 
-                    b.Property<string>("NameAr")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("NameEn")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -2286,17 +2215,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("Technician");
                 });
 
-            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotMessage", b =>
-                {
-                    b.HasOne("Neighborhood.Services.Domain.Chatbot.ChatbotSession", "ChatbotSession")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatbotSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChatbotSession");
-                });
-
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>
                 {
                     b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", "Booking")
@@ -2800,11 +2718,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("ServiceRequests");
 
                     b.Navigation("TechnicianCategories");
-                });
-
-            modelBuilder.Entity("Neighborhood.Services.Domain.Chatbot.ChatbotSession", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.Conversation.Conversation", b =>
