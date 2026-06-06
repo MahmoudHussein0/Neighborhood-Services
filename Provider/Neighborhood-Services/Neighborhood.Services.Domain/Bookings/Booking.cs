@@ -27,6 +27,8 @@ namespace Neighborhood.Services.Domain.Bookings
         public string Description { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public DateTime ScheduledAt { get; set; }
+        // null until the technician accepts and provides the estimated duration
+        public int? DurationMinutes { get; set; }
         public decimal EstimatedPrice { get; set; }
         public decimal FinalPrice { get; set; }
         public BookingStatus Status { get; set; }

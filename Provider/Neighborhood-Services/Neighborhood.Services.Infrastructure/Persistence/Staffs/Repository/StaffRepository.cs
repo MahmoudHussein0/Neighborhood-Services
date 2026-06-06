@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -7,7 +6,7 @@ using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
 {
-    public class StaffRepository :GenericRepository<Staff, int>, IStaffRepository
+    public class StaffRepository : GenericRepository<Staff, int>, IStaffRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -25,7 +24,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
                 .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
-        public async Task<Staff?> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        public async Task<Staff?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _context.Staffs
                 .Include(s => s.Permissions)
@@ -58,7 +57,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _context.Staffs
                 .AnyAsync(s => s.UserId == userId, cancellationToken);
@@ -72,6 +71,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
                          (p.Permission == permission || p.Permission == PermissionType.FullAccess),
                     cancellationToken);
         }
+
 
         // ── Commands ───────────────────────────────────────────────────────────
 
@@ -92,5 +92,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
             _context.Staffs.Remove(staff);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        
     }
 }

@@ -24,5 +24,34 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Wallets
             wallet.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(wallet);
         }
+
+        public async Task CreditAsync(int walletId, decimal amount)
+        {
+            if (amount <= 0)
+                throw new InvalidOperationException("Credit amount must be greater than zero.");
+
+            var wallet = await GetByIdAsync(walletId)
+                ?? throw new KeyNotFoundException($"Wallet with ID {walletId} not found.");
+
+            wallet.Balance += amount;
+            wallet.UpdatedAt = DateTime.UtcNow;
+            await UpdateAsync(wallet);
+        }
+
+        public async Task DebitAsync(int walletId, decimal amount)
+        {
+            if (amount <= 0)
+                throw new InvalidOperationException("Debit amount must be greater than zero.");
+
+            var wallet = await GetByIdAsync(walletId)
+                ?? throw new KeyNotFoundException($"Wallet with ID {walletId} not found.");
+
+            if (wallet.Balance < amount)
+                throw new InvalidOperationException("Insufficient wallet balance.");
+
+            wallet.Balance -= amount;
+            wallet.UpdatedAt = DateTime.UtcNow;
+            await UpdateAsync(wallet);
+        }
     }
 }

@@ -26,7 +26,7 @@ public class Dispute :BaseEntity<int>
 
 
     // Empty Constructor For EF
-    private Dispute()
+    public Dispute()
     {
     }
 

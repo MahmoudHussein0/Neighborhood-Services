@@ -1,14 +1,10 @@
 ﻿using Neighborhood.Services.Domain.Shared;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Neighborhood.Services.Domain.Reviews
 {
-    public class Review:BaseEntity<int>
+    public class Review : BaseEntity<int>
     {
-        
+
         public int BookingId { get; set; }
         public int ReviewerId { get; set; }
         public int RevieweeId { get; set; }
@@ -18,10 +14,10 @@ namespace Neighborhood.Services.Domain.Reviews
         public DateTime CreatedAt { get; set; }
 
         // Navigation Property
-        public ReviewAnalysis Analysis { get;  set; }
+        public ReviewAnalysis Analysis { get; set; }
 
         // Empty Constructor For EF Core
-        private Review() { }
+        public Review() { }
 
         // Main Constructor — pure data, no defaults
         public Review(

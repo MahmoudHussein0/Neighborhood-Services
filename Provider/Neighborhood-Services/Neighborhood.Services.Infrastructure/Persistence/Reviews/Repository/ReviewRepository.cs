@@ -32,6 +32,12 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
                 .Include(r => r.Analysis)
                 .FirstOrDefaultAsync(r => r.BookingId == bookingId, cancellationToken);
         }
+        public async Task<IReadOnlyList<Review>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Reviews
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
 
         public async Task<IReadOnlyList<Review>> GetByReviewerIdAsync(int reviewerId, CancellationToken cancellationToken = default)
         {
@@ -59,6 +65,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
+
 
         // Returns reviews whose analysis is flagged
         public async Task<IReadOnlyList<Review>> GetFlaggedAsync(CancellationToken cancellationToken = default)
@@ -96,5 +103,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+      
     }
 }
