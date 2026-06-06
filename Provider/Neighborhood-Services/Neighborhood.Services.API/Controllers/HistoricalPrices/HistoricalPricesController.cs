@@ -18,8 +18,8 @@ namespace Neighborhood.Services.API.Controllers.HistoricalPrices
         }
 
         [HttpGet("{problemId}")]
-        public async Task<ActionResult<IReadOnlyList<HistoricalPricingDto>>> Get (int problemId)
-            => Ok (await _mediator.Send(new GetHistoricalPricesForProblemTypeQuery(problemId)) );
+        public async Task<ActionResult<IReadOnlyList<HistoricalPricingDto>>> Get (int problemId ,[FromQuery] string lang = "en" )
+            => Ok (await _mediator.Send(new GetHistoricalPricesForProblemTypeQuery(lang , problemId)) );
 
     }
 }
