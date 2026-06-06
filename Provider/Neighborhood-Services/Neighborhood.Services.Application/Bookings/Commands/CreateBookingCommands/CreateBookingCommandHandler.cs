@@ -52,7 +52,7 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
             await semaphore.WaitAsync(cancellationToken);
             try
             {
-                var estimatedPrice = await _priceEstimationService.EstimateAsync(request.ProblemTypeId);
+                var estimatedPrice = await _priceEstimationService.EstimateAsync(request.ProblemTypeId , request.Region );
             // validating the date 
             if (request.ScheduledAt <= DateTime.UtcNow)
                 throw new ValidationException("Scheduled time cannot be in the past");

@@ -17,10 +17,10 @@ namespace Neighborhood.Services.Domain.AiAnalyses
         public DateTime GeneratedAt { get; set; }
 
         //---- Foreign Keys
-        public int BookingId { get; set; }
+        public int? BookingId { get; set; }
 
         // Nav
-        public Booking  Booking { get; set; }
+        public Booking? Booking { get; set; }
 
     }
 }

@@ -8,8 +8,11 @@ namespace Neighborhood.Services.Domain.ProblemTypes
 {
     public class ProblemType :BaseEntity<int>
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string NameEn { get; set; } = null!;
+        public string NameAr { get; set; } = null!;
+        public string DescriptionEn { get; set; } = null!;
+        public string DescriptionAr { get; set; } = null!;
+
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
         public DateTime CreatedAt { get; set; }

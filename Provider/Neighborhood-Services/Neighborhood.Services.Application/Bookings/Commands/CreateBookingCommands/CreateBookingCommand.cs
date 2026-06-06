@@ -16,6 +16,7 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
         public string Address { get; set; } = string.Empty;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string?  Region  { get; set; }
         public DateTime ScheduledAt { get; set; }
         public int? PromoCodeId { get; set; }
     }

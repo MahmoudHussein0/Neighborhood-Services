@@ -22,12 +22,11 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Queries
         public async Task<IReadOnlyList<AvailiabilityExceptionDTO>> Handle(GetAvabilityExceptionForSpecificTechQuery request, CancellationToken cancellationToken)
         {
 
-          var techAvabilityException =  await _exceptionRepo.GetByConditionAsync( AE => AE.TechnicianId == request.TechnicianId );
+          var techAvabilityException =  await _exceptionRepo.GetByConditionAsync( AE => (!AE.IsDeleted) &&  AE.TechnicianId == request.TechnicianId );
 
             if (techAvabilityException is null || !techAvabilityException.Any()) 
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                { { "TechnicianId", new[] { "No exception found for this technician." } }});}
+                throw new ValidationException("No exception found for this technician.");}
 
             return techAvabilityException.OrderByDescending(AE => AE.Date).Adapt<IReadOnlyList<AvailiabilityExceptionDTO>>();
 

@@ -1,0 +1,53 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.API.Helper;
+using Neighborhood.Services.Application.Categories.Commands;
+using Neighborhood.Services.Application.Categories.DTOs;
+using Neighborhood.Services.Application.Categories.Queries;
+using Neighborhood.Services.Infrastructure.Cache;
+
+namespace Neighborhood.Services.API.Controllers.Category
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriesController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+
+        public CategoriesController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+
+        [Cache(600)]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAll([FromQuery] string? searchTerm, [FromQuery] string lang = "en")
+         =>    Ok(await _mediator.Send(new GetAllCategoriesQuery(lang , searchTerm )));
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CategoryDetailsDto>> GetById(int id, [FromQuery] string lang = "en")
+         =>  Ok(await _mediator.Send(new GetCategoryByIdQuery(id , lang)));
+
+
+
+        [HttpPost]
+        public async Task<ActionResult<int>> Add(AddCategoryCommand command)
+         =>  Ok(await _mediator.Send(command));
+
+        [HttpPut ("{id}")]
+        public async Task<ActionResult<CategoryDto>> Update (int id ,  UpdateCategoryCommand command )
+        {
+            command.Id = id;
+            var result =  await _mediator.Send(command);
+            return Ok(result);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> Delete (int id)
+            =>  Ok( await _mediator.Send( new DeleteCategoryCommand(id)  ));
+    }
+}

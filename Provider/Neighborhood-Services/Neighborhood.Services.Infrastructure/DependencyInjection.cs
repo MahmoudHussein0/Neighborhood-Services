@@ -10,8 +10,10 @@ using Neighborhood.Services.Application.AiAnalysises.Interface;
 using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
 using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Cache;
 using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
 using Neighborhood.Services.Application.Categories.Interfaces;
+using Neighborhood.Services.Application.Chatbot.Interfaces;
 using Neighborhood.Services.Application.Conversations;
 using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
 using Neighborhood.Services.Application.Customers.Interfaces;
@@ -44,6 +46,7 @@ using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Application.Invoices.Services;
 using Neighborhood.Services.Application.Payments.Gateways;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Infrastructure.Cache;
 using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
 using Neighborhood.Services.Infrastructure.Persistence.AiAnalysises;
 using Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesException;
@@ -51,6 +54,7 @@ using Neighborhood.Services.Infrastructure.Persistence.BookingImages;
 using Neighborhood.Services.Infrastructure.Persistence.Bookings;
 using Neighborhood.Services.Infrastructure.Persistence.CancellationPolicies;
 using Neighborhood.Services.Infrastructure.Persistence.Categories;
+using Neighborhood.Services.Infrastructure.Persistence.Chatbot;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Conversations;
 using Neighborhood.Services.Infrastructure.Persistence.CustomerAddresses;
@@ -69,6 +73,7 @@ using Neighborhood.Services.Infrastructure.Persistence.ProblemTypes;
 using Neighborhood.Services.Infrastructure.Persistence.PromoCodes;
 using Neighborhood.Services.Infrastructure.Persistence.RecurringBookings;
 using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
+using Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge;
 using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
 using Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Repository;
@@ -84,8 +89,8 @@ using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Services.Invoices;
 using Neighborhood.Services.Infrastructure.Services.Payments;
 using Neighborhood.Services.Infrastructure.Services.AI;
-
 using Neighborhood.Services.Infrastructure.Shared;
+using Qdrant.Client;
 
 
 
@@ -123,8 +128,8 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
+            services.AddScoped<ITechnicianCategoryRepository, TechnicianCategoryRepository>();
             services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-
             services.AddScoped<ITechnicianAvailabilityRepository, TechnitianAvailabilityRepository>();
             services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             services.AddScoped<ITechnicianPricingRepository, TechnicianPricingRepository>();
@@ -153,6 +158,7 @@ namespace Neighborhood.Services.Infrastructure
             services.AddScoped<INewsletterRepository, NewsletterRepository>();
             services.AddScoped<IFavoritesRepository, FavoritesRepository>();
 
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             //End of Arwa's
 
@@ -177,14 +183,35 @@ namespace Neighborhood.Services.Infrastructure
             services.AddHangfireServer();
             services.AddScoped<RecurringBookingGeneratorService>();
             services.AddScoped<ServiceRequestExpiryService>();
+            services.AddScoped<KnowledgeSeeder>();
             //Kernl
             services.AddSingleton(sp => {
-                var apiKey = configuration["OpenAI:ApiKey"];
+                var apiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";
                 return Kernel.CreateBuilder()
-                    .AddOpenAIChatCompletion("gpt-4o", apiKey!)
+                    .AddOpenAIChatCompletion("gpt-4o", apiKey)
                     .Build();
             });
             services.AddScoped<IAiClient, SemanticKernelClient>();
+            // AI 
+            // --- Qdrant / RAG ---
+            // 1- Embedding generator (text -> vector). Uses the same OpenAI key.
+            var openAiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";
+                #pragma warning disable SKEXP0010
+                 services.AddOpenAIEmbeddingGenerator("text-embedding-3-small", openAiKey);
+                #pragma warning restore SKEXP0010
+
+            // 2- Qdrant client (talks to your cloud cluster over gRPC)
+            var qdrantEndpoint = configuration["Qdrant:Endpoint"] ?? "https://dummy.qdrant.io";
+            var qdrantApiKey = configuration["Qdrant:ApiKey"] ?? "dummy-key";
+            services.AddSingleton(sp => new QdrantClient(
+                host: new Uri(qdrantEndpoint).Host,
+                https: true,
+                apiKey: qdrantApiKey));
+
+            // 3- Our vector memory wrapper
+            services.AddScoped<IVectorMemory, QdrantMemoryService>();
+            // Chatbot
+            services.AddScoped<IChatbotRepository, ChatbotRepository>();
             return services;
         }
     }

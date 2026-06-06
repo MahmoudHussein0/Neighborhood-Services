@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Neighborhood.Services.Application.AvilabilitiesException.Commands;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
@@ -22,8 +23,7 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
 
             if (request.EndTime <= request.StartTime)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-            {{ "TimeRange", new[] { "End Time must be greater than Start Time." }}});}
+                throw new ValidationException("End Time must be greater than Start Time.");}
 
 
             if (await _availabilityRepo.HasOverlapAsync(
@@ -32,8 +32,7 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
                     request.StartTime,
                     request.EndTime))
             {
-                    throw new ValidationException(new Dictionary<string, string[]>
-                {{ "Overlap", new[] { "This availability overlaps with an existing time slot." } }});}
+                    throw new ValidationException("This availability overlaps with an existing time slot.");}
 
 
             var availability = new TechnicianAvailability()

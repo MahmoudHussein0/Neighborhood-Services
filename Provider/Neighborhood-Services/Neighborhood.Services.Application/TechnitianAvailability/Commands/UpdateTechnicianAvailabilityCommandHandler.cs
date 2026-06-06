@@ -33,14 +33,12 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
 
             if (request.EndTime <= request.StartTime)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-            {{ "TimeRange", new[] { "End Time must be greater than Start Time." }}});}
+                throw new ValidationException("End Time must be greater than Start Time.");}
 
 
             if (await _availabilityRepo.HasOverlapAsync(techAvailability.TechnicianId, request.DayOfWeek, request.StartTime, request.EndTime, request.Id))
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-            {{ "Overlap", new[] { "This availability overlaps with an existing time slot." }}});}
+                throw new ValidationException("This availability overlaps with an existing time slot.");}
 
 
             techAvailability.DayOfWeek = request.DayOfWeek;

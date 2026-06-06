@@ -20,12 +20,11 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Queries
         public async Task<IReadOnlyList<TechnicianAvailabilityDetailsDTO>> Handle(GetTechAvailabilityForTechnicianQuery request, CancellationToken cancellationToken)
         {
 
-          var techAvailabilities =  await _availabilityRepo.GetByConditionAsync(TA => TA.TechnicianId == request.TechnicianId );
+          var techAvailabilities =  await _availabilityRepo.GetByConditionAsync(TA =>  (!TA.IsDeleted) &&  TA.TechnicianId == request.TechnicianId );
             
             if (techAvailabilities == null || !techAvailabilities.Any())
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "TechnicianId", new[] { "No availability found for this technician." } }}); }
+                throw new ValidationException("No availability found for this technician."); }
 
 
           return  techAvailabilities.OrderByDescending(TA => TA.DayOfWeek).ThenByDescending(TA => TA.StartTime).Adapt<IReadOnlyList<TechnicianAvailabilityDetailsDTO>>();

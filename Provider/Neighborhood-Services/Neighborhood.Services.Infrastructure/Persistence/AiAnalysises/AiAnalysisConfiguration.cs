@@ -28,6 +28,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.AiAnalysises
             builder.HasOne(a => a.Booking)
             .WithOne(b => b.AiAnalysis)
             .HasForeignKey<AiAnalysis>(a => a.BookingId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
 
 

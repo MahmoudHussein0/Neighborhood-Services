@@ -8,5 +8,8 @@ using System.Text;
 namespace Neighborhood.Services.Application.HistoricalPrices.Interfaces
 {
     public interface IHistoricalPriceRepository  : IGenericRepository<HistoricalPrice , int>
-    {}
+    {
+        Task<IReadOnlyList<HistoricalPrice>> GetByProblemTypeAndRegion(int problemId , string region);
+        Task<IReadOnlyList<HistoricalPrice>> GetByProblemType(int problemId );
+    }
 }

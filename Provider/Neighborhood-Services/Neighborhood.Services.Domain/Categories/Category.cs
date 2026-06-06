@@ -6,8 +6,9 @@ namespace Neighborhood.Services.Domain.Categories
 {
     public class Category :BaseEntity<int>
     {
-        public string Name { get; set; }
-        public string Icon { get; set; }
+        public string NameEn { get; set; } = null!;
+        public string NameAr { get; set; } = null!;
+        public string Icon { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public ICollection<ProblemType> ProblemTypes { get; set; }
         public ICollection<TechnicianCategory> TechnicianCategories { get; set; }

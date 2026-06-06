@@ -15,7 +15,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Categories
         public CategoriesRepository( ApplicationDbContext context):base(context)
         {}
 
-        public async Task<bool> IsNameExistsAsync(string name)
-         => await  _context.Categories.AnyAsync(c => c.Name.ToLower().Contains(name.ToLower()));
+        public async Task<bool> IsNameExistsAsync(string nameEn , string nameAr)
+         => await  _context.Categories.AnyAsync(c => EF.Functions.Like(c.NameEn.ToLower() , nameEn.ToLower() ) || c.NameAr.ToLower() == nameAr.ToLower());
     }
 }

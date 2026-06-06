@@ -47,28 +47,24 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 
             if (await _technicianPricingRepo.IsExistsAsync(request.TechnicianId, request.ProblemTypeId))
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                   {{ "ProblemTypeId", new[] { "Technician already has pricing for this problem." } }});}
+                throw new ValidationException("Technician already has pricing for this problem.");}
 
 
 
             if (request.MinPrice <= 0)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "MinPrice", new[] { "MinPrice must be greater than zero." }}});}
+                throw new ValidationException("MinPrice must be greater than zero.");}
 
 
             if (request.MaxPrice <= 0)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                    {{ "MaxPrice", new[] { "MaxPrice must be greater than zero." }}});}
+                throw new ValidationException("MaxPrice must be greater than zero.");}
 
 
 
             if (request.MinPrice >= request.MaxPrice)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                     {{ "PriceRange", new[] { "MinPrice must be less than MaxPrice." }}});}
+                throw new ValidationException("MinPrice must be less than MaxPrice.");}
 
             var techPricing = new TechnicianPricing()
             {

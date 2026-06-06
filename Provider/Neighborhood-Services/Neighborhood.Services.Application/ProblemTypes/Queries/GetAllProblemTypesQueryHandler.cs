@@ -18,16 +18,31 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
         }
         public async Task<IReadOnlyList<ProblemTypeDto>> Handle(GetAllProblemTypesQuery request, CancellationToken cancellationToken)
         {
-            var problemtTypes = (await _problemTypeRepo.GetByConditionAsync(
-                 P =>
-                !P.IsDeleted &&
-                 ( string.IsNullOrWhiteSpace(request.SearchTerm) || P.Description.ToLower().Contains(request.SearchTerm.ToLower())) 
-                 &&
-                 (!request.MinPrice.HasValue ||P.MinPrice == request.MinPrice.Value) 
-                 && 
-                 (!request.MaxPrice.HasValue ||P.MaxPrice == request.MaxPrice.Value)
-                 )).OrderByDescending(P => P.CreatedAt);
-           return  problemtTypes.Adapt<IReadOnlyList<ProblemTypeDto>>();
+
+            var lang = request.Lang.ToLower();
+
+            var problemTypes = (await _problemTypeRepo.GetByConditionAsync(
+             p =>
+            !p.IsDeleted
+            &&
+            (lang == "en" ? (string.IsNullOrEmpty(request.SearchTerm))  ||    (p.DescriptionEn != null && p.DescriptionEn.Contains(request.SearchTerm))       : (string.IsNullOrEmpty(request.SearchTerm)) || (p.DescriptionAr != null && p.DescriptionAr.Contains(request.SearchTerm)))
+            &&
+            (!request.MinPrice.HasValue || p.MinPrice >= request.MinPrice.Value)
+            &&
+            (!request.MaxPrice.HasValue || p.MaxPrice <= request.MaxPrice.Value))).OrderByDescending(p => p.CreatedAt);
+
+
+            var problemTypeDto = problemTypes.Select(P => new ProblemTypeDto
+            {
+                Id = P.Id ,
+                Name = lang == "en" ? P.NameEn : P.NameAr,
+                Description = lang == "en" ? P.DescriptionEn : P.DescriptionAr,
+                MinPrice = P.MinPrice ,
+                MaxPrice = P.MaxPrice 
+                
+            }).ToList();
+
+            return problemTypeDto;
         }
     }
 }

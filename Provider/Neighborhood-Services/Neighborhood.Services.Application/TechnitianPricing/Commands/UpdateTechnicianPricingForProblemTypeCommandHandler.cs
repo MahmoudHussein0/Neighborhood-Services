@@ -32,21 +32,20 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 
             if (request.MinPrice <= 0)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                {{ "MinPrice", new[] { "MinPrice must be greater than zero." }}});}
+                throw new ValidationException("MinPrice must be greater than zero.");}
 
 
             if (request.MaxPrice <= 0)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                    {{ "MaxPrice", new[] { "MaxPrice must be greater than zero." }}});}
+                throw new ValidationException("MaxPrice must be greater than zero.");
+            }
 
 
 
             if (request.MinPrice >= request.MaxPrice)
             {
-                throw new ValidationException(new Dictionary<string, string[]>
-                     {{ "PriceRange", new[] { "MinPrice must be less than MaxPrice." }}}); }
+                throw new ValidationException("MinPrice must be less than MaxPrice."); }
+
 
 
             pricing.MinPrice = request.MinPrice;

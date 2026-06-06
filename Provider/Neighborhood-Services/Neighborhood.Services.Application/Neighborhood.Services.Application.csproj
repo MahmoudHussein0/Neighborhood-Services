@@ -26,8 +26,6 @@
     <Folder Include="AgentLogs\Commands\" />
     <Folder Include="AgentLogs\DTOs\" />
     <Folder Include="AgentLogs\Queries\" />
-    <Folder Include="AiAnalysises\Commands\" />
-    <Folder Include="AiAnalysises\DTOs\" />
     <Folder Include="AiAnalysises\Queries\" />
     <Folder Include="BookingImages\Commands\" />
     <Folder Include="BookingImages\DTOs\" />
