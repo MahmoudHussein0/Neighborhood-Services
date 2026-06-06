@@ -1,0 +1,62 @@
+[
+  {
+    "QuestionEn": "What is Neighborhood Services?",
+    "QuestionAr": "ما هي منصة Neighborhood Services؟",
+    "AnswerEn": "Neighborhood Services is a home services marketplace in Egypt that connects customers with verified professional technicians for home repairs, cleaning, maintenance, and more.",
+    "AnswerAr": "Neighborhood Services هي منصة لخدمات المنازل في مصر تربط العملاء بفنيين محترفين وموثوقين لإصلاح وصيانة وتنظيف المنازل وغيرها."
+  },
+  {
+    "QuestionEn": "How do I book a service?",
+    "QuestionAr": "كيف أحجز خدمة؟",
+    "AnswerEn": "You can book in two ways: directly choose a technician and pick a time, or post a service request describing your problem and let technicians send you offers to choose from.",
+    "AnswerAr": "يمكنك الحجز بطريقتين: اختيار فني مباشرة وتحديد موعد، أو نشر طلب خدمة يصف مشكلتك ودع الفنيين يرسلون لك عروضًا للاختيار من بينها."
+  },
+  {
+    "QuestionEn": "How does payment work? Is it safe?",
+    "QuestionAr": "كيف يتم الدفع؟ هل هو آمن؟",
+    "AnswerEn": "Payment is secured through an escrow system. Your money is held safely when a booking is confirmed and is only released to the technician after you confirm the job is completed. If a booking is cancelled, you get a full refund.",
+    "AnswerAr": "الدفع مؤمَّن من خلال نظام ضمان (Escrow). يتم الاحتفاظ بأموالك بأمان عند تأكيد الحجز ولا تُحوَّل للفني إلا بعد تأكيدك إتمام العمل. وفي حال إلغاء الحجز تسترد كامل المبلغ."
+  },
+  {
+    "QuestionEn": "How do I pay or top up my wallet?",
+    "QuestionAr": "كيف أدفع أو أشحن محفظتي؟",
+    "AnswerEn": "You can top up your wallet using the Paymob payment gateway, which supports cards and other local payment methods. All prices are in Egyptian Pounds (EGP).",
+    "AnswerAr": "يمكنك شحن محفظتك باستخدام بوابة الدفع Paymob التي تدعم البطاقات وطرق الدفع المحلية الأخرى. جميع الأسعار بالجنيه المصري."
+  },
+  {
+    "QuestionEn": "Can I cancel a booking and get a refund?",
+    "QuestionAr": "هل يمكنني إلغاء الحجز واسترداد أموالي؟",
+    "AnswerEn": "Yes. If you cancel a booking while the payment is still held in escrow, the full amount is refunded back to your wallet.",
+    "AnswerAr": "نعم. إذا ألغيت الحجز بينما لا يزال المبلغ محتجزًا في نظام الضمان، يُسترد كامل المبلغ إلى محفظتك."
+  },
+  {
+    "QuestionEn": "How do I become a technician on the platform?",
+    "QuestionAr": "كيف أصبح فنيًا على المنصة؟",
+    "AnswerEn": "You can register as a technician, submit your details and national ID for verification. Once your account is approved, you can receive bookings, send offers on service requests, and set your availability and pricing.",
+    "AnswerAr": "يمكنك التسجيل كفني وتقديم بياناتك والرقم القومي للتحقق. بعد اعتماد حسابك يمكنك استقبال الحجوزات وإرسال عروض على طلبات الخدمة وتحديد أوقات توفرك وأسعارك."
+  },
+  {
+    "QuestionEn": "What is a recurring booking?",
+    "QuestionAr": "ما هو الحجز المتكرر؟",
+    "AnswerEn": "A recurring booking lets you schedule a service to repeat automatically on a daily, weekly, or monthly basis — useful for regular cleaning or maintenance. The system generates the bookings for you automatically.",
+    "AnswerAr": "الحجز المتكرر يتيح لك جدولة خدمة تتكرر تلقائيًا يوميًا أو أسبوعيًا أو شهريًا — مفيد للتنظيف أو الصيانة الدورية. ويقوم النظام بإنشاء الحجوزات تلقائيًا نيابة عنك."
+  },
+  {
+    "QuestionEn": "Can the app help me figure out my problem and its cost?",
+    "QuestionAr": "هل يستطيع التطبيق مساعدتي في تحديد مشكلتي وتكلفتها؟",
+    "AnswerEn": "Yes. You can describe your problem and optionally upload a photo, and our AI will analyze it to detect the likely problem, its severity, and an estimated price range before you book.",
+    "AnswerAr": "نعم. يمكنك وصف مشكلتك ورفع صورة اختياريًا، وسيقوم الذكاء الاصطناعي بتحليلها لتحديد المشكلة المحتملة ودرجة خطورتها ونطاق السعر التقديري قبل الحجز."
+  },
+  {
+    "QuestionEn": "What languages does the platform support?",
+    "QuestionAr": "ما اللغات التي تدعمها المنصة؟",
+    "AnswerEn": "The platform supports both Arabic and English. You can use it and chat with support in whichever language you prefer.",
+    "AnswerAr": "تدعم المنصة اللغتين العربية والإنجليزية. يمكنك استخدامها والتحدث مع الدعم باللغة التي تفضلها."
+  },
+  {
+    "QuestionEn": "How do offers on a service request work?",
+    "QuestionAr": "كيف تعمل العروض على طلب الخدمة؟",
+    "AnswerEn": "After you post a service request, nearby technicians can send offers with their proposed price and time. You review the offers, pick the one you like, and a confirmed booking is created automatically.",
+    "AnswerAr": "بعد نشر طلب الخدمة، يمكن للفنيين القريبين إرسال عروض بأسعارهم والمواعيد المقترحة. تراجع العروض وتختار ما يناسبك، ويتم إنشاء حجز مؤكد تلقائيًا."
+  }
+]

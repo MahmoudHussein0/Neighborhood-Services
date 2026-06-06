@@ -10,6 +10,7 @@ using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
 using StackExchange.Redis;
+using Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge;
 using Neighborhood.Services.Infrastructure.Services;
 
 using System.Text;
@@ -103,6 +104,20 @@ namespace Neighborhood.Services.API
             using (var scope = app.Services.CreateScope())
             {
                 await DbSeeder.SeedAsync(scope.ServiceProvider);
+
+                // Seed Qdrant knowledge base from the DB (catalog) + Faqs.json.
+                // If OpenAI/Qdrant is unavailable (bad key, no quota, network down) we log
+                // and continue — the app stays up; only the AI endpoints will fail per-call.
+                try
+                {
+                    var knowledgeSeeder = scope.ServiceProvider.GetRequiredService<KnowledgeSeeder>();
+                    await knowledgeSeeder.SeedAsync();
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogWarning(ex, "KnowledgeSeeder failed at startup — AI endpoints may not work until this is fixed. App will continue to run.");
+                }
             }
 
 
