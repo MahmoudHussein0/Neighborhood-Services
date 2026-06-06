@@ -1,4 +1,5 @@
 ﻿using MediatR;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Neighborhood.Services.Application.AI.Interfaces;
@@ -21,6 +22,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
         private readonly IAiClient _aiClient;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+
         private readonly IPriceEstimationService _priceEstimationService;
         private readonly ILogger<SendChatMessageCommandHandler> _logger;
 
@@ -28,6 +30,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
         // Below this, the user's message isn't clearly about any specific service —
         // we skip the price lookup and let the chatbot fall back to general RAG answer.
         private const float ClassifierConfidenceThreshold = 0.5f;
+
 
         public SendChatMessageCommandHandler(IChatbotRepository chatbotRepository,
                                                 IVectorMemory vectorMemory,

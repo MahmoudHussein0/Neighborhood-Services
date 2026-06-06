@@ -49,7 +49,9 @@ namespace Neighborhood.Services.Application.AiAnalysises.Commands.AnalyzeBooking
                 """;
 
             var userPrompt = $"""
+
                 Problem Type: {problemType?.NameEn} / {problemType?.NameAr}
+
                 Description: {request.Description}
                 """;
 
