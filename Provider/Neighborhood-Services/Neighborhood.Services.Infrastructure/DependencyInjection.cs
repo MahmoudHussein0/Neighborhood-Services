@@ -1,5 +1,5 @@
-    using Microsoft.AspNetCore.Authorization;
     using Hangfire;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -14,8 +14,8 @@
     using Neighborhood.Services.Application.Cache;
     using Neighborhood.Services.Application.CancellationPolicies.Interfaces;
     using Neighborhood.Services.Application.Categories.Interfaces;
-    using Neighborhood.Services.Application.Cloudinary;
     using Neighborhood.Services.Application.Chatbot.Interfaces;
+    using Neighborhood.Services.Application.Cloudinary;
     using Neighborhood.Services.Application.Conversations;
     using Neighborhood.Services.Application.CustomerAddresses.Interfaces;
     using Neighborhood.Services.Application.Customers.Interfaces;
@@ -24,16 +24,19 @@
     using Neighborhood.Services.Application.Favorites;
     using Neighborhood.Services.Application.HistoricalPrices.Interfaces;
     using Neighborhood.Services.Application.Invoices.Interfaces;
+    using Neighborhood.Services.Application.Invoices.Services;
     using Neighborhood.Services.Application.Messages;
     using Neighborhood.Services.Application.Newsletter;
     using Neighborhood.Services.Application.Notifications;
     using Neighborhood.Services.Application.Notifications.Services;
     using Neighborhood.Services.Application.Offers.Interfaces;
+    using Neighborhood.Services.Application.Payments.Gateways;
     using Neighborhood.Services.Application.Payments.Interfaces;
     using Neighborhood.Services.Application.ProblemTypes.Interface;
     using Neighborhood.Services.Application.PromoCodes.Interface;
     using Neighborhood.Services.Application.RecurringBookings.Interfaces;
     using Neighborhood.Services.Application.Reviews.Interfaces;
+using Neighborhood.Services.Application.ReviewsAnalysis;
     using Neighborhood.Services.Application.ServiceRequests.Interfaces;
     using Neighborhood.Services.Application.Shared;
     using Neighborhood.Services.Application.Shared.Email;
@@ -47,8 +50,6 @@
     using Neighborhood.Services.Application.Transactions.Interfaces;
     using Neighborhood.Services.Application.Users.Interfaces;
     using Neighborhood.Services.Application.Wallets.Interfaces;
-    using Neighborhood.Services.Application.Invoices.Services;
-    using Neighborhood.Services.Application.Payments.Gateways;
     using Neighborhood.Services.Domain.ApplicationUsers;
     using Neighborhood.Services.Infrastructure.Cache;
     using Neighborhood.Services.Infrastructure.Persistence.AgentLogs;
@@ -77,6 +78,7 @@
     using Neighborhood.Services.Infrastructure.Persistence.PromoCodes;
     using Neighborhood.Services.Infrastructure.Persistence.RecurringBookings;
     using Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository;
+using Neighborhood.Services.Infrastructure.Persistence.ReviewsAnalysis;
     using Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge;
     using Neighborhood.Services.Infrastructure.Persistence.ServiceRequests;
     using Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository;
@@ -90,20 +92,20 @@
     using Neighborhood.Services.Infrastructure.Persistence.Users;
     using Neighborhood.Services.Infrastructure.Persistence.Wallets;
     using Neighborhood.Services.Infrastructure.Services;
-    using Neighborhood.Services.Infrastructure.Services.EmailService;
-    using Neighborhood.Services.Infrastructure.Services.Invoices;
-    using Neighborhood.Services.Infrastructure.Services.Payments;
     using Neighborhood.Services.Infrastructure.Services.AI;
     using Neighborhood.Services.Infrastructure.Services.Authorization;
     using Neighborhood.Services.Infrastructure.Services.CloudinaryService;
-    using Neighborhood.Services.Infrastructure.Shared;
+    using Neighborhood.Services.Infrastructure.Services.EmailService;
+    using Neighborhood.Services.Infrastructure.Services.Invoices;
     using Neighborhood.Services.Infrastructure.Services.NotificationService;
+    using Neighborhood.Services.Infrastructure.Services.Payments;
+    using Neighborhood.Services.Infrastructure.Shared;
     using Qdrant.Client;
 
 
 
 
-    namespace Neighborhood.Services.Infrastructure
+namespace Neighborhood.Services.Infrastructure
     {
         public static class DependencyInjection
         {
@@ -156,6 +158,7 @@
 
                 services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
                 services.AddScoped<IReviewRepository, ReviewRepository>();
+                services.AddScoped<IReviewAnalysisRepository, ReviewAyalysisRepository>();
                 services.AddScoped<IDisputeRepository, DisputeRepository>();
                 //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
                 services.AddScoped<IHistoricalPriceRepository, HistoricalPriceRepository>();
