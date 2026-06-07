@@ -1,0 +1,10 @@
+<button class="btn btn-light position-relative" type="button" (click)="open()" aria-label="Notifications">
+  <i class="bi bi-bell"></i>
+  @if (unreadCount() > 0) {
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      {{ unreadCount() }}
+    </span>
+  }
+</button>
+
+<!-- TODO (Arwa): notification dropdown goes here -->
