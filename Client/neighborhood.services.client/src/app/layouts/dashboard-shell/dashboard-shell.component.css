@@ -1,0 +1,28 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.topbar {
+  height: 4rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  overflow: auto;
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}

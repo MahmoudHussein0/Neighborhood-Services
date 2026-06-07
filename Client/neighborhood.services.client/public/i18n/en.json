@@ -1,6 +1,10 @@
 {
     "navbar": {
         "home": "Home",
+        "services": "Our Services",
+        "about": "About Us",
+        "contact": "Contact",
+        "login": "Login / Register",
         "link": "Link",
         "dropDown": "Dropdown",
         "action": "Action",

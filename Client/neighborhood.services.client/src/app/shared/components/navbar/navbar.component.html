@@ -1,58 +1,52 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+  <div class="container">
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+      <span class="logo-badge">NS</span>
+      <span class="fw-bold">Neighborhood Services</span>
+    </a>
+
+    <!-- Mobile toggle (manual, no Bootstrap JS) -->
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="menuOpen()">
+
+      <!-- Public links -->
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: true }">{{ "navbar.home" | translate }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/services" routerLinkActive="active">{{ "navbar.services" | translate }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/about" routerLinkActive="active">{{ "navbar.about" | translate }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/contact" routerLinkActive="active">{{ "navbar.contact" | translate }}</a>
+        </li>
+      </ul>
+
+      <!-- Right side: search + language + auth -->
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <form class="d-flex" role="search">
+          <input class="form-control form-control-sm me-2" type="search"
+                 [placeholder]="'navbar.search' | translate" aria-label="Search" />
+          <button class="btn btn-sm btn-outline-success" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+        <button class="btn btn-sm btn-outline-secondary" type="button"
+                (click)="ChangeLang(currentLang === 'en' ? 'ar' : 'en')">
+          {{ currentLang === 'en' ? 'AR' : 'EN' }}
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"> {{"navbar.home" | translate}} </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"> {{"navbar.link" | translate}} </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        {{"navbar.dropDown" | translate}}
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"> {{"navbar.action" | translate }} </a></li>
-                        <li><a class="dropdown-item" href="#">{{"navbar.anotherAction" | translate }} </a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">{{"navbar.somethingElseHere" | translate }} </a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">{{"navbar.disabled" | translate }}</a>
-                </li>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        {{"navbar.lang" | translate}}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                        @if (currentLang === 'en')
-                        {
-                        <li><a role="button" class="dropdown-item" (click)="ChangeLang('ar')">Ar</a></li>
-                        }
-
-                        @if (currentLang === 'ar')
-                        {
-                        <li><a role="button" class="dropdown-item" (click)="ChangeLang('en')">En</a></li>
-                        }
-                    </ul>
-                </div>
-            </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" [placeholder]=" 'navbar.search' | translate "
-                    aria-label="Search" />
-                <button class="btn btn-outline-success" type="submit">{{"navbar.search" | translate }}</button>
-            </form>
-        </div>
+        <a class="btn btn-sm btn-primary" routerLink="/login">{{ "navbar.login" | translate }}</a>
+      </div>
     </div>
+  </div>
 </nav>

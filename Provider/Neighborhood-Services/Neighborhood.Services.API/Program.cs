@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Mvc;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Neighborhood.Services.API.Middlewares;
@@ -10,18 +8,13 @@ using Neighborhood.Services.Application;
 using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Cloudinary;
 using Neighborhood.Services.Domain.Staffs;
-using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge;
-using StackExchange.Redis;
-
 using Neighborhood.Services.Infrastructure.Services;
-using Neighborhood.Services.Infrastructure.Services.EmailService;
-
-
 using Neighborhood.Services.Infrastructure.Services.CloudinaryService;
+using StackExchange.Redis;
 using System.Text;
 
 
@@ -35,14 +28,14 @@ namespace Neighborhood.Services.API
 
             // Add services to the container.
             //Email config: Moved to Infra
-           //builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailSettings"));
+            //builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.Converters.Add(
                         new System.Text.Json.Serialization.JsonStringEnumConverter()));
             builder.Services.AddSignalR();
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddCors(options =>
@@ -68,11 +61,11 @@ namespace Neighborhood.Services.API
                 {
                     var errors = actionContext.ModelState.Where(M => M.Value.Errors.Count() > 0)
                              .SelectMany(M => M.Value.Errors)
-                             .Select(E => !(string.IsNullOrEmpty(E.Exception?.Message)) ?  E.Exception.Message  : E.ErrorMessage )
+                             .Select(E => !(string.IsNullOrEmpty(E.Exception?.Message)) ? E.Exception.Message : E.ErrorMessage)
                              .ToArray();
                     return new BadRequestObjectResult(new
                     {
-                        StatusCod = 400 ,
+                        StatusCod = 400,
                         Errors = errors
                     });
                 });
@@ -82,7 +75,7 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
             {
-                var connection =   builder.Configuration.GetConnectionString("Redis");
+                var connection = builder.Configuration.GetConnectionString("Redis");
                 return ConnectionMultiplexer.Connect(connection);
             });
 
@@ -145,7 +138,14 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                // Use full type names as schema IDs so two commands with the same class
+                // name in different namespaces (e.g. UpdateTechnicianAvailabilityCommand
+                // in both Technicians.Commands and TechnitianAvailability.Commands) don't
+                // collide.
+                c.CustomSchemaIds(type => type.FullName);
+            });
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
             builder.Services.AddHttpContextAccessor();

@@ -23,7 +23,7 @@
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.29.1" />
     <PackageReference Include="MediatR" Version="14.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.10" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.10" />-->
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.8" />
 
    
@@ -40,7 +40,6 @@
     <PackageReference Include="QuestPDF" Version="2026.5.0" />
     <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="StackExchange.Redis" Version="3.0.47-preview" />
-    <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 
   </ItemGroup>

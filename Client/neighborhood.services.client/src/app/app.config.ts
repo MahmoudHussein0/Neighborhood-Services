@@ -1,8 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
- Dev
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 
