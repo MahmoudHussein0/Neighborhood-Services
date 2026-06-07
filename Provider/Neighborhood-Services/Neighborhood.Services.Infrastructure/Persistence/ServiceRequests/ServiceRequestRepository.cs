@@ -48,5 +48,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
                     .ThenInclude(o => o.Technician)
                 .FirstOrDefaultAsync(sr => sr.Id == serviceRequestId && !sr.IsDeleted);
         }
+
+        //arwa
+        public async Task<string?> GetCustomerUserAppIdAsync(int serviceRequestId)
+        {
+            var cust= await _context.ServiceRequests
+                .Include(o=>o.Customer).FirstOrDefaultAsync(sr => sr.Id==serviceRequestId);
+            return cust?.Customer.ApplicationUserId??null;
+        }
+        //
+
+        
     }
 }

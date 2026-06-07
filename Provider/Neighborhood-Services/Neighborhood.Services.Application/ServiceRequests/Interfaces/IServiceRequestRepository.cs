@@ -13,5 +13,10 @@ namespace Neighborhood.Services.Application.ServiceRequests.Interfaces
         Task<IEnumerable<ServiceRequest>> GetCustomerServiceRequestsAsync(int customerId);
         Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters);
         Task<ServiceRequest?> GetServiceRequestWithOffersAsync(int serviceRequestId);
+
+
+
+        //arwa
+        public Task<string?> GetCustomerUserAppIdAsync(int serviceRequestId);
     }
 }
