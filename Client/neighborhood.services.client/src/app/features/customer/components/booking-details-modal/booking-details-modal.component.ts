@@ -1,0 +1,36 @@
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe, CurrencyPipe } from '@angular/common';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe } from '@ngx-translate/core';
+import { BookingService } from '../../services/booking.service';
+import { BookingDetails } from '../../models/booking.model';
+
+@Component({
+  selector: 'app-booking-details-modal',
+  imports: [DatePipe, CurrencyPipe, TranslatePipe],
+  templateUrl: './booking-details-modal.component.html',
+})
+export class BookingDetailsModalComponent implements OnInit {
+  /** Set by the caller via componentInstance before the modal opens */
+  bookingId!: number;
+
+  private readonly activeModal = inject(NgbActiveModal);
+  private readonly bookingService = inject(BookingService);
+
+  loading = signal(true);
+  details = signal<BookingDetails | null>(null);
+
+  ngOnInit() {
+    this.bookingService.getById(this.bookingId).subscribe({
+      next: (d) => {
+        this.details.set(d);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  close() {
+    this.activeModal.dismiss();
+  }
+}

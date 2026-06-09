@@ -199,7 +199,7 @@
                 services.AddHangfireServer();
                 services.AddScoped<RecurringBookingGeneratorService>();
                 services.AddScoped<ServiceRequestExpiryService>();
-                services.AddScoped<KnowledgeSeeder>();
+                services.AddScoped<IKnowledgeIndexer, KnowledgeSeeder>();
                 //Kernl
                 services.AddSingleton(sp => {
                     var apiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";

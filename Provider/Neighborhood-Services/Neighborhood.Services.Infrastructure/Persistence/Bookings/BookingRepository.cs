@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -40,11 +41,78 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<Booking>> GetByRecurringBookingIdAsync(int recurringBookingId)
+        {
+            return await _context.Bookings
+                .AsNoTracking()
+                .Where(b => b.RecurringBookingId == recurringBookingId && !b.IsDeleted)
+                .OrderBy(b => b.ScheduledAt)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Booking>> GetTechnicianBookingsAsync(int technicianId)
         {
             return await _context.Bookings
                 .Where(b => b.TechnicianId == technicianId && !b.IsDeleted)
                 .ToListAsync();
+        }
+
+        public async Task<PagedResult<Booking>> GetCustomerBookingsPagedAsync(int customerId, BookingStatus? status, string? search, int page, int pageSize)
+        {
+            var query = _context.Bookings
+                .Where(b => b.CustomerId == customerId && !b.IsDeleted);
+
+            if (status.HasValue)
+                query = query.Where(b => b.Status == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                int? idTerm = int.TryParse(term, out var parsed) ? parsed : null;
+                query = query.Where(b =>
+                    b.Description.Contains(term) ||
+                    b.Address.Contains(term) ||
+                    (idTerm != null && b.Id == idTerm));
+            }
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(b => b.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Booking>(items, total, page, pageSize);
+        }
+
+        public async Task<PagedResult<Booking>> GetTechnicianBookingsPagedAsync(int technicianId, BookingStatus? status, string? search, int page, int pageSize)
+        {
+            var query = _context.Bookings
+                .Where(b => b.TechnicianId == technicianId && !b.IsDeleted);
+
+            if (status.HasValue)
+                query = query.Where(b => b.Status == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                int? idTerm = int.TryParse(term, out var parsed) ? parsed : null;
+                query = query.Where(b =>
+                    b.Description.Contains(term) ||
+                    b.Address.Contains(term) ||
+                    (idTerm != null && b.Id == idTerm));
+            }
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(b => b.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Booking>(items, total, page, pageSize);
         }
 
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync()

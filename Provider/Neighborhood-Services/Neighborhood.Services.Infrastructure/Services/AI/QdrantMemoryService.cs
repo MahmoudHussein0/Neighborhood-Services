@@ -44,6 +44,47 @@ namespace Neighborhood.Services.Infrastructure.Services.AI
             await _client.UpsertAsync(collection, new List<PointStruct> { point });
         }
 
+        public async Task UpsertManyAsync(string collection, IReadOnlyList<VectorDoc> docs)
+        {
+            if (docs.Count == 0)
+                return;
+
+            await EnsureCollectionAsync(collection);
+
+            // Embed in chunks so a big re-seed stays within the embedding API's batch limits,
+            // but still collapses N per-doc round-trips into ~N/chunk requests.
+            const int chunkSize = 100;
+            for (var start = 0; start < docs.Count; start += chunkSize)
+            {
+                var chunk = docs.Skip(start).Take(chunkSize).ToList();
+
+                // One embedding request for the whole chunk.
+                var embeddings = await _embedding.GenerateAsync(chunk.Select(d => d.Text).ToList());
+
+                var points = new List<PointStruct>(chunk.Count);
+                for (var i = 0; i < chunk.Count; i++)
+                {
+                    var point = new PointStruct
+                    {
+                        Id = new PointId { Uuid = DeterministicGuid(chunk[i].Id) },
+                        Vectors = embeddings[i].Vector.ToArray(),
+                        Payload = { ["text"] = chunk[i].Text }
+                    };
+
+                    if (chunk[i].Fields is { } fields)
+                    {
+                        foreach (var kv in fields)
+                            point.Payload[kv.Key] = kv.Value;
+                    }
+
+                    points.Add(point);
+                }
+
+                // One upsert for the whole chunk.
+                await _client.UpsertAsync(collection, points);
+            }
+        }
+
         // Text-only search — thin wrapper over the detailed one (single source of truth).
         public async Task<IEnumerable<string>> SearchAsync(string collection, string query, int topK = 3)
         {
@@ -69,6 +110,69 @@ namespace Neighborhood.Services.Infrastructure.Services.AI
                 var text = r.Payload.TryGetValue("text", out var t) ? t.StringValue : "";
                 return new SearchHit(text, r.Score, fields);
             }).ToList();
+        }
+
+        public async Task<string?> GetFieldAsync(string collection, string id, string field)
+        {
+            if (!await _client.CollectionExistsAsync(collection))
+                return null;
+
+            var points = await _client.RetrieveAsync(
+                collection,
+                new PointId { Uuid = DeterministicGuid(id) },
+                withPayload: true,
+                withVectors: false);
+
+            var point = points.FirstOrDefault();
+            if (point is null)
+                return null;
+
+            return point.Payload.TryGetValue(field, out var value) ? value.StringValue : null;
+        }
+
+        public async Task RemoveExceptAsync(string collection, IReadOnlyCollection<string> keepIds)
+        {
+            if (!await _client.CollectionExistsAsync(collection))
+                return;
+
+            // The point id we store is DeterministicGuid(docId); rebuild the keep-set in that space.
+            var keepGuids = new HashSet<string>(
+                keepIds.Select(DeterministicGuid), StringComparer.OrdinalIgnoreCase);
+
+            var orphans = new List<PointId>();
+            PointId? offset = null;
+
+            // Page through every point (ids only — no payload/vectors needed).
+            do
+            {
+                var page = await _client.ScrollAsync(
+                    collection,
+                    limit: 256,
+                    offset: offset,
+                    payloadSelector: false,
+                    vectorsSelector: false);
+
+                foreach (var point in page.Result)
+                {
+                    var uuid = point.Id?.Uuid;
+                    if (!string.IsNullOrEmpty(uuid) && !keepGuids.Contains(uuid))
+                        orphans.Add(point.Id);
+                }
+
+                offset = page.NextPageOffset;
+            }
+            while (offset is not null);
+
+            if (orphans.Count > 0)
+                await _client.DeleteAsync(collection, orphans);
+        }
+
+        public async Task RemoveAsync(string collection, string id)
+        {
+            if (!await _client.CollectionExistsAsync(collection))
+                return;
+
+            await _client.DeleteAsync(collection, new PointId { Uuid = DeterministicGuid(id) });
         }
 
         private async Task EnsureCollectionAsync(string collection)

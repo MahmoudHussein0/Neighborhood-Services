@@ -6,6 +6,7 @@ using Neighborhood.Services.Application.ServiceRequests.Queries.GetOpenServiceRe
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestByIdQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestsByCustomerQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestWithOffersQuery;
+using Neighborhood.Services.Domain.ServiceRequests;
 
 namespace Neighborhood.Services.API.ServiceRequests
 {
@@ -32,11 +33,22 @@ namespace Neighborhood.Services.API.ServiceRequests
 
         // ---------- Queries ----------
 
-        // GET /api/servicerequests/mine  (authenticated customer — their own requests)
+        // GET /api/servicerequests/mine?status=Open&search=leak&page=1&pageSize=10
+        // (authenticated customer — their own requests, paged + optional filter/search)
         [HttpGet("mine")]
-        public async Task<IActionResult> GetMine()
+        public async Task<IActionResult> GetMine(
+            [FromQuery] ServiceRequestStatus? status,
+            [FromQuery] string? search,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetMyServiceRequestsQuery());
+            var result = await _mediator.Send(new GetMyServiceRequestsQuery
+            {
+                Status = status,
+                Search = search,
+                Page = page,
+                PageSize = pageSize
+            });
             return Ok(result);
         }
 

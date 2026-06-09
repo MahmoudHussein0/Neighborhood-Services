@@ -1,0 +1,107 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'recurring.editTitle' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="modal-body">
+
+    <div class="alert alert-warning py-2 px-3 small mb-3">
+      <i class="bi bi-exclamation-triangle me-1"></i>{{ 'recurring.editWarning' | translate }}
+    </div>
+
+    <div class="row g-3">
+
+      <!-- Pattern -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'recurring.form.repeat' | translate }}</label>
+        <select class="form-select" formControlName="pattern" (change)="onPatternChange()">
+          <option [ngValue]="null" disabled>{{ 'recurring.form.choosePattern' | translate }}</option>
+          @for (p of patterns; track p) {
+            <option [ngValue]="p">{{ ('recurring.form.pattern.' + p) | translate }}</option>
+          }
+        </select>
+        @if (form.controls.pattern.touched && form.controls.pattern.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errPattern' | translate }}</div>
+        }
+      </div>
+
+      <!-- Conditional: Day of week (Weekly) -->
+      @if (form.controls.pattern.value === 'Weekly') {
+        <div class="col-md-6">
+          <label class="form-label">{{ 'recurring.form.dayOfWeek' | translate }}</label>
+          <select class="form-select" formControlName="dayOfWeek">
+            <option [ngValue]="null" disabled>{{ 'recurring.form.chooseDay' | translate }}</option>
+            @for (d of daysOfWeek; track d) {
+              <option [ngValue]="d">{{ ('recurring.days.' + d) | translate }}</option>
+            }
+          </select>
+          @if (form.controls.dayOfWeek.touched && form.controls.dayOfWeek.invalid) {
+            <div class="text-danger small mt-1">{{ 'recurring.form.errDayOfWeek' | translate }}</div>
+          }
+        </div>
+      }
+
+      <!-- Conditional: Day of month (Monthly) -->
+      @if (form.controls.pattern.value === 'Monthly') {
+        <div class="col-md-6">
+          <label class="form-label">{{ 'recurring.form.dayOfMonth' | translate }}</label>
+          <input type="number" class="form-control" formControlName="dayOfMonth" min="1" max="31" />
+          @if (form.controls.dayOfMonth.touched && form.controls.dayOfMonth.invalid) {
+            <div class="text-danger small mt-1">{{ 'recurring.form.errDayOfMonth' | translate }}</div>
+          }
+        </div>
+      }
+
+      <!-- Time + Duration -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'recurring.form.timeOfDay' | translate }}</label>
+        <input type="time" class="form-control" formControlName="timeOfDay" />
+        @if (form.controls.timeOfDay.touched && form.controls.timeOfDay.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errTime' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ 'recurring.form.duration' | translate }}</label>
+        <input type="number" class="form-control" formControlName="durationMinutes" min="15"
+               [placeholder]="'recurring.form.durationPlaceholder' | translate" />
+        @if (form.controls.durationMinutes.touched && form.controls.durationMinutes.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errDuration' | translate }}</div>
+        }
+      </div>
+
+      <!-- Dates -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'recurring.form.startDate' | translate }}</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+        @if (form.controls.startDate.touched && form.controls.startDate.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errStartDate' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ 'recurring.form.endDate' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+
+      <!-- Address -->
+      <div class="col-12">
+        <label class="form-label">{{ 'recurring.form.address' | translate }}</label>
+        <input type="text" class="form-control" formControlName="address"
+               [placeholder]="'recurring.form.addressPlaceholder' | translate" />
+        @if (form.controls.address.touched && form.controls.address.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errAddress' | translate }}</div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+      {{ (submitting() ? 'common.creating' : 'recurring.save') | translate }}
+    </button>
+  </div>
+</form>

@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Application.ServiceRequests.Interfaces;
+using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.ServiceRequests;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
@@ -31,6 +32,36 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
             return await _context.ServiceRequests
                 .Where(sr => sr.CustomerId == customerId && !sr.IsDeleted)
                 .ToListAsync();
+        }
+
+        public async Task<PagedResult<ServiceRequest>> GetCustomerServiceRequestsPagedAsync(int customerId, ServiceRequestStatus? status, string? search, int page, int pageSize)
+        {
+            var query = _context.ServiceRequests
+                .Include(sr => sr.Offers)
+                .Where(sr => sr.CustomerId == customerId && !sr.IsDeleted);
+
+            if (status.HasValue)
+                query = query.Where(sr => sr.Status == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                int? idTerm = int.TryParse(term, out var parsed) ? parsed : null;
+                query = query.Where(sr =>
+                    sr.Description.Contains(term) ||
+                    sr.Address.Contains(term) ||
+                    (idTerm != null && sr.Id == idTerm));
+            }
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(sr => sr.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<ServiceRequest>(items, total, page, pageSize);
         }
         public async Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters)
         {

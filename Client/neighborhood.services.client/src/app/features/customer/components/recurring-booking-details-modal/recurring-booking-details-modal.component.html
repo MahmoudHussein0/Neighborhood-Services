@@ -1,0 +1,94 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'recurring.detailsTitle' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <span class="text-muted small">#{{ booking.id }}</span>
+    <span class="badge rounded-pill" [class]="badgeClass(booking.status)">
+      {{ ('recurring.status.' + booking.status) | translate }}
+    </span>
+  </div>
+
+  <dl class="row mb-0 small">
+    <dt class="col-5 text-muted">{{ 'recurring.form.repeat' | translate }}</dt>
+    <dd class="col-7">{{ ('recurring.form.pattern.' + booking.pattern) | translate }}</dd>
+
+    @if (booking.pattern === 'Weekly') {
+      <dt class="col-5 text-muted">{{ 'recurring.form.dayOfWeek' | translate }}</dt>
+      <dd class="col-7">{{ ('recurring.days.' + booking.dayOfWeek) | translate }}</dd>
+    }
+    @if (booking.pattern === 'Monthly') {
+      <dt class="col-5 text-muted">{{ 'recurring.form.dayOfMonth' | translate }}</dt>
+      <dd class="col-7">{{ booking.dayOfMonth }}</dd>
+    }
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.timeOfDay' | translate }}</dt>
+    <dd class="col-7">{{ booking.timeOfDay.slice(0, 5) }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.duration' | translate }}</dt>
+    <dd class="col-7">{{ booking.durationMinutes }} {{ 'recurring.min' | translate }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.startDate' | translate }}</dt>
+    <dd class="col-7">{{ booking.startDate | date: 'mediumDate' }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.endDate' | translate }}</dt>
+    <dd class="col-7">{{ booking.endDate ? (booking.endDate | date: 'mediumDate') : '—' }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.address' | translate }}</dt>
+    <dd class="col-7">{{ booking.address }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.priceLabel' | translate }}</dt>
+    <dd class="col-7">{{ booking.agreedPrice != null ? (booking.agreedPrice | currency: 'EGP ') : '—' }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.technician' | translate }}</dt>
+    <dd class="col-7">#{{ booking.technicianId }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.problemType' | translate }}</dt>
+    <dd class="col-7">#{{ booking.problemTypeId }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.createdLabel' | translate }}</dt>
+    <dd class="col-7">{{ booking.createdAt | date: 'medium' }}</dd>
+  </dl>
+
+  <hr class="my-3" />
+
+  <!-- Upcoming: projected from the schedule (the job only materializes ~1 week ahead) -->
+  <div class="mb-3">
+    <div class="fw-semibold small mb-2"><i class="bi bi-calendar-event me-1 text-primary"></i>{{ 'recurring.upcoming' | translate }}</div>
+    @if (upcoming().length) {
+      <ul class="list-unstyled mb-1 small">
+        @for (d of upcoming(); track d.getTime()) {
+          <li class="mb-1">{{ d | date: 'EEE, MMM d' }} · {{ d | date: 'HH:mm' }}</li>
+        }
+      </ul>
+      <div class="text-muted fst-italic" style="font-size: 0.72rem;">{{ 'recurring.upcomingNote' | translate }}</div>
+    } @else {
+      <div class="text-muted small">{{ 'recurring.noUpcoming' | translate }}</div>
+    }
+  </div>
+
+  <!-- Recent: the real generated visits with their actual status -->
+  <div>
+    <div class="fw-semibold small mb-2"><i class="bi bi-clock-history me-1 text-muted"></i>{{ 'recurring.recent' | translate }}</div>
+    @if (loadingVisits()) {
+      <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+    } @else if (recent().length) {
+      <ul class="list-unstyled mb-0 small">
+        @for (v of recent(); track v.id) {
+          <li class="d-flex align-items-center justify-content-between gap-2 mb-1">
+            <span>{{ v.scheduledAt | date: 'EEE, MMM d' }} · {{ v.scheduledAt | date: 'HH:mm' }}</span>
+            <span class="badge rounded-pill" [class]="visitBadgeClass(v.status)">{{ ('bookings.status.' + v.status) | translate }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="text-muted small">{{ 'recurring.noRecent' | translate }}</div>
+    }
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="close()">{{ 'common.close' | translate }}</button>
+</div>

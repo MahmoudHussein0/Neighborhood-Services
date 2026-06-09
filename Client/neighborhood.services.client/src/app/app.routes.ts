@@ -10,6 +10,11 @@ import { ServicesComponent } from './features/public/pages/services/services.com
 import { AboutComponent } from './features/public/pages/about/about.component';
 import { ContactComponent } from './features/public/pages/contact/contact.component';
 import { CustomerDashboardComponent } from './features/customer/pages/dashboard/customer-dashboard.component';
+import { BookingsComponent } from './features/customer/pages/bookings/bookings.component';
+import { ServiceRequestsComponent } from './features/customer/pages/service-requests/service-requests.component';
+import { ServiceRequestDetailsComponent } from './features/customer/pages/service-requests/service-request-details.component';
+import { RecurringBookingsComponent } from './features/customer/pages/recurring-bookings/recurring-bookings.component';
+import { FindTechnicianComponent } from './features/customer/pages/find-technician/find-technician.component';
 import { TechnicianDashboardComponent } from './features/technician/pages/dashboard/technician-dashboard.component';
 import { StaffDashboardComponent } from './features/staff/pages/dashboard/staff-dashboard.component';
 
@@ -33,6 +38,11 @@ export const routes: Routes = [
     // canActivate: [authGuard, roleGuard], data: { role: 'Customer' }  ← add when auth exists
     children: [
       { path: '', component: CustomerDashboardComponent },
+      { path: 'bookings', component: BookingsComponent },
+      { path: 'service-requests', component: ServiceRequestsComponent },
+      { path: 'service-requests/:id', component: ServiceRequestDetailsComponent },
+      { path: 'find-technician', component: FindTechnicianComponent },
+      { path: 'recurring-bookings', component: RecurringBookingsComponent },
     ],
   },
 

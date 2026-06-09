@@ -11,6 +11,9 @@ namespace Neighborhood.Services.Application.ServiceRequests.Interfaces
     {
         Task<ServiceRequest?> GetServiceRequestWithDetailsAsync(int serviceRequestId);
         Task<IEnumerable<ServiceRequest>> GetCustomerServiceRequestsAsync(int customerId);
+
+        // Paged + optional status filter + search (used by "my service requests")
+        Task<PagedResult<ServiceRequest>> GetCustomerServiceRequestsPagedAsync(int customerId, ServiceRequestStatus? status, string? search, int page, int pageSize);
         Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters);
         Task<ServiceRequest?> GetServiceRequestWithOffersAsync(int serviceRequestId);
     }

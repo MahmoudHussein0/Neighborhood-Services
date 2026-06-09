@@ -51,6 +51,15 @@ namespace Neighborhood.Services.API.Technicians
             return Ok(result);
         }
 
+        // Customer-facing browse list for the "Find Technician" page
+        // (name/photo/location + categories). Additive — does not touch GetAll.
+        [HttpGet("browse")]
+        public async Task<IActionResult> Browse()
+        {
+            var result = await _mediator.Send(new GetTechniciansForBrowseQuery());
+            return Ok(result);
+        }
+
         [Authorize(Roles = "Technician,Staff")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateTechnicianCommand command)
