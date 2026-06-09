@@ -1,0 +1,21 @@
+.auth-page {
+  background-color: #f9fafb;
+}
+
+.auth-panel {
+  border-radius: 0.5rem;
+  padding: 2rem;
+}
+
+.auth-kicker {
+  color: #1d4ed8;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 575.98px) {
+  .auth-panel {
+    padding: 1.25rem;
+  }
+}

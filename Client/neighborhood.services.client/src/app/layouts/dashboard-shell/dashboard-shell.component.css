@@ -26,3 +26,11 @@
   font-weight: 700;
   font-size: 0.875rem;
 }
+
+.user-summary {
+  line-height: 1.1;
+}
+
+.user-role {
+  font-size: 0.75rem;
+}

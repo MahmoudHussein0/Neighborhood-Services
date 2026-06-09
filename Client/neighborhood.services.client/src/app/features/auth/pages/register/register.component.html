@@ -1,0 +1,156 @@
+<section class="auth-page">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8 col-xl-7">
+        <div class="auth-panel bg-white border shadow-sm">
+          <div class="mb-4">
+            <span class="auth-kicker">Get started</span>
+            <h1 class="h3 fw-bold mt-2 mb-2">Create account</h1>
+            <p class="text-muted mb-0">Set up your Neighborhood Services profile.</p>
+          </div>
+
+          @if (apiError()) {
+            <div class="alert alert-danger" role="alert">
+              {{ apiError() }}
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="fullName" class="form-label">Full name</label>
+                <input
+                  id="fullName"
+                  class="form-control"
+                  formControlName="fullName"
+                  autocomplete="name"
+                  [class.is-invalid]="form.controls.fullName.touched && form.controls.fullName.invalid"
+                />
+                @if (hasError('fullName', 'required')) {
+                  <div class="invalid-feedback">Full name is required.</div>
+                } @else if (hasError('fullName', 'minlength')) {
+                  <div class="invalid-feedback">Full name must be at least 2 characters.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  autocomplete="email"
+                  [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+                />
+                @if (hasError('email', 'required')) {
+                  <div class="invalid-feedback">Email is required.</div>
+                } @else if (hasError('email', 'email')) {
+                  <div class="invalid-feedback">Enter a valid email address.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+                />
+                @if (hasError('password', 'required')) {
+                  <div class="invalid-feedback">Password is required.</div>
+                } @else if (hasError('password', 'minlength')) {
+                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="age" class="form-label">Age</label>
+                <input
+                  id="age"
+                  type="number"
+                  class="form-control"
+                  formControlName="age"
+                  min="13"
+                  max="120"
+                  [class.is-invalid]="form.controls.age.touched && form.controls.age.invalid"
+                />
+                @if (hasError('age', 'required')) {
+                  <div class="invalid-feedback">Age is required.</div>
+                } @else if (hasError('age', 'min') || hasError('age', 'max')) {
+                  <div class="invalid-feedback">Age must be between 13 and 120.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="applicationUserRole" class="form-label">Account type</label>
+                <select
+                  id="applicationUserRole"
+                  class="form-select"
+                  formControlName="applicationUserRole"
+                  [class.is-invalid]="form.controls.applicationUserRole.touched && form.controls.applicationUserRole.invalid"
+                >
+                  @for (role of roleOptions; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+                @if (hasError('applicationUserRole', 'required')) {
+                  <div class="invalid-feedback">Account type is required.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="latitude" class="form-label">Latitude</label>
+                <input
+                  id="latitude"
+                  type="number"
+                  class="form-control"
+                  formControlName="latitude"
+                  step="0.000001"
+                  [class.is-invalid]="form.controls.latitude.touched && form.controls.latitude.invalid"
+                />
+                @if (hasError('latitude', 'required')) {
+                  <div class="invalid-feedback">Latitude is required.</div>
+                } @else if (hasError('latitude', 'min') || hasError('latitude', 'max')) {
+                  <div class="invalid-feedback">Latitude must be between -90 and 90.</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="longitude" class="form-label">Longitude</label>
+                <input
+                  id="longitude"
+                  type="number"
+                  class="form-control"
+                  formControlName="longitude"
+                  step="0.000001"
+                  [class.is-invalid]="form.controls.longitude.touched && form.controls.longitude.invalid"
+                />
+                @if (hasError('longitude', 'required')) {
+                  <div class="invalid-feedback">Longitude is required.</div>
+                } @else if (hasError('longitude', 'min') || hasError('longitude', 'max')) {
+                  <div class="invalid-feedback">Longitude must be between -180 and 180.</div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4" type="submit" [disabled]="isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              }
+              Create account
+            </button>
+          </form>
+
+          <p class="text-center text-muted small mb-0 mt-4">
+            Already have an account?
+            <a routerLink="/auth/login" class="fw-semibold text-decoration-none">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

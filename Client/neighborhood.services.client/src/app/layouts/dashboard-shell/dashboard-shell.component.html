@@ -12,7 +12,24 @@
 
       <div class="d-flex align-items-center gap-3">
         <app-notification-bell />
-        <div class="avatar">A</div>
+        <div class="user-summary d-none d-sm-flex flex-column align-items-end">
+          <span class="fw-semibold small">{{ currentUser()?.fullName || 'Account' }}</span>
+          <span class="text-muted user-role">{{ currentUser()?.role || 'User' }}</span>
+        </div>
+        <div class="avatar">{{ userInitial() }}</div>
+        <button
+          class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-2"
+          type="button"
+          (click)="logout()"
+          [disabled]="isLoggingOut()"
+        >
+          @if (isLoggingOut()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-box-arrow-right"></i>
+          }
+          <span class="d-none d-md-inline">Logout</span>
+        </button>
       </div>
     </header>
 
