@@ -69,6 +69,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
                     FullName = user.FullName,
                     Photo = user.Photo,
                     Rating = technician.Rating,
+                    Experience = technician.Experience,
                     MaxTravelDistance = technician.MaxTravelDistance,
                     VerificationStatus = technician.VerificationStatus,
                     IsAvailable = technician.IsAvailable,

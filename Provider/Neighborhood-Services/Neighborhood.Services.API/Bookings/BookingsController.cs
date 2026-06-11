@@ -19,6 +19,7 @@ using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByRecurringQ
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByStatusQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByTechnicianQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetTechnicianPricingRangeQuery;
+using Neighborhood.Services.Application.Matching.Queries;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 
@@ -33,6 +34,16 @@ namespace Neighborhood.Services.API.Bookings
         public BookingsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        // POST /api/bookings/match
+        // "Smart Match" on Find Technician: customer picks category + problem type (+ optional
+        // location / note); the matchmaking agent returns the best 1-2 technicians to book.
+        [HttpPost("match")]
+        public async Task<IActionResult> Match([FromBody] GetTechnicianMatchesQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         // ---------- Commands ----------

@@ -11,6 +11,7 @@ namespace Neighborhood.Services.Application.Technicians.DTOs
         public string FullName { get; set; } = string.Empty;
         public string Photo { get; set; } = string.Empty;
         public decimal Rating { get; set; }
+        public string Experience { get; set; } = string.Empty;
         public int MaxTravelDistance { get; set; }
         public TechnicianVerificationStatus VerificationStatus { get; set; }
         public bool IsAvailable { get; set; }
