@@ -15,8 +15,11 @@ import { LoginComponent } from './features/auth/pages/login/login.component';
 import { RegisterComponent } from './features/auth/pages/register/register.component';
 import { CustomerDashboardComponent } from './features/customer/pages/dashboard/customer-dashboard.component';
 import { CustomerPlaceholderComponent } from './features/customer/pages/customer-placeholder/customer-placeholder.component';
+import { CustomerProfileComponent } from './features/customer/pages/profile/customer-profile.component';
 import { TechnicianDashboardComponent } from './features/technician/pages/dashboard/technician-dashboard.component';
+import { TechnicianProfileComponent } from './features/technician/pages/profile/technician-profile.component';
 import { StaffDashboardComponent } from './features/staff/pages/dashboard/staff-dashboard.component';
+import { StaffUsersComponent } from './features/staff/pages/users/staff-users.component';
 
 export const routes: Routes = [
   {
@@ -48,7 +51,7 @@ export const routes: Routes = [
       { path: 'chat', component: CustomerPlaceholderComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
-      { path: 'profile', component: CustomerPlaceholderComponent, data: { title: 'Profile' } },
+      { path: 'profile', component: CustomerProfileComponent },
       { path: '**', redirectTo: '' },
     ],
   },
@@ -56,18 +59,22 @@ export const routes: Routes = [
     path: 'technician',
     component: TechnicianLayoutComponent,
     canActivate: [authGuard, roleGuard],
+    canActivateChild: [authGuard, roleGuard],
     data: { roles: ['Technician'] },
     children: [
       { path: '', component: TechnicianDashboardComponent },
+      { path: 'profile', component: TechnicianProfileComponent },
     ],
   },
   {
     path: 'staff',
     component: StaffLayoutComponent,
     canActivate: [authGuard, roleGuard],
+    canActivateChild: [authGuard, roleGuard],
     data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
     children: [
       { path: '', component: StaffDashboardComponent },
+      { path: 'users', component: StaffUsersComponent },
     ],
   },
   { path: '**', redirectTo: '' },

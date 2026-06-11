@@ -80,7 +80,16 @@ namespace Neighborhood.Services.API
             });
 
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+                builder.Services.AddAuthentication(options =>
+                {
+                    // AddIdentity() sets the default authenticate scheme to the Identity cookie, which
+                    // means our JWT (in the access_token cookie) is never read. Force JwtBearer to be
+                    // the default for authenticate/challenge so protected endpoints actually use the JWT.
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters

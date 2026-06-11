@@ -144,7 +144,7 @@ namespace Neighborhood.Services.API.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None
             });
 
             return Ok(new { Message = "Logged out successfully" });
@@ -156,7 +156,7 @@ namespace Neighborhood.Services.API.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Expires = expiresAt
             });
         }
