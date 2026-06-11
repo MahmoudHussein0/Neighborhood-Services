@@ -1,11 +1,14 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Bookings.Services;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.PromoCodes.Interface;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.PromoCodes;
@@ -23,9 +26,12 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
         private readonly IPromoCodeRepository _promoCodeRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly ICustomerRepository _customerRepository;
+        private readonly ITechnicianRepository _technicianRepository;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<CreateBookingCommandHandler> _logger;
         // trying to handle concurrency
         private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
-        public CreateBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork, IPriceEstimationService priceEstimationService, ITechnicianAvailabilityRepository technicianAvailabilityRepository, IPromoCodeRepository promoCodeRepository, ICurrentUserService currentUserService, ICustomerRepository customerRepository)
+        public CreateBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork, IPriceEstimationService priceEstimationService, ITechnicianAvailabilityRepository technicianAvailabilityRepository, IPromoCodeRepository promoCodeRepository, ICurrentUserService currentUserService, ICustomerRepository customerRepository, ITechnicianRepository technicianRepository, INotificationService notificationService, ILogger<CreateBookingCommandHandler> logger)
         {
             _bookingRepository = bookingRepository;
             _unitOfWork = unitOfWork;
@@ -34,6 +40,9 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
             _promoCodeRepository = promoCodeRepository;
             _currentUserService = currentUserService;
             _customerRepository = customerRepository;
+            _technicianRepository = technicianRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -139,6 +148,21 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
                 {
                     throw new ConflictException("Technician is not available at this time");
                 }
+
+                // Notify the technician of the new booking request — best effort.
+                try
+                {
+                    var technician = await _technicianRepository.GetByIdAsync(request.TechnicianId);
+                    if (!string.IsNullOrEmpty(technician?.ApplicationUserId))
+                        await _notificationService.SendNotificationToUser(
+                            technician.ApplicationUserId,
+                            $"You have a new booking request (#{booking.Id}). Review it and send a quote.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "New-booking notification failed for booking {Id}.", booking.Id);
+                }
+
                 return booking.Id;
             }
             finally

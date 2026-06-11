@@ -1,5 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
@@ -16,16 +19,25 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.SetRecurr
         private readonly ITechnicianRepository _technicianRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<SetRecurringPriceCommandHandler> _logger;
         public SetRecurringPriceCommandHandler(
              IRecurringBookingRepository recurringBookingRepository,
              ITechnicianRepository technicianRepository,
              ICurrentUserService currentUserService,
-             IUnitOfWork unitOfWork)
+             IUnitOfWork unitOfWork,
+             ICustomerRepository customerRepository,
+             INotificationService notificationService,
+             ILogger<SetRecurringPriceCommandHandler> logger)
         {
             _recurringBookingRepository = recurringBookingRepository;
             _technicianRepository = technicianRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _customerRepository = customerRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(SetRecurringPriceCommand request, CancellationToken cancellationToken)
@@ -57,6 +69,20 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.SetRecurr
 
             await _recurringBookingRepository.UpdateAsync(recurringBooking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the customer a price was proposed and awaits their approval — best effort.
+            try
+            {
+                var customer = await _customerRepository.GetByIdAsync(recurringBooking.CustomerId);
+                if (!string.IsNullOrEmpty(customer?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        customer.ApplicationUserId,
+                        $"Your technician set a price for recurring booking #{recurringBooking.Id}. Review and approve to activate it.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Set-recurring-price notification failed for recurring booking {Id}.", recurringBooking.Id);
+            }
 
             return true;
         }

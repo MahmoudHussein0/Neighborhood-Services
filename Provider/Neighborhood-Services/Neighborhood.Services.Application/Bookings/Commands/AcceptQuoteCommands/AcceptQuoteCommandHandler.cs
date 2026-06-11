@@ -1,8 +1,10 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.Bookings;
@@ -16,19 +18,25 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
         private readonly IMediator _mediator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<AcceptQuoteCommandHandler> _logger;
 
         public AcceptQuoteCommandHandler(
             IBookingRepository bookingRepository,
             IWalletRepository walletRepository,
             IMediator mediator,
             IUnitOfWork unitOfWork,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            INotificationService notificationService,
+            ILogger<AcceptQuoteCommandHandler> logger)
         {
             _bookingRepository = bookingRepository;
             _walletRepository = walletRepository;
             _mediator = mediator;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(AcceptQuoteCommand request, CancellationToken cancellationToken)
@@ -76,6 +84,20 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
             await _bookingRepository.UpdateAsync(booking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
+
+            // Notify the technician their quote was accepted — best effort.
+            try
+            {
+                if (!string.IsNullOrEmpty(booking.Technician?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        booking.Technician.ApplicationUserId,
+                        $"Your quote for booking #{booking.Id} was accepted. The job is confirmed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Accept-quote notification failed for booking {Id}.", booking.Id);
+            }
+
             return true;
         }
     }

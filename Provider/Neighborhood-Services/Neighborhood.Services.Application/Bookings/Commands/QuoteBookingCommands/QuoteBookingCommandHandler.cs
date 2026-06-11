@@ -1,6 +1,8 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Domain.Bookings;
@@ -13,17 +15,23 @@ namespace Neighborhood.Services.Application.Bookings.Commands.QuoteBookingComman
         private readonly ITechnicianPricingRepository _technicianPricingRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<QuoteBookingCommandHandler> _logger;
 
         public QuoteBookingCommandHandler(
             IBookingRepository bookingRepository,
             ITechnicianPricingRepository technicianPricingRepository,
             IUnitOfWork unitOfWork,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            INotificationService notificationService,
+            ILogger<QuoteBookingCommandHandler> logger)
         {
             _bookingRepository = bookingRepository;
             _technicianPricingRepository = technicianPricingRepository;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(QuoteBookingCommand request, CancellationToken cancellationToken)
@@ -80,6 +88,20 @@ namespace Neighborhood.Services.Application.Bookings.Commands.QuoteBookingComman
 
             await _bookingRepository.UpdateAsync(booking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the customer that a quote arrived — best effort.
+            try
+            {
+                if (!string.IsNullOrEmpty(booking.Customer?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        booking.Customer.ApplicationUserId,
+                        $"A technician sent a price quote for your booking #{booking.Id}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Quote notification failed for booking {Id}.", booking.Id);
+            }
+
             return true;
         }
     }

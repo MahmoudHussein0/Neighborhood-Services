@@ -1,6 +1,9 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.AI.DTOs;
 using Neighborhood.Services.Application.AI.Interfaces;
+using Neighborhood.Services.Application.Customers.Interfaces;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.AgentLogs;
@@ -14,15 +17,24 @@ namespace Neighborhood.Services.Application.ServiceRequests.Commands.ModerateSer
         private readonly IServiceRequestRepository _serviceRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAiClient _aiClient;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<ModerateServiceRequestCommandHandler> _logger;
 
         public ModerateServiceRequestCommandHandler(
             IServiceRequestRepository serviceRequestRepository,
             IUnitOfWork unitOfWork,
-            IAiClient aiClient)
+            IAiClient aiClient,
+            ICustomerRepository customerRepository,
+            INotificationService notificationService,
+            ILogger<ModerateServiceRequestCommandHandler> logger)
         {
             _serviceRequestRepository = serviceRequestRepository;
             _unitOfWork = unitOfWork;
             _aiClient = aiClient;
+            _customerRepository = customerRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(ModerateServiceRequestCommand request, CancellationToken cancellationToken)
@@ -105,6 +117,29 @@ namespace Neighborhood.Services.Application.ServiceRequests.Commands.ModerateSer
                 : ServiceRequestStatus.Flagged;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify — best effort. A notification failure must never undo moderation.
+            try
+            {
+                if (isAppropriate)
+                {
+                    var customer = await _customerRepository.GetByIdAsync(serviceRequest.CustomerId);
+                    if (!string.IsNullOrEmpty(customer?.ApplicationUserId))
+                        await _notificationService.SendNotificationToUser(
+                            customer.ApplicationUserId,
+                            $"Your service request #{serviceRequest.Id} is now live and visible to technicians.");
+                }
+                else
+                {
+                    // Flagged — alert staff to review it in the moderation queue.
+                    await _notificationService.SendNotificationToAdmin(
+                        $"Service request #{serviceRequest.Id} was flagged by moderation and needs review.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Moderation notification failed for request {Id}.", serviceRequest.Id);
+            }
 
             return isAppropriate;
         }
