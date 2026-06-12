@@ -405,6 +405,17 @@
             "Other": "Other"
         }
     },
+    "review": {
+        "leave": "Leave a review",
+        "title": "Leave a review",
+        "subtitle": "How was this booking? Your review goes through a quick automated check before it's published.",
+        "rating": "Rating",
+        "comment": "Your review",
+        "commentHint": "Tell others what your experience was like…",
+        "submit": "Submit review",
+        "submitted": "Review submitted — it'll appear once it passes our review check.",
+        "done": "Reviewed"
+    },
     "smartMatch": {
         "button": "Smart Match",
         "title": "Smart Match",

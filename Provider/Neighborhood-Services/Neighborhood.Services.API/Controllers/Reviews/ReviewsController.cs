@@ -9,7 +9,7 @@ namespace Neighborhood.Services.API.Controllers.Reviews
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class ReviewsController : ControllerBase
     {
         private readonly IMediator _mediator;

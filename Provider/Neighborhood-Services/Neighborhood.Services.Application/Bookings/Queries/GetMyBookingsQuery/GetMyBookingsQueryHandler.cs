@@ -3,6 +3,7 @@ using Neighborhood.Services.Application.Bookings.DTOs;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Reviews.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
 
@@ -13,17 +14,20 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
         private readonly IBookingRepository _bookingRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly ITechnicianRepository _technicianRepository;
+        private readonly IReviewRepository _reviewRepository;
         private readonly ICurrentUserService _currentUserService;
 
         public GetMyBookingsQueryHandler(
             IBookingRepository bookingRepository,
             ICustomerRepository customerRepository,
             ITechnicianRepository technicianRepository,
+            IReviewRepository reviewRepository,
             ICurrentUserService currentUserService)
         {
             _bookingRepository = bookingRepository;
             _customerRepository = customerRepository;
             _technicianRepository = technicianRepository;
+            _reviewRepository = reviewRepository;
             _currentUserService = currentUserService;
         }
 
@@ -41,7 +45,7 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
             if (customer != null)
             {
                 var paged = await _bookingRepository.GetCustomerBookingsPagedAsync(customer.Id, request.Status, request.Search, page, pageSize);
-                return MapToDto(paged);
+                return await MapToDtoAsync(paged, userId, cancellationToken);
             }
 
             // Fall back to technician
@@ -49,14 +53,19 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
             if (technician != null)
             {
                 var paged = await _bookingRepository.GetTechnicianBookingsPagedAsync(technician.Id, request.Status, request.Search, page, pageSize);
-                return MapToDto(paged);
+                return await MapToDtoAsync(paged, userId, cancellationToken);
             }
 
             throw new ForbiddenException("User is not a customer or technician.");
         }
 
-        private static PagedResult<MyBookingSummaryDto> MapToDto(PagedResult<Domain.Bookings.Booking> source) =>
-            new PagedResult<MyBookingSummaryDto>(
+        private async Task<PagedResult<MyBookingSummaryDto>> MapToDtoAsync(
+            PagedResult<Domain.Bookings.Booking> source, string userId, CancellationToken cancellationToken)
+        {
+            var ids = source.Items.Select(b => b.Id).ToList();
+            var reviewed = await _reviewRepository.GetBookingIdsReviewedByAsync(ids, userId, cancellationToken);
+
+            return new PagedResult<MyBookingSummaryDto>(
                 source.Items.Select(b => new MyBookingSummaryDto
                 {
                     Id = b.Id,
@@ -73,10 +82,12 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
                     TechnicianId = b.TechnicianId,
                     ProblemTypeId = b.ProblemTypeId,
                     Latitude = b.Location?.Y ?? 0,
-                    Longitude = b.Location?.X ?? 0
+                    Longitude = b.Location?.X ?? 0,
+                    HasReview = reviewed.Contains(b.Id)
                 }).ToList(),
                 source.TotalCount,
                 source.Page,
                 source.PageSize);
+        }
     }
 }

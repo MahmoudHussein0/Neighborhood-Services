@@ -12,6 +12,7 @@ import { MyBookingSummary, BookingStatus, DisputeType } from '../../models/booki
 import { BookingDetailsModalComponent } from '../../components/booking-details-modal/booking-details-modal.component';
 import { CancelBookingModalComponent } from '../../components/cancel-booking-modal/cancel-booking-modal.component';
 import { RaiseDisputeModalComponent } from '../../components/raise-dispute-modal/raise-dispute-modal.component';
+import { LeaveReviewModalComponent } from '../../components/leave-review-modal/leave-review-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 
@@ -226,7 +227,31 @@ export class BookingsComponent implements OnInit {
     return status === 'Confirmed' || status === 'Completed';
   }
 
+  // Reviews unlock only after the customer has confirmed the completed work and the
+  // escrow released — proof the cycle is fully done. Hidden once a review exists.
+  canReview(b: MyBookingSummary): boolean {
+    return b.status === 'Completed' && b.clientConfirmed && !b.hasReview;
+  }
+
+  leaveReview(b: MyBookingSummary) {
+    const ref = this.modal.open(LeaveReviewModalComponent);
+    ref.result.then(
+      (res: { rating: number; comment: string }) => {
+        this.busyId.set(b.id);
+        this.bookingService.createReview(b.id, res.rating, res.comment).subscribe({
+          next: () => {
+            this.busyId.set(null);
+            this.toastr.success(this.translate.instant('review.submitted'));
+            this.load();
+          },
+          error: () => this.busyId.set(null),
+        });
+      },
+      () => {} // dismissed — do nothing
+    );
+  }
+
   hasActions(b: MyBookingSummary): boolean {
-    return this.canCancel(b.status) || this.canConfirm(b) || this.canRespondToQuote(b.status) || this.canDispute(b.status);
+    return this.canCancel(b.status) || this.canConfirm(b) || this.canRespondToQuote(b.status) || this.canDispute(b.status) || this.canReview(b);
   }
 }

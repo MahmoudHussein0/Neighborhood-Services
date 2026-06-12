@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <h5 class="modal-title"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <p class="text-muted small">{{ 'review.subtitle' | translate }}</p>
+
+  <div class="mb-3 text-center">
+    <label class="form-label d-block">{{ 'review.rating' | translate }}</label>
+    <div class="d-inline-flex gap-1 fs-3" (mouseleave)="clearHover()">
+      @for (n of stars; track n) {
+        <button type="button" class="btn btn-link p-0 lh-1"
+          (mouseenter)="setHover(n)"
+          (click)="setRating(n)"
+          [attr.aria-label]="n + ' stars'">
+          <i class="bi"
+             [class.bi-star-fill]="n <= (hoverRating() || rating())"
+             [class.bi-star]="n > (hoverRating() || rating())"
+             [class.text-warning]="n <= (hoverRating() || rating())"
+             [class.text-secondary]="n > (hoverRating() || rating())"></i>
+        </button>
+      }
+    </div>
+    <div class="text-muted small mt-1">{{ rating() }} / 5</div>
+  </div>
+
+  <div class="mb-1">
+    <label class="form-label">{{ 'review.comment' | translate }}</label>
+    <textarea class="form-control" rows="4"
+      [ngModel]="comment()" (ngModelChange)="comment.set($event)"
+      [placeholder]="'review.commentHint' | translate"></textarea>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+  <button type="button" class="btn btn-primary" [disabled]="!comment().trim()" (click)="submit()">
+    {{ 'review.submit' | translate }}
+  </button>
+</div>

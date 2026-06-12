@@ -85,5 +85,18 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
                 r.ReviewType == direction,
                 cancellationToken);
         }
+
+        public async Task<HashSet<int>> GetBookingIdsReviewedByAsync(IEnumerable<int> bookingIds, string reviewerId, CancellationToken cancellationToken = default)
+        {
+            var ids = bookingIds as ICollection<int> ?? bookingIds.ToList();
+            if (ids.Count == 0) return new HashSet<int>();
+
+            var reviewed = await _context.Reviews
+                .Where(r => r.ReviewerId == reviewerId && ids.Contains(r.BookingId))
+                .Select(r => r.BookingId)
+                .ToListAsync(cancellationToken);
+
+            return reviewed.ToHashSet();
+        }
     }
 }

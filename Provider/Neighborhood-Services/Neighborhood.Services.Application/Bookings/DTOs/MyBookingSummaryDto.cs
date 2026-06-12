@@ -27,5 +27,9 @@ namespace Neighborhood.Services.Application.Bookings.DTOs
         // From Location (Point): Y = latitude, X = longitude. Lets the UI open the spot in Maps.
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        // True if the current user (customer or technician) has already left a review for this booking.
+        // Drives the "Leave a review" vs "Reviewed ✓" state on the bookings/jobs pages.
+        public bool HasReview { get; set; }
     }
 }

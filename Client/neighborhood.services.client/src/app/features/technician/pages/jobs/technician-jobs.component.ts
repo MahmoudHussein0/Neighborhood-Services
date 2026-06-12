@@ -12,6 +12,7 @@ import { MyBookingSummary, BookingStatus, DisputeType } from '../../../customer/
 import { QuoteJobModalComponent } from '../../components/quote-job-modal/quote-job-modal.component';
 import { CompleteJobModalComponent } from '../../components/complete-job-modal/complete-job-modal.component';
 import { RaiseDisputeModalComponent } from '../../../customer/components/raise-dispute-modal/raise-dispute-modal.component';
+import { LeaveReviewModalComponent } from '../../../customer/components/leave-review-modal/leave-review-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 
 interface Tab {
@@ -143,6 +144,25 @@ export class TechnicianJobsComponent implements OnInit {
   // A dispute only makes sense once there's a committed job (mirrors the backend rule).
   canDispute(status: BookingStatus): boolean {
     return status === 'Confirmed' || status === 'Completed';
+  }
+
+  // Tech can review the customer only after the customer has confirmed the completed work.
+  // Hidden once a review exists (HasReview is per-current-user from /api/bookings/mine).
+  canReview(b: MyBookingSummary): boolean {
+    return b.status === 'Completed' && b.clientConfirmed && !b.hasReview;
+  }
+
+  leaveReview(job: MyBookingSummary) {
+    const ref = this.modal.open(LeaveReviewModalComponent);
+    ref.result.then(
+      (res: { rating: number; comment: string }) =>
+        this.run(
+          job.id,
+          this.service.createReview(job.id, res.rating, res.comment),
+          this.translate.instant('review.submitted'),
+        ),
+      () => {},
+    );
   }
 
   private run(id: number, action: Observable<unknown>, successMsg: string) {

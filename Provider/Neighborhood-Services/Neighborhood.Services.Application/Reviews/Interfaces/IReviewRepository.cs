@@ -20,6 +20,10 @@ namespace Neighborhood.Services.Application.Reviews.Interfaces
 
       
         Task<bool> ExistsByDirectionAsync(int bookingId, ReviewType direction, CancellationToken cancellationToken = default);
+
+        // Given a list of booking ids, returns the subset the given user has already reviewed.
+        // Used by GET /api/bookings/mine to flip the UI button to "Reviewed ✓" without N+1.
+        Task<HashSet<int>> GetBookingIdsReviewedByAsync(IEnumerable<int> bookingIds, string reviewerId, CancellationToken cancellationToken = default);
         // ── Commands ───────────────────────────────────────────────────────────
 
     }

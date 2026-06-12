@@ -92,6 +92,9 @@ export interface MyBookingSummary {
   problemTypeId: number;
   latitude: number;
   longitude: number;
+  // True if the current user already left a review on this booking — drives the
+  // "Leave a review" vs "Reviewed ✓" state on the bookings/jobs pages.
+  hasReview: boolean;
 }
 
 // Mirrors TechnicianPricingRangeDto (GET /api/bookings/tech-pricing-range)

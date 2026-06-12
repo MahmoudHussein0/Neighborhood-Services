@@ -52,6 +52,11 @@ export class JobService {
     return this.api.post<void>(`/api/bookings/${id}/dispute`, { disputeType, reason });
   }
 
+  /** POST /api/reviews — leave a review on a completed+confirmed booking. Backend derives reviewer/reviewee from auth + booking. */
+  createReview(bookingId: number, rating: number, comment: string): Observable<void> {
+    return this.api.post<void>('/api/reviews', { bookingId, rating, comment });
+  }
+
   /** POST /api/bookings/{id}/images — upload a Before/After photo (URL already hosted on Cloudinary). */
   uploadImage(id: number, imageUrl: string, type: BookingImageType): Observable<{ id: number }> {
     return this.api.post<{ id: number }>(`/api/bookings/${id}/images`, { bookingId: id, imageUrl, type });

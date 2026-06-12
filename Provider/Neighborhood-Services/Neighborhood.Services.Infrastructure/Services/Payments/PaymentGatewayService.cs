@@ -122,10 +122,11 @@ namespace Neighborhood.Services.Infrastructure.Services.Payments
 
             if (!paymentKeyResponse.IsSuccessStatusCode)
             {
+                var body = await paymentKeyResponse.Content.ReadAsStringAsync(cancellationToken);
                 return new PaymentGatewayResponse
                 {
                     Success = false,
-                    ErrorMessage = "Paymob payment key creation failed."
+                    ErrorMessage = $"Paymob payment key creation failed ({(int)paymentKeyResponse.StatusCode}): {body}"
                 };
             }
 

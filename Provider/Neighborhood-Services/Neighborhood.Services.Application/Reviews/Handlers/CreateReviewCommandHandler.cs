@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Reviews.Commands;
 using Neighborhood.Services.Application.Reviews.DTOs;
 using Neighborhood.Services.Application.Reviews.Interfaces;
@@ -16,66 +17,78 @@ namespace Neighborhood.Services.Application.Reviews.Handlers
         private readonly IReviewRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBookingRepository _bookingRepository;
-        public CreateReviewCommandHandler(IReviewRepository repository, IUnitOfWork unitOfWork, IBookingRepository bookingRepository)
+        private readonly ICurrentUserService _currentUser;
+
+        public CreateReviewCommandHandler(
+            IReviewRepository repository,
+            IUnitOfWork unitOfWork,
+            IBookingRepository bookingRepository,
+            ICurrentUserService currentUser)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _bookingRepository = bookingRepository;
+            _currentUser = currentUser;
         }
 
-        public async Task<ReviewDto> Handle(
-     CreateReviewCommand request,
-     CancellationToken cancellationToken)
+        public async Task<ReviewDto> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
         {
-            if (request.ReviewerId == request.RevieweeId)
-                throw new Exception("User cannot review himself.");
-
             if (request.Rating < 1 || request.Rating > 5)
-                throw new Exception("Rating must be between 1 and 5.");
+                throw new BadRequestException("Rating must be between 1 and 5.");
 
-            
+            if (string.IsNullOrWhiteSpace(request.Comment))
+                throw new BadRequestException("A comment is required.");
 
+            var reviewerId = _currentUser.UserId
+                ?? throw new UnauthorizedException("User is not authenticated.");
 
-            var booking = await _bookingRepository.GetBookingWithDetailsAsync(request.BookingId);
-            if (booking is null)
-                throw new Exception("Booking not found");
+            var booking = await _bookingRepository.GetBookingWithDetailsAsync(request.BookingId)
+                ?? throw new NotFoundException(nameof(Booking), request.BookingId);
+
+            // A review only makes sense once the cycle is fully closed: the customer has
+            // confirmed the completed work and the escrow was released. This prevents
+            // review-before-dispute sequencing and stops reviews on jobs that aren't really done.
+            if (booking.Status != BookingStatus.Completed || !booking.ClientConfirmed)
+                throw new BadRequestException("You can only review a booking after the customer confirms completion.");
+
             var customerUserId = booking.Customer.ApplicationUserId;
             var technicianUserId = booking.Technician.ApplicationUserId;
 
+            // Derive direction from WHO is calling — the auth token is the source of truth.
+            // The reviewee is whichever party the reviewer is not.
             ReviewType direction;
-
-            if (request.ReviewerId == customerUserId &&
-                request.RevieweeId == technicianUserId)
+            string revieweeId;
+            if (reviewerId == customerUserId)
             {
                 direction = ReviewType.CustomerToTechnician;
+                revieweeId = technicianUserId;
             }
-            else if (request.ReviewerId == technicianUserId &&
-                     request.RevieweeId == customerUserId)
+            else if (reviewerId == technicianUserId)
             {
                 direction = ReviewType.TechnicianToCustomer;
+                revieweeId = customerUserId;
             }
             else
             {
-                throw new Exception("Invalid review direction");
+                throw new ForbiddenException("You don't have access to this booking.");
             }
 
-            var ReviewExists = await _repository.ExistsByDirectionAsync( request.BookingId, direction);
+            if (await _repository.ExistsByDirectionAsync(request.BookingId, direction, cancellationToken))
+                throw new ConflictException("You have already reviewed this booking.");
 
-            if (ReviewExists)
-                throw new Exception("Review already exists for this direction");
             var review = new Review
             {
                 BookingId = request.BookingId,
-                ReviewerId = request.ReviewerId,
-                RevieweeId = request.RevieweeId,
+                ReviewerId = reviewerId,
+                RevieweeId = revieweeId,
+                ReviewType = direction,
                 Rating = request.Rating,
-                Comment = request.Comment,
+                Comment = request.Comment.Trim(),
                 Status = ReviewStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 
             await _repository.AddAsync(review);
-
             await _unitOfWork.SaveChangesAsync();
 
             return ReviewMapper.MapToDto(review);

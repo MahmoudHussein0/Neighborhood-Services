@@ -86,6 +86,14 @@
               @if (canDispute(job.status)) {
                 <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === job.id" (click)="raiseDispute(job)">{{ 'dispute.raise' | translate }}</button>
               }
+              @if (canReview(job)) {
+                <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="leaveReview(job)">
+                  <i class="bi bi-star me-1"></i>{{ 'review.leave' | translate }}
+                </button>
+              }
+              @if (job.status === 'Completed' && job.clientConfirmed && job.hasReview) {
+                <span class="badge text-bg-light border align-self-center"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.done' | translate }}</span>
+              }
             </div>
           </div>
         </div>
