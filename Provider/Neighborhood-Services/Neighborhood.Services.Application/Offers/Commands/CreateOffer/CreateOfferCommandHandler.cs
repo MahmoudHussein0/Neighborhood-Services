@@ -1,6 +1,9 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.DTOs;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
@@ -21,6 +24,9 @@ namespace Neighborhood.Services.Application.Offers.Commands.CreateOffer
         private readonly ITechnicianAvailabilityRepository _availabilityRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<CreateOfferCommandHandler> _logger;
 
         public CreateOfferCommandHandler(
             IOfferRepository offerRepository,
@@ -29,7 +35,10 @@ namespace Neighborhood.Services.Application.Offers.Commands.CreateOffer
             ITechnicianRepository technicianRepository,
             ITechnicianAvailabilityRepository availabilityRepository,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICustomerRepository customerRepository,
+            INotificationService notificationService,
+            ILogger<CreateOfferCommandHandler> logger)
         {
             _offerRepository = offerRepository;
             _serviceRequestRepository = serviceRequestRepository;
@@ -38,6 +47,9 @@ namespace Neighborhood.Services.Application.Offers.Commands.CreateOffer
             _availabilityRepository = availabilityRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _customerRepository = customerRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<CreateOfferResultDto> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
@@ -108,6 +120,20 @@ namespace Neighborhood.Services.Application.Offers.Commands.CreateOffer
 
             await _offerRepository.AddAsync(offer);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the request's customer that a new offer arrived — best effort.
+            try
+            {
+                var customer = await _customerRepository.GetByIdAsync(serviceRequest.CustomerId);
+                if (!string.IsNullOrEmpty(customer?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        customer.ApplicationUserId,
+                        $"You received a new offer on your service request #{serviceRequest.Id}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "New-offer notification failed for request {Id}.", serviceRequest.Id);
+            }
 
             return new CreateOfferResultDto
             {

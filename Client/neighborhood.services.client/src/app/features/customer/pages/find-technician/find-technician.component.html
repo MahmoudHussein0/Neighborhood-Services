@@ -1,0 +1,148 @@
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-2">
+  <div>
+    <h2 class="h4 fw-bold mb-0">{{ 'findTech.title' | translate }}</h2>
+    <p class="text-muted small mb-0">{{ 'findTech.subtitle' | translate }}</p>
+  </div>
+  <div class="input-group" style="max-width: 320px;">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input
+      type="search"
+      class="form-control"
+      [placeholder]="'findTech.search' | translate"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)" />
+  </div>
+</div>
+
+<!-- Toolbar: sort + quick filters -->
+<div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+  <button class="btn btn-sm btn-primary" (click)="openSmartMatch()">
+    <i class="bi bi-stars me-1"></i>{{ 'smartMatch.button' | translate }}
+  </button>
+  <div class="vr mx-1"></div>
+  <div class="btn-group btn-group-sm" role="group">
+    <button class="btn btn-outline-secondary" [class.active]="sortBy() === 'rating'" (click)="setSort('rating')">
+      <i class="bi bi-star me-1"></i>{{ 'findTech.sortRating' | translate }}
+    </button>
+    <button class="btn btn-outline-secondary" [class.active]="sortBy() === 'available'" (click)="setSort('available')">
+      <i class="bi bi-lightning me-1"></i>{{ 'findTech.sortAvailable' | translate }}
+    </button>
+  </div>
+
+  <button class="btn btn-sm" [class.btn-success]="availableOnly()" [class.btn-outline-success]="!availableOnly()" (click)="toggleAvailable()">
+    <i class="bi bi-broadcast me-1"></i>{{ 'findTech.availableOnly' | translate }}
+  </button>
+  <button class="btn btn-sm" [class.btn-primary]="verifiedOnly()" [class.btn-outline-primary]="!verifiedOnly()" (click)="toggleVerified()">
+    <i class="bi bi-patch-check me-1"></i>{{ 'findTech.verifiedOnly' | translate }}
+  </button>
+</div>
+
+<!-- Category chips (derived from loaded technicians) -->
+@if (categories().length) {
+  <div class="d-flex align-items-center flex-wrap gap-2 mb-4">
+    <button class="badge rounded-pill border" [class.text-bg-dark]="selectedCategory() === null" [class.text-bg-light]="selectedCategory() !== null" (click)="selectCategory(null)">
+      {{ 'findTech.allCategories' | translate }}
+    </button>
+    @for (c of categories(); track c.id) {
+      <button class="badge rounded-pill border" [class.text-bg-dark]="selectedCategory() === c.id" [class.text-bg-light]="selectedCategory() !== c.id" (click)="selectCategory(c.id)">
+        @if (c.icon) { <i class="bi {{ c.icon }} me-1"></i> }{{ categoryName(c) }}
+      </button>
+    }
+  </div>
+}
+
+@if (loading()) {
+  <!-- Skeleton grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+    @for (s of [1,2,3,4,5,6]; track s) {
+      <div class="col">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="placeholder-glow"><span class="placeholder rounded-circle" style="width:56px;height:56px;"></span></div>
+              <div class="flex-grow-1 placeholder-glow">
+                <span class="placeholder col-7 d-block mb-2"></span>
+                <span class="placeholder col-4"></span>
+              </div>
+            </div>
+            <div class="placeholder-glow"><span class="placeholder col-9 mb-2"></span><span class="placeholder col-6"></span></div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+
+  @if (filtered().length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-search fs-1 d-block mb-2"></i>
+        {{ 'findTech.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <div class="text-muted small mb-2">{{ 'findTech.results' | translate: { count: filtered().length } }}</div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+      @for (tech of filtered(); track tech.id) {
+        <div class="col">
+          <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body d-flex flex-column">
+
+              <!-- Identity -->
+              <div class="d-flex align-items-center gap-3 mb-3">
+                @if (tech.photo) {
+                  <img [src]="tech.photo" [alt]="displayName(tech)" class="rounded-circle object-fit-cover" style="width:56px;height:56px;" />
+                } @else {
+                  <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+                    {{ initials(tech) }}
+                  </div>
+                }
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="fw-semibold text-truncate">{{ displayName(tech) }}</span>
+                    @if (isVerified(tech)) { <i class="bi bi-patch-check-fill text-primary" [title]="'findTech.verified' | translate"></i> }
+                  </div>
+                  <div class="small">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <span class="fw-semibold ms-1">{{ tech.rating ? (tech.rating | number: '1.1-1') : ('findTech.noRating' | translate) }}</span>
+                  </div>
+                </div>
+                <span class="badge rounded-pill" [class.text-bg-success]="tech.isAvailable" [class.text-bg-secondary]="!tech.isAvailable">
+                  {{ (tech.isAvailable ? 'findTech.available' : 'findTech.offline') | translate }}
+                </span>
+              </div>
+
+              <!-- Specialties -->
+              @if (tech.categories.length) {
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                  @for (c of tech.categories; track c.id) {
+                    <span class="badge text-bg-light border">@if (c.icon) { <i class="bi {{ c.icon }} me-1"></i> }{{ categoryName(c) }}</span>
+                  }
+                </div>
+              }
+
+              <!-- Travel range -->
+              @if (tech.maxTravelDistance) {
+                <div class="text-muted small mb-3"><i class="bi bi-geo-alt me-1"></i>{{ 'findTech.travelKm' | translate: { km: tech.maxTravelDistance } }}</div>
+              }
+
+              <!-- CTAs -->
+              <div class="d-flex gap-2 mt-auto pt-2">
+                <button class="btn btn-sm btn-outline-secondary flex-fill" (click)="bookNow(tech)">
+                  <i class="bi bi-lightning-charge me-1"></i>{{ 'findTech.bookNow' | translate }}
+                </button>
+                <button class="btn btn-sm btn-primary flex-fill" (click)="setupRecurring(tech)">
+                  <i class="bi bi-arrow-repeat me-1"></i>{{ 'findTech.setupRecurring' | translate }}
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}

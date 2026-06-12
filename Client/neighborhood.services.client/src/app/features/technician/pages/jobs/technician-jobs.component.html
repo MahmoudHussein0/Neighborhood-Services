@@ -1,0 +1,107 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+  <h2 class="h4 fw-bold mb-0">{{ 'technician.jobs.title' | translate }}</h2>
+  <div class="input-group" style="max-width: 280px;">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input
+      type="search"
+      class="form-control"
+      [placeholder]="'technician.jobs.search' | translate"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)" />
+  </div>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-pills gap-2 mb-4 flex-wrap">
+  @for (tab of tabs; track tab.value) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab.value" (click)="selectTab(tab.value)">
+        {{ ('technician.jobs.tabs.' + (tab.value === 'All' ? 'all' : tab.value)) | translate }}
+      </button>
+    </li>
+  }
+</ul>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (result(); as res) {
+
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-briefcase fs-1 d-block mb-2"></i>
+        {{ 'technician.jobs.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <div class="d-flex flex-column gap-3">
+      @for (job of res.items; track job.id) {
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+              <div>
+                <div class="fw-semibold">{{ job.description }}</div>
+                <div class="text-muted small">
+                  {{ job.address }} · {{ job.scheduledAt | date: 'medium' }}
+                  @if (mapsUrl(job.latitude, job.longitude); as url) {
+                    <a [href]="url" target="_blank" rel="noopener" class="ms-1 text-decoration-none"><i class="bi bi-geo-alt-fill me-1"></i>{{ 'common.openInMaps' | translate }}</a>
+                  }
+                </div>
+                <div class="text-muted small mt-1">
+                  <span class="badge text-bg-light border me-1">{{ ('bookings.bookingType.' + job.bookingType) | translate }}</span>
+                  @if (job.finalPrice > 0) {
+                    {{ 'technician.jobs.yourPrice' | translate }}: {{ job.finalPrice | currency: 'EGP ' }}
+                    @if (job.durationMinutes) {
+                      · {{ job.durationMinutes }} {{ 'technician.jobs.min' | translate }}
+                    }
+                  } @else {
+                    {{ 'technician.jobs.estimated' | translate }}: {{ job.estimatedPrice | currency: 'EGP ' }}
+                  }
+                </div>
+              </div>
+              <span class="badge rounded-pill" [class]="badgeClass(job.status)">{{ ('bookings.status.' + job.status) | translate }}</span>
+            </div>
+
+            <!-- Status-specific call-outs -->
+            @if (job.status === 'Quoted') {
+              <div class="alert alert-info py-2 px-3 mt-3 mb-0 small">
+                <i class="bi bi-hourglass-split me-1"></i>{{ 'technician.jobs.awaitingCustomer' | translate }}
+              </div>
+            }
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              @if (job.status === 'Pending') {
+                <button class="btn btn-sm btn-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.setPrice' | translate }}</button>
+              }
+              @if (job.status === 'Quoted') {
+                <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.editQuote' | translate }}</button>
+              }
+              @if (job.status === 'Confirmed') {
+                <button class="btn btn-sm btn-outline-success" [disabled]="busyId() === job.id" (click)="complete(job)">{{ 'technician.jobs.complete' | translate }}</button>
+              }
+              @if (canDispute(job.status)) {
+                <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === job.id" (click)="raiseDispute(job)">{{ 'dispute.raise' | translate }}</button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-4">
+        <span class="text-muted small">
+          {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}
+        </span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">{{ 'common.previous' | translate }}</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">{{ 'common.next' | translate }}</button>
+        </div>
+      </div>
+    }
+  }
+}

@@ -1,0 +1,76 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+  <h2 class="h4 fw-bold mb-0">{{ 'technician.offers.title' | translate }}</h2>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-pills gap-2 mb-4 flex-wrap">
+  @for (tab of tabs; track tab.value) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab.value" (click)="selectTab(tab.value)">
+        {{ ('technician.offers.tabs.' + (tab.value === 'All' ? 'all' : tab.value)) | translate }}
+      </button>
+    </li>
+  }
+</ul>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (result(); as res) {
+
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-tag fs-1 d-block mb-2"></i>
+        {{ 'technician.offers.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <div class="d-flex flex-column gap-3">
+      @for (offer of res.items; track offer.id) {
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+              <div>
+                <div class="fw-semibold">
+                  {{ offer.price | currency: 'EGP ' }}
+                  <span class="text-muted fw-normal">· {{ offer.estimatedDuration }} {{ 'technician.offers.min' | translate }}</span>
+                </div>
+                <div class="text-muted small">
+                  {{ 'technician.offers.request' | translate }} #{{ offer.serviceRequestId }} ·
+                  {{ offer.scheduledAt | date: 'medium' }}
+                </div>
+                @if (offer.message) {
+                  <div class="small mt-1">{{ offer.message }}</div>
+                }
+              </div>
+              <span class="badge rounded-pill" [class]="badgeClass(offer.status)">{{ ('serviceRequests.offerStatus.' + offer.status) | translate }}</span>
+            </div>
+
+            @if (offer.status === 'Pending') {
+              <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === offer.id" (click)="withdraw(offer)">
+                  {{ 'technician.offers.withdraw' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-4">
+        <span class="text-muted small">
+          {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}
+        </span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">{{ 'common.previous' | translate }}</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">{{ 'common.next' | translate }}</button>
+        </div>
+      </div>
+    }
+  }
+}

@@ -1,0 +1,125 @@
+<!-- Floating toggle button -->
+<button type="button" class="chat-fab btn btn-primary rounded-circle shadow" (click)="toggle()"
+        [attr.aria-label]="'chatbot.title' | translate">
+  <i class="bi" [class.bi-chat-dots-fill]="!isOpen()" [class.bi-x-lg]="isOpen()"></i>
+</button>
+
+@if (isOpen()) {
+  <div class="chat-panel card shadow-lg border-0 rounded-4">
+    <!-- Header -->
+    <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between rounded-top-4">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-robot"></i>
+        <span class="fw-semibold">{{ 'chatbot.title' | translate }}</span>
+      </div>
+      <div class="d-flex align-items-center gap-1">
+        @if (isAuthenticated()) {
+          @if (view() === 'chat') {
+            <button type="button" class="btn btn-sm btn-link text-white p-1" (click)="openHistory()"
+                    [title]="'chatbot.history' | translate"><i class="bi bi-clock-history"></i></button>
+          } @else {
+            <button type="button" class="btn btn-sm btn-link text-white p-1" (click)="backToChat()"
+                    [title]="'chatbot.back' | translate"><i class="bi bi-arrow-left"></i></button>
+          }
+        }
+        <button type="button" class="btn btn-sm btn-link text-white p-1" (click)="newChat()"
+                [title]="'chatbot.newChat' | translate"><i class="bi bi-pencil-square"></i></button>
+        <button type="button" class="btn btn-sm btn-link text-white p-1" (click)="close()"
+                [title]="'common.close' | translate"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+
+    <!-- History view -->
+    @if (view() === 'history') {
+      <div class="chat-body p-2">
+        @if (loadingSessions()) {
+          <div class="text-center py-4"><span class="spinner-border spinner-border-sm text-primary"></span></div>
+        } @else if (sessions().length === 0) {
+          <div class="text-muted small text-center py-4">{{ 'chatbot.noHistory' | translate }}</div>
+        } @else {
+          <div class="list-group list-group-flush">
+            @for (s of sessions(); track s.id) {
+              <button type="button" class="list-group-item list-group-item-action small" (click)="loadSession(s.id)">
+                <i class="bi bi-chat-left-text me-2"></i>{{ s.title || ('chatbot.untitled' | translate) }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Chat view -->
+      <div class="chat-body p-3">
+        @if (messages().length === 0) {
+          <div class="text-muted small text-center py-4">
+            <i class="bi bi-chat-heart d-block fs-3 mb-2"></i>{{ 'chatbot.empty' | translate }}
+          </div>
+        }
+        @for (m of messages(); track $index) {
+          <div class="msg mb-2" [class.user]="m.role === 'User'" [class.assistant]="m.role === 'Assistant'">
+            <div class="msg-bubble">
+              @if (m.imageUrl) {
+                <img [src]="m.imageUrl" alt="attachment" class="rounded mb-1 d-block"
+                     style="max-width: 160px; max-height: 160px; object-fit: cover;" />
+              }
+              @if (m.content) { {{ m.content }} }
+            </div>
+          </div>
+        }
+        @if (sending()) {
+          <div class="msg assistant mb-2"><div class="msg-bubble text-muted"><span class="spinner-grow spinner-grow-sm"></span></div></div>
+        }
+      </div>
+
+      @if (!isAuthenticated()) {
+        <div class="px-3 pb-1"><div class="alert alert-light border py-1 px-2 small mb-2 text-muted">
+          <i class="bi bi-info-circle me-1"></i>{{ 'chatbot.guestNudge' | translate }}
+        </div></div>
+      }
+
+      <!-- Composer -->
+      <div class="card-footer bg-white border-0 pt-0">
+        @if (coords()) {
+          <div class="mb-2">
+            <span class="badge text-bg-success-subtle border border-success-subtle text-success-emphasis">
+              <i class="bi bi-geo-alt-fill me-1"></i>{{ 'chatbot.locationAttached' | translate }}
+              <button type="button" class="btn-close btn-close-sm ms-1" style="font-size: 0.6rem;"
+                      (click)="clearLocation()" [attr.aria-label]="'chatbot.removeLocation' | translate"></button>
+            </span>
+          </div>
+        }
+        @if (attachedImage(); as img) {
+          <div class="mb-2 d-inline-block position-relative">
+            <img [src]="img" alt="attachment" class="rounded border"
+                 style="max-width: 64px; max-height: 64px; object-fit: cover;" />
+            <button type="button" class="btn-close bg-white rounded-circle position-absolute top-0 start-100 translate-middle p-1"
+                    style="font-size: 0.5rem;" (click)="removeImage()"
+                    [attr.aria-label]="'chatbot.removeImage' | translate"></button>
+          </div>
+        } @else if (uploadingImage()) {
+          <div class="mb-2 small text-muted">
+            <span class="spinner-border spinner-border-sm me-1"></span>{{ 'chatbot.uploadingImage' | translate }}
+          </div>
+        }
+        <div class="input-group">
+          <button type="button" class="btn btn-outline-secondary" (click)="shareLocation()"
+                  [class.text-success]="coords()" [title]="'chatbot.shareLocation' | translate">
+            <i class="bi bi-geo-alt"></i>
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="imageInput.click()"
+                  [disabled]="uploadingImage()" [class.text-primary]="attachedImage()"
+                  [title]="'chatbot.attachImage' | translate">
+            <i class="bi bi-image"></i>
+          </button>
+          <input #imageInput type="file" accept="image/*" class="d-none" (change)="onImageSelected($event)" />
+          <input type="text" class="form-control" [(ngModel)]="draft"
+                 [placeholder]="'chatbot.placeholder' | translate"
+                 (keydown.enter)="send()" [disabled]="sending()" />
+          <button type="button" class="btn btn-primary" (click)="send()"
+                  [disabled]="sending() || uploadingImage() || (!draft.trim() && !attachedImage())">
+            <i class="bi bi-send"></i>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

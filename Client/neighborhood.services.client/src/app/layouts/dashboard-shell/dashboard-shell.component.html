@@ -11,6 +11,7 @@
       <h1 class="h5 fw-bold mb-0">{{ title() }}</h1>
 
       <div class="d-flex align-items-center gap-3">
+        <app-language-switcher />
         <app-notification-bell />
         <div class="user-summary d-none d-sm-flex flex-column align-items-end">
           <span class="fw-semibold small">{{ currentUser()?.fullName || 'Account' }}</span>

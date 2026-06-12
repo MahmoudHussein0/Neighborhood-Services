@@ -10,6 +10,7 @@ namespace Neighborhood.Services.Domain.AgentLogs
         Dispute,
         Review,
         Technician,
-        ServiceRequest
+        ServiceRequest,
+        Match
     }
 }

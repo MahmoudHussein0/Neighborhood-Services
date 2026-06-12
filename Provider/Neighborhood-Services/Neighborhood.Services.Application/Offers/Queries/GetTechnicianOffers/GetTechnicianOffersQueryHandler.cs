@@ -7,7 +7,7 @@ using Neighborhood.Services.Application.Technicians.Interfaces;
 
 namespace Neighborhood.Services.Application.Offers.Queries.GetTechnicianOffers
 {
-    public class GetTechnicianOffersQueryHandler : IRequestHandler<GetTechnicianOffersQuery, IEnumerable<OfferDto>>
+    public class GetTechnicianOffersQueryHandler : IRequestHandler<GetTechnicianOffersQuery, PagedResult<OfferDto>>
     {
         private readonly IOfferRepository _offerRepository;
         private readonly ITechnicianRepository _technicianRepository;
@@ -23,27 +23,34 @@ namespace Neighborhood.Services.Application.Offers.Queries.GetTechnicianOffers
             _currentUserService = currentUserService;
         }
 
-        public async Task<IEnumerable<OfferDto>> Handle(GetTechnicianOffersQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<OfferDto>> Handle(GetTechnicianOffersQuery request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.UserId
                 ?? throw new UnauthorizedException("User is not authenticated.");
             var technician = await _technicianRepository.GetByUserIdAsync(userId)
                 ?? throw new NotFoundException("Technician", userId);
 
-            var offers = await _offerRepository.GetTechnicianOffersAsync(technician.Id);
+            var page = request.Page < 1 ? 1 : request.Page;
+            var pageSize = request.PageSize is < 1 or > 100 ? 10 : request.PageSize;
 
-            return offers.Select(o => new OfferDto
-            {
-                Id = o.Id,
-                ServiceRequestId = o.ServiceRequestId,
-                TechnicianId = o.TechnicianId,
-                Price = o.Price,
-                EstimatedDuration = o.EstimatedDuration,
-                Message = o.Message,
-                ScheduledAt = o.ScheduledAt,
-                Status = o.Status,
-                CreatedAt = o.CreatedAt
-            });
+            var paged = await _offerRepository.GetTechnicianOffersPagedAsync(technician.Id, request.Status, page, pageSize);
+
+            return new PagedResult<OfferDto>(
+                paged.Items.Select(o => new OfferDto
+                {
+                    Id = o.Id,
+                    ServiceRequestId = o.ServiceRequestId,
+                    TechnicianId = o.TechnicianId,
+                    Price = o.Price,
+                    EstimatedDuration = o.EstimatedDuration,
+                    Message = o.Message,
+                    ScheduledAt = o.ScheduledAt,
+                    Status = o.Status,
+                    CreatedAt = o.CreatedAt
+                }).ToList(),
+                paged.TotalCount,
+                paged.Page,
+                paged.PageSize);
         }
     }
 }

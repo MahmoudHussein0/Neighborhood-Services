@@ -22,17 +22,32 @@ export class MyTranslateService {
 
 
   ChangeDirection() {
-    if (localStorage.getItem('lang') == 'en') {
-      this.renderer.setAttribute(document.documentElement, 'dir', 'ltr')
-      this.renderer.setAttribute(document.documentElement, 'lang', 'en')
+    const isArabic = localStorage.getItem('lang') === 'ar';
 
-
-
+    if (isArabic) {
+      this.renderer.setAttribute(document.documentElement, 'dir', 'rtl');
+      this.renderer.setAttribute(document.documentElement, 'lang', 'ar');
+    } else {
+      this.renderer.setAttribute(document.documentElement, 'dir', 'ltr');
+      this.renderer.setAttribute(document.documentElement, 'lang', 'en');
     }
 
-    else if (localStorage.getItem('lang') == 'ar') {
-      this.renderer.setAttribute(document.documentElement, 'dir', 'rtl')
-      this.renderer.setAttribute(document.documentElement, 'lang', 'ar')
+    this.toggleRtlStylesheet(isArabic);
+  }
+
+  /** Loads Bootstrap's RTL stylesheet only for Arabic (lazy 'bootstrap-rtl' bundle). */
+  private toggleRtlStylesheet(enable: boolean) {
+    const id = 'bootstrap-rtl-css';
+    const existing = document.getElementById(id);
+
+    if (enable && !existing) {
+      const link = this.renderer.createElement('link');
+      this.renderer.setAttribute(link, 'id', id);
+      this.renderer.setAttribute(link, 'rel', 'stylesheet');
+      this.renderer.setAttribute(link, 'href', 'bootstrap-rtl.css');
+      this.renderer.appendChild(document.head, link);
+    } else if (!enable && existing) {
+      existing.remove();
     }
   }
 

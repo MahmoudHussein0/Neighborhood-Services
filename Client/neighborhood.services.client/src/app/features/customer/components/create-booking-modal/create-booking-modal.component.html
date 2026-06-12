@@ -1,0 +1,188 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'bookings.bookNow.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="modal-body">
+    <div class="row g-3">
+
+      <!-- Technician (pre-selected on the Find Technician page) -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.technician' | translate }}</label>
+        <div class="form-control bg-light d-flex align-items-center gap-2">
+          <i class="bi bi-person-badge text-primary"></i>
+          <span class="fw-semibold">{{ technicianName || ('bookings.bookNow.technician' | translate) }}</span>
+        </div>
+      </div>
+
+      <!-- Date & Time -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.dateTime' | translate }}</label>
+        <input type="datetime-local" class="form-control" formControlName="scheduledAt" [min]="minDateTime" />
+        @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errDateTime' | translate }}</div>
+        }
+        @if (availabilityWarning(); as warn) {
+          <div class="text-warning small mt-1"><i class="bi bi-exclamation-triangle me-1"></i>{{ warn }}</div>
+        }
+      </div>
+
+      <!-- Working hours hint -->
+      @if (availability().length) {
+        <div class="col-12">
+          <div class="small text-muted">
+            <i class="bi bi-clock me-1"></i>{{ 'bookings.bookNow.workingHours' | translate }}:
+            @for (a of availability(); track a.dayOfWeek) {
+              <span class="badge text-bg-light border me-1 mb-1">{{ ('recurring.days.' + a.dayOfWeek) | translate }} {{ a.startTime.slice(0, 5) }}–{{ a.endTime.slice(0, 5) }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Category -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.category' | translate }}</label>
+        <select class="form-select" formControlName="categoryId" (change)="onCategoryChange()">
+          <option [ngValue]="null" disabled>{{ 'bookings.bookNow.chooseCategory' | translate }}</option>
+          @for (c of categories(); track c.id) {
+            <option [ngValue]="c.id">{{ c.name }}</option>
+          }
+        </select>
+        @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errCategory' | translate }}</div>
+        }
+        @if (categories().length === 0) {
+          <div class="text-muted small mt-1">{{ 'bookings.bookNow.noCategories' | translate }}</div>
+        }
+      </div>
+
+      <!-- Problem type -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.problemType' | translate }}</label>
+        <select class="form-select" formControlName="problemTypeId" (change)="onProblemTypeChange()" [attr.disabled]="problemTypes().length ? null : true">
+          <option [ngValue]="null" disabled>{{ 'bookings.bookNow.chooseProblemType' | translate }}</option>
+          @for (p of problemTypes(); track p.id) {
+            <option [ngValue]="p.id">{{ p.name }}</option>
+          }
+        </select>
+        @if (form.controls.problemTypeId.touched && form.controls.problemTypeId.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errProblemType' | translate }}</div>
+        }
+      </div>
+
+      <!-- Estimated price (optional, on demand) -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.estimate' | translate }}</label>
+        <div class="input-group">
+          <input type="text" class="form-control bg-light" readonly
+                 [value]="estimatedPrice() != null ? ('EGP ' + estimatedPrice()) : ''"
+                 [placeholder]="'bookings.bookNow.estimatePlaceholder' | translate" />
+          <button type="button" class="btn btn-outline-primary"
+                  [disabled]="form.controls.problemTypeId.value == null || estimating()"
+                  (click)="getEstimate()">
+            @if (estimating()) {
+              <span class="spinner-border spinner-border-sm" role="status"></span>
+            } @else {
+              {{ 'bookings.bookNow.getEstimate' | translate }}
+            }
+          </button>
+        </div>
+        <div class="form-text">{{ 'bookings.bookNow.estimateNote' | translate }}</div>
+      </div>
+
+      <!-- Tech's own range for the selected problem type -->
+      @if (form.controls.problemTypeId.value != null) {
+        <div class="col-12">
+          @if (!techPricingLoaded()) {
+            <div class="text-muted small"><span class="spinner-border spinner-border-sm me-1"></span></div>
+          } @else if (techPricing(); as r) {
+            <div class="alert alert-success py-2 px-3 small mb-0">
+              <i class="bi bi-cash-coin me-1"></i>{{ 'bookings.bookNow.techRange' | translate: { min: r.minPrice, max: r.maxPrice } }}
+            </div>
+          } @else {
+            <div class="alert alert-warning py-2 px-3 small mb-0">
+              <i class="bi bi-exclamation-triangle me-1"></i>{{ 'bookings.bookNow.techNoPricing' | translate }}
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label">{{ 'bookings.bookNow.description' | translate }}</label>
+        <textarea class="form-control" rows="2" formControlName="description"
+                  [placeholder]="'bookings.bookNow.descriptionPlaceholder' | translate"></textarea>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errDescription' | translate }}</div>
+        }
+      </div>
+
+      <!-- Address -->
+      <div class="col-12">
+        <label class="form-label">{{ 'bookings.bookNow.address' | translate }}</label>
+        <input type="text" class="form-control" formControlName="address"
+               [placeholder]="'bookings.bookNow.addressPlaceholder' | translate" />
+        @if (form.controls.address.touched && form.controls.address.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errAddress' | translate }}</div>
+        }
+      </div>
+
+      <!-- Problem photo (optional) — shown to the technician before they quote -->
+      <div class="col-12">
+        <label class="form-label">{{ 'bookings.bookNow.photo' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        <input type="file" class="form-control" accept="image/*"
+               (change)="onPhotoSelected($event)" [disabled]="uploadingPhoto()" />
+        <div class="form-text">{{ 'bookings.bookNow.photoHint' | translate }}</div>
+        @if (uploadingPhoto()) {
+          <div class="text-muted small mt-1">
+            <span class="spinner-border spinner-border-sm me-1"></span>{{ 'serviceRequests.form.uploading' | translate }}
+          </div>
+        }
+        @if (beforeImageUrl() && !uploadingPhoto()) {
+          <div class="mt-2">
+            <img [src]="beforeImageUrl()" alt="problem" class="rounded" style="height: 80px; object-fit: cover;" />
+            <span class="text-success small ms-2"><i class="bi bi-check-circle"></i> {{ 'serviceRequests.form.uploaded' | translate }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Location (required) -->
+      <div class="col-12">
+        <label class="form-label d-block">{{ 'common.location' | translate }} <span class="text-danger">*</span></label>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="useMyLocation()" [disabled]="locating()">
+          <i class="bi bi-geo-alt"></i>
+          {{ (locating() ? 'common.locating' : 'common.useMyLocation') | translate }}
+        </button>
+        @if (lat() != null && lng() != null) {
+          <span class="text-success small ms-2"><i class="bi bi-check-circle"></i> {{ 'common.captured' | translate }}</span>
+        }
+        @if (submitAttempted() && (lat() == null || lng() == null)) {
+          <div class="text-danger small mt-1">{{ 'common.locationRequired' | translate }}</div>
+        }
+      </div>
+
+      <!-- Promo code (optional) -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'bookings.bookNow.promo' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        <input type="text" class="form-control" formControlName="promoCode"
+               [placeholder]="'bookings.bookNow.promoPlaceholder' | translate" />
+      </div>
+
+      <!-- Note -->
+      <div class="col-12">
+        <div class="alert alert-info py-2 px-3 small mb-0">
+          <i class="bi bi-info-circle me-1"></i>{{ 'bookings.bookNow.note' | translate }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="submitting() || uploadingPhoto()">
+      {{ (submitting() ? 'common.creating' : 'bookings.bookNow.submit') | translate }}
+    </button>
+  </div>
+</form>

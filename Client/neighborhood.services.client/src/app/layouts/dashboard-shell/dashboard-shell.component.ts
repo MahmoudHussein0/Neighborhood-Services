@@ -1,11 +1,12 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { AuthService } from '../../features/auth/services/auth.service';
 
 @Component({
   selector: 'app-dashboard-shell',
-  imports: [RouterOutlet, NotificationBellComponent],
+  imports: [RouterOutlet, NotificationBellComponent, LanguageSwitcherComponent],
   templateUrl: './dashboard-shell.component.html',
   styleUrl: './dashboard-shell.component.css',
 })

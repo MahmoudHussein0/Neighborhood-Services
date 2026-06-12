@@ -1,0 +1,112 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+  <h2 class="h4 fw-bold mb-0">{{ 'recurring.title' | translate }}</h2>
+  <div class="d-flex gap-2">
+    <div class="input-group" style="max-width: 280px;">
+      <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+      <input
+        type="search"
+        class="form-control"
+        [placeholder]="'recurring.search' | translate"
+        [value]="searchTerm()"
+        (input)="onSearchInput($any($event.target).value)" />
+    </div>
+    <button class="btn btn-primary" (click)="create()">
+      <i class="bi bi-plus-lg me-1"></i> {{ 'recurring.new' | translate }}
+    </button>
+  </div>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-pills gap-2 mb-4 flex-wrap">
+  @for (tab of tabs; track tab.value) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab.value" (click)="selectTab(tab.value)">
+        {{ ('recurring.tabs.' + (tab.value === 'All' ? 'all' : tab.value)) | translate }}
+      </button>
+    </li>
+  }
+</ul>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (result(); as res) {
+
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-arrow-repeat fs-1 d-block mb-2"></i>
+        {{ 'recurring.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <div class="d-flex flex-column gap-3">
+      @for (rb of res.items; track rb.id) {
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+              <div>
+                <div class="fw-semibold">{{ scheduleText(rb) }}</div>
+                <div class="text-muted small">{{ rb.address }} · {{ rb.durationMinutes }} {{ 'recurring.min' | translate }}</div>
+                @if (nextVisit(rb); as nv) {
+                  <div class="text-primary small mt-1">
+                    <i class="bi bi-calendar-event me-1"></i>{{ 'recurring.nextVisit' | translate }}: {{ nv | date: 'EEE, MMM d' }} · {{ nv | date: 'HH:mm' }}
+                  </div>
+                }
+              </div>
+              <span class="badge rounded-pill" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
+            </div>
+
+            <!-- Proposed price call-out when awaiting customer -->
+            @if (rb.status === 'PendingCustomerApproval' && rb.agreedPrice != null) {
+              <div class="alert alert-primary py-2 px-3 mt-3 mb-0 small">
+                {{ 'recurring.proposedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}
+              </div>
+            } @else if (rb.agreedPrice != null) {
+              <div class="text-muted small mt-2">{{ 'recurring.agreedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}</div>
+            }
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" (click)="details(rb)">{{ 'recurring.details' | translate }}</button>
+                @if (rb.status !== 'Cancelled') {
+                  <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === rb.id" (click)="edit(rb)">{{ 'recurring.edit' | translate }}</button>
+                }
+              </div>
+              <div class="d-flex gap-2">
+                @if (rb.status === 'PendingCustomerApproval') {
+                  <button class="btn btn-sm btn-primary" [disabled]="busyId() === rb.id" (click)="approve(rb)">{{ 'recurring.approve' | translate }}</button>
+                  <button class="btn btn-sm btn-outline-secondary" [disabled]="busyId() === rb.id" (click)="rejectPrice(rb)">{{ 'recurring.rejectPrice' | translate }}</button>
+                }
+                @if (rb.status === 'Active') {
+                  <button class="btn btn-sm btn-outline-secondary" [disabled]="busyId() === rb.id" (click)="pause(rb)">{{ 'recurring.pause' | translate }}</button>
+                }
+                @if (rb.status === 'Paused') {
+                  <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === rb.id" (click)="resume(rb)">{{ 'recurring.resume' | translate }}</button>
+                }
+                @if (rb.status !== 'Cancelled') {
+                  <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === rb.id" (click)="cancel(rb)">{{ 'recurring.cancel' | translate }}</button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-4">
+        <span class="text-muted small">
+          {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}
+        </span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">{{ 'common.previous' | translate }}</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">{{ 'common.next' | translate }}</button>
+        </div>
+      </div>
+    }
+  }
+}

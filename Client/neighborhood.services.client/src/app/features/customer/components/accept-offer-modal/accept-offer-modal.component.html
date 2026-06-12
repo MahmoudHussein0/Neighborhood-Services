@@ -1,0 +1,24 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'serviceRequests.acceptModal.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <p class="mb-3">{{ 'serviceRequests.acceptModal.body' | translate: { name: technicianName } }}</p>
+
+  <div class="d-flex gap-4">
+    <div>
+      <div class="text-muted small">{{ 'serviceRequests.acceptModal.price' | translate }}</div>
+      <div class="h5 fw-bold mb-0">{{ price | currency: 'EGP ' }}</div>
+    </div>
+    <div>
+      <div class="text-muted small">{{ 'serviceRequests.acceptModal.duration' | translate }}</div>
+      <div class="h5 fw-bold mb-0">{{ duration }} {{ 'serviceRequests.acceptModal.min' | translate }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+  <button type="button" class="btn btn-primary" (click)="confirm()">{{ 'serviceRequests.acceptModal.accept' | translate }}</button>
+</div>

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.RecurringBookings.Commands.ApproveRecurring;
 using Neighborhood.Services.Application.RecurringBookings.Commands.CancelRecurring;
@@ -10,11 +11,13 @@ using Neighborhood.Services.Application.RecurringBookings.Commands.SetRecurringP
 using Neighborhood.Services.Application.RecurringBookings.Commands.UpdateRecurring;
 using Neighborhood.Services.Application.RecurringBookings.Queries.GetMyRecurringBookingsQuery;
 using Neighborhood.Services.Application.RecurringBookings.Queries.GetRecurringBookingByIdQuery;
+using Neighborhood.Services.Domain.RecurringBookings;
 
 namespace Neighborhood.Services.API.RecurringBookings
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RecurringBookingsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -95,11 +98,22 @@ namespace Neighborhood.Services.API.RecurringBookings
 
         // ---------- Queries ----------
 
-        // GET /api/recurringbookings/mine  (authenticated customer or technician)
+        // GET /api/recurringbookings/mine?status=Active&search=cairo&page=1&pageSize=10
+        // (authenticated customer or technician — paged + optional filter/search)
         [HttpGet("mine")]
-        public async Task<IActionResult> GetMine()
+        public async Task<IActionResult> GetMine(
+            [FromQuery] RecurringBookingStatus? status,
+            [FromQuery] string? search,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetMyRecurringBookingsQuery());
+            var result = await _mediator.Send(new GetMyRecurringBookingsQuery
+            {
+                Status = status,
+                Search = search,
+                Page = page,
+                PageSize = pageSize
+            });
             return Ok(result);
         }
 

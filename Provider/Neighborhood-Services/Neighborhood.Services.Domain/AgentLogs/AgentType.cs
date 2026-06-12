@@ -9,6 +9,7 @@ namespace Neighborhood.Services.Domain.AgentLogs
         Matching,
         Pricing,
         Booking,
-        QA
+        QA,
+        Moderation
     }
 }

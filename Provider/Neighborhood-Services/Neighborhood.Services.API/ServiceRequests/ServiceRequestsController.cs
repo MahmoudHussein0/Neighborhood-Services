@@ -1,16 +1,21 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.ServiceRequests.Commands.CreateService;
+using Neighborhood.Services.Application.ServiceRequests.Commands.ReviewFlaggedServiceRequest;
+using Neighborhood.Services.Application.ServiceRequests.Queries.GetFlaggedServiceRequestsQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetMyServiceRequestsQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetOpenServiceRequestsQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestByIdQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestsByCustomerQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestWithOffersQuery;
+using Neighborhood.Services.Domain.ServiceRequests;
 
 namespace Neighborhood.Services.API.ServiceRequests
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ServiceRequestsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -32,11 +37,22 @@ namespace Neighborhood.Services.API.ServiceRequests
 
         // ---------- Queries ----------
 
-        // GET /api/servicerequests/mine  (authenticated customer — their own requests)
+        // GET /api/servicerequests/mine?status=Open&search=leak&page=1&pageSize=10
+        // (authenticated customer — their own requests, paged + optional filter/search)
         [HttpGet("mine")]
-        public async Task<IActionResult> GetMine()
+        public async Task<IActionResult> GetMine(
+            [FromQuery] ServiceRequestStatus? status,
+            [FromQuery] string? search,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetMyServiceRequestsQuery());
+            var result = await _mediator.Send(new GetMyServiceRequestsQuery
+            {
+                Status = status,
+                Search = search,
+                Page = page,
+                PageSize = pageSize
+            });
             return Ok(result);
         }
 
@@ -62,6 +78,42 @@ namespace Neighborhood.Services.API.ServiceRequests
         {
             var result = await _mediator.Send(new GetServiceRequestsByCustomerQuery { CustomerId = customerId });
             return Ok(result);
+        }
+
+        // ---------- Staff moderation queue ----------
+
+        // GET /api/servicerequests/flagged?page=1&pageSize=10
+        // Staff-only: requests the moderation agent flagged as inappropriate.
+        [Authorize(Roles = "Staff")]
+        [HttpGet("flagged")]
+        public async Task<IActionResult> GetFlagged(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var result = await _mediator.Send(new GetFlaggedServiceRequestsQuery
+            {
+                Page = page,
+                PageSize = pageSize
+            });
+            return Ok(result);
+        }
+
+        // POST /api/servicerequests/{id}/approve  (Flagged -> Open, goes live)
+        [Authorize(Roles = "Staff")]
+        [HttpPost("{id:int}/approve")]
+        public async Task<IActionResult> Approve(int id)
+        {
+            await _mediator.Send(new ReviewFlaggedServiceRequestCommand { ServiceRequestId = id, Approved = true });
+            return NoContent();
+        }
+
+        // POST /api/servicerequests/{id}/reject  (Flagged -> Closed)
+        [Authorize(Roles = "Staff")]
+        [HttpPost("{id:int}/reject")]
+        public async Task<IActionResult> Reject(int id)
+        {
+            await _mediator.Send(new ReviewFlaggedServiceRequestCommand { ServiceRequestId = id, Approved = false });
+            return NoContent();
         }
 
         // GET /api/servicerequests/open?latitude=...&longitude=...&radiusInMeters=...

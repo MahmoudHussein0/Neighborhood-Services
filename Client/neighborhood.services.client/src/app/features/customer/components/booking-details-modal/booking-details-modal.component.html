@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'bookings.detailsModal.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  @if (loading()) {
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } @else if (details(); as d) {
+    <dl class="row mb-0">
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.status' | translate }}</dt>
+      <dd class="col-sm-8">{{ ('bookings.status.' + d.status) | translate }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.type' | translate }}</dt>
+      <dd class="col-sm-8">{{ ('bookings.bookingType.' + d.bookingType) | translate }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.description' | translate }}</dt>
+      <dd class="col-sm-8">{{ d.description }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.address' | translate }}</dt>
+      <dd class="col-sm-8">
+        {{ d.address }}
+        @if (mapsUrl(d.latitude, d.longitude); as url) {
+          <a [href]="url" target="_blank" rel="noopener" class="ms-2 small text-decoration-none">
+            <i class="bi bi-geo-alt-fill me-1"></i>{{ 'common.openInMaps' | translate }}
+          </a>
+        }
+      </dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.scheduled' | translate }}</dt>
+      <dd class="col-sm-8">{{ d.scheduledAt | date: 'medium' }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.estimatedPrice' | translate }}</dt>
+      <dd class="col-sm-8">{{ d.estimatedPrice | currency: 'EGP ' }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.finalPrice' | translate }}</dt>
+      <dd class="col-sm-8">{{ d.finalPrice | currency: 'EGP ' }}</dd>
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.clientConfirmed' | translate }}</dt>
+      <dd class="col-sm-8">{{ (d.clientConfirmed ? 'common.yes' : 'common.no') | translate }}</dd>
+
+      @if (d.cancellationReason) {
+        <dt class="col-sm-4">{{ 'bookings.detailsModal.cancellationReason' | translate }}</dt>
+        <dd class="col-sm-8">{{ d.cancellationReason }}</dd>
+      }
+
+      <dt class="col-sm-4">{{ 'bookings.detailsModal.created' | translate }}</dt>
+      <dd class="col-sm-8">{{ d.createdAt | date: 'medium' }}</dd>
+    </dl>
+
+    @if (images().length) {
+      <hr />
+      <h6 class="mb-2">{{ 'bookings.detailsModal.photos' | translate }}</h6>
+      <div class="d-flex flex-wrap gap-3">
+        @for (img of images(); track img.id) {
+          <a [href]="img.imageUrl" target="_blank" rel="noopener" class="text-center text-decoration-none">
+            <img [src]="img.imageUrl" [alt]="img.type" class="rounded d-block"
+                 style="width: 100px; height: 100px; object-fit: cover;" />
+            <span class="small text-muted">{{ ('bookings.detailsModal.photoType.' + img.type) | translate }}</span>
+          </a>
+        }
+      </div>
+    }
+  } @else {
+    <p class="text-muted mb-0">{{ 'bookings.detailsModal.loadError' | translate }}</p>
+  }
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="close()">{{ 'common.close' | translate }}</button>
+</div>

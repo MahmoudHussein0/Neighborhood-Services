@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ titleKey | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <p class="mb-0">{{ messageKey | translate: messageParams }}</p>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ cancelKey | translate }}</button>
+  <button type="button" [class]="confirmButtonClass" (click)="confirm()">{{ confirmKey | translate }}</button>
+</div>

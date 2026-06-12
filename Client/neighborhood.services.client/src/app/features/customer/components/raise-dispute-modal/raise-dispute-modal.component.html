@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-1"></i>{{ 'dispute.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <p class="text-muted small">{{ 'dispute.subtitle' | translate }}</p>
+
+  <div class="mb-3">
+    <label class="form-label">{{ 'dispute.type' | translate }}</label>
+    <select class="form-select" [ngModel]="disputeType()" (ngModelChange)="disputeType.set($event)">
+      @for (t of types; track t) {
+        <option [ngValue]="t">{{ ('dispute.types.' + t) | translate }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="mb-1">
+    <label class="form-label">{{ 'dispute.reason' | translate }}</label>
+    <textarea class="form-control" rows="3"
+      [ngModel]="reason()" (ngModelChange)="reason.set($event)"
+      [placeholder]="'dispute.reasonHint' | translate"></textarea>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+  <button type="button" class="btn btn-danger" [disabled]="!reason().trim()" (click)="submit()">
+    {{ 'dispute.submit' | translate }}
+  </button>
+</div>

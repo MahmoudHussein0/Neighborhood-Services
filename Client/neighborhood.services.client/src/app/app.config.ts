@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -17,6 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimations(),
     provideToastr(),
+    // Locale for DatePipe/CurrencyPipe, taken from the saved language (applies on load/refresh)
+    { provide: LOCALE_ID, useFactory: () => localStorage.getItem('lang') ?? 'en' },
     provideTranslateService({
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({

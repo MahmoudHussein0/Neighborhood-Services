@@ -20,5 +20,8 @@ namespace Neighborhood.Services.Application.Bookings.DTOs
         public int ProblemTypeId { get; set; }
         public int? OfferId { get; set; }
         public int? ServiceRequestId { get; set; }
+        // From Location (Point): Y = latitude, X = longitude. Lets the UI open the spot in Maps.
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

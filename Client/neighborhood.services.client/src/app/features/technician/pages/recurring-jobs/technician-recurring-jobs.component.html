@@ -1,0 +1,91 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+  <h2 class="h4 fw-bold mb-0">{{ 'technician.recurring.title' | translate }}</h2>
+  <div class="input-group" style="max-width: 280px;">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input
+      type="search"
+      class="form-control"
+      [placeholder]="'technician.recurring.search' | translate"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)" />
+  </div>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-pills gap-2 mb-4 flex-wrap">
+  @for (tab of tabs; track tab.value) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab.value" (click)="selectTab(tab.value)">
+        {{ ('technician.recurring.tabs.' + (tab.value === 'All' ? 'all' : tab.value)) | translate }}
+      </button>
+    </li>
+  }
+</ul>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (result(); as res) {
+
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-arrow-repeat fs-1 d-block mb-2"></i>
+        {{ 'technician.recurring.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <div class="d-flex flex-column gap-3">
+      @for (rb of res.items; track rb.id) {
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+              <div>
+                <div class="fw-semibold">{{ scheduleText(rb) }}</div>
+                <div class="text-muted small">{{ rb.address }} · {{ rb.durationMinutes }} {{ 'technician.recurring.min' | translate }}</div>
+              </div>
+              <span class="badge rounded-pill" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
+            </div>
+
+            <!-- Price call-outs -->
+            @if (rb.status === 'PendingApproval') {
+              <div class="alert alert-secondary py-2 px-3 mt-3 mb-0 small">
+                {{ 'technician.recurring.needsPrice' | translate }}
+              </div>
+            } @else if (rb.status === 'PendingCustomerApproval' && rb.agreedPrice != null) {
+              <div class="alert alert-primary py-2 px-3 mt-3 mb-0 small">
+                {{ 'technician.recurring.awaitingCustomer' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}
+              </div>
+            } @else if (rb.agreedPrice != null) {
+              <div class="text-muted small mt-2">{{ 'technician.recurring.agreedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}</div>
+            }
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              @if (rb.status === 'PendingApproval') {
+                <button class="btn btn-sm btn-primary" [disabled]="busyId() === rb.id" (click)="setPrice(rb)">{{ 'technician.recurring.setPrice' | translate }}</button>
+              }
+              @if (rb.status === 'Active' || rb.status === 'Paused') {
+                <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === rb.id" (click)="cancel(rb)">{{ 'technician.recurring.cancel' | translate }}</button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-4">
+        <span class="text-muted small">
+          {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}
+        </span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">{{ 'common.previous' | translate }}</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">{{ 'common.next' | translate }}</button>
+        </div>
+      </div>
+    }
+  }
+}

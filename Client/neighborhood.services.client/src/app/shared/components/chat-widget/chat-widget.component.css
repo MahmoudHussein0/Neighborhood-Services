@@ -1,0 +1,68 @@
+/* Floating action button — bottom-right (LTR), bottom-left (RTL) */
+.chat-fab {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  width: 56px;
+  height: 56px;
+  font-size: 1.4rem;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-panel {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1.25rem;
+  width: 360px;
+  max-width: calc(100vw - 2rem);
+  height: 520px;
+  max-height: calc(100vh - 8rem);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* RTL: flip the widget to the left side */
+:host-context([dir='rtl']) .chat-fab,
+:host-context([dir='rtl']) .chat-panel {
+  right: auto;
+  left: 1.25rem;
+}
+
+.chat-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+/* Message bubbles */
+.msg {
+  display: flex;
+}
+.msg.user {
+  justify-content: flex-end;
+}
+.msg.assistant {
+  justify-content: flex-start;
+}
+.msg-bubble {
+  max-width: 80%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.msg.user .msg-bubble {
+  background: var(--bs-primary, #0d6efd);
+  color: #fff;
+  border-bottom-right-radius: 0.25rem;
+}
+.msg.assistant .msg-bubble {
+  background: var(--bs-light, #f1f3f5);
+  color: var(--bs-body-color, #212529);
+  border-bottom-left-radius: 0.25rem;
+}

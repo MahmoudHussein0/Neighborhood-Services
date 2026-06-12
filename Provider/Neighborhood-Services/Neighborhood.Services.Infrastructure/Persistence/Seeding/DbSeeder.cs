@@ -9,7 +9,9 @@ using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Domain.ProblemTypes;
 using Neighborhood.Services.Domain.RecurringBookings;
 using Neighborhood.Services.Domain.ServiceRequests;
+using Neighborhood.Services.Domain.TechnicianCategories;
 using Neighborhood.Services.Domain.Technicians;
+using Neighborhood.Services.Domain.TechniciansPricing;
 using Neighborhood.Services.Domain.TechniciansAvailability;
 using Neighborhood.Services.Domain.Wallets;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -38,6 +40,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             var problemTypes = await SeedReferenceDataAsync(context);
 
             var (customers, technicians) = await SeedAccountsAsync(context, userManager);
+            await SeedTechnicianCategoriesAsync(context, technicians);
+            await SeedTechnicianPricingAsync(context, technicians, problemTypes);
             await SeedBookingDomainAsync(context, customers, technicians, problemTypes);
 
             await context.SaveChangesAsync();
@@ -108,18 +112,97 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             var customers = new List<Customer>
             {
                 await CreateCustomerAsync(context, userManager, "customer1@test.com", "Sara Customer", 30, 31.2001, 29.9187),
-                await CreateCustomerAsync(context, userManager, "customer2@test.com", "Omar Customer", 27, 31.2100, 29.9250)
+                await CreateCustomerAsync(context, userManager, "customer2@test.com", "Omar Customer", 27, 31.2100, 29.9250),
+                await CreateCustomerAsync(context, userManager, "customer3@test.com", "Heba Customer", 33, 31.2200, 29.9350),
+                await CreateCustomerAsync(context, userManager, "customer4@test.com", "Youssef Customer", 25, 31.1950, 29.9100)
             };
 
+            // Varied technicians (rating / availability / verification) so the Find Technician
+            // badges, sorting and filters all have something to show.
             var technicians = new List<Technician>
             {
-                await CreateTechnicianAsync(context, userManager, "tech1@test.com", "Ali Technician", 35, "29801011200123", 31.2050, 29.9200),
-                await CreateTechnicianAsync(context, userManager, "tech2@test.com", "Mona Technician", 40, "29505052500456", 31.2150, 29.9300)
+                await CreateTechnicianAsync(context, userManager, "tech1@test.com", "Ali Technician", 35, "29801011200123", 31.2050, 29.9200, 4.5m, true, TechnicianVerificationStatus.Approved),
+                await CreateTechnicianAsync(context, userManager, "tech2@test.com", "Mona Technician", 40, "29505052500456", 31.2150, 29.9300, 4.8m, true, TechnicianVerificationStatus.Approved),
+                await CreateTechnicianAsync(context, userManager, "tech3@test.com", "Khaled Technician", 38, "29002021200789", 31.2080, 29.9220, 4.2m, true, TechnicianVerificationStatus.Approved),
+                await CreateTechnicianAsync(context, userManager, "tech4@test.com", "Nour Technician", 29, "29404041400321", 31.2250, 29.9400, 3.9m, false, TechnicianVerificationStatus.Approved),
+                await CreateTechnicianAsync(context, userManager, "tech5@test.com", "Hassan Technician", 45, "27803031300654", 31.1900, 29.9050, 4.6m, true, TechnicianVerificationStatus.Pending),
+                await CreateTechnicianAsync(context, userManager, "tech6@test.com", "Layla Technician", 31, "29606061600987", 31.2300, 29.9450, 5.0m, true, TechnicianVerificationStatus.Approved)
             };
 
             await context.SaveChangesAsync();
             return (customers, technicians);
         }
+
+        // ---------- Technician ↔ Category assignments ----------
+        private static async Task SeedTechnicianCategoriesAsync(ApplicationDbContext context, List<Technician> technicians)
+        {
+            var categories = await context.Categories.AsNoTracking().OrderBy(c => c.Id).ToListAsync();
+            if (categories.Count == 0)
+                return;
+
+            // Give each technician a rotating slice of categories so the data is varied (some
+            // overlap, some differ) — enough to exercise the category filter + per-tech booking.
+            var perTech = Math.Min(3, categories.Count);
+            for (var i = 0; i < technicians.Count; i++)
+            {
+                for (var j = 0; j < perTech; j++)
+                {
+                    var category = categories[(i + j) % categories.Count];
+                    context.TechnicianCategories.Add(new TechnicianCategory
+                    {
+                        TechnicianId = technicians[i].Id,
+                        CategoryId = category.Id
+                    });
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // ---------- Technician ↔ ProblemType pricing ----------
+        // Every technician gets a price band for every problem type. The booking Quote
+        // flow REQUIRES a pricing row (the tech can only quote within [MinPrice, MaxPrice],
+        // and the customer's Book Now modal shows that range), so without this the Direct
+        // flow can't be exercised. Each tech's band sits inside the problem type's own
+        // market range, nudged a little per technician so the ranges vary (higher-index
+        // technicians price slightly higher) — useful for the "this tech vs market" hint.
+        private static async Task SeedTechnicianPricingAsync(
+            ApplicationDbContext context, List<Technician> technicians, List<ProblemType> problemTypes)
+        {
+            if (await context.TechnicianPricings.AnyAsync())
+                return;
+
+            var now = DateTime.UtcNow;
+            var techCount = technicians.Count;
+
+            for (var t = 0; t < techCount; t++)
+            {
+                foreach (var pt in problemTypes)
+                {
+                    var range = pt.MaxPrice - pt.MinPrice;
+
+                    // Raise the floor a bit for higher-index techs, and lower the ceiling a
+                    // bit for lower-index techs — both rounded to the nearest 10 EGP.
+                    var min = pt.MinPrice + RoundTo10(range * t / 25m);
+                    var max = pt.MaxPrice - RoundTo10(range * (techCount - 1 - t) / 33m);
+                    if (max <= min) max = min + 10m; // safety for very narrow ranges
+
+                    context.TechnicianPricings.Add(new TechnicianPricing
+                    {
+                        TechnicianId = technicians[t].Id,
+                        ProblemTypeId = pt.Id,
+                        MinPrice = min,
+                        MaxPrice = max,
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    });
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private static decimal RoundTo10(decimal value) => Math.Round(value / 10m) * 10m;
 
         // ---------- Booking domain (service requests, offers, bookings, recurring) ----------
         private static async Task SeedBookingDomainAsync(
@@ -257,7 +340,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
 
         private static async Task<Technician> CreateTechnicianAsync(
             ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-            string email, string fullName, int age, string nationalId, double lat, double lng)
+            string email, string fullName, int age, string nationalId, double lat, double lng,
+            decimal rating = 4.5m, bool isAvailable = true,
+            TechnicianVerificationStatus verificationStatus = TechnicianVerificationStatus.Approved)
         {
             var user = await CreateUserAsync(userManager, email, fullName, age, ApplicationUserRole.Technician, lat, lng);
 
@@ -266,10 +351,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
                 ApplicationUserId = user.Id,
                 NationalId = nationalId,
                 Experience = "5 years of professional experience",
-                Rating = 4.5m,
+                Rating = rating,
                 MaxTravelDistance = 20000,
-                VerificationStatus = TechnicianVerificationStatus.Approved,
-                IsAvailable = true,
+                VerificationStatus = verificationStatus,
+                IsAvailable = isAvailable,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow

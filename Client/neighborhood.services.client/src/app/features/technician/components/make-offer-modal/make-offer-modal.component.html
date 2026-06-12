@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'technician.browse.offerTitle' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="modal-body">
+    @if (requestDescription || requestAddress) {
+      <div class="bg-light rounded-3 p-3 mb-3 small">
+        @if (requestDescription) {
+          <div class="fw-semibold mb-1"><i class="bi bi-clipboard me-1"></i>{{ requestDescription }}</div>
+        }
+        @if (requestAddress) {
+          <div class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ requestAddress }}</div>
+        }
+      </div>
+    }
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">{{ 'technician.browse.price' | translate }}</label>
+        <input type="number" class="form-control" formControlName="price" min="1"
+               [placeholder]="'technician.browse.pricePlaceholder' | translate" />
+        @if (form.controls.price.touched && form.controls.price.invalid) {
+          <div class="text-danger small mt-1">{{ 'technician.browse.errPrice' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ 'technician.browse.duration' | translate }}</label>
+        <input type="number" class="form-control" formControlName="estimatedDuration" min="15"
+               [placeholder]="'technician.browse.durationPlaceholder' | translate" />
+        @if (form.controls.estimatedDuration.touched && form.controls.estimatedDuration.invalid) {
+          <div class="text-danger small mt-1">{{ 'technician.browse.errDuration' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">{{ 'technician.browse.scheduledAt' | translate }}</label>
+        <input type="datetime-local" class="form-control" formControlName="scheduledAt" [min]="minDateTime" />
+        @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
+          <div class="text-danger small mt-1">{{ 'technician.browse.errScheduledAt' | translate }}</div>
+        }
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">{{ 'technician.browse.message' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        <textarea class="form-control" rows="2" formControlName="message"
+                  [placeholder]="'technician.browse.messagePlaceholder' | translate"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+      {{ (submitting() ? 'common.creating' : 'technician.browse.submitOffer') | translate }}
+    </button>
+  </div>
+</form>
