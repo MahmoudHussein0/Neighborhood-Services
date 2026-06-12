@@ -13,6 +13,7 @@ namespace Neighborhood.Services.Application.SupportTickets.DTOs
 
         public string Description { get; set; }
         public string Status { get; set; }
+        public string Priority { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

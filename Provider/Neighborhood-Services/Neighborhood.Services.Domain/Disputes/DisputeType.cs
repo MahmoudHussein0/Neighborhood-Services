@@ -6,7 +6,7 @@ namespace Neighborhood.Services.Domain.Disputes
 {
     public enum DisputeType
     {
-        PaymentIssue = 1,
+        CustomerBehavior = 1,
         TechnicianBehavior = 2,
         PoorService = 3,
         Scam = 4,

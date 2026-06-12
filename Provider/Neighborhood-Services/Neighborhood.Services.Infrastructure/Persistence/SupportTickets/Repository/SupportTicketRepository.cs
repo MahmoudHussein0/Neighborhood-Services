@@ -49,6 +49,13 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<IReadOnlyList<SupportTicket>> GetByPriorityAsync(SupportTicketPriority priority, CancellationToken cancellationToken = default)
+        {
+            return await _context.SupportTickets
+                .Where(t => t.Priority == priority)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
         public async Task<IReadOnlyList<SupportTicket>> GetByBookingIdAsync(int bookingId, CancellationToken cancellationToken = default)
         {
             return await _context.SupportTickets

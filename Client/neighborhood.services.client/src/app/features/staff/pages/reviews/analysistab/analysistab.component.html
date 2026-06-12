@@ -1,0 +1,99 @@
+ <!-- Summary metric cards -->
+    <div class="metrics-grid mb-4">
+      <div class="metric-card">
+        <div class="metric-label">Average rating</div>
+        <div class="metric-value">
+          {{ avgRating() | number:'1.1-1' }}
+          <span class="text-warning">★</span>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total reviews</div>
+        <div class="metric-value">{{ reviews().length }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Positive (4–5 ★)</div>
+        <div class="metric-value text-success">{{ positivePercent() }}%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Red flags</div>
+        <div class="metric-value text-danger">{{ redFlagCount() }}</div>
+        <div class="metric-sub">Staff below 2.5★</div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading()" class="text-center py-5">
+      <div class="spinner-border spinner-border-sm text-secondary"></div>
+    </div>
+
+    <ng-container *ngIf="!loading()">
+      <!-- Charts row -->
+      <div class="charts-row mb-4">
+        <div class="chart-card">
+          <div class="chart-title">Rating trend (monthly)</div>
+          <div class="chart-wrap">
+            <canvas #trendChart></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Sentiment breakdown</div>
+          <div class="chart-wrap">
+            <canvas #sentimentChart></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Staff ratings bar chart -->
+      <div class="chart-card mb-4">
+        <div class="chart-title">Average rating per staff</div>
+        <div class="chart-wrap" [style.height.px]="staffBarHeight()">
+          <canvas #staffChart></canvas>
+        </div>
+      </div>
+
+      <!-- Top performers & Red flags -->
+      <div class="performers-grid">
+        <div class="performers-card">
+          <div class="performers-header text-success">
+            <i class="bi bi-trophy"></i> Top performers
+          </div>
+          <div
+            class="performer-row"
+            *ngFor="let s of topPerformers()">
+            <div class="performer-avatar bg-primary-subtle text-primary">
+              {{ initials(s.staffId) }}
+            </div>
+            <div class="performer-info">
+              <div class="performer-name">{{ s.staffId | slice:0:12 }}…</div>
+              <div class="performer-score">{{ s.averageRating | number:'1.1-1' }} ★ · {{ s.totalReviews }} reviews</div>
+            </div>
+            <div class="performer-bar-wrap">
+              <div class="performer-bar bg-success" [style.width.%]="(s.averageRating / 5) * 100"></div>
+            </div>
+          </div>
+          <div *ngIf="topPerformers().length === 0" class="text-muted small p-3">No data yet.</div>
+        </div>
+
+        <div class="performers-card">
+          <div class="performers-header text-danger">
+            <i class="bi bi-exclamation-triangle"></i> Red flags
+          </div>
+          <div
+            class="performer-row"
+            *ngFor="let s of redFlags()">
+            <div class="performer-avatar bg-danger-subtle text-danger">
+              {{ initials(s.staffId) }}
+            </div>
+            <div class="performer-info">
+              <div class="performer-name">{{ s.staffId | slice:0:12 }}…</div>
+              <div class="performer-score">{{ s.averageRating | number:'1.1-1' }} ★ · {{ s.totalReviews }} reviews</div>
+            </div>
+            <div class="performer-bar-wrap">
+              <div class="performer-bar bg-danger" [style.width.%]="(s.averageRating / 5) * 100"></div>
+            </div>
+          </div>
+          <div *ngIf="redFlags().length === 0" class="text-muted small p-3">No red flags.</div>
+        </div>
+      </div>
+    </ng-container>

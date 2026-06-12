@@ -1,8 +1,5 @@
 ﻿using Neighborhood.Services.Application.SupportTickets.DTOs;
 using Neighborhood.Services.Domain.SupportTickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.Shared.Mappers
 {
@@ -12,10 +9,10 @@ namespace Neighborhood.Services.Application.Shared.Mappers
         {
             Id = ticket.Id,
             UserId = ticket.UserId,
-            BookingId = ticket.BookingId,
             Subject = ticket.Subject,
             Description = ticket.Description,
             Status = ticket.Status.ToString(),
+            Priority = ticket.Priority.ToString(),
             CreatedAt = ticket.CreatedAt,
             UpdatedAt = ticket.UpdatedAt
         };

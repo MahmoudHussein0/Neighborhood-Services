@@ -8,11 +8,11 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Disputes.Repository
 {
     public class DisputeRepository : GenericRepository<Dispute, int>, IDisputeRepository
     {
-        
 
+        private readonly ApplicationDbContext _context;
         public DisputeRepository(ApplicationDbContext context) : base(context)
         {
-           
+            _context = context;
         }
 
         // ── Queries ────────────────────────────────────────────────────────────

@@ -11,7 +11,9 @@ public class Staff:BaseEntity<int>
     public StaffRole Role { get; set; }
     public bool IsActive { get;  set; }
     public int? CreatedByStaffId { get;  set; }
-    public DateTime CreatedAt { get;  set; }
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 
     // Navigation Property
     public ICollection<StaffPermission> Permissions { get; set; }

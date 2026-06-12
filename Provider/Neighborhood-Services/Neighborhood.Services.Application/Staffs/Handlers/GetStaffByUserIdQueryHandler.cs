@@ -1,32 +1,29 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Shared.Mappers;
 using Neighborhood.Services.Application.Staffs.DTOs;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.Staffs.Queries;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.Staffs.Handlers
 {
-    public class GetStaffByUserIdQueryHandler
-        : IRequestHandler<GetStaffByUserIdQuery, StaffDto>
+    /// <summary>
+    /// Query handler for retrieving a staff member by User ID with their ApplicationUser details
+    /// Returns StaffDto with FullName and Email populated from ApplicationUser
+    /// </summary>
+    public class GetStaffByUserIdQueryHandler : IRequestHandler<GetStaffByUserIdQuery, StaffDto>
     {
-        private readonly IStaffRepository _repository;
+        private readonly IStaffRepository _staffRepository;
 
-        public GetStaffByUserIdQueryHandler(IStaffRepository repository)
+        public GetStaffByUserIdQueryHandler(IStaffRepository staffRepository)
         {
-            _repository = repository;
+            _staffRepository = staffRepository;
         }
 
-        public async Task<StaffDto> Handle(
-            GetStaffByUserIdQuery request,
-            CancellationToken cancellationToken)
+        public async Task<StaffDto> Handle(GetStaffByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var staff = await _repository.GetByUserIdAsync(
-                request.UserId,
-                cancellationToken);
+            var staff = await _staffRepository.GetByUserIdAsync(request.UserId);
 
+            
             if (staff is null)
                 throw new Exception(
                     $"Staff with user id {request.UserId} not found.");

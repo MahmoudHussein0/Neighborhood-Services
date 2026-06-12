@@ -122,8 +122,10 @@ namespace Neighborhood.Services.API
                 })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
-                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+                    //options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+                    //options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "dummy-google-client-id";
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "dummy-google-client-secret";
                 });
             // Add authorization policies for each permission type (Amira)
             builder.Services.AddAuthorization(options =>
@@ -190,7 +192,25 @@ namespace Neighborhood.Services.API
             // rebuild it deliberately via the CLI above or POST /api/knowledge/reindex.)
             using (var scope = app.Services.CreateScope())
             {
-                await DbSeeder.SeedAsync(scope.ServiceProvider);
+                var environment = app.Services.GetRequiredService<IWebHostEnvironment>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                await DbSeeder.SeedAsync(scope.ServiceProvider, environment, logger);
+
+
+                // Seed Qdrant knowledge base from the DB (catalog) + Faqs.json.
+                // If OpenAI/Qdrant is unavailable (bad key, no quota, network down) we log
+                // and continue — the app stays up; only the AI endpoints will fail per-call.
+                try
+                {
+                    var knowledgeSeeder = scope.ServiceProvider.GetRequiredService<KnowledgeSeeder>();
+                    await knowledgeSeeder.SeedAsync();
+                }
+                catch (Exception ex)
+                {
+                    var logger2 = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger2.LogWarning(ex, "KnowledgeSeeder failed at startup — AI endpoints may not work until this is fixed. App will continue to run.");
+                }
+
             }
 
 
@@ -204,6 +224,7 @@ namespace Neighborhood.Services.API
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
             app.UseCors("Frontend");
+           
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHangfireDashboard("/hangfire");

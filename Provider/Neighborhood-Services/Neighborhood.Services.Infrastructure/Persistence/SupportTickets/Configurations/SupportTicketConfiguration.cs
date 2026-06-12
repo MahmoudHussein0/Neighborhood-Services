@@ -28,8 +28,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
             builder.Property(t => t.Status)
                 .IsRequired()
                 .HasConversion<string>();
+            builder.Property(t => t.Priority)
+                .HasConversion<string>();
 
-           
 
             builder.Property(t => t.CreatedAt)
                 .IsRequired();

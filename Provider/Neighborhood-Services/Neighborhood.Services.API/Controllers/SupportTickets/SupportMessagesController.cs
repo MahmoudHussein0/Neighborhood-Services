@@ -8,7 +8,7 @@ namespace Neighborhood.Services.API.Controllers.SupportTickets
 {
     [ApiController]
     [Route("api/supporttickets/{ticketId}/messages")] // nested under ticket
-    [Authorize]
+    //[Authorize]
     public class SupportMessagesController : ControllerBase
     {
         private readonly IMediator _mediator;

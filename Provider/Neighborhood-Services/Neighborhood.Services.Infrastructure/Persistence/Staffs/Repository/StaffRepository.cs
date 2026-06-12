@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -6,57 +6,73 @@ using Neighborhood.Services.Infrastructure.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
 {
+    /// <summary>
+    /// Repository implementation for Staff entity
+    /// Includes ApplicationUser data for FullName and Email in all queries
+    /// </summary>
     public class StaffRepository : GenericRepository<Staff, int>, IStaffRepository
     {
-      
+        private readonly ApplicationDbContext _context;
 
         public StaffRepository(ApplicationDbContext context) : base(context)
         {
-          
+            _context = context;
         }
 
-        // ── Queries ────────────────────────────────────────────────────────────
-        public async Task<Staff?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get all staff with ApplicationUser data included
+        /// </summary>
+        public async Task<IEnumerable<Staff>> GetAllAsync()
         {
             return await _context.Staffs
-                .Include(s => s.Permissions)
-                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+                .Include(s => s.User)
+                .Where(s => !s.IsDeleted)
+                .ToListAsync();
         }
 
-
-        public async Task<Staff?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get all active staff with ApplicationUser data included
+        /// </summary>
+        public async Task<IEnumerable<Staff>> GetActiveAsync()
         {
             return await _context.Staffs
-                .Include(s => s.Permissions)
-                .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
+                .Include(s => s.User)
+                .Where(s => s.IsActive && !s.IsDeleted)
+                .ToListAsync();
         }
 
-        public async Task<IReadOnlyList<Staff>> GetAllAsync(CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get staff by ID with ApplicationUser data included
+        /// </summary>
+        public async Task<Staff> GetByIdAsync(int id)
         {
             return await _context.Staffs
-                .Include(s => s.Permissions)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         }
 
-        public async Task<IReadOnlyList<Staff>> GetByRoleAsync(StaffRole role, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get staff by User ID with ApplicationUser data included
+        /// </summary>
+        public async Task<Staff> GetByUserIdAsync(string userId)
         {
             return await _context.Staffs
-                .Include(s => s.Permissions)
-                .Where(s => s.Role == role)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.UserId == userId && !s.IsDeleted);
         }
 
-        public async Task<IReadOnlyList<Staff>> GetActiveAsync(CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get staff members by role with ApplicationUser data included
+        /// </summary>
+        public async Task<IEnumerable<Staff>> GetByRoleAsync(StaffRole role)
         {
             return await _context.Staffs
-                .Include(s => s.Permissions)
-                .Where(s => s.IsActive)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+                .Include(s => s.User)
+                .Where(s => s.Role == role && !s.IsDeleted)
+                .ToListAsync();
         }
 
+     
         public async Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _context.Staffs
@@ -71,9 +87,6 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
                          (p.Permission == permission || p.Permission == PermissionType.FullAccess),
                     cancellationToken);
         }
-
-
-        // ── Commands ───────────────────────────────────────────────────────────
 
 
         public async Task ReplacePermissionsAsync(

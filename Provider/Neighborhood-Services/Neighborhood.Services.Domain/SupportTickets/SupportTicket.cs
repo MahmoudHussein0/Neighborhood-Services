@@ -14,7 +14,7 @@ public class SupportTicket : BaseEntity<int>
     public string Subject { get; set; }
     public string Description { get; set; }
     public SupportTicketStatus Status { get; set; }
-
+    public SupportTicketPriority Priority { get; set; } = SupportTicketPriority.Low;
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

@@ -7,7 +7,6 @@ namespace Neighborhood.Services.Application.SupportTickets.Commands
     {
 
 
-        public int? BookingId { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
     }

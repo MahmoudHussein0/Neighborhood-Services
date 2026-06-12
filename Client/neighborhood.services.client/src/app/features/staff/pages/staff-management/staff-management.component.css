@@ -1,0 +1,120 @@
+.card {
+  border-radius: 16px;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.badge {
+  font-weight: 500;
+}
+
+.modal-content {
+  border-radius: 18px;
+}
+
+@media (max-width: 991px) {
+
+  .table-responsive {
+    display: none;
+  }
+
+}
+
+.page-card {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.stats-card {
+  border: none;
+  border-radius: 16px;
+  transition: all .25s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+}
+
+.table > tbody > tr {
+  transition: all .2s ease;
+}
+
+.table > tbody > tr:hover {
+  background: #f8faff;
+}
+
+.permission-badge {
+  border-radius: 30px;
+  padding: .4rem .7rem;
+  font-size: .75rem;
+}
+
+.search-box {
+  border-radius: 12px;
+}
+
+.filter-select {
+  border-radius: 12px;
+}
+
+.modal-content {
+  border-radius: 20px;
+}
+
+.modal-header {
+  border-bottom: 0;
+}
+
+.modal-footer {
+  border-top: 0;
+}
+
+.staff-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.mobile-staff-card {
+  border-radius: 16px;
+  transition: .25s ease;
+}
+
+.mobile-staff-card:hover {
+  transform: translateY(-2px);
+}
+
+.permission-container {
+  max-width: 320px;
+}
+
+.permission-container .badge {
+  border-radius: 20px;
+}
+
+@media (max-width: 991px) {
+
+  .container-fluid {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .modal-dialog {
+    margin: 1rem;
+  }
+
+  .stats-card h3 {
+    font-size: 1.5rem;
+  }
+
+}

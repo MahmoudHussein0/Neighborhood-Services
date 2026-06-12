@@ -1,0 +1,94 @@
+<div class="st-layout" [class.has-selected]="selectedTicketId !== null">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="st-sidebar">
+
+    <div class="st-sidebar-header">
+      <h2 class="st-title">Support tickets</h2>
+
+      <div class="st-filters">
+        <div class="st-filter-row">
+          <select [(ngModel)]="filters.status" (change)="onFilterChange()">
+  <option value="">All statuses</option>
+  <option value="Open">Open</option>
+  <option value="InProgress">In progress</option>
+  <option value="WaitingOnCustomer">Waiting on customer</option>
+  <option value="Resolved">Resolved</option>
+</select>
+
+<select [(ngModel)]="filters.priority" (change)="onFilterChange()">
+  <option value="">All priorities</option>
+  <option value="High">High</option>
+  <option value="Medium">Medium</option>
+  <option value="Low">Low</option>
+</select>
+        </div>
+
+        <input
+          [(ngModel)]="filters.search"
+          (input)="onSearchInput()"
+          placeholder="Search by subject or description..."
+          class="st-search" />
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="st-list">
+      <div *ngIf="loading" class="st-spinner">
+        <span></span><span></span><span></span>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <button
+          *ngFor="let t of tickets"
+          class="st-ticket-item"
+          [class.active]="selectedTicketId === t.id"
+          (click)="openTicket(t.id)">
+
+          <div class="st-item-top">
+            <span class="st-subject">{{ t.subject }}</span>
+            <span class="st-badge" [ngClass]="getStatusClass(t.status)">
+              {{ getStatusLabel(t.status) }}
+            </span>
+          </div>
+
+          <p class="st-desc">
+            {{ t.description | slice:0:70 }}{{ (t.description?.length ?? 0) > 70 ? '…' : '' }}
+          </p>
+
+          <div class="st-item-footer">
+            <span class="st-badge" [ngClass]="getPriorityClass(t.priority)">
+              {{ t.priority }}
+            </span>
+            <span class="st-date">{{ t.createdAt | date:'dd MMM' }}</span>
+          </div>
+        </button>
+
+        <div *ngIf="tickets.length === 0" class="st-empty">
+          No tickets match your filters.
+        </div>
+      </ng-container>
+    </div>
+
+  </aside>
+
+  <!-- ========== DETAIL PANEL ========== -->
+  <main class="st-detail">
+
+    <!-- Placeholder -->
+    <div *ngIf="!selectedTicketId" class="st-placeholder">
+      <i class="ti ti-message-circle" style="font-size:40px; opacity:0.25" aria-hidden="true"></i>
+      <span>Select a ticket to view conversation</span>
+    </div>
+
+    <!-- Ticket details component -->
+    <app-ticket-details
+      *ngIf="selectedTicketId"
+      [ticketId]="selectedTicketId!"
+      (ticketUpdated)="loadTickets()"
+      (close)="selectedTicketId = null">
+    </app-ticket-details>
+
+  </main>
+
+</div>

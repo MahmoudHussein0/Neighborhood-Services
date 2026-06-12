@@ -1,0 +1,10 @@
+.filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1.25rem;
+    }
+    .search-input { flex: 1; min-width: 200px; }
+    .form-select { width: auto; }
+    .stars { letter-spacing: 2px; }
+    .text-monospace { font-family: monospace; }

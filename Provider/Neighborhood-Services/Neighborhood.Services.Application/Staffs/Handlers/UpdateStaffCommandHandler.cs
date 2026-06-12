@@ -30,8 +30,7 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
             CancellationToken cancellationToken)
         {
             var currentStaff = await _repository.GetByUserIdAsync(
-                _currentUser.UserId,
-                cancellationToken);
+                _currentUser.UserId);
 
             if (currentStaff is null)
             {

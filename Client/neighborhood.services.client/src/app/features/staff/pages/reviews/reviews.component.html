@@ -1,0 +1,31 @@
+<div class="page-container">
+      <!-- Tab bar -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <button
+            class="nav-link d-flex align-items-center gap-2"
+            [class.active]="activeTab() === 'reviews'"
+            (click)="setTab('reviews')">
+            <i class="bi bi-chat-left-text"></i>
+            Reviews
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link d-flex align-items-center gap-2"
+            [class.active]="activeTab() === 'analysis'"
+            (click)="setTab('analysis')">
+            <i class="bi bi-bar-chart-line"></i>
+            Review analysis
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab content (kept mounted to preserve state) -->
+      <div [hidden]="activeTab() !== 'reviews'">
+        <app-reviewstab />
+      </div>
+      <div [hidden]="activeTab() !== 'analysis'">
+        <app-analysistab/>
+      </div>
+    </div>

@@ -1,0 +1,411 @@
+<div class="container-fluid py-3 py-lg-4" dir="ltr">
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="text-primary fw-bold m-0">Staff Management</h2>
+      <p class="text-muted small mb-0">Manage roles and permissions for dashboard and platform staff</p>
+    </div>
+
+    <button class="btn btn-primary d-flex align-items-center gap-2 px-3 shadow-sm" (click)="toggleModal(true)">
+      <i class="bi bi-person-plus-fill"></i>
+      <span>Add New Staff</span>
+    </button>
+  </div>
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="Search by name or email..." [(ngModel)]="searchTerm">
+    </div>
+
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedRoleFilter">
+
+        <option value="">All Roles</option>
+
+        <option value="Admin">
+          Admin
+        </option>
+
+        <option value="TechnicalSupport">
+          Technical Support
+        </option>
+
+      </select>
+    </div>
+
+  </div>
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Total Staff</h6>
+          <h3 class="fw-bold">{{ staffList.length }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Active Staff</h6>
+          <h3 class="fw-bold text-success">
+            {{ staffList.filter(s => s.isActive).length }}
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Administrators</h6>
+          <h3 class="fw-bold text-primary">
+            {{ staffList.filter(s => s.staffRole === 'Admin').length }}
+          </h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div *ngIf="!isLoading && staffList.length > 0" class="card shadow-sm border-0 overflow-hidden d-none d-lg-block">
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 text-start">
+        <thead class="table-light text-secondary small fw-bold">
+          <tr>
+            <th class="ps-4">Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Permissions</th>
+            <th>Status Action</th>
+            <th>Created At</th>
+            <th class="text-center pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let staff of filteredStaffList">
+            <td class="ps-4">
+              <div class="fw-semibold text-dark"><div class="d-flex align-items-center gap-3">
+
+  <div class="staff-avatar">
+    {{ staff.fullName.charAt(0) }}
+  </div>
+
+  <div>
+    <div class="fw-semibold">
+      {{ staff.fullName }}
+    </div>
+
+    <small class="text-muted">
+      Staff ID #{{ staff.id }}
+    </small>
+  </div>
+
+</div></div>
+              
+            </td>
+            <td class="text-secondary">{{ staff.email }}</td>
+            <td>
+              <span class="badge bg-info-subtle text-info px-2.5 py-1.5 rounded">
+                {{ formatRole(staff.staffRole) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge rounded-pill px-3 py-1.5"
+                [ngClass]="staff.isActive ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                {{ staff.isActive ? 'Active' : 'Suspended' }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex flex-wrap gap-1 justify-content-start" style="max-width: 320px;">
+                <span *ngIf="staff.permissions.length === 0" class="text-muted small fst-italic">
+                  No permissions assigned
+                </span>
+                <span *ngFor="let p of staff.permissions"
+                  class="badge bg-light text-dark border border-light-subtle small fw-normal">
+                  {{ formatPermission(p.permission) }}
+                </span>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" [ngClass]="staff.isActive
+      ? 'btn-outline-warning'
+      : 'btn-outline-success'" (click)="toggleStatus(staff)">
+
+                {{ staff.isActive ? 'Deactivate' : 'Activate' }}
+
+              </button>
+            </td>
+            <td>
+              {{ staff.createdAt | date:'mediumDate' }}
+            </td>
+            <td class="text-center">
+
+  <div class="d-flex gap-2 justify-content-center">
+
+    <button
+      class="btn btn-sm btn-outline-primary"
+      (click)="openEditModal(staff)">
+      <i class="bi bi-pencil-square"></i>
+    </button>
+
+    <button
+      class="btn btn-sm btn-outline-danger"
+      (click)="onDeleteStaff(staff.id)">
+      <i class="bi bi-trash3-fill"></i>
+    </button>
+
+  </div>
+
+</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Mobile View -->
+
+  <div *ngIf="!isLoading && staffList.length > 0" class="d-lg-none">
+
+    <div *ngFor="let staff of filteredStaffList" class="card border-0 shadow-sm mb-3">
+
+      <div class="card-body">
+
+        <!-- Header -->
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+          <div>
+            <h6 class="fw-bold mb-1">
+              {{ staff.fullName }}
+            </h6>
+
+            <small class="text-muted">
+              Staff ID: #{{ staff.id }}
+            </small>
+          </div>
+
+          <span class="badge" [ngClass]="staff.isActive
+            ? 'bg-success-subtle text-success'
+            : 'bg-secondary-subtle text-secondary'">
+            {{ staff.isActive ? 'Active' : 'Inactive' }}
+          </span>
+
+        </div>
+
+        <!-- Email -->
+
+        <div class="mb-2">
+          <small class="text-muted d-block">
+            Email
+          </small>
+
+          <span>
+            {{ staff.email }}
+          </span>
+        </div>
+
+        <!-- Role -->
+
+        <div class="mb-2">
+
+          <small class="text-muted d-block">
+            Role
+          </small>
+
+          <span class="badge bg-primary-subtle text-primary">
+            {{ formatRole(staff.staffRole) }}
+          </span>
+
+        </div>
+
+        <!-- Created -->
+
+        <div class="mb-3">
+
+          <small class="text-muted d-block">
+            Created
+          </small>
+
+          <span>
+            {{ staff.createdAt | date:'mediumDate' }}
+          </span>
+
+        </div>
+
+        <!-- Permissions -->
+
+        <div class="mb-3">
+
+          <small class="text-muted d-block mb-1">
+            Permissions
+          </small>
+
+          <div class="d-flex flex-wrap gap-1">
+
+            <span *ngIf="staff.permissions.length === 0" class="text-muted small fst-italic">
+              No permissions assigned
+            </span>
+
+            <span *ngFor="let p of staff.permissions" class="badge bg-light text-dark border">
+              {{ formatPermission(p.permission) }}
+            </span>
+
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+
+        <div class="d-flex justify-content-end gap-2">
+
+          <button
+            class="btn btn-sm btn-outline-primary"
+            (click)="openEditModal(staff)">
+            <i class="bi bi-pencil-square"></i>
+            Edit
+          </button>
+
+          <button
+            class="btn btn-sm"
+            [ngClass]="staff.isActive ? 'btn-outline-warning' : 'btn-outline-success'"
+            (click)="toggleStatus(staff)">
+            {{ staff.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+
+          <button class="btn btn-outline-danger btn-sm" (click)="onDeleteStaff(staff.id)">
+            <i class="bi bi-trash3-fill"></i>
+            Delete
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+  <div *ngIf="!isLoading && staffList.length === 0"
+    class="text-center py-5 card bg-light border-0 shadow-sm mt-3 animate__animated animate__fadeIn">
+    <i class="bi bi-people-fill text-muted display-3 mb-3"></i>
+    <h5 class="fw-bold text-secondary">No staff members found</h5>
+    <p class="text-muted small">Click on "Add New Staff" above to assign a user to the staff management system.</p>
+  </div>
+
+  <div class="modal fade show" [ngClass]="{'d-block bg-dark bg-opacity-50': showModal}" *ngIf="showModal" tabindex="-1"
+    role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content border-0 shadow-lg text-start">
+        <div class="modal-header bg-primary text-white justify-content-between">
+          <h5 class="modal-title fw-bold m-0">{{ isEditMode ? 'Edit Staff Member' : 'Assign New Staff Member' }}</h5>
+          <button type="button" class="btn-close btn-close-white m-0" (click)="toggleModal(false)"></button>
+        </div>
+        <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+
+           <!-- يظهر فقط عند Add -->
+<div class="mb-3" *ngIf="!isEditMode">
+
+  <label class="form-label fw-semibold text-dark">
+    Select User
+  </label>
+
+  <select
+    formControlName="userId"
+    class="form-select"
+    [ngClass]="{
+      'is-invalid':
+      staffForm.get('userId')?.touched &&
+      staffForm.get('userId')?.invalid
+    }">
+
+    <option value="">
+      -- Choose User --
+    </option>
+
+    <option
+      *ngFor="let user of usersList"
+      [value]="user.id">
+
+      {{ user.fullName }}
+      • {{ user.email }}
+
+    </option>
+
+  </select>
+
+  <div class="invalid-feedback">
+    Please select a user.
+  </div>
+
+  <small class="text-muted">
+    {{ usersList.length }} available users
+  </small>
+
+</div>
+<div *ngIf="isEditMode && selectedStaff" class="mb-3">
+
+  <label class="form-label fw-semibold">
+    Staff Member
+  </label>
+
+  <div class="form-control bg-light">
+
+    <div class="fw-semibold">
+      {{ selectedStaff.fullName }}
+    </div>
+
+    <small class="text-muted">
+      {{ selectedStaff.email }}
+    </small>
+
+  </div>
+
+</div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">System Role</label>
+              <select formControlName="role" class="form-select">
+                <option [value]="2">Technical Support</option>
+                <option [value]="1">Admin</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark mb-2">Assign Custom Access Permissions:</label>
+              <div class="card p-3 bg-light border-0 max-height-200 overflow-auto">
+                <div class="form-check mb-2 text-start d-flex align-items-center gap-2 justify-content-start"
+                  *ngFor="let perm of permissionsList">
+                  <input class="form-check-input ms-0" type="checkbox" [id]="'perm-' + perm.id"
+                    [checked]="staffForm.get('selectedPermissions')?.value?.includes(perm.id)"
+                    (change)="onPermissionChange(perm.id, $event)">
+                  <label class="form-check-label text-dark ms-2" [for]="'perm-' + perm.id">
+                    {{ perm.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer bg-light justify-content-end">
+            <button type="button" class="btn btn-secondary" (click)="toggleModal(false)">Cancel</button>
+            <button type="submit" class="btn btn-primary shadow-sm px-4 py-2 d-flex align-items-center gap-2"
+              [disabled]="staffForm.invalid || isSubmitting">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+             <span>
+  {{ isEditMode ? 'Update Staff' : 'Save & Activate Staff' }}
+</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

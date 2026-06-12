@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.SupportTickets.Commands;
 using Neighborhood.Services.Application.SupportTickets.Queries;
+using Neighborhood.Services.Domain.SupportTickets;
 
 namespace Neighborhood.Services.API.Controllers.SupportTickets
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class SupportTicketsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -62,6 +63,18 @@ namespace Neighborhood.Services.API.Controllers.SupportTickets
         {
             command.Id = id;
             var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+        [HttpPut("{id}/priority")]
+        public async Task<IActionResult> UpdatePriority(int id, [FromBody] SupportTicketPriority priority)
+        {
+            var result = await _mediator.Send(new updateTicketPriorityCommand { Id = id, Priority = priority });
+            return Ok(result);
+        }
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] SupportTicketStatus status)
+        {
+            var result = await _mediator.Send(new updateTicketStatusCommand { Id = id, Status = status });
             return Ok(result);
         }
 

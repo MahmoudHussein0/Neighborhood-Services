@@ -9,9 +9,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
 {
     public class ReviewRepository : GenericRepository<Review, int>, IReviewRepository
     {
-        
+        private readonly ApplicationDbContext _context;
 
-        public ReviewRepository(ApplicationDbContext context) : base(context){}
+        public ReviewRepository(ApplicationDbContext context) : base(context){ _context = context; }
 
         // ── Queries ────────────────────────────────────────────────────────────
 

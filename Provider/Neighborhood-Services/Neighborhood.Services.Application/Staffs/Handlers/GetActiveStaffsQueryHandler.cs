@@ -1,30 +1,28 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Shared.Mappers;
 using Neighborhood.Services.Application.Staffs.DTOs;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.Staffs.Queries;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.Staffs.Handlers
 {
-    public class GetActiveStaffsQueryHandler
-       : IRequestHandler<GetActiveStaffsQuery, IReadOnlyList<StaffDto>>
+    /// <summary>
+    /// Query handler for retrieving active staff members with their ApplicationUser details
+    /// Returns StaffDto with FullName and Email populated from ApplicationUser
+    /// </summary>
+    public class GetActiveStaffsQueryHandler : IRequestHandler<GetActiveStaffsQuery, IEnumerable<StaffDto>>
     {
-        private readonly IStaffRepository _repository;
+        private readonly IStaffRepository _staffRepository;
 
-        public GetActiveStaffsQueryHandler(IStaffRepository repository)
+        public GetActiveStaffsQueryHandler(IStaffRepository staffRepository)
         {
-            _repository = repository;
+            _staffRepository = staffRepository;
         }
 
-        public async Task<IReadOnlyList<StaffDto>> Handle(
-            GetActiveStaffsQuery request,
-            CancellationToken cancellationToken)
+        public async Task<IEnumerable<StaffDto>> Handle(GetActiveStaffsQuery request, CancellationToken cancellationToken)
         {
-            var staffs = await _repository.GetActiveAsync(
-                cancellationToken);
+            var staffs = await _staffRepository.GetActiveAsync();
+
 
             return staffs
                 .Select(StaffMapper.MapToDto)

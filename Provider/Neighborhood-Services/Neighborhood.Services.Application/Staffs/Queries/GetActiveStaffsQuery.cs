@@ -7,5 +7,5 @@ using System.Text;
 namespace Neighborhood.Services.Application.Staffs.Queries
 {
     public record GetActiveStaffsQuery()
-        : IRequest<IReadOnlyList<StaffDto>>;
+        : IRequest<IEnumerable<StaffDto>>;
 }

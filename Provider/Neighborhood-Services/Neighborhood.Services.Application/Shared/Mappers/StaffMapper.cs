@@ -8,17 +8,20 @@ namespace Neighborhood.Services.Application.Shared.Mappers
         public static StaffDto MapToDto(Staff staff) => new()
         {
             Id = staff.Id,
-            UserId = staff.UserId,
-            Role = staff.Role.ToString(),
+            ApplicationUserId = staff.UserId,
+            StaffRole = staff.Role.ToString(),
             IsActive = staff.IsActive,
-            CreatedByStaffId = staff.CreatedByStaffId,
             CreatedAt = staff.CreatedAt,
             Permissions = staff.Permissions?.Select(p => new StaffPermissionDto
             {
                 Id = p.Id,
                 StaffId = p.StaffId,
                 Permission = p.Permission.ToString()
-            }).ToList() ?? new()
+            }).ToList() ?? new(),
+
+            FullName = staff.User?.FullName ?? string.Empty,
+            Email = staff.User?.Email ?? string.Empty
         };
+
     }
 }

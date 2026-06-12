@@ -11,7 +11,7 @@ namespace Neighborhood.Services.API.Controllers.Disputes
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     //[HasPermission(PermissionType.ManageDisputes)]
     public class DisputesController : ControllerBase
     {
