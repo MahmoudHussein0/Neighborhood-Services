@@ -169,6 +169,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
                     });
                 }
             }
+
+            await context.SaveChangesAsync();
+        }
+
         // ---------- 3. Staff & Admin Seeding ----------
         private static async Task SeedStaffAccountsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
