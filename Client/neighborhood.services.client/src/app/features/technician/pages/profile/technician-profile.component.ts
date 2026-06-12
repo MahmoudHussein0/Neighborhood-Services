@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
+import { environment } from '../../../../environments/environment';
 import {
   TechnicianPhoto,
   TechnicianProfile,
@@ -39,6 +40,25 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
           }
 
           <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+            <div class="col-12 d-flex justify-content-center mb-2">
+              <label class="profile-avatar-picker" for="technicianAvatarFile" aria-label="Choose profile photo">
+                @if (avatarPreviewUrl() || getPhotoSrc(userProfile()?.photo ?? ''); as photoUrl) {
+                  <img [src]="photoUrl" alt="Profile photo preview" />
+                } @else {
+                  <span>{{ fallbackInitials() }}</span>
+                }
+                <span class="profile-avatar-action">
+                  <i class="bi bi-camera" aria-hidden="true"></i>
+                </span>
+              </label>
+              <input
+                id="technicianAvatarFile"
+                class="visually-hidden"
+                type="file"
+                accept="image/*"
+                (change)="onAvatarSelected($event)"
+              />
+            </div>
             <div class="col-12 col-md-6">
               <label class="form-label" for="fullName">Full name</label>
               <input id="fullName" class="form-control" formControlName="fullName" />
@@ -47,15 +67,11 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
               <label class="form-label" for="email">Email</label>
               <input id="email" class="form-control" formControlName="email" readonly />
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
               <label class="form-label" for="age">Age</label>
               <input id="age" type="number" class="form-control" formControlName="age" />
             </div>
-            <div class="col-12 col-md-4">
-              <label class="form-label" for="photo">Photo URL</label>
-              <input id="photo" class="form-control" formControlName="photo" />
-            </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
               <label class="form-label" for="rating">Rating</label>
               <input id="rating" class="form-control" [value]="technician()?.rating ?? 0" readonly />
             </div>
@@ -93,10 +109,31 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
 
         <form [formGroup]="photoForm" (ngSubmit)="savePhoto()" class="row g-3 mb-4">
           <div class="col-12 col-lg-7">
-            <label class="form-label" for="photoUrl">Photo URL</label>
-            <input id="photoUrl" class="form-control" formControlName="photoUrl" [class.is-invalid]="photoForm.controls.photoUrl.touched && photoForm.controls.photoUrl.invalid" />
-            @if (photoForm.controls.photoUrl.touched && photoForm.controls.photoUrl.invalid) {
-              <div class="invalid-feedback">Photo URL is required.</div>
+            <label class="form-label" for="portfolioPhotoFile">Photo</label>
+            <label class="portfolio-uploader" for="portfolioPhotoFile" [class.border-danger]="photoPickerTouched() && !selectedPhotoFile() && !editingPhotoId()">
+              @if (selectedPhotoPreviewUrl() || editingPhotoPreviewUrl(); as previewUrl) {
+                <img [src]="previewUrl" alt="Selected portfolio preview" />
+                <span class="portfolio-uploader-action">
+                  <i class="bi bi-camera" aria-hidden="true"></i>
+                  Change photo
+                </span>
+              } @else {
+                <span class="portfolio-uploader-empty">
+                  <i class="bi bi-image fs-3" aria-hidden="true"></i>
+                  <span class="fw-semibold">Add a work photo</span>
+                  <span class="small text-muted">JPG, PNG, WebP, or GIF up to 5 MB</span>
+                </span>
+              }
+            </label>
+            <input
+              id="portfolioPhotoFile"
+              class="visually-hidden"
+              type="file"
+              accept="image/*"
+              (change)="onPortfolioPhotoSelected($event)"
+            />
+            @if (photoPickerTouched() && !selectedPhotoFile() && !editingPhotoId()) {
+              <div class="text-danger small mt-1">Choose a portfolio photo.</div>
             }
           </div>
           <div class="col-12 col-lg-5">
@@ -105,7 +142,12 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
           </div>
           <div class="col-12 d-flex gap-2">
             <button class="btn btn-primary" type="submit" [disabled]="savingPhoto() || photoForm.invalid || !technician()">
-              {{ editingPhotoId() ? 'Update photo' : 'Add photo' }}
+              @if (savingPhoto()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                Saving photo...
+              } @else {
+                {{ editingPhotoId() ? 'Update photo' : 'Add photo' }}
+              }
             </button>
             @if (editingPhotoId()) {
               <button class="btn btn-outline-secondary" type="button" (click)="resetPhotoForm()">Cancel</button>
@@ -123,7 +165,7 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
               <div class="col-12 col-md-6 col-xl-4">
                 <div class="border rounded-3 overflow-hidden h-100 bg-white">
                   <div class="portfolio-image bg-light">
-                    <img [src]="photo.photoUrl" [alt]="photo.caption || 'Technician work sample'" />
+                    <img [src]="getPhotoSrc(photo.photoUrl)" [alt]="photo.caption || 'Technician work sample'" />
                   </div>
                   <div class="p-3">
                     <h3 class="h6 fw-bold mb-1">{{ photo.caption || 'Work sample' }}</h3>
@@ -152,9 +194,92 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
       object-fit: cover;
       width: 100%;
     }
+
+    .portfolio-uploader {
+      align-items: center;
+      aspect-ratio: 16 / 9;
+      background-color: #f8fafc;
+      border: 1px dashed #bfdbfe;
+      border-radius: 0.5rem;
+      color: #1d4ed8;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+
+    .portfolio-uploader img {
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .portfolio-uploader-empty {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .portfolio-uploader-action {
+      align-items: center;
+      background: rgb(17 24 39 / 0.72);
+      bottom: 0;
+      color: #fff;
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      left: 0;
+      padding: 0.65rem;
+      position: absolute;
+      right: 0;
+    }
+
+    .profile-avatar-picker {
+      align-items: center;
+      background-color: #dbeafe;
+      border: 2px solid #bfdbfe;
+      border-radius: 50%;
+      color: #1d4ed8;
+      cursor: pointer;
+      display: flex;
+      font-size: 1.75rem;
+      font-weight: 700;
+      height: 7rem;
+      justify-content: center;
+      position: relative;
+      width: 7rem;
+    }
+
+    .profile-avatar-picker img {
+      border-radius: 50%;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .profile-avatar-action {
+      align-items: center;
+      background-color: #1d4ed8;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      bottom: 0.2rem;
+      color: #fff;
+      display: flex;
+      font-size: 0.9rem;
+      height: 2rem;
+      justify-content: center;
+      position: absolute;
+      right: 0.2rem;
+      width: 2rem;
+    }
   `],
 })
-export class TechnicianProfileComponent implements OnInit {
+export class TechnicianProfileComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly technicianProfileService = inject(TechnicianProfileService);
   private readonly formBuilder = inject(FormBuilder);
@@ -169,24 +294,53 @@ export class TechnicianProfileComponent implements OnInit {
   readonly photoLoading = signal(false);
   readonly savingPhoto = signal(false);
   readonly editingPhotoId = signal<number | null>(null);
+  readonly selectedPhotoFile = signal<File | null>(null);
+  readonly selectedPhotoPreviewUrl = signal<string | null>(null);
+  readonly editingPhotoPreviewUrl = signal<string | null>(null);
+  readonly photoPickerTouched = signal(false);
+  readonly avatarPreviewUrl = signal<string | null>(null);
+  readonly selectedAvatarFile = signal<File | null>(null);
+  readonly fullNameValue = signal('');
+
+  readonly fallbackInitials = computed(() => {
+    const fullName = this.fullNameValue().trim();
+
+    if (!fullName) {
+      return 'NS';
+    }
+
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    return nameParts.length > 1
+      ? `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase()
+      : fullName.slice(0, Math.min(2, fullName.length)).toUpperCase();
+  });
 
   readonly form = this.formBuilder.nonNullable.group({
     fullName: ['', Validators.required],
     email: [''],
     age: [18, [Validators.required, Validators.min(13), Validators.max(120)]],
-    photo: [''],
     nationalId: ['', Validators.required],
     experience: ['', Validators.required],
     maxTravelDistance: [10, [Validators.required, Validators.min(0)]],
   });
 
   readonly photoForm = this.formBuilder.nonNullable.group({
-    photoUrl: ['', Validators.required],
     caption: [''],
   });
 
+  constructor() {
+    this.form.controls.fullName.valueChanges.subscribe((fullName) => {
+      this.fullNameValue.set(fullName);
+    });
+  }
+
   ngOnInit(): void {
     this.load();
+  }
+
+  ngOnDestroy(): void {
+    this.revokeSelectedPhotoPreview();
+    this.revokeAvatarPreview();
   }
 
   load(): void {
@@ -208,15 +362,16 @@ export class TechnicianProfileComponent implements OnInit {
       next: ({ userProfile, technician }) => {
         this.userProfile.set(userProfile);
         this.technician.set(technician);
+        this.authService.updateSafeUser({ fullName: userProfile.fullName, photo: userProfile.photo });
         this.form.patchValue({
           fullName: userProfile.fullName,
           email: userProfile.email,
           age: userProfile.age,
-          photo: userProfile.photo,
           nationalId: technician.nationalId,
           experience: technician.experience,
           maxTravelDistance: technician.maxTravelDistance,
         });
+        this.fullNameValue.set(userProfile.fullName);
         this.loading.set(false);
         this.loadPhotos(technician.id);
       },
@@ -241,29 +396,71 @@ export class TechnicianProfileComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
 
-    forkJoin([
-      this.technicianProfileService.updateUserProfile(user.userId, {
+    this.technicianProfileService
+      .updateUserProfile(user.userId, {
         fullName: formValue.fullName,
         age: formValue.age,
-      }),
-      this.technicianProfileService.updateUserPhoto(user.userId, formValue.photo),
-      this.technicianProfileService.updateTechnician(technician.id, {
-        nationalId: formValue.nationalId,
-        experience: formValue.experience,
-        maxTravelDistance: formValue.maxTravelDistance,
-      }),
-    ]).subscribe({
-      next: () => {
-        this.authService.updateSafeUser({ fullName: formValue.fullName });
+      })
+      .pipe(
+        switchMap(() =>
+          this.selectedAvatarFile()
+            ? this.technicianProfileService.uploadUserPhoto(this.selectedAvatarFile() as File).pipe(
+                switchMap(({ photoUrl }) =>
+                  this.technicianProfileService.updateUserPhoto(user.userId, photoUrl).pipe(
+                    switchMap(() => of(photoUrl)),
+                  ),
+                ),
+              )
+            : of(this.userProfile()?.photo ?? ''),
+        ),
+        switchMap((photoUrl) =>
+          this.technicianProfileService.updateTechnician(technician.id, {
+            nationalId: formValue.nationalId,
+            experience: formValue.experience,
+            maxTravelDistance: formValue.maxTravelDistance,
+          }).pipe(switchMap(() => of(photoUrl))),
+        ),
+      )
+      .subscribe({
+      next: (photoUrl) => {
+        this.authService.updateSafeUser({ fullName: formValue.fullName, photo: photoUrl });
         this.success.set('Technician profile updated.');
         this.saving.set(false);
+        this.selectedAvatarFile.set(null);
+        this.revokeAvatarPreview();
         this.load();
       },
       error: () => {
         this.error.set('Unable to update technician profile.');
         this.saving.set(false);
       },
-    });
+      });
+  }
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.error.set('Please choose an image file.');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.error.set('Profile photo must be 5 MB or smaller.');
+      input.value = '';
+      return;
+    }
+
+    this.revokeAvatarPreview();
+    this.selectedAvatarFile.set(file);
+    this.avatarPreviewUrl.set(URL.createObjectURL(file));
+    this.error.set(null);
   }
 
   loadPhotos(technicianId: number): void {
@@ -285,7 +482,9 @@ export class TechnicianProfileComponent implements OnInit {
     const user = this.authService.currentUser();
     const technician = this.technician();
 
-    if (!user || !technician || this.photoForm.invalid) {
+    this.photoPickerTouched.set(true);
+
+    if (!user || !technician || this.photoForm.invalid || (!this.selectedPhotoFile() && !this.editingPhotoId())) {
       this.photoForm.markAllAsTouched();
       return;
     }
@@ -296,13 +495,25 @@ export class TechnicianProfileComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
 
-    const request$: Observable<unknown> = editingId
-      ? this.technicianProfileService.updatePhoto(editingId, formValue)
-      : this.technicianProfileService.addPhoto({
-          ...formValue,
-          applicationUserId: user.userId,
-          technicianId: technician.id,
-        });
+    const photoUpload$ = this.selectedPhotoFile()
+      ? this.technicianProfileService.uploadPhoto(this.selectedPhotoFile() as File)
+      : of({ photoUrl: this.editingPhotoPreviewUrl() ?? '' });
+
+    const request$: Observable<unknown> = photoUpload$.pipe(
+      switchMap(({ photoUrl }) =>
+        editingId
+          ? this.technicianProfileService.updatePhoto(editingId, {
+              photoUrl,
+              caption: formValue.caption,
+            })
+          : this.technicianProfileService.addPhoto({
+              photoUrl,
+              caption: formValue.caption,
+              applicationUserId: user.userId,
+              technicianId: technician.id,
+            }),
+      ),
+    );
 
     request$.subscribe({
       next: () => {
@@ -320,18 +531,61 @@ export class TechnicianProfileComponent implements OnInit {
 
   editPhoto(photo: TechnicianPhoto): void {
     this.editingPhotoId.set(photo.id);
+    this.revokeSelectedPhotoPreview();
+    this.selectedPhotoFile.set(null);
+    this.selectedPhotoPreviewUrl.set(null);
+    this.editingPhotoPreviewUrl.set(this.getPhotoSrc(photo.photoUrl));
+    this.photoPickerTouched.set(false);
     this.photoForm.patchValue({
-      photoUrl: photo.photoUrl,
       caption: photo.caption,
     });
   }
 
   resetPhotoForm(): void {
     this.editingPhotoId.set(null);
+    this.revokeSelectedPhotoPreview();
+    this.selectedPhotoFile.set(null);
+    this.selectedPhotoPreviewUrl.set(null);
+    this.editingPhotoPreviewUrl.set(null);
+    this.photoPickerTouched.set(false);
     this.photoForm.reset({
-      photoUrl: '',
       caption: '',
     });
+  }
+
+  onPortfolioPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.photoPickerTouched.set(true);
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.error.set('Please choose an image file.');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.error.set('Portfolio photo must be 5 MB or smaller.');
+      input.value = '';
+      return;
+    }
+
+    this.revokeSelectedPhotoPreview();
+    this.selectedPhotoFile.set(file);
+    this.selectedPhotoPreviewUrl.set(URL.createObjectURL(file));
+    this.error.set(null);
+  }
+
+  getPhotoSrc(photoUrl: string): string {
+    if (!photoUrl || photoUrl.startsWith('http') || photoUrl.startsWith('blob:') || photoUrl.startsWith('data:')) {
+      return photoUrl;
+    }
+
+    return `${environment.apiUrl}${photoUrl.startsWith('/') ? '' : '/'}${photoUrl}`;
   }
 
   deletePhoto(photo: TechnicianPhoto): void {
@@ -348,5 +602,23 @@ export class TechnicianProfileComponent implements OnInit {
       },
       error: () => this.error.set('Unable to delete portfolio photo.'),
     });
+  }
+
+  private revokeSelectedPhotoPreview(): void {
+    const previewUrl = this.selectedPhotoPreviewUrl();
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+  }
+
+  private revokeAvatarPreview(): void {
+    const previewUrl = this.avatarPreviewUrl();
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    this.avatarPreviewUrl.set(null);
   }
 }

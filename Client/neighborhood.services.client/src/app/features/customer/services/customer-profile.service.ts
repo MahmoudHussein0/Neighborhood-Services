@@ -6,6 +6,7 @@ import {
   CustomerAddressRequest,
   CustomerProfile,
   CustomerRecord,
+  GeocodingResult,
 } from '../models/customer-profile.model';
 
 @Injectable({
@@ -28,6 +29,20 @@ export class CustomerProfileService {
     });
   }
 
+  geocodeAddress(address: string) {
+    return this.http.get<GeocodingResult>(`${this.apiUrl}/api/Geocoding/search`, {
+      params: { address },
+      withCredentials: true,
+    });
+  }
+
+  reverseGeocode(latitude: number, longitude: number) {
+    return this.http.get<GeocodingResult>(`${this.apiUrl}/api/Geocoding/reverse`, {
+      params: { lat: latitude, lng: longitude },
+      withCredentials: true,
+    });
+  }
+
   updateProfile(userId: string, body: { fullName: string; age: number }) {
     return this.http.put<void>(`${this.apiUrl}/api/Users/${userId}/profile`, body, {
       withCredentials: true,
@@ -36,6 +51,15 @@ export class CustomerProfileService {
 
   updatePhoto(userId: string, photo: string) {
     return this.http.put<void>(`${this.apiUrl}/api/Users/${userId}/photo`, { photo }, {
+      withCredentials: true,
+    });
+  }
+
+  uploadUserPhoto(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<{ photoUrl: string }>(`${this.apiUrl}/api/Users/photo-upload`, formData, {
       withCredentials: true,
     });
   }

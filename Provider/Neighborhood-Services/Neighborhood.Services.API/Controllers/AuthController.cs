@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.Auth.Commands;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Customers;
 using NetTopologySuite.Geometries;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace Neighborhood.Services.API.Controllers
 {
@@ -16,12 +19,16 @@ namespace Neighborhood.Services.API.Controllers
         IMediator mediator,
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        IJwtTokenService jwtTokenService) : ControllerBase
+        IJwtTokenService jwtTokenService,
+        ICustomerRepository customerRepository,
+        IConfiguration configuration) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
+        private readonly ICustomerRepository _customerRepository = customerRepository;
+        private readonly IConfiguration _configuration = configuration;
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginCommand command)
@@ -35,6 +42,7 @@ namespace Neighborhood.Services.API.Controllers
                 authResponse.UserId,
                 authResponse.FullName,
                 authResponse.Email,
+                authResponse.Photo,
                 authResponse.Role,
                 authResponse.ExpiresAt
             });
@@ -57,16 +65,19 @@ namespace Neighborhood.Services.API.Controllers
             var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
-                return Unauthorized(new { Message = "Google authentication failed" });
+                return Redirect(BuildExternalErrorUrl("Google authentication failed."));
             }
 
             var email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrWhiteSpace(email))
             {
-                return BadRequest(new { Message = "Google account did not provide an email address" });
+                return Redirect(BuildExternalErrorUrl("Google account did not provide an email address."));
             }
 
             var fullName = loginInfo.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
+            var photo = loginInfo.Principal.FindFirstValue("picture")
+                ?? loginInfo.Principal.FindFirstValue("urn:google:picture")
+                ?? string.Empty;
             var user = await _userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
             var shouldAddExternalLogin = false;
 
@@ -84,6 +95,7 @@ namespace Neighborhood.Services.API.Controllers
                     Email = email,
                     EmailConfirmed = true,
                     FullName = fullName,
+                    Photo = photo,
                     ApplicationUserRole = ApplicationUserRole.Customer,
                     IsActive = true,
                     IsDeleted = false,
@@ -96,19 +108,21 @@ namespace Neighborhood.Services.API.Controllers
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
-                    return BadRequest(new
-                    {
-                        Message = "Failed to create user from Google account",
-                        Errors = createResult.Errors.Select(error => error.Description)
-                    });
+                    return Redirect(BuildExternalErrorUrl("Failed to create user from Google account."));
                 }
 
                 shouldAddExternalLogin = true;
             }
+            else if (string.IsNullOrWhiteSpace(user.Photo) && !string.IsNullOrWhiteSpace(photo))
+            {
+                user.Photo = photo;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
 
             if (user.IsDeleted || !user.IsActive)
             {
-                return Unauthorized(new { Message = "User account is not active" });
+                return Redirect(BuildExternalErrorUrl("User account is not active."));
             }
 
             if (shouldAddExternalLogin)
@@ -116,25 +130,17 @@ namespace Neighborhood.Services.API.Controllers
                 var addLoginResult = await _userManager.AddLoginAsync(user, loginInfo);
                 if (!addLoginResult.Succeeded)
                 {
-                    return BadRequest(new
-                    {
-                        Message = "Failed to link Google account",
-                        Errors = addLoginResult.Errors.Select(error => error.Description)
-                    });
+                    return Redirect(BuildExternalErrorUrl("Failed to link Google account."));
                 }
             }
+
+            await EnsureCustomerProfileAsync(user);
 
             var tokenResult = _jwtTokenService.GenerateToken(user);
             AppendAccessTokenCookie(tokenResult.Token, tokenResult.ExpiresAt);
 
-            return Ok(new
-            {
-                UserId = user.Id,
-                user.FullName,
-                Email = user.Email ?? string.Empty,
-                Role = user.ApplicationUserRole.ToString(),
-                tokenResult.ExpiresAt
-            });
+            var callbackUrl = BuildExternalCallbackUrl(user, tokenResult.ExpiresAt);
+            return Redirect(callbackUrl);
         }
 
         [HttpPost("logout")]
@@ -159,6 +165,59 @@ namespace Neighborhood.Services.API.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = expiresAt
             });
+        }
+
+        private async Task EnsureCustomerProfileAsync(ApplicationUser user)
+        {
+            if (user.ApplicationUserRole != ApplicationUserRole.Customer)
+            {
+                return;
+            }
+
+            if (await _customerRepository.GetByUserIdAsync(user.Id) != null)
+            {
+                return;
+            }
+
+            await _customerRepository.CreateAsync(new Customer
+            {
+                ApplicationUserId = user.Id,
+                IsDeleted = false,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
+
+        private string BuildExternalCallbackUrl(ApplicationUser user, DateTime expiresAt)
+        {
+            var frontendBaseUrl = _configuration["Frontend:BaseUrl"]
+                ?? _configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()?.FirstOrDefault()
+                ?? "http://localhost:4200";
+
+            var query = new Dictionary<string, string?>
+            {
+                ["userId"] = user.Id,
+                ["fullName"] = user.FullName,
+                ["email"] = user.Email ?? string.Empty,
+                ["photo"] = user.Photo,
+                ["role"] = user.ApplicationUserRole.ToString(),
+                ["expiresAt"] = expiresAt.ToString("O")
+            };
+
+            var encodedQuery = string.Join("&", query.Select(item =>
+                $"{UrlEncoder.Default.Encode(item.Key)}={UrlEncoder.Default.Encode(item.Value ?? string.Empty)}"));
+
+            return $"{frontendBaseUrl.TrimEnd('/')}/auth/external-callback?{encodedQuery}";
+        }
+
+        private string BuildExternalErrorUrl(string message)
+        {
+            var frontendBaseUrl = _configuration["Frontend:BaseUrl"]
+                ?? _configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()?.FirstOrDefault()
+                ?? "http://localhost:4200";
+
+            return $"{frontendBaseUrl.TrimEnd('/')}/auth/login?externalError={UrlEncoder.Default.Encode(message)}";
         }
     }
 }

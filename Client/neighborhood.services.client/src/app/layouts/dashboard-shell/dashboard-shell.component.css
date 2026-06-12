@@ -25,6 +25,13 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.875rem;
+  overflow: hidden;
+}
+
+.avatar img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .user-summary {

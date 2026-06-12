@@ -17,7 +17,13 @@
           <span class="fw-semibold small">{{ currentUser()?.fullName || 'Account' }}</span>
           <span class="text-muted user-role">{{ currentUser()?.role || 'User' }}</span>
         </div>
-        <div class="avatar">{{ userInitial() }}</div>
+        <div class="avatar">
+          @if (userPhoto()) {
+            <img [src]="userPhoto()" alt="Profile photo" />
+          } @else {
+            {{ userInitial() }}
+          }
+        </div>
         <button
           class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-2"
           type="button"

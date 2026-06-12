@@ -24,6 +24,12 @@ namespace Neighborhood.Services.API.Middlewares
                     Title = "Resource not found",
                     Detail = exception.Message
                 },
+                KeyNotFoundException => new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "Resource not found",
+                    Detail = exception.Message
+                },
                 ValidationException validationEx => new ValidationProblemDetails(validationEx.Errors)
                 {
                     Status = StatusCodes.Status400BadRequest,
@@ -35,6 +41,18 @@ namespace Neighborhood.Services.API.Middlewares
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     Title = "Unauthorized",
+                    Detail = exception.Message
+                },
+                UnauthorizedAccessException => new ProblemDetails
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    Title = "Unauthorized",
+                    Detail = exception.Message
+                },
+                ForbiddenException => new ProblemDetails
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    Title = "Forbidden",
                     Detail = exception.Message
                 },
                 ConflictException => new ProblemDetails

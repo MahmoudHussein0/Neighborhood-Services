@@ -37,6 +37,7 @@ namespace Neighborhood.Services.Application.Auth.Commands
                 UserId = user.Id,
                 FullName = user.FullName,
                 Email = user.Email ?? string.Empty,
+                Photo = user.Photo,
                 Role = user.ApplicationUserRole.ToString(),
                 ExpiresAt = tokenResult.ExpiresAt
             };

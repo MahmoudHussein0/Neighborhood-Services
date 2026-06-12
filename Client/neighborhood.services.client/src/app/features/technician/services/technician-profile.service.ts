@@ -33,6 +33,15 @@ export class TechnicianProfileService {
     });
   }
 
+  uploadUserPhoto(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<{ photoUrl: string }>(`${this.apiUrl}/api/Users/photo-upload`, formData, {
+      withCredentials: true,
+    });
+  }
+
   getTechnicianByUserId(userId: string) {
     return this.http.get<TechnicianProfile>(`${this.apiUrl}/api/Technicians/user/${userId}`, {
       withCredentials: true,
@@ -53,6 +62,15 @@ export class TechnicianProfileService {
 
   addPhoto(body: { photoUrl: string; caption: string; applicationUserId: string; technicianId: number }) {
     return this.http.post<{ id: number }>(`${this.apiUrl}/api/technician-photos`, body, {
+      withCredentials: true,
+    });
+  }
+
+  uploadPhoto(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<{ photoUrl: string }>(`${this.apiUrl}/api/technician-photos/upload`, formData, {
       withCredentials: true,
     });
   }

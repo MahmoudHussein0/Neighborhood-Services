@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth/services/auth.service';
+import { environment } from '../../../../environments/environment';
 import { StaffUserDetails, StaffUserSummary } from '../../models/staff-user.model';
 import { StaffUsersService } from '../../services/staff-users.service';
 
@@ -60,7 +61,13 @@ import { StaffUsersService } from '../../services/staff-users.service';
                 <tr>
                   <td>
                     <div class="d-flex align-items-center gap-2">
-                      <div class="staff-avatar">{{ getInitial(user) }}</div>
+                      @if (user.photo) {
+                        <div class="staff-avatar">
+                          <img [src]="getPhotoSrc(user.photo)" alt="User photo" />
+                        </div>
+                      } @else {
+                        <div class="staff-avatar">{{ getInitial(user) }}</div>
+                      }
                       <span class="fw-semibold">{{ user.fullName }}</span>
                     </div>
                   </td>
@@ -89,43 +96,79 @@ import { StaffUsersService } from '../../services/staff-users.service';
       }
     </section>
 
-    @if (selectedUser()) {
-      <section class="bg-white border rounded-3 shadow-sm p-4 mt-4">
-        <div class="d-flex justify-content-between gap-3 mb-3">
-          <h3 class="h5 fw-bold mb-0">User details</h3>
-          <button class="btn btn-sm btn-outline-secondary" type="button" (click)="selectedUser.set(null)">Close</button>
-        </div>
-        @if (detailsLoading()) {
-          <div class="text-muted">Loading details...</div>
-        } @else {
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
-              <div class="text-muted small">Full name</div>
-              <div class="fw-semibold">{{ selectedUser()?.fullName }}</div>
+    @if (selectedUser(); as user) {
+      <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="userDetailsTitle">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+              <div class="d-flex align-items-center gap-3">
+                <div class="staff-avatar-lg">
+                  @if (user.photo) {
+                    <img [src]="getPhotoSrc(user.photo)" alt="User photo" />
+                  } @else {
+                    {{ getInitial(user) }}
+                  }
+                </div>
+                <div>
+                  <h3 class="modal-title h5 fw-bold mb-1" id="userDetailsTitle">{{ user.fullName }}</h3>
+                  <div class="d-flex flex-wrap gap-2">
+                    <span class="badge text-bg-light border">{{ user.applicationUserRole }}</span>
+                    <span class="badge" [class.text-bg-success]="user.isActive" [class.text-bg-secondary]="!user.isActive">
+                      {{ user.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn-close" type="button" aria-label="Close" (click)="closeDetails()"></button>
             </div>
-            <div class="col-12 col-md-6">
-              <div class="text-muted small">Email</div>
-              <div class="fw-semibold">{{ selectedUser()?.email }}</div>
+            <div class="modal-body">
+              @if (detailsLoading()) {
+                <div class="d-flex align-items-center gap-2 text-muted py-4">
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  Loading details...
+                </div>
+              } @else {
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="detail-card">
+                      <div class="text-muted small">Full name</div>
+                      <div class="fw-semibold text-break">{{ user.fullName }}</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="detail-card">
+                      <div class="text-muted small">Email</div>
+                      <div class="fw-semibold text-break">{{ user.email }}</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="detail-card">
+                      <div class="text-muted small">Age</div>
+                      <div class="fw-semibold">{{ user.age || 'N/A' }}</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="detail-card">
+                      <div class="text-muted small">Role</div>
+                      <div class="fw-semibold">{{ user.applicationUserRole }}</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="detail-card">
+                      <div class="text-muted small">Status</div>
+                      <div class="fw-semibold">{{ user.isActive ? 'Active' : 'Inactive' }}</div>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
-            <div class="col-12 col-md-4">
-              <div class="text-muted small">Age</div>
-              <div class="fw-semibold">{{ selectedUser()?.age ?? 'N/A' }}</div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="text-muted small">Role</div>
-              <div class="fw-semibold">{{ selectedUser()?.applicationUserRole }}</div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="text-muted small">Status</div>
-              <div class="fw-semibold">{{ selectedUser()?.isActive ? 'Active' : 'Inactive' }}</div>
-            </div>
-            <div class="col-12">
-              <div class="text-muted small">Photo</div>
-              <div class="fw-semibold text-break">{{ selectedUser()?.photo || 'No photo set' }}</div>
+            <div class="modal-footer border-0 pt-0">
+              <button class="btn btn-outline-secondary" type="button" (click)="closeDetails()">Close</button>
             </div>
           </div>
-        }
-      </section>
+        </div>
+      </div>
+      <div class="modal-backdrop fade show"></div>
     }
   `,
   styles: [`
@@ -139,7 +182,38 @@ import { StaffUsersService } from '../../services/staff-users.service';
       font-weight: 700;
       height: 2rem;
       justify-content: center;
+      overflow: hidden;
       width: 2rem;
+    }
+
+    .staff-avatar img,
+    .staff-avatar-lg img {
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .staff-avatar-lg {
+      align-items: center;
+      background-color: #dbeafe;
+      border-radius: 50%;
+      color: #1d4ed8;
+      display: flex;
+      flex: 0 0 auto;
+      font-size: 1.35rem;
+      font-weight: 700;
+      height: 4rem;
+      justify-content: center;
+      overflow: hidden;
+      width: 4rem;
+    }
+
+    .detail-card {
+      background-color: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      height: 100%;
+      padding: 1rem;
     }
   `],
 })
@@ -217,6 +291,11 @@ export class StaffUsersComponent implements OnInit {
     });
   }
 
+  closeDetails(): void {
+    this.selectedUser.set(null);
+    this.detailsLoading.set(false);
+  }
+
   activate(user: StaffUserSummary): void {
     this.staffUsersService.activateUser(user.id).subscribe({
       next: () => this.afterUserAction('User activated.'),
@@ -248,6 +327,14 @@ export class StaffUsersComponent implements OnInit {
 
   getInitial(user: StaffUserSummary): string {
     return user.fullName.trim().charAt(0).toUpperCase() || 'U';
+  }
+
+  getPhotoSrc(photoUrl: string): string {
+    if (!photoUrl || photoUrl.startsWith('http') || photoUrl.startsWith('blob:') || photoUrl.startsWith('data:')) {
+      return photoUrl;
+    }
+
+    return `${environment.apiUrl}${photoUrl.startsWith('/') ? '' : '/'}${photoUrl}`;
   }
 
   private afterUserAction(message: string): void {

@@ -30,6 +30,12 @@ export interface CustomerAddressRequest {
   longitude: number;
 }
 
+export interface GeocodingResult {
+  formattedAddress: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface CustomerRecord {
   id: number;
   applicationUserId: string;

@@ -223,6 +223,7 @@ namespace Neighborhood.Services.API
             //app.UseCors("AllowJS");
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
+            app.UseStaticFiles();
             app.UseCors("Frontend");
            
             app.UseAuthentication();
