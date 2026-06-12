@@ -1,0 +1,85 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+  <div>
+    <h2 class="h4 fw-bold mb-0">Bookings</h2>
+    <p class="text-muted small mb-0">Every booking across the marketplace.</p>
+  </div>
+  <div class="input-group" style="max-width: 300px;">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control" placeholder="Search customer, technician, id…"
+      [value]="searchTerm()" (input)="onSearchInput($any($event.target).value)" />
+  </div>
+</div>
+
+<!-- Status tabs -->
+<ul class="nav nav-pills gap-2 mb-3">
+  @for (tab of tabs; track tab) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab" (click)="selectTab(tab)">{{ tab }}</button>
+    </li>
+  }
+</ul>
+
+@if (loading()) {
+  <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
+} @else if (result(); as res) {
+
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+        No bookings here.
+      </div>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>Technician</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th class="text-end">Price</th>
+              <th>Scheduled</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of res.items; track b.id) {
+              <tr>
+                <td class="text-muted">{{ b.id }}</td>
+                <td>{{ b.customerName }}</td>
+                <td>{{ b.technicianName }}</td>
+                <td><span class="badge text-bg-light border">{{ b.bookingType }}</span></td>
+                <td><span class="badge rounded-pill" [class]="badgeClass(b.status)">{{ b.status }}</span></td>
+                <td class="text-end">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</td>
+                <td class="small text-muted">{{ b.scheduledAt | date: 'medium' }}</td>
+                <td class="text-end">
+                  @if (canCancel(b.status)) {
+                    <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="cancel(b)">
+                      <i class="bi bi-x-lg me-1"></i>Cancel
+                    </button>
+                  } @else {
+                    <span class="text-muted small">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-3">
+        <span class="text-muted small">Page {{ res.page }} of {{ res.totalPages }} ({{ res.totalCount }} total)</span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">Previous</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">Next</button>
+        </div>
+      </div>
+    }
+  }
+}

@@ -1,0 +1,73 @@
+<section class="auth-page">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-9 col-lg-6 col-xl-5">
+        <div class="auth-panel bg-white border shadow-sm">
+          <div class="mb-4">
+            <span class="auth-kicker">Welcome back</span>
+            <h1 class="h3 fw-bold mt-2 mb-2">Sign in</h1>
+            <p class="text-muted mb-0">Access your Neighborhood Services account.</p>
+          </div>
+
+          @if (apiError()) {
+            <div class="alert alert-danger" role="alert">
+              {{ apiError() }}
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                id="email"
+                type="email"
+                class="form-control"
+                formControlName="email"
+                autocomplete="email"
+                [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+              />
+              @if (hasError('email', 'required')) {
+                <div class="invalid-feedback">Email is required.</div>
+              } @else if (hasError('email', 'email')) {
+                <div class="invalid-feedback">Enter a valid email address.</div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                id="password"
+                type="password"
+                class="form-control"
+                formControlName="password"
+                autocomplete="current-password"
+                [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+              />
+              @if (hasError('password', 'required')) {
+                <div class="invalid-feedback">Password is required.</div>
+              }
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit" [disabled]="isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              }
+              Sign in
+            </button>
+          </form>
+
+          <div class="auth-divider"><span>or</span></div>
+
+          <a class="btn btn-outline-secondary w-100" [href]="googleLoginUrl">
+            Continue with Google
+          </a>
+
+          <p class="text-center text-muted small mb-0 mt-4">
+            New here?
+            <a routerLink="/auth/register" class="fw-semibold text-decoration-none">Create an account</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

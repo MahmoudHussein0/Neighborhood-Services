@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.AiAnalysises.Commands.AnalyzeBooking;
@@ -10,6 +11,7 @@ namespace Neighborhood.Services.API.AiAnalysis
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AiAnalysisController : ControllerBase
     {
         private readonly IMediator _mediator;

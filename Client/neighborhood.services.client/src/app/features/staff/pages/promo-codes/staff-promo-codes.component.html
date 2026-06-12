@@ -1,0 +1,110 @@
+<div class="container-fluid">
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+      <h2 class="fw-bold mb-0">{{ 'promoCodes.title' | translate }}</h2>
+    </div>
+    <div class="col-md-6 text-end mt-3 mt-md-0">
+      <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#createPromoModal">
+        <i class="bi bi-plus-lg me-2"></i>{{ 'promoCodes.create' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4">{{ 'promoCodes.code' | translate }}</th>
+              <th>{{ 'promoCodes.discount' | translate }}</th>
+              <th>{{ 'promoCodes.usage' | translate }}</th>
+              <th>{{ 'promoCodes.expiresAt' | translate }}</th>
+              <th>{{ 'promoCodes.status' | translate }}</th>
+              <th class="text-end pe-4">{{ 'promoCodes.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (promoCodes().length === 0) {
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  <i class="bi bi-tag fs-1 d-block mb-2"></i>
+                  {{ 'promoCodes.noCodes' | translate }}
+                </td>
+              </tr>
+            }
+            @for (promo of promoCodes(); track promo.id) {
+              <tr>
+                <td class="ps-4">
+                  <span class="badge bg-light text-dark border font-monospace fs-6 px-3 py-2">
+                    {{ promo.code }}
+                  </span>
+                </td>
+                <td class="fw-bold text-success">{{ promo.discountPercentage }}%</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span>{{ promo.usedCount }} / {{ promo.maxUses }}</span>
+                    <div class="progress flex-grow-1" style="height: 6px; max-width: 100px;">
+                      <div class="progress-bar" [style.width.%]="(promo.usedCount / promo.maxUses) * 100" [ngClass]="{'bg-danger': promo.usedCount >= promo.maxUses}"></div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ promo.expiresAt | date:'mediumDate' }}</td>
+                <td>
+                  @if (promo.isActive) {
+                    <span class="badge bg-success">{{ 'promoCodes.active' | translate }}</span>
+                  } @else {
+                    <span class="badge bg-secondary">{{ 'promoCodes.inactive' | translate }}</span>
+                  }
+                </td>
+                <td class="text-end pe-4">
+                  <button class="btn btn-sm btn-outline-danger border-0" (click)="deletePromoCode(promo.id)" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createPromoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold">{{ 'promoCodes.createTitle' | translate }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label text-muted">{{ 'promoCodes.codeLabel' | translate }}</label>
+          <input type="text" class="form-control font-monospace text-uppercase" [ngModel]="newCode()" (ngModelChange)="newCode.set($event)" placeholder="SUMMER26">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted">{{ 'promoCodes.discountLabel' | translate }}</label>
+          <div class="input-group">
+            <input type="number" class="form-control" [ngModel]="newDiscount()" (ngModelChange)="newDiscount.set($event)" min="1" max="100">
+            <span class="input-group-text bg-white">%</span>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-6">
+            <label class="form-label text-muted">{{ 'promoCodes.maxUsesLabel' | translate }}</label>
+            <input type="number" class="form-control" [ngModel]="newMaxUses()" (ngModelChange)="newMaxUses.set($event)" min="1">
+          </div>
+          <div class="col-6">
+            <label class="form-label text-muted">{{ 'promoCodes.expiryLabel' | translate }}</label>
+            <input type="date" class="form-control" [ngModel]="newExpiresAt()" (ngModelChange)="newExpiresAt.set($event)">
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="createPromoCode()" data-bs-dismiss="modal">
+          {{ 'promoCodes.save' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

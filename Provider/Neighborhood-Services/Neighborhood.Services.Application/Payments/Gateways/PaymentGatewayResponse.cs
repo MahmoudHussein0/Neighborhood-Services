@@ -6,5 +6,6 @@ namespace Neighborhood.Services.Application.Payments.Gateways
         public string? RedirectUrl { get; set; }
         public string? ProviderReference { get; set; }
         public string? ErrorMessage { get; set; }
+        public bool IsInstant { get; set; }
     }
 }

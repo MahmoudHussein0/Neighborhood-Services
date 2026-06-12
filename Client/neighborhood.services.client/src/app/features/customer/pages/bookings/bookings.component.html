@@ -1,0 +1,146 @@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+  <h2 class="h4 fw-bold mb-0">{{ 'bookings.title' | translate }}</h2>
+  <div class="input-group" style="max-width: 320px;">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input
+      type="search"
+      class="form-control"
+      [placeholder]="'bookings.search' | translate"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)" />
+  </div>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-pills gap-2 mb-4">
+  @for (tab of tabs; track tab) {
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab() === tab" (click)="selectTab(tab)">
+        {{ (tab === 'All' ? 'bookings.filterAll' : 'bookings.status.' + tab) | translate }}
+      </button>
+    </li>
+  }
+</ul>
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (result(); as res) {
+
+  <!-- Empty -->
+  @if (res.items.length === 0) {
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+        {{ 'bookings.empty' | translate }}
+      </div>
+    </div>
+  } @else {
+
+    <!-- List -->
+    <div class="d-flex flex-column gap-3">
+      @for (b of res.items; track b.id) {
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+
+              <div class="d-flex align-items-center gap-3">
+                <div class="icon-box"><i class="bi bi-tools"></i></div>
+                <div>
+                  <div class="fw-semibold">{{ b.description }}</div>
+                  <div class="text-muted small">
+                    {{ b.address }} · {{ b.scheduledAt | date: 'mediumDate' }}
+                    @if (mapsUrl(b.latitude, b.longitude); as url) {
+                      <a [href]="url" target="_blank" rel="noopener" class="ms-1 text-decoration-none"><i class="bi bi-geo-alt-fill me-1"></i>{{ 'common.openInMaps' | translate }}</a>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                <span class="fw-bold">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</span>
+                <span class="badge rounded-pill" [class]="badgeClass(b.status)">
+                  {{ ('bookings.status.' + b.status) | translate }}
+                </span>
+
+                <button class="btn btn-sm btn-outline-secondary" (click)="openDetails(b.id)">
+                  {{ 'bookings.details' | translate }}
+                </button>
+
+                @if (b.status === 'Completed' && b.clientConfirmed) {
+                  <span class="text-success small"><i class="bi bi-check-circle-fill me-1"></i>{{ 'bookings.youConfirmed' | translate }}</span>
+                }
+
+                @if (hasActions(b)) {
+                  <div ngbDropdown class="d-inline-block">
+                    <button class="btn btn-sm btn-outline-primary" ngbDropdownToggle>
+                      {{ 'bookings.actions' | translate }}
+                    </button>
+                    <div ngbDropdownMenu>
+                      @if (canConfirm(b)) {
+                        <button ngbDropdownItem [disabled]="busyId() === b.id" (click)="confirm(b)">{{ 'bookings.confirmCompleted' | translate }}</button>
+                      }
+                      @if (canCancel(b.status)) {
+                        <button ngbDropdownItem class="text-danger" (click)="cancel(b)">{{ 'bookings.cancelBooking' | translate }}</button>
+                      }
+                      @if (canDispute(b.status)) {
+                        <button ngbDropdownItem class="text-danger" [disabled]="busyId() === b.id" (click)="raiseDispute(b)">{{ 'dispute.raise' | translate }}</button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Quoted: the tech has set a price, show callout + accept/reject -->
+            @if (b.status === 'Quoted') {
+              <div class="alert alert-info py-2 px-3 mt-3 mb-0 d-flex align-items-center justify-content-between flex-wrap gap-2 small">
+                <div>
+                  <i class="bi bi-tag me-1"></i>
+                  {{ 'bookings.quotedCallout' | translate: { price: (b.finalPrice | currency: 'EGP ') } }}
+                  @if (b.durationMinutes) {
+                    · {{ b.durationMinutes }} {{ 'bookings.min' | translate }}
+                  }
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="rejectQuote(b)">
+                    {{ 'bookings.rejectQuote' | translate }}
+                  </button>
+                  <button class="btn btn-sm btn-success" [disabled]="busyId() === b.id" (click)="acceptQuote(b)">
+                    {{ 'bookings.acceptQuote' | translate }}
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- Pending: tech hasn't quoted yet -->
+            @if (b.status === 'Pending') {
+              <div class="text-muted small mt-2">
+                <i class="bi bi-hourglass-split me-1"></i>{{ 'bookings.awaitingTechnician' | translate }}
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (res.totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between mt-4">
+        <span class="text-muted small">
+          {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}
+        </span>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">
+            {{ 'common.previous' | translate }}
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">
+            {{ 'common.next' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+  }
+}

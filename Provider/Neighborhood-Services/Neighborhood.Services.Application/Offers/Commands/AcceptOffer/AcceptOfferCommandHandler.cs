@@ -1,12 +1,15 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.Offers;
@@ -23,6 +26,9 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
         private readonly ICurrentUserService _currentUserService;
         private readonly IMediator _mediator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITechnicianRepository _technicianRepository;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<AcceptOfferCommandHandler> _logger;
 
         public AcceptOfferCommandHandler(
             IOfferRepository offerRepository,
@@ -31,7 +37,10 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             IWalletRepository walletRepository,
             ICurrentUserService currentUserService,
             IMediator mediator,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ITechnicianRepository technicianRepository,
+            INotificationService notificationService,
+            ILogger<AcceptOfferCommandHandler> logger)
         {
             _offerRepository = offerRepository;
             _serviceRequestRepository = serviceRequestRepository;
@@ -40,6 +49,9 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             _currentUserService = currentUserService;
             _mediator = mediator;
             _unitOfWork = unitOfWork;
+            _technicianRepository = technicianRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<int> Handle(AcceptOfferCommand request, CancellationToken cancellationToken)
@@ -156,6 +168,20 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
                 Amount = booking.EstimatedPrice
             }, cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
+
+            // Notify the winning technician their offer was accepted — best effort.
+            try
+            {
+                var technician = await _technicianRepository.GetByIdAsync(offer.TechnicianId);
+                if (!string.IsNullOrEmpty(technician?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        technician.ApplicationUserId,
+                        $"Your offer on service request #{serviceRequest.Id} was accepted. Booking #{booking.Id} is confirmed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Accept-offer notification failed for offer {Id}.", offer.Id);
+            }
 
             return booking.Id;
         }

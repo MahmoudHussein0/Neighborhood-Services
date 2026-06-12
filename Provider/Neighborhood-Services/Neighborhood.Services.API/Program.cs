@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
+using Neighborhood.Services.Application.AI.Interfaces;
 using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Cloudinary;
 using Neighborhood.Services.Domain.Staffs;
@@ -80,7 +81,15 @@ namespace Neighborhood.Services.API
             });
 
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication(options =>
+            {
+                // AddIdentity() sets the default authenticate scheme to the Identity cookie, which
+                // means our JWT (in the access_token cookie) is never read. Force JwtBearer to be
+                // the default for authenticate/challenge so protected endpoints actually use the JWT.
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -136,9 +145,9 @@ namespace Neighborhood.Services.API
             builder.Services.AddScoped<ICloudinaryService,
                 CloudinaryService>();
             // end of Amira
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
 
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -168,6 +177,19 @@ namespace Neighborhood.Services.API
 
             //END OF ARWA
             // Seed dev/test data on startup (migrates + seeds if empty)
+            // CLI: pure knowledge reindex. Assumes the DB is already migrated (boot the app
+            // normally at least once first). Does NOT seed dev data, does NOT start the server.
+            //   dotnet run -- reindex-knowledge   (same job as POST /api/knowledge/reindex)
+            if (args.Contains("reindex-knowledge"))
+            {
+                using var reindexScope = app.Services.CreateScope();
+                await reindexScope.ServiceProvider.GetRequiredService<IKnowledgeIndexer>().ReindexAllAsync();
+                Console.WriteLine("Knowledge reindex complete.");
+                return;
+            }
+
+            // Normal boot only: migrate + seed dev/test data. (Knowledge index is NOT seeded here —
+            // rebuild it deliberately via the CLI above or POST /api/knowledge/reindex.)
             using (var scope = app.Services.CreateScope())
             {
                 var environment = app.Services.GetRequiredService<IWebHostEnvironment>();
@@ -198,7 +220,7 @@ namespace Neighborhood.Services.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors("AllowJS");
+            //app.UseCors("AllowJS");
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
             app.UseCors("Frontend");

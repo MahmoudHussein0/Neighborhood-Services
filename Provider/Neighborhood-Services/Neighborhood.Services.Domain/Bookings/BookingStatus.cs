@@ -10,6 +10,9 @@ namespace Neighborhood.Services.Domain.Bookings
         Confirmed,
         Completed,
         Cancelled,
-        Disputed
+        Disputed,
+        // Direct flow: technician has quoted FinalPrice + DurationMinutes,
+        // awaiting the customer's accept / reject.
+        Quoted
     }
 }

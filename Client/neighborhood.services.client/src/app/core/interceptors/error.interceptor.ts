@@ -21,7 +21,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           toastr.error('Server error, please try again later.');
           break;
         default:
-          toastr.error(error.error?.message || 'Something went wrong.');
+          // Backend returns RFC7807 ProblemDetails — the human message is in `detail`.
+          // Fall back to `message` (older shapes) then a generic string.
+          toastr.error(error.error?.detail || error.error?.message || 'Something went wrong.');
           break;
       }
       return throwError(() => error);

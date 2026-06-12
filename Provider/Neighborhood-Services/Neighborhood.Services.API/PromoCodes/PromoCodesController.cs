@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.PromoCodes.Commands.ApplyPromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.CreatePromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.DeletePromoCode;
+using Neighborhood.Services.Application.PromoCodes.Queries.GetAllPromoCodes;
 using Neighborhood.Services.Application.PromoCodes.Queries.GetPromoCodeByCode;
 using Neighborhood.Services.Application.PromoCodes.Queries.ValidatePromoCode;
 using Neighborhood.Services.Application.Shared;
@@ -28,6 +29,14 @@ namespace Neighborhood.Services.API.PromoCodes
         public async Task<IActionResult> GetByCode(string code)
         {
             var result = await _mediator.Send(new GetPromoCodeByCodeQuery { Code = code });
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _mediator.Send(new GetAllPromoCodesQuery());
             return Ok(result);
         }
 

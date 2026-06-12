@@ -14,13 +14,15 @@ namespace Neighborhood.Services.Application.ServiceRequests.Commands.CreateServi
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IBackgroundJobScheduler _backgroundJobs;
 
-        public CreateServiceRequestCommandHandler(IServiceRequestRepository serviceRequestRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, ICustomerRepository customerRepository)
+        public CreateServiceRequestCommandHandler(IServiceRequestRepository serviceRequestRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, ICustomerRepository customerRepository, IBackgroundJobScheduler backgroundJobs)
         {
             _serviceRequestRepository = serviceRequestRepository;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
             _customerRepository = customerRepository;
+            _backgroundJobs = backgroundJobs;
         }
 
         public async Task<int> Handle(CreateServiceRequestCommand request, CancellationToken cancellationToken)
@@ -53,7 +55,9 @@ namespace Neighborhood.Services.Application.ServiceRequests.Commands.CreateServi
                 Budget = request.Budget,
                 Image = request.Image,
                 ScheduledAt = request.ScheduledAt,
-                Status = ServiceRequestStatus.Open,
+                // Created in PendingReview — the moderation agent flips it to Open/Flagged
+                // in the background. Never start as Open: that would skip moderation.
+                Status = ServiceRequestStatus.PendingReview,
                 Location = new Point(request.Longitude, request.Latitude) { SRID = 4326 },
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddDays(7)
@@ -61,6 +65,10 @@ namespace Neighborhood.Services.Application.ServiceRequests.Commands.CreateServi
 
             await _serviceRequestRepository.AddAsync(serviceRequest);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Queue background moderation. This is just an INSERT into Hangfire's table
+            // (microseconds) — the user does not wait for the AI call.
+            _backgroundJobs.EnqueueServiceRequestModeration(serviceRequest.Id);
 
             return serviceRequest.Id;
         }

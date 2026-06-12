@@ -39,7 +39,9 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetBookingByIdQuery
                 TechnicianId = booking.TechnicianId,
                 ProblemTypeId = booking.ProblemTypeId,
                 OfferId = booking.OfferId,
-                ServiceRequestId = booking.ServiceRequestId
+                ServiceRequestId = booking.ServiceRequestId,
+                Latitude = booking.Location?.Y ?? 0,
+                Longitude = booking.Location?.X ?? 0
             };
         }
     }

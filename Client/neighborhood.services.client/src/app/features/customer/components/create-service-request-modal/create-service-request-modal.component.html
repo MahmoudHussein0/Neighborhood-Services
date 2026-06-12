@@ -1,0 +1,125 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'serviceRequests.form.title' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="modal-body">
+    <div class="row g-3">
+
+      <!-- Category -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'serviceRequests.form.category' | translate }}</label>
+        <select class="form-select" formControlName="categoryId" (change)="onCategoryChange()">
+          <option [ngValue]="null" disabled>{{ 'serviceRequests.form.chooseCategory' | translate }}</option>
+          @for (c of categories(); track c.id) {
+            <option [ngValue]="c.id">{{ c.name }}</option>
+          }
+        </select>
+        @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errCategory' | translate }}</div>
+        }
+      </div>
+
+      <!-- Problem type -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'serviceRequests.form.problemType' | translate }}</label>
+        <select class="form-select" formControlName="problemTypeId" [attr.disabled]="problemTypes().length ? null : true">
+          <option [ngValue]="null" disabled>{{ 'serviceRequests.form.chooseProblemType' | translate }}</option>
+          @for (p of problemTypes(); track p.id) {
+            <option [ngValue]="p.id">{{ p.name }}</option>
+          }
+        </select>
+        @if (selectedProblemType(); as pt) {
+          <div class="text-muted small mt-1">
+            {{ 'serviceRequests.form.typicalRange' | translate: { min: pt.minPrice, max: pt.maxPrice } }}
+          </div>
+        }
+        @if (form.controls.problemTypeId.touched && form.controls.problemTypeId.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errProblemType' | translate }}</div>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label">{{ 'serviceRequests.form.description' | translate }}</label>
+        <textarea class="form-control" rows="3" formControlName="description"
+                  [placeholder]="'serviceRequests.form.descriptionPlaceholder' | translate"></textarea>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errDescription' | translate }}</div>
+        }
+      </div>
+
+      <!-- Budget -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'serviceRequests.form.budget' | translate }}</label>
+        <input type="number" class="form-control" formControlName="budget"
+               [placeholder]="'serviceRequests.form.budgetPlaceholder' | translate" />
+        @if (form.controls.budget.touched && form.controls.budget.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errBudget' | translate }}</div>
+        }
+      </div>
+
+      <!-- Scheduled at -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'serviceRequests.form.dateTime' | translate }}</label>
+        <input type="datetime-local" class="form-control" formControlName="scheduledAt" />
+        @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errDateTime' | translate }}</div>
+        }
+      </div>
+
+      <!-- Address -->
+      <div class="col-12">
+        <label class="form-label">{{ 'serviceRequests.form.address' | translate }}</label>
+        <input type="text" class="form-control" formControlName="address"
+               [placeholder]="'serviceRequests.form.addressPlaceholder' | translate" />
+        @if (form.controls.address.touched && form.controls.address.invalid) {
+          <div class="text-danger small mt-1">{{ 'serviceRequests.form.errAddress' | translate }}</div>
+        }
+      </div>
+
+      <!-- Image (optional) -->
+      <div class="col-12">
+        <label class="form-label">{{ 'serviceRequests.form.photo' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        <input type="file" class="form-control" accept="image/*"
+               (change)="onFileSelected($event)" [disabled]="uploading()" />
+
+        @if (uploading()) {
+          <div class="text-muted small mt-1">
+            <span class="spinner-border spinner-border-sm me-1"></span> {{ 'serviceRequests.form.uploading' | translate }}
+          </div>
+        }
+        @if (form.controls.image.value && !uploading()) {
+          <div class="mt-2">
+            <img [src]="form.controls.image.value" alt="preview"
+                 class="rounded" style="height: 80px; object-fit: cover;" />
+            <span class="text-success small ms-2"><i class="bi bi-check-circle"></i> {{ 'serviceRequests.form.uploaded' | translate }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Location -->
+      <div class="col-12">
+        <label class="form-label d-block">{{ 'common.location' | translate }}</label>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="useMyLocation()" [disabled]="locating()">
+          <i class="bi bi-geo-alt"></i>
+          {{ (locating() ? 'common.locating' : 'common.useMyLocation') | translate }}
+        </button>
+        @if (lat() != null && lng() != null) {
+          <span class="text-success small ms-2">
+            <i class="bi bi-check-circle"></i> {{ 'common.captured' | translate }}
+          </span>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="submitting() || uploading()">
+      {{ (submitting() ? 'serviceRequests.form.submitting' : 'serviceRequests.form.submit') | translate }}
+    </button>
+  </div>
+</form>

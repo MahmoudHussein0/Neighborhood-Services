@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.AgentLogs.Queries.GetAgentLogsByReferenceQuery;
 using Neighborhood.Services.Application.AgentLogs.Queries.GetAgentLogsByTypeQuery;
@@ -8,6 +9,7 @@ namespace Neighborhood.Services.API.AgentLogs
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Staff")]
     public class AgentLogsController : ControllerBase
     {
         private readonly IMediator _mediator;

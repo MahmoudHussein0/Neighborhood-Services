@@ -1,0 +1,54 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'technician.jobs.completeTitle' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  @if (job) {
+    <div class="bg-light rounded-3 p-3 mb-3 small">
+      <div class="fw-semibold mb-1">{{ job.description }}</div>
+      <div class="text-muted">
+        <i class="bi bi-geo-alt me-1"></i>{{ job.address }}
+        @if (mapsUrl(job.latitude, job.longitude); as url) {
+          <a [href]="url" target="_blank" rel="noopener" class="ms-2 text-decoration-none">{{ 'common.openInMaps' | translate }}</a>
+        }
+      </div>
+      <div class="text-muted"><i class="bi bi-calendar me-1"></i>{{ job.scheduledAt | date: 'medium' }}</div>
+      <div class="text-muted"><i class="bi bi-cash me-1"></i>{{ 'technician.jobs.estimated' | translate }}: {{ job.estimatedPrice | currency: 'EGP ' }}</div>
+    </div>
+  }
+
+  <label class="form-label">{{ 'technician.jobs.afterPhoto' | translate }}</label>
+  <input
+    type="file"
+    class="form-control"
+    accept="image/*"
+    (change)="onFileSelected($event)"
+    [disabled]="uploading() || submitting()" />
+  <div class="form-text">{{ 'technician.jobs.afterPhotoHint' | translate }}</div>
+
+  @if (uploading()) {
+    <div class="text-muted small mt-2">
+      <span class="spinner-border spinner-border-sm me-1"></span>{{ 'serviceRequests.form.uploading' | translate }}
+    </div>
+  }
+  @if (photoUrl() && !uploading()) {
+    <div class="mt-2">
+      <img [src]="photoUrl()" alt="after" class="rounded" style="height: 100px; object-fit: cover;" />
+      <span class="text-success small ms-2"><i class="bi bi-check-circle"></i>{{ 'serviceRequests.form.uploaded' | translate }}</span>
+    </div>
+  }
+  @if (touched() && !photoUrl() && !uploading()) {
+    <div class="text-danger small mt-1">{{ 'technician.jobs.photoRequired' | translate }}</div>
+  }
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
+  <button type="button" class="btn btn-success" [disabled]="uploading() || submitting()" (click)="confirm()">
+    @if (submitting()) {
+      <span class="spinner-border spinner-border-sm me-1"></span>
+    }
+    {{ 'technician.jobs.complete' | translate }}
+  </button>
+</div>

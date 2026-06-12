@@ -180,14 +180,15 @@
                 services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
 
 
-                services.AddHttpClient();
-
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
                 services.AddScoped<IJwtTokenService, JwtTokenService>();
                 services.AddScoped<IInvoicePdfService, InvoicePdfService>();
                 services.AddHttpClient<IPaymentGatewayService, PaymentGatewayService>();
                 services.Configure<PaymentGatewayOptions>(configuration.GetSection("PaymentGateway"));
-                services.AddScoped<IGeocodingService, GeocodingService>();
+                services.AddHttpClient<IGeocodingService, GeoapifyGeocodingService>(client =>
+                {
+                    client.BaseAddress = new Uri(configuration["Geoapify:BaseUrl"]!);
+                });
 
 
                 services.AddScoped<ITechnicianCategoryRepository, TechnicianCategoryRepository>();
@@ -199,7 +200,9 @@
                 services.AddHangfireServer();
                 services.AddScoped<RecurringBookingGeneratorService>();
                 services.AddScoped<ServiceRequestExpiryService>();
-                services.AddScoped<KnowledgeSeeder>();
+                services.AddScoped<ServiceRequestModerationJob>();
+                services.AddScoped<IBackgroundJobScheduler, BackgroundJobScheduler>();
+                services.AddScoped<IKnowledgeIndexer, KnowledgeSeeder>();
                 //Kernl
                 services.AddSingleton(sp => {
                     var apiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";

@@ -10,6 +10,10 @@ namespace Neighborhood.Services.Application.RecurringBookings.Interfaces
     {
         Task<IEnumerable<RecurringBooking>> GetCustomerRecurringBookingsAsync(int customerId);
         Task<IEnumerable<RecurringBooking>> GetActiveRecurringBookingsAsync();
+
+        // Paged + optional status filter + search (used by "my recurring bookings")
+        Task<PagedResult<RecurringBooking>> GetCustomerRecurringBookingsPagedAsync(int customerId, RecurringBookingStatus? status, string? search, int page, int pageSize);
+        Task<PagedResult<RecurringBooking>> GetTechnicianRecurringBookingsPagedAsync(int technicianId, RecurringBookingStatus? status, string? search, int page, int pageSize);
         Task<RecurringBooking?> GetRecurringBookingWithDetailsAsync(int recurringBookingId);
         Task<IEnumerable<RecurringBooking>> GetTechnicianRecurringBookingsAsync(int technicianId);
 

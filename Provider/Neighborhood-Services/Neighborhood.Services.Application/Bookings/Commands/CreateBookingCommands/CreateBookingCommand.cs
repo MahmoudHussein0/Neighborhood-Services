@@ -19,5 +19,8 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
         public string?  Region  { get; set; }
         public DateTime ScheduledAt { get; set; }
         public int? PromoCodeId { get; set; }
+        // Optional photo of the problem (already hosted on Cloudinary) the customer attaches
+        // so the technician can see the current state before quoting. Saved as a "Before" image.
+        public string? BeforeImageUrl { get; set; }
     }
 }

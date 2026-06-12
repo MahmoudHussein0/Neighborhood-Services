@@ -10,6 +10,7 @@ namespace Neighborhood.Services.Application.Offers.Interfaces
     {
         Task<IEnumerable<Offer>> GetOffersByServiceRequestAsync(int serviceRequestId);
         Task<IEnumerable<Offer>> GetTechnicianOffersAsync(int technicianId);
+        Task<PagedResult<Offer>> GetTechnicianOffersPagedAsync(int technicianId, OfferStatus? status, int page, int pageSize);
         Task<Offer?> GetAcceptedOfferAsync(int serviceRequestId);
         Task<Offer?> GetOfferWithDetailsAsync(int offerId);
     }
