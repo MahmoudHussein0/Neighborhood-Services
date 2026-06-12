@@ -30,7 +30,7 @@ getTickets(filters: any) {
   return this.http.get(this.baseUrl, { params });
 }
   getTicketDetails(id: number) {
-    return this.http.get(`${this.baseUrl}/${id}/details`);
+    return this.http.get(`${this.baseUrl}/${id}`);
   }
 // دالة تحديث الحالة -> /api/SupportTickets/{id}/status
 updateTicketStatus(id: number, status: number) {

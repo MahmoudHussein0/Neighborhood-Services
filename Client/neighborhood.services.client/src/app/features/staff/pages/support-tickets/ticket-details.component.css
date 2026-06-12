@@ -1,279 +1,150 @@
-/* ── Shared badge classes (mirrored from parent) ─────────────────────────── */
-.st-badge       { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-.badge-open       { background: #E6F1FB; color: #0C447C; }
-.badge-inprogress { background: #FAEEDA; color: #633806; }
-.badge-closed     { background: #EAF3DE; color: #27500A; }
-.badge-high       { background: #FCEBEB; color: #791F1F; }
-.badge-medium     { background: #FAEEDA; color: #633806; }
-.badge-low        { background: #F1EFE8; color: #444441; }
-.badge-neutral    { background: #f0f0f0; color: #666; }
-
-/* ── Loading ─────────────────────────────────────────────────────────────── */
-.td-spinner-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 12px;
-}
-
-.td-spinner {
-  display: flex;
-  gap: 5px;
-}
-
-.td-spinner span {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #bbb;
-  animation: td-pulse 1.2s ease-in-out infinite;
-}
-
-.td-spinner span:nth-child(2) { animation-delay: 0.2s; }
-.td-spinner span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes td-pulse {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-  40%           { opacity: 1;   transform: scale(1);   }
-}
-
-.td-spinner-label {
-  font-size: 13px;
-  color: #aaa;
-  margin: 0;
-}
-
-/* ── Card ────────────────────────────────────────────────────────────────── */
 .td-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  padding: 25px;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
 .td-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 0.5px solid #e0e0e0;
-  flex-shrink: 0;
-}
-
-.td-header-left {
-  flex: 1;
-  min-width: 0;
+  align-items: flex-start;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .td-ticket-id {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0 0 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #adb5bd;
+  font-weight: 600;
+  margin: 0;
+}
+
+.td-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 5px 0 10px 0;
+  direction: rtl;
 }
 
 .td-badges {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-/* ── Action buttons ──────────────────────────────────────────────────────── */
-.td-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.td-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 500;
-  height: 30px;
-  padding: 0 10px;
-  border-radius: 6px;
-  border: 0.5px solid #d0d0d0;
-  background: #fff;
-  cursor: pointer;
-  transition: background 0.1s;
-}
-
-.td-btn i { font-size: 14px; }
-
-.td-btn-progress { border-color: #185FA5; color: #185FA5; }
-.td-btn-progress:hover { background: #E6F1FB; }
-
-.td-btn-resolve { border-color: #3B6D11; color: #3B6D11; }
-.td-btn-resolve:hover { background: #EAF3DE; }
-
-.td-btn-delete { border-color: #A32D2D; color: #A32D2D; padding: 0 8px; }
-.td-btn-delete:hover { background: #FCEBEB; }
-
-.td-resolved-badge { padding: 5px 10px; }
-
-.td-priority-select {
-  font-size: 12px;
-  height: 30px;
-  border: 0.5px solid #d0d0d0;
-  border-radius: 6px;
-  padding: 0 6px;
-  background: #fff;
-  color: inherit;
-  cursor: pointer;
-}
-
-.td-priority-select:focus { outline: none; border-color: #378ADD; }
-
-/* ── Description bar ─────────────────────────────────────────────────────── */
-.td-desc-bar {
-  display: flex;
   gap: 8px;
-  padding: 10px 16px;
-  background: #f9f9f9;
-  border-bottom: 0.5px solid #e0e0e0;
-  flex-shrink: 0;
 }
 
-.td-desc-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #888;
-  white-space: nowrap;
-  padding-top: 1px;
+.td-body {
+  display: grid;
+  grid-template-columns: 2s 1fr;
+  gap: 25px;
 }
 
-.td-desc-text {
-  font-size: 13px;
-  color: inherit;
-  line-height: 1.5;
-  margin: 0;
-  white-space: pre-wrap;
+@media (max-width: 992px) {
+  .td-body { grid-template-columns: 1fr; }
 }
 
-/* ── Chat area ───────────────────────────────────────────────────────────── */
-.td-chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: #fafafa;
-}
-
-.td-msg {
-  display: flex;
-  flex-direction: column;
-  max-width: 72%;
-}
-
-.td-msg-staff    { align-self: flex-end;   align-items: flex-end; }
-.td-msg-customer { align-self: flex-start; align-items: flex-start; }
-
-.td-bubble {
-  padding: 10px 14px;
-  border-radius: 12px;
-}
-
-.td-msg-staff .td-bubble {
-  background: #185FA5;
-  color: #fff;
-  border-bottom-right-radius: 3px;
-}
-
-.td-msg-customer .td-bubble {
-  background: #fff;
-  border: 0.5px solid #e0e0e0;
-  color: inherit;
-  border-bottom-left-radius: 3px;
-}
-
-.td-sender {
-  display: block;
-  font-size: 10px;
-  font-weight: 500;
+.td-section-label {
+  font-size: 0.85rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-  opacity: 0.6;
+  color: #a0aec0;
+  margin-bottom: 10px;
 }
 
-.td-msg-text {
-  font-size: 13px;
-  line-height: 1.5;
-  margin: 0;
-  white-space: pre-wrap;
+/* كارت معلومات العميل */
+.td-customer-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
-.td-msg-time {
-  font-size: 11px;
-  color: #aaa;
-  margin-top: 3px;
-  padding: 0 2px;
-}
-
-.td-sending { color: #e08a00; }
-
-.td-no-msgs {
-  flex: 1;
+.td-avatar {
+  width: 45px;
+  height: 45px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  color: #bbb;
-  font-style: italic;
+  font-weight: bold;
 }
 
-/* ── Footer / input ──────────────────────────────────────────────────────── */
-.td-footer {
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  border-top: 0.5px solid #e0e0e0;
-  background: #fff;
-  flex-shrink: 0;
+.td-customer-info {
+  flex-grow: 1;
 }
 
-.td-input {
-  flex: 1;
-  height: 36px;
-  border: 0.5px solid #d0d0d0;
+.td-customer-name {
+  font-weight: 600;
+  margin: 0;
+  color: #2d3748;
+}
+
+.td-customer-email {
+  font-size: 0.85rem;
+  color: #718096;
+  text-decoration: none;
+}
+
+/* صندوق المشكلة المشروحة بالعربي */
+.td-issue-box {
+  background: #fffaf0;
+  border: 1px solid #feebc8;
+  padding: 20px;
   border-radius: 8px;
-  padding: 0 12px;
-  font-size: 13px;
-  background: #fff;
-  color: inherit;
+  color: #2d3748;
+  line-height: 1.6;
+  direction: rtl; /* للقراءة الصحيحة للغة العربية */
+  text-align: right;
 }
 
-.td-input:focus {
-  outline: none;
-  border-color: #378ADD;
+/* كروت التحكم الجانبية (الأزرار والـ Danger Zone) */
+.td-side-card {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
-.td-send-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 36px;
-  padding: 0 16px;
+.td-action-btn {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
   border: none;
-  border-radius: 8px;
-  background: #185FA5;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.td-send-btn:hover { background: #0C447C; }
-.td-send-btn i { font-size: 15px; }
-.badge-waiting { background: #EEEDFE; color: #3C3489; }
+.td-action-btn--resolve {
+  background: #10b981;
+}
+
+.td-priority-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.td-side-card--danger {
+  border-color: #fee2e2;
+  background: #fef2f2;
+}
+
+.td-delete-btn {
+  width: 100%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}

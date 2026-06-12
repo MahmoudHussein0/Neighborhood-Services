@@ -34,6 +34,7 @@ import { StaffBookingsComponent } from './features/staff/pages/bookings/staff-bo
 import { TechnicianProfileComponent } from './features/technician/pages/profile/technician-profile.component';
 import { TechnicianWalletComponent } from './features/technician/pages/wallet/technician-wallet.component';
 import { TechnicianEarningsComponent } from './features/technician/pages/earnings/technician-earnings.component';
+
 import { StaffUsersComponent } from './features/staff/pages/users/staff-users.component';
 import { StaffPromoCodesComponent } from './features/staff/pages/promo-codes/staff-promo-codes.component';
 

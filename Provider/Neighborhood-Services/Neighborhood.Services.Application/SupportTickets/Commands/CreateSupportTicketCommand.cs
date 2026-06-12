@@ -9,6 +9,8 @@ namespace Neighborhood.Services.Application.SupportTickets.Commands
 
         public string Subject { get; set; }
         public string Description { get; set; }
+        public string SenderName { get; set; }
+        public string SenderEmail { get; set; }
     }
 
 

@@ -187,14 +187,15 @@ namespace Neighborhood.Services.API
                 return;
             }
 
-            // Normal boot only: migrate + seed dev/test data. (Knowledge index is NOT seeded here —
-            // rebuild it deliberately via the CLI above or POST /api/knowledge/reindex.)
+            
             using (var scope = app.Services.CreateScope())
             {
                 var environment = app.Services.GetRequiredService<IWebHostEnvironment>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 await DbSeeder.SeedAsync(scope.ServiceProvider, environment, logger);
             }
+
+            
 
 
             // Configure the HTTP request pipeline.

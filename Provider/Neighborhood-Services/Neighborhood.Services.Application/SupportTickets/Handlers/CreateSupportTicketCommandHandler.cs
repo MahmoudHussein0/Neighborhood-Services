@@ -40,6 +40,8 @@ namespace Neighborhood.Services.Application.SupportTickets.Handlers
             {
                 UserId = _currentUser.UserId,
                 Subject = request.Subject,
+                SenderName = request.SenderName,
+                SenderEmail = request.SenderEmail,
                 Description = request.Description,
                 Status = SupportTicketStatus.Open,
                 CreatedAt = DateTime.UtcNow,

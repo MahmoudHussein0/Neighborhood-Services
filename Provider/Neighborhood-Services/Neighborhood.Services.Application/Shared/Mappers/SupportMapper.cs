@@ -11,6 +11,8 @@ namespace Neighborhood.Services.Application.Shared.Mappers
             UserId = ticket.UserId,
             Subject = ticket.Subject,
             Description = ticket.Description,
+            SenderName = ticket.SenderName,
+            SenderEmail = ticket.SenderEmail,
             Status = ticket.Status.ToString(),
             Priority = ticket.Priority.ToString(),
             CreatedAt = ticket.CreatedAt,

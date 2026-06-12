@@ -16,7 +16,6 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
                 .UseIdentityColumn();
 
             builder.Property(s => s.UserId)
-     .IsRequired()
      .HasMaxLength(450); // ← add this — 450 is the standard Identity FK length
             builder.Property(t => t.BookingId)
                 .IsRequired(false);

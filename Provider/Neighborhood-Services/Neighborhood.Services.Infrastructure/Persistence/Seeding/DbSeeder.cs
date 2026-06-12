@@ -563,6 +563,8 @@ private static async Task SeedSupportTicketsAsync(
         {
             UserId = c1.ApplicationUserId,
             BookingId = booking?.Id,
+            SenderName= "Sara Customer",
+            SenderEmail= "sara@gmail.com",
             Subject = "الفني لم يصلح المشكلة",
             Description = "الراجل خد مني الفلوس حق تصليح الغسالة وبعدين لقيت الغسالة عطلانة تاني",
             Status = SupportTicketStatus.Open,
@@ -573,6 +575,8 @@ private static async Task SeedSupportTicketsAsync(
         new SupportTicket
         {
             UserId = c2.ApplicationUserId,
+            SenderName= "Omar guste",
+            SenderEmail= "omar@gmail.com",
             Subject = "مشكلة في السحب من المحفظة",
             Description = "حاولت مرارًا وتكرارًا السحب من المحفظة ولم أستطع، برجاء حل مشكلتي",
             Status = SupportTicketStatus.Open,

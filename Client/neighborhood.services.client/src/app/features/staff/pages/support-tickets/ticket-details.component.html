@@ -1,116 +1,140 @@
-<!-- ── Loading ── -->
+<!-- Loading -->
 <div *ngIf="loading" class="td-spinner-wrap">
   <div class="td-spinner">
     <span></span><span></span><span></span>
   </div>
-  <p class="td-spinner-label">Loading conversation…</p>
+  <p class="td-spinner-label">Loading ticket…</p>
 </div>
 
-<!-- ── Main card ── -->
+<!-- Card -->
 <div class="td-card" *ngIf="!loading && ticket">
 
-  <!-- Header -->
+  <!-- ── Header ── -->
   <div class="td-header">
     <div class="td-header-left">
-      <button class="td-back-btn btn btn-sm btn-outline-secondary d-md-none me-2 mb-2" (click)="onBack()" aria-label="Back to ticket list">
-        <i class="bi bi-arrow-left"></i> Back
-      </button>
-      <h3 class="td-ticket-id">#{{ ticket.id }} — {{ ticket.subject }}</h3>
+      <p class="td-ticket-id">#{{ ticket.id }}</p>
+      <h3 class="td-title">{{ ticket.subject }}</h3>
       <div class="td-badges">
         <span class="st-badge" [ngClass]="getStatusClass(ticket.status)">
           {{ getStatusLabel(ticket.status) }}
         </span>
         <span class="st-badge" [ngClass]="getPriorityClass(ticket.priority)">
-          {{ ticket.priority }} priority
+          {{ ticket.priority }}
         </span>
       </div>
     </div>
 
-    <div class="td-actions">
-      <!-- Status workflow: Open → InProgress → Closed only -->
-      <!-- Open → InProgress -->
-<button
-  *ngIf="ticket.status === 'Open'"
-  class="td-btn td-btn-progress"
-  (click)="updateStatus(2)">
-  <i class="ti ti-player-play" aria-hidden="true"></i>
-  Start progress
-</button>
-
-<!-- InProgress → Resolved -->
-<button
-  *ngIf="ticket.status === 'InProgress'"
-  class="td-btn td-btn-resolve"
-  (click)="updateStatus(4)">
-  <i class="ti ti-check" aria-hidden="true"></i>
-  Resolve ticket
-</button>
-
-<!-- Resolved: no action -->
-<span *ngIf="ticket.status === 'Resolved'" class="st-badge badge-closed td-resolved-badge">
-  Resolved
-</span>
-
-      <!-- Priority select -->
-      <select
-        class="td-priority-select"
-        [ngModel]="ticket.priority"
-        (change)="changePriority($any($event.target).value)">
-        <option value="High">High priority</option>
-        <option value="Medium">Medium priority</option>
-        <option value="Low">Low priority</option>
-      </select>
-
-      <button class="td-btn td-btn-delete" (click)="deleteTicket()" aria-label="Delete ticket">
-        <i class="ti ti-trash" aria-hidden="true"></i>
-      </button>
+    <div class="td-header-right">
+      <p class="td-meta-date">
+        <span class="td-meta-label">Opened</span>
+        {{ ticket.createdAt | date:'dd MMM yyyy, HH:mm' }}
+      </p>
+      <p class="td-meta-date" *ngIf="ticket.updatedAt !== ticket.createdAt">
+        <span class="td-meta-label">Updated</span>
+        {{ ticket.updatedAt | date:'dd MMM yyyy, HH:mm' }}
+      </p>
     </div>
   </div>
 
-  <!-- Description bar -->
-  <div class="td-desc-bar">
-    <span class="td-desc-label">Issue:</span>
-    <p class="td-desc-text">{{ ticket.description }}</p>
-  </div>
+  <!-- ── Body ── -->
+  <div class="td-body">
 
-  <!-- Chat messages -->
-  <div #scrollMe class="td-chat">
-    <ng-container *ngIf="messages.length > 0; else noMsgs">
-      <div
-        *ngFor="let msg of messages"
-        class="td-msg"
-        [class.td-msg-staff]="msg.senderType === 'Staff'"
-        [class.td-msg-customer]="msg.senderType !== 'Staff'">
+    <!-- Left column -->
+    <div class="td-col-main">
 
-        <div class="td-bubble">
-          <small class="td-sender">{{ msg.senderType || 'Staff' }} <span *ngIf="msg.senderId" class="text-muted opacity-75 small">({{ msg.senderId | slice:0:8 }}…)</span></small>
-          <p class="td-msg-text">{{ msg.message }}</p>
+      <!-- Customer -->
+      <div class="td-section">
+        <p class="td-section-label">Customer</p>
+        <div class="td-customer-card">
+          <div class="td-avatar">{{ getInitials(ticket.senderName) }}</div>
+          <div class="td-customer-info">
+            <p class="td-customer-name">{{ ticket.senderName }}</p>
+            <a class="td-customer-email" [href]="'mailto:' + ticket.senderEmail">
+              {{ ticket.senderEmail }}
+            </a>
+          </div>
+          <div class="td-customer-actions">
+            <a class="td-btn td-btn-mail"
+               [href]="'mailto:' + ticket.senderEmail"
+               target="_blank"
+               title="Send email">
+              <i class="ti ti-mail" aria-hidden="true"></i>
+            </a>
+            <button class="td-btn td-btn-copy"
+                    (click)="copyEmail(ticket.senderEmail)"
+                    title="Copy email">
+              <i class="ti ti-copy" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-
-        <small class="td-msg-time">
-          {{ msg.createdAt | date:'shortTime' }}
-          <span *ngIf="msg.isTemp" class="td-sending">· Sending…</span>
-        </small>
       </div>
-    </ng-container>
 
-    <ng-template #noMsgs>
-      <div class="td-no-msgs">No messages yet. Start the conversation below.</div>
-    </ng-template>
+      <!-- Issue -->
+      <div class="td-section">
+        <p class="td-section-label">Issue</p>
+        <div class="td-issue-box">
+          <p class="td-issue-desc">{{ ticket.description }}</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column -->
+    <div class="td-col-side">
+
+      <!-- Status control -->
+      <div class="td-section">
+        <p class="td-section-label">Status</p>
+        <div class="td-side-card">
+          <div class="td-status-row">
+            <span class="st-badge" [ngClass]="getStatusClass(ticket.status)">
+              {{ getStatusLabel(ticket.status) }}
+            </span>
+            <button
+              *ngIf="ticket.status === 'Open'"
+              class="td-action-btn"
+              (click)="updateStatus(2)">
+              Start progress →
+            </button>
+            <button
+              *ngIf="ticket.status === 'InProgress'"
+              class="td-action-btn td-action-btn--resolve"
+              (click)="updateStatus(4)">
+              Mark resolved →
+            </button>
+            <span *ngIf="ticket.status === 'Resolved'" class="td-resolved-tag">
+              <i class="ti ti-circle-check" aria-hidden="true"></i> Resolved
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Priority control -->
+      <div class="td-section">
+        <p class="td-section-label">Priority</p>
+        <div class="td-side-card">
+          <select
+            class="td-priority-select"
+            [ngModel]="ticket.priority"
+            (change)="changePriority($any($event.target).value)">
+            <option value="High">🔴 High</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="td-section">
+        <p class="td-section-label">Danger zone</p>
+        <div class="td-side-card td-side-card--danger">
+          <button class="td-delete-btn" (click)="deleteTicket()">
+            <i class="ti ti-trash" aria-hidden="true"></i>
+            Delete ticket
+          </button>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <!-- Message input -->
-  <div class="td-footer">
-    <input
-      type="text"
-      class="td-input"
-      [(ngModel)]="messageText"
-      (keyup.enter)="sendMessage()"
-      placeholder="Type your response…" />
-    <button class="td-send-btn" (click)="sendMessage()">
-      Send
-      <i class="ti ti-send" aria-hidden="true"></i>
-    </button>
-  </div>
-
 </div>

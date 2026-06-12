@@ -1728,80 +1728,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.ToTable("SupportMessages", (string)null);
                 });
 
-            modelBuilder.Entity("Neighborhood.Services.Domain.SupportTickets.SupportTicket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BookingId1")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("nvarchar(3000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PromoCodeUsageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("BookingId")
-                        .HasDatabaseName("IX_SupportTickets_BookingId");
-
-                    b.HasIndex("BookingId1")
-                        .IsUnique()
-                        .HasFilter("[BookingId1] IS NOT NULL");
-
-                    b.HasIndex("PromoCodeUsageId");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("IX_SupportTickets_Status");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IX_SupportTickets_UserId");
-
-                    b.ToTable("SupportTickets", (string)null);
-                });
-
             modelBuilder.Entity("Neighborhood.Services.Domain.TechnicianCategories.TechnicianCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -2141,6 +2067,87 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Favorites");
+                });
+
+            modelBuilder.Entity("SupportTicket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BookingId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PromoCodeUsageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("BookingId")
+                        .HasDatabaseName("IX_SupportTickets_BookingId");
+
+                    b.HasIndex("BookingId1")
+                        .IsUnique()
+                        .HasFilter("[BookingId1] IS NOT NULL");
+
+                    b.HasIndex("PromoCodeUsageId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_SupportTickets_Status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_SupportTickets_UserId");
+
+                    b.ToTable("SupportTickets", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -2668,7 +2675,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Neighborhood.Services.Domain.SupportTickets.SupportTicket", "Ticket")
+                    b.HasOne("SupportTicket", "Ticket")
                         .WithMany("Messages")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2677,38 +2684,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("Sender");
 
                     b.Navigation("Ticket");
-                });
-
-            modelBuilder.Entity("Neighborhood.Services.Domain.SupportTickets.SupportTicket", b =>
-                {
-                    b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", null)
-                        .WithMany("SupportTickets")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", null)
-                        .WithOne("SupportTicket")
-                        .HasForeignKey("Neighborhood.Services.Domain.SupportTickets.SupportTicket", "BookingId1");
-
-                    b.HasOne("Neighborhood.Services.Domain.PromoCodes.PromoCodeUsage", "PromoCodeUsage")
-                        .WithMany()
-                        .HasForeignKey("PromoCodeUsageId");
-
-                    b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("PromoCodeUsage");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Neighborhood.Services.Domain.TechnicianCategories.TechnicianCategory", b =>
@@ -2838,6 +2813,37 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SupportTicket", b =>
+                {
+                    b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", null)
+                        .WithMany("SupportTickets")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", null)
+                        .WithOne("SupportTicket")
+                        .HasForeignKey("SupportTicket", "BookingId1");
+
+                    b.HasOne("Neighborhood.Services.Domain.PromoCodes.PromoCodeUsage", "PromoCodeUsage")
+                        .WithMany()
+                        .HasForeignKey("PromoCodeUsageId");
+
+                    b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("PromoCodeUsage");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", b =>
                 {
                     b.Navigation("Customer")
@@ -2963,11 +2969,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("ResolvedDisputes");
                 });
 
-            modelBuilder.Entity("Neighborhood.Services.Domain.SupportTickets.SupportTicket", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
             modelBuilder.Entity("Neighborhood.Services.Domain.Technicians.Technician", b =>
                 {
                     b.Navigation("AvailabilityExceptions");
@@ -2996,6 +2997,11 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                     b.Navigation("IncomingTransactions");
 
                     b.Navigation("OutgoingTransactions");
+                });
+
+            modelBuilder.Entity("SupportTicket", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }
