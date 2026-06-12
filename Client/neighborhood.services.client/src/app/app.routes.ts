@@ -51,13 +51,12 @@ export const routes: Routes = [
       { path: 'find-technician', component: CustomerPlaceholderComponent, data: { title: 'Find Technician' } },
       { path: 'recurring-bookings', component: CustomerPlaceholderComponent, data: { title: 'Recurring Bookings' } },
       { path: 'favorites', component: CustomerPlaceholderComponent, data: { title: 'Favorites' } },
-      { path: 'wallet', component: CustomerPlaceholderComponent, data: { title: 'Wallet' } },
+      { path: 'wallet', component: CustomerWalletComponent },
       { path: 'chat', component: CustomerPlaceholderComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
       { path: 'profile', component: CustomerProfileComponent },
-      { path: '**', redirectTo: '' },
-      { path: 'wallet', component: CustomerWalletComponent },
+      { path: '**', redirectTo: '' }
     ],
   },
   {

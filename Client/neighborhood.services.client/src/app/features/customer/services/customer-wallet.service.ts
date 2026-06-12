@@ -14,8 +14,8 @@ export class CustomerWalletService {
     return this.api.get<Wallet>('/wallets/me');
   }
 
-  topUp(amount: number, paymentMethodId: number, provider: PaymentProvider): Observable<TopUpResponse> {
-    return this.api.post<TopUpResponse>('/wallets/me/topup', { amount, paymentMethodId, provider });
+  topUp(amount: number, paymentMethodId: number | undefined, provider: PaymentProvider): Observable<{transactionId: number, redirectUrl: string, providerReference: string}> {
+    return this.api.post<{transactionId: number, redirectUrl: string, providerReference: string}>('/wallets/me/topup', { amount, paymentMethodId, provider });
   }
 
   getMyTransactions(): Observable<Transaction[]> {
@@ -39,5 +39,17 @@ export class CustomerWalletService {
 
   deletePaymentMethod(id: number): Observable<void> {
     return this.api.delete<void>(`/paymentmethods/${id}`);
+  }
+
+  withdraw(amount: number): Observable<void> {
+    return this.api.post<void>('/wallets/me/withdraw', { amount });
+  }
+
+  finalizeTransaction(merchantOrderId: number, success: boolean, token?: string, maskedPan?: string): Observable<{message: string, status: string}> {
+    let url = `/wallets/me/transactions/finalize?merchant_order_id=${merchantOrderId}&success=${success}`;
+    if (token && maskedPan) {
+      url += `&token=${token}&masked_pan=${maskedPan}`;
+    }
+    return this.api.get<{message: string, status: string}>(url);
   }
 }

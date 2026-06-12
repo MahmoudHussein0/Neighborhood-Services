@@ -1,4 +1,4 @@
-﻿using Neighborhood.Services.Application.Transactions.Interfaces;
+using Neighborhood.Services.Application.Transactions.Interfaces;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using Neighborhood.Services.Domain.Transactions;
@@ -16,6 +16,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Transactions
         => await GetByConditionAsync(t => t.Type == type);
 
         public async Task<IEnumerable<Transaction>> GetByWalletIdAsync(int walletId)
-        => await GetByConditionAsync(t => t.FromWalletId == walletId || t.ToWalletId == walletId);
+        {
+            var transactions = await GetByConditionAsync(t => t.FromWalletId == walletId || t.ToWalletId == walletId);
+            return transactions.OrderByDescending(t => t.CreatedAt);
+        }
     }
 }
