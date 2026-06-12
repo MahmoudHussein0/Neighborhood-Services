@@ -95,6 +95,16 @@ export class AuthService {
     return '/staff';
   }
 
+  updateSafeUser(user: Partial<SafeAuthUser>): void {
+    const currentUser = this.currentUserSignal();
+
+    if (!currentUser) {
+      return;
+    }
+
+    this.setCurrentUser({ ...currentUser, ...user });
+  }
+
   private setCurrentUser(user: SafeAuthUser): void {
     this.currentUserSignal.set(user);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
