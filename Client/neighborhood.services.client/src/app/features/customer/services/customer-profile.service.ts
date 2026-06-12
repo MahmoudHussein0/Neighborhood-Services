@@ -6,6 +6,7 @@ import {
   CustomerAddressRequest,
   CustomerProfile,
   CustomerRecord,
+  GeocodingResult,
 } from '../models/customer-profile.model';
 
 @Injectable({
@@ -24,6 +25,20 @@ export class CustomerProfileService {
 
   getCurrentCustomer() {
     return this.http.get<CustomerRecord>(`${this.apiUrl}/api/customers/me`, {
+      withCredentials: true,
+    });
+  }
+
+  geocodeAddress(address: string) {
+    return this.http.get<GeocodingResult>(`${this.apiUrl}/api/Geocoding/search`, {
+      params: { address },
+      withCredentials: true,
+    });
+  }
+
+  reverseGeocode(latitude: number, longitude: number) {
+    return this.http.get<GeocodingResult>(`${this.apiUrl}/api/Geocoding/reverse`, {
+      params: { lat: latitude, lng: longitude },
       withCredentials: true,
     });
   }

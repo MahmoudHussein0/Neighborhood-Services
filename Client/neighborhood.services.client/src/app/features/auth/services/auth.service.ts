@@ -4,6 +4,7 @@ import { catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   AuthResponse,
+  GeocodingResult,
   LoginRequest,
   RegisterRequest,
   RegisterResponse,
@@ -35,6 +36,13 @@ export class AuthService {
 
   register(userData: RegisterRequest) {
     return this.http.post<RegisterResponse>(`${this.baseUrl}/api/Users`, userData, {
+      withCredentials: true,
+    });
+  }
+
+  geocodeAddress(address: string) {
+    return this.http.get<GeocodingResult>(`${this.baseUrl}/api/Geocoding/search`, {
+      params: { address },
       withCredentials: true,
     });
   }

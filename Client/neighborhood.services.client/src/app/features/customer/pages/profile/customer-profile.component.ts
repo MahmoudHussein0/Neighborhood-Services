@@ -81,7 +81,7 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
         <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
           <div>
             <h2 class="h5 fw-bold mb-1">Saved addresses</h2>
-            <p class="text-muted mb-0">Use latitude and longitude until geocoding UI is added.</p>
+            <p class="text-muted mb-0">Enter a specific address and we will locate it automatically.</p>
           </div>
         </div>
 
@@ -96,20 +96,30 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
           </div>
           <div class="col-12 col-md-9">
             <label class="form-label" for="address">Address</label>
-            <input id="address" class="form-control" formControlName="address" [class.is-invalid]="addressForm.controls.address.touched && addressForm.controls.address.invalid" />
+            <div class="input-group">
+              <input id="address" class="form-control" formControlName="address" [class.is-invalid]="addressForm.controls.address.touched && addressForm.controls.address.invalid" />
+              <button
+                class="btn btn-outline-primary"
+                type="button"
+                title="Use my current location"
+                [disabled]="locatingCurrentAddress()"
+                (click)="useCurrentLocation()"
+              >
+                @if (locatingCurrentAddress()) {
+                  <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                  Locating...
+                } @else {
+                  <i class="bi bi-crosshair me-2" aria-hidden="true"></i>
+                  Use my location
+                }
+              </button>
+            </div>
             @if (addressForm.controls.address.touched && addressForm.controls.address.invalid) {
-              <div class="invalid-feedback">Address is required.</div>
+              <div class="text-danger small mt-1">Enter a specific address, area, and city.</div>
             }
+            <div class="form-text">Example: 15 Tahrir Street, Dokki, Giza</div>
           </div>
-          <div class="col-12 col-md-4">
-            <label class="form-label" for="latitude">Latitude</label>
-            <input id="latitude" type="number" step="0.000001" class="form-control" formControlName="latitude" />
-          </div>
-          <div class="col-12 col-md-4">
-            <label class="form-label" for="longitude">Longitude</label>
-            <input id="longitude" type="number" step="0.000001" class="form-control" formControlName="longitude" />
-          </div>
-          <div class="col-12 col-md-4 d-flex align-items-end">
+          <div class="col-12">
             <div class="form-check">
               <input id="isDefault" class="form-check-input" type="checkbox" formControlName="isDefault" />
               <label class="form-check-label" for="isDefault">Default address</label>
@@ -117,7 +127,12 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
           </div>
           <div class="col-12 d-flex gap-2">
             <button class="btn btn-primary" type="submit" [disabled]="savingAddress() || !customer()">
-              {{ editingAddressId() ? 'Update address' : 'Add address' }}
+              @if (savingAddress()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                Locating address...
+              } @else {
+                {{ editingAddressId() ? 'Update address' : 'Add address' }}
+              }
             </button>
             @if (editingAddressId()) {
               <button class="btn btn-outline-secondary" type="button" (click)="resetAddressForm()">Cancel</button>
@@ -139,7 +154,6 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
                     }
                   </div>
                   <p class="mb-2">{{ address.address }}</p>
-                  <div class="text-muted small mb-3">{{ address.latitude }}, {{ address.longitude }}</div>
                   <div class="d-flex flex-wrap gap-2">
                     <button class="btn btn-sm btn-outline-primary" type="button" (click)="editAddress(address)">Edit</button>
                     <button class="btn btn-sm btn-outline-secondary" type="button" (click)="setDefault(address)" [disabled]="address.isDefault">Set default</button>
@@ -163,6 +177,7 @@ export class CustomerProfileComponent implements OnInit {
   readonly loading = signal(true);
   readonly savingProfile = signal(false);
   readonly savingAddress = signal(false);
+  readonly locatingCurrentAddress = signal(false);
   readonly error = signal<string | null>(null);
   readonly success = signal<string | null>(null);
   readonly profile = signal<CustomerProfile | null>(null);
@@ -179,9 +194,7 @@ export class CustomerProfileComponent implements OnInit {
 
   readonly addressForm = this.formBuilder.nonNullable.group({
     label: ['Home' as CustomerAddressLabel, Validators.required],
-    address: ['', Validators.required],
-    latitude: [30.0444, [Validators.required, Validators.min(-90), Validators.max(90)]],
-    longitude: [31.2357, [Validators.required, Validators.min(-180), Validators.max(180)]],
+    address: ['', [Validators.required, Validators.minLength(5)]],
     isDefault: [false],
   });
 
@@ -266,9 +279,8 @@ export class CustomerProfileComponent implements OnInit {
       return;
     }
 
-    const formValue = this.addressForm.getRawValue();
-    const editingId = this.editingAddressId();
     const customer = this.customer();
+    const editingId = this.editingAddressId();
 
     if (!editingId && !customer) {
       this.error.set('Unable to find your customer profile.');
@@ -279,26 +291,78 @@ export class CustomerProfileComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
 
-    const request$: Observable<unknown> = editingId
-      ? this.customerProfileService.updateAddress(editingId, formValue)
-      : this.customerProfileService.createAddress(
-          user.userId,
-          customer?.id ?? 0,
-          formValue,
-        );
+    const formValue = this.addressForm.getRawValue();
+    this.customerProfileService.geocodeAddress(formValue.address.trim()).subscribe({
+      next: (location) => {
+        const addressRequest = {
+          label: formValue.label,
+          address: location.formattedAddress || formValue.address.trim(),
+          latitude: location.latitude,
+          longitude: location.longitude,
+        };
+        const request$: Observable<unknown> = editingId
+          ? this.customerProfileService.updateAddress(editingId, addressRequest)
+          : this.customerProfileService.createAddress(
+              user.userId,
+              customer?.id ?? 0,
+              { ...addressRequest, isDefault: formValue.isDefault },
+            );
 
-    request$.subscribe({
-      next: () => {
-        this.success.set(editingId ? 'Address updated.' : 'Address added.');
-        this.savingAddress.set(false);
-        this.resetAddressForm();
-        this.load();
+        request$.subscribe({
+          next: () => {
+            this.success.set(editingId ? 'Address updated.' : 'Address added.');
+            this.savingAddress.set(false);
+            this.resetAddressForm();
+            this.load();
+          },
+          error: () => {
+            this.error.set('Unable to save address.');
+            this.savingAddress.set(false);
+          },
+        });
       },
       error: () => {
-        this.error.set('Unable to save address.');
+        this.error.set('Could not find this address. Please enter a more specific address.');
         this.savingAddress.set(false);
       },
     });
+  }
+
+  useCurrentLocation(): void {
+    this.error.set(null);
+    this.success.set(null);
+
+    if (!navigator.geolocation) {
+      this.error.set('Location access is not supported by this browser.');
+      return;
+    }
+
+    this.locatingCurrentAddress.set(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        this.customerProfileService.reverseGeocode(coords.latitude, coords.longitude).subscribe({
+          next: (location) => {
+            this.addressForm.controls.address.setValue(location.formattedAddress);
+            this.addressForm.controls.address.markAsTouched();
+            this.success.set('Current location found. Review the address before saving.');
+            this.locatingCurrentAddress.set(false);
+          },
+          error: () => {
+            this.error.set('Could not find an address for your current location.');
+            this.locatingCurrentAddress.set(false);
+          },
+        });
+      },
+      (positionError) => {
+        this.error.set(this.getLocationErrorMessage(positionError));
+        this.locatingCurrentAddress.set(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000,
+      },
+    );
   }
 
   editAddress(address: CustomerAddress): void {
@@ -306,8 +370,6 @@ export class CustomerProfileComponent implements OnInit {
     this.addressForm.patchValue({
       label: address.label,
       address: address.address,
-      latitude: address.latitude,
-      longitude: address.longitude,
       isDefault: address.isDefault,
     });
   }
@@ -317,8 +379,6 @@ export class CustomerProfileComponent implements OnInit {
     this.addressForm.reset({
       label: 'Home',
       address: '',
-      latitude: 30.0444,
-      longitude: 31.2357,
       isDefault: false,
     });
   }
@@ -339,5 +399,21 @@ export class CustomerProfileComponent implements OnInit {
       next: () => this.load(),
       error: () => this.error.set('Unable to delete address.'),
     });
+  }
+
+  private getLocationErrorMessage(error: GeolocationPositionError): string {
+    if (error.code === error.PERMISSION_DENIED) {
+      return 'Location permission was denied. Allow location access in your browser and try again.';
+    }
+
+    if (error.code === error.POSITION_UNAVAILABLE) {
+      return 'Your current location is unavailable. Please enter your address manually.';
+    }
+
+    if (error.code === error.TIMEOUT) {
+      return 'Finding your location took too long. Please try again.';
+    }
+
+    return 'Could not access your current location.';
   }
 }

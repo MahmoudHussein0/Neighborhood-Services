@@ -17,6 +17,26 @@
 
           <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
             <div class="row g-3">
+              <div class="col-12 d-flex justify-content-center">
+                <label class="avatar-picker" for="avatarFile" aria-label="Choose profile photo">
+                  @if (avatarPreviewUrl()) {
+                    <img [src]="avatarPreviewUrl()" alt="Selected profile photo preview" />
+                  } @else {
+                    <span>{{ fallbackInitials() }}</span>
+                  }
+                  <span class="avatar-camera">
+                    <i class="bi bi-camera"></i>
+                  </span>
+                </label>
+                <input
+                  id="avatarFile"
+                  class="visually-hidden"
+                  type="file"
+                  accept="image/*"
+                  (change)="onAvatarSelected($event)"
+                />
+              </div>
+
               <div class="col-12">
                 <label for="fullName" class="form-label">Full name</label>
                 <input
@@ -102,37 +122,20 @@
                 }
               </div>
 
-              <div class="col-12 col-md-6">
-                <label for="latitude" class="form-label">Latitude</label>
+              <div class="col-12">
+                <label for="address" class="form-label">Location Address</label>
                 <input
-                  id="latitude"
-                  type="number"
+                  id="address"
                   class="form-control"
-                  formControlName="latitude"
-                  step="0.000001"
-                  [class.is-invalid]="form.controls.latitude.touched && form.controls.latitude.invalid"
+                  formControlName="address"
+                  autocomplete="street-address"
+                  placeholder="Street, area, city"
+                  [class.is-invalid]="form.controls.address.touched && form.controls.address.invalid"
                 />
-                @if (hasError('latitude', 'required')) {
-                  <div class="invalid-feedback">Latitude is required.</div>
-                } @else if (hasError('latitude', 'min') || hasError('latitude', 'max')) {
-                  <div class="invalid-feedback">Latitude must be between -90 and 90.</div>
-                }
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label for="longitude" class="form-label">Longitude</label>
-                <input
-                  id="longitude"
-                  type="number"
-                  class="form-control"
-                  formControlName="longitude"
-                  step="0.000001"
-                  [class.is-invalid]="form.controls.longitude.touched && form.controls.longitude.invalid"
-                />
-                @if (hasError('longitude', 'required')) {
-                  <div class="invalid-feedback">Longitude is required.</div>
-                } @else if (hasError('longitude', 'min') || hasError('longitude', 'max')) {
-                  <div class="invalid-feedback">Longitude must be between -180 and 180.</div>
+                @if (hasError('address', 'required')) {
+                  <div class="invalid-feedback">Address is required.</div>
+                } @else if (hasError('address', 'minlength')) {
+                  <div class="invalid-feedback">Enter a more specific address.</div>
                 }
               </div>
             </div>

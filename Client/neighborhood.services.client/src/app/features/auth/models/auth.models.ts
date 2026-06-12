@@ -15,6 +15,21 @@ export interface RegisterRequest {
   longitude: number;
 }
 
+export interface RegisterFormValue {
+  fullName: string;
+  email: string;
+  password: string;
+  age: number;
+  applicationUserRole: ApplicationUserRole;
+  address: string;
+}
+
+export interface GeocodingResult {
+  formattedAddress: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface AuthResponse {
   userId: string;
   fullName: string;
