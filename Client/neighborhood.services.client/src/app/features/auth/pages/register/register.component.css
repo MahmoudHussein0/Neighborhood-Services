@@ -14,43 +14,33 @@
   text-transform: uppercase;
 }
 
-.avatar-picker {
+.register-tabs {
+  background-color: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0.35rem;
+}
+
+.register-tab {
   align-items: center;
-  background-color: #dbeafe;
-  border: 2px solid #bfdbfe;
-  border-radius: 50%;
-  color: #1d4ed8;
-  cursor: pointer;
-  display: flex;
-  font-size: 1.5rem;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0.4rem;
+  color: #4b5563;
+  display: inline-flex;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 2.75rem;
   font-weight: 700;
-  height: 6rem;
-  justify-content: center;
-  position: relative;
-  width: 6rem;
 }
 
-.avatar-picker img {
-  border-radius: 50%;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-}
-
-.avatar-camera {
-  align-items: center;
+.register-tab.active {
   background-color: #1d4ed8;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  bottom: 0.15rem;
   color: #fff;
-  display: flex;
-  font-size: 0.85rem;
-  height: 1.8rem;
-  justify-content: center;
-  position: absolute;
-  right: 0.15rem;
-  width: 1.8rem;
+  box-shadow: 0 0.35rem 0.9rem rgb(29 78 216 / 0.18);
 }
 
 @media (max-width: 575.98px) {

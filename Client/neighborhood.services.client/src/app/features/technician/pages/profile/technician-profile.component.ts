@@ -2,6 +2,8 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
+import { ChangePasswordFormValue, ChangePasswordModalComponent } from '../../../../shared/components/change-password-modal/change-password-modal.component';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../../auth/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import {
@@ -13,7 +15,7 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
 
 @Component({
   selector: 'app-technician-profile',
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, ConfirmModalComponent, ChangePasswordModalComponent],
   template: `
     <div class="d-flex flex-column gap-4">
       <section class="bg-white border rounded-3 shadow-sm p-4">
@@ -87,12 +89,16 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
               <label class="form-label" for="experience">Experience</label>
               <textarea id="experience" class="form-control" rows="4" formControlName="experience"></textarea>
             </div>
-            <div class="col-12">
+            <div class="col-12 d-flex flex-wrap gap-2">
               <button class="btn btn-primary" type="submit" [disabled]="saving() || form.invalid">
                 @if (saving()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                 }
                 Save profile
+              </button>
+              <button class="btn btn-outline-primary" type="button" (click)="openChangePasswordModal()">
+                <i class="bi bi-shield-lock me-2" aria-hidden="true"></i>
+                Change password
               </button>
             </div>
           </form>
@@ -181,6 +187,29 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
           </div>
         }
       </section>
+
+      @if (photoPendingDelete(); as photo) {
+        <app-confirm-modal
+          title="Delete portfolio photo?"
+          subtitle="This action cannot be undone."
+          [message]="photo.caption ? 'Delete &quot;' + photo.caption + '&quot; from your portfolio?' : 'Delete this photo from your portfolio?'"
+          confirmText="Delete photo"
+          busyText="Deleting..."
+          [busy]="deletingPhoto()"
+          variant="danger"
+          (confirm)="confirmDeletePhoto()"
+          (cancel)="closeDeletePhotoModal()"
+        />
+      }
+
+      @if (changePasswordModalOpen()) {
+        <app-change-password-modal
+          [busy]="changingPassword()"
+          [apiError]="passwordError()"
+          (submitPassword)="changePassword($event)"
+          (cancel)="closeChangePasswordModal()"
+        />
+      }
     </div>
   `,
   styles: [`
@@ -286,7 +315,9 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
 
   readonly loading = signal(true);
   readonly saving = signal(false);
+  readonly changingPassword = signal(false);
   readonly error = signal<string | null>(null);
+  readonly passwordError = signal<string | null>(null);
   readonly success = signal<string | null>(null);
   readonly userProfile = signal<TechnicianUserProfile | null>(null);
   readonly technician = signal<TechnicianProfile | null>(null);
@@ -301,6 +332,9 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
   readonly avatarPreviewUrl = signal<string | null>(null);
   readonly selectedAvatarFile = signal<File | null>(null);
   readonly fullNameValue = signal('');
+  readonly photoPendingDelete = signal<TechnicianPhoto | null>(null);
+  readonly deletingPhoto = signal(false);
+  readonly changePasswordModalOpen = signal(false);
 
   readonly fallbackInitials = computed(() => {
     const fullName = this.fullNameValue().trim();
@@ -435,6 +469,42 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
         this.saving.set(false);
       },
       });
+  }
+
+  openChangePasswordModal(): void {
+    this.passwordError.set(null);
+    this.changePasswordModalOpen.set(true);
+  }
+
+  closeChangePasswordModal(): void {
+    if (this.changingPassword()) {
+      return;
+    }
+
+    this.changePasswordModalOpen.set(false);
+    this.passwordError.set(null);
+  }
+
+  changePassword(value: ChangePasswordFormValue): void {
+    this.changingPassword.set(true);
+    this.passwordError.set(null);
+    this.error.set(null);
+    this.success.set(null);
+
+    this.authService.changePassword({
+      currentPassword: value.currentPassword,
+      newPassword: value.newPassword,
+    }).subscribe({
+      next: (response) => {
+        this.changingPassword.set(false);
+        this.changePasswordModalOpen.set(false);
+        this.success.set(response.message || 'Password changed successfully.');
+      },
+      error: (error) => {
+        this.changingPassword.set(false);
+        this.passwordError.set(this.getPasswordError(error));
+      },
+    });
   }
 
   onAvatarSelected(event: Event): void {
@@ -589,18 +659,40 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
   }
 
   deletePhoto(photo: TechnicianPhoto): void {
-    const technician = this.technician();
+    this.photoPendingDelete.set(photo);
+  }
 
-    if (!technician || !confirm('Delete this portfolio photo?')) {
+  closeDeletePhotoModal(): void {
+    if (this.deletingPhoto()) {
       return;
     }
+
+    this.photoPendingDelete.set(null);
+  }
+
+  confirmDeletePhoto(): void {
+    const technician = this.technician();
+    const photo = this.photoPendingDelete();
+
+    if (!technician || !photo) {
+      return;
+    }
+
+    this.deletingPhoto.set(true);
+    this.error.set(null);
+    this.success.set(null);
 
     this.technicianProfileService.deletePhoto(photo.id).subscribe({
       next: () => {
         this.success.set('Portfolio photo deleted.');
+        this.deletingPhoto.set(false);
+        this.photoPendingDelete.set(null);
         this.loadPhotos(technician.id);
       },
-      error: () => this.error.set('Unable to delete portfolio photo.'),
+      error: () => {
+        this.error.set('Unable to delete portfolio photo.');
+        this.deletingPhoto.set(false);
+      },
     });
   }
 
@@ -620,5 +712,16 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
     }
 
     this.avatarPreviewUrl.set(null);
+  }
+
+  private getPasswordError(error: unknown): string {
+    if (typeof error === 'object' && error && 'error' in error) {
+      const response = (error as { error?: { message?: string; errors?: string[] } }).error;
+      const firstError = response?.errors?.[0];
+
+      return firstError || response?.message || 'Unable to change password.';
+    }
+
+    return 'Unable to change password.';
   }
 }
