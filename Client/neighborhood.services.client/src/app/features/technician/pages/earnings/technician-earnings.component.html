@@ -1,0 +1,104 @@
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="fw-bold">{{ 'earnings.title' | translate }}</h2>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4 g-3">
+    <div class="col-md-4">
+      <div class="card bg-white border-0 shadow-sm h-100">
+        <div class="card-body p-4 d-flex align-items-center gap-4">
+          <div class="icon-circle bg-success-subtle text-success">
+            <i class="bi bi-cash-stack fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">{{ 'earnings.totalEarned' | translate }}</h6>
+            <h3 class="fw-bold mb-0">EGP {{ totalEarned() | number:'1.2-2' }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card bg-white border-0 shadow-sm h-100">
+        <div class="card-body p-4 d-flex align-items-center gap-4">
+          <div class="icon-circle bg-warning-subtle text-warning">
+            <i class="bi bi-hourglass-split fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">{{ 'earnings.pendingAmount' | translate }}</h6>
+            <h3 class="fw-bold mb-0">EGP {{ pendingAmount() | number:'1.2-2' }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-white border-0 shadow-sm h-100">
+        <div class="card-body p-4 d-flex align-items-center gap-4">
+          <div class="icon-circle bg-primary-subtle text-primary">
+            <i class="bi bi-receipt fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">{{ 'earnings.totalInvoices' | translate }}</h6>
+            <h3 class="fw-bold mb-0">{{ invoices().length }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoices Table -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0">{{ 'earnings.invoices' | translate }}</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4">{{ 'earnings.invoiceNo' | translate }}</th>
+              <th>{{ 'earnings.bookingNo' | translate }}</th>
+              <th>{{ 'earnings.date' | translate }}</th>
+              <th>{{ 'earnings.amount' | translate }}</th>
+              <th>{{ 'earnings.tax' | translate }}</th>
+              <th>{{ 'earnings.total' | translate }}</th>
+              <th>{{ 'earnings.status' | translate }}</th>
+              <th class="text-end pe-4">{{ 'earnings.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (invoices().length === 0) {
+              <tr>
+                <td colspan="8" class="text-center py-4 text-muted">{{ 'earnings.noInvoices' | translate }}</td>
+              </tr>
+            }
+            @for (inv of invoices(); track inv.id) {
+              <tr>
+                <td class="ps-4 fw-bold">#{{ inv.id }}</td>
+                <td><span class="text-muted">#{{ inv.bookingId }}</span></td>
+                <td>{{ inv.issuedAt | date:'shortDate' }}</td>
+                <td>EGP {{ inv.amount | number:'1.2-2' }}</td>
+                <td>EGP {{ inv.tax | number:'1.2-2' }}</td>
+                <td class="fw-bold">EGP {{ inv.totalAmount | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(inv.status)">
+                    {{ InvoiceStatus[inv.status] }}
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <button class="btn btn-sm btn-outline-primary" (click)="downloadPdf(inv.bookingId)" title="Download PDF">
+                    <i class="bi bi-download"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -139,6 +139,37 @@ namespace Neighborhood.Services.Infrastructure.Services.Payments
                 };
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Token))
+            {
+                var payResponse = await _httpClient.PostAsJsonAsync(
+                    $"{_options.PaymobBaseUrl}/acceptance/payments/pay",
+                    new
+                    {
+                        source = new { identifier = request.Token, subtype = "TOKEN" },
+                        payment_token = paymentKey.Token
+                    },
+                    cancellationToken);
+
+                if (payResponse.IsSuccessStatusCode)
+                {
+                    var payResultString = await payResponse.Content.ReadAsStringAsync(cancellationToken);
+                    using var doc = System.Text.Json.JsonDocument.Parse(payResultString);
+                    bool isSuccess = false;
+                    if (doc.RootElement.TryGetProperty("success", out var successProp))
+                    {
+                        isSuccess = successProp.GetBoolean();
+                    }
+
+                    return new PaymentGatewayResponse
+                    {
+                        Success = true,
+                        IsInstant = true,
+                        ProviderReference = order.Id.ToString(),
+                        RedirectUrl = $"?merchant_order_id={order.Id}&success={(isSuccess ? "true" : "false")}"
+                    };
+                }
+            }
+
             return new PaymentGatewayResponse
             {
                 Success = true,

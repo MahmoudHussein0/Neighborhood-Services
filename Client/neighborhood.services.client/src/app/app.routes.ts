@@ -21,6 +21,7 @@ import { RecurringBookingsComponent } from './features/customer/pages/recurring-
 import { FindTechnicianComponent } from './features/customer/pages/find-technician/find-technician.component';
 import { CustomerPlaceholderComponent } from './features/customer/pages/customer-placeholder/customer-placeholder.component';
 import { CustomerProfileComponent } from './features/customer/pages/profile/customer-profile.component';
+import { CustomerWalletComponent } from './features/customer/pages/wallet/customer-wallet.component';
 import { TechnicianDashboardComponent } from './features/technician/pages/dashboard/technician-dashboard.component';
 import { TechnicianJobsComponent } from './features/technician/pages/jobs/technician-jobs.component';
 import { TechnicianOffersComponent } from './features/technician/pages/offers/technician-offers.component';
@@ -30,8 +31,11 @@ import { StaffDashboardComponent } from './features/staff/pages/dashboard/staff-
 import { FlaggedRequestsComponent } from './features/staff/pages/flagged-requests/flagged-requests.component';
 import { StaffBookingsComponent } from './features/staff/pages/bookings/staff-bookings.component';
 import { TechnicianProfileComponent } from './features/technician/pages/profile/technician-profile.component';
+import { TechnicianWalletComponent } from './features/technician/pages/wallet/technician-wallet.component';
+import { TechnicianEarningsComponent } from './features/technician/pages/earnings/technician-earnings.component';
 import { StaffDashboardComponent } from './features/staff/pages/dashboard/staff-dashboard.component';
 import { StaffUsersComponent } from './features/staff/pages/users/staff-users.component';
+import { StaffPromoCodesComponent } from './features/staff/pages/promo-codes/staff-promo-codes.component';
 
 
 export const routes: Routes = [
@@ -61,12 +65,12 @@ export const routes: Routes = [
       { path: 'find-technician', component: FindTechnicianComponent },
       { path: 'recurring-bookings', component: RecurringBookingsComponent },
       { path: 'favorites', component: CustomerPlaceholderComponent, data: { title: 'Favorites' } },
-      { path: 'wallet', component: CustomerPlaceholderComponent, data: { title: 'Wallet' } },
+      { path: 'wallet', component: CustomerWalletComponent },
       { path: 'chat', component: CustomerPlaceholderComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
       { path: 'profile', component: CustomerProfileComponent },
-      { path: '**', redirectTo: '' },
+      { path: '**', redirectTo: '' }
     ],
   },
   {
@@ -82,6 +86,8 @@ export const routes: Routes = [
       { path: 'offers', component: TechnicianOffersComponent },
       { path: 'recurring-jobs', component: TechnicianRecurringJobsComponent },
       { path: 'profile', component: TechnicianProfileComponent },
+      { path: 'wallet', component: TechnicianWalletComponent },
+      { path: 'earnings', component: TechnicianEarningsComponent },
     ],
   },
   {
@@ -95,6 +101,7 @@ export const routes: Routes = [
       { path: 'bookings', component: StaffBookingsComponent },
       { path: 'flagged-requests', component: FlaggedRequestsComponent },
       { path: 'users', component: StaffUsersComponent },
+      { path: 'promo-codes', component: StaffPromoCodesComponent },
     ],
   },
   { path: '**', redirectTo: '' },
