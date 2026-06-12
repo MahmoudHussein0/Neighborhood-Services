@@ -16,5 +16,8 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
         public ApplicationUserRole ApplicationUserRole { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string? NationalId { get; set; }
+        public string? Experience { get; set; }
+        public int? MaxTravelDistance { get; set; }
     }
 }

@@ -4,6 +4,8 @@ import { catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   AuthResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   GeocodingResult,
   LoginRequest,
   RegisterRequest,
@@ -56,6 +58,12 @@ export class AuthService {
   geocodeAddress(address: string) {
     return this.http.get<GeocodingResult>(`${this.baseUrl}/api/Geocoding/search`, {
       params: { address },
+      withCredentials: true,
+    });
+  }
+
+  changePassword(request: ChangePasswordRequest) {
+    return this.http.post<ChangePasswordResponse>(`${this.baseUrl}/api/Auth/change-password`, request, {
       withCredentials: true,
     });
   }

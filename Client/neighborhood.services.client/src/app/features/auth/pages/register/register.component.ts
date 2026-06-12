@@ -1,7 +1,7 @@
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { of, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { ApplicationUserRole, RegisterRequest } from '../../models/auth.models';
 import { AuthService } from '../../services/auth.service';
 
@@ -11,17 +11,14 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
-export class RegisterComponent implements OnDestroy {
+export class RegisterComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly isSubmitting = signal(false);
   readonly apiError = signal<string | null>(null);
-  readonly avatarPreviewUrl = signal<string | null>(null);
-  readonly selectedAvatarFile = signal<File | null>(null);
-  readonly fullNameValue = signal('');
-  readonly roleOptions: ApplicationUserRole[] = ['Customer', 'Technician', 'Staff'];
+  readonly selectedRole = signal<Extract<ApplicationUserRole, 'Customer' | 'Technician'>>('Customer');
 
   readonly form = this.formBuilder.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -30,58 +27,27 @@ export class RegisterComponent implements OnDestroy {
     age: [0, [Validators.required, Validators.min(13), Validators.max(120)]],
     applicationUserRole: ['Customer' as ApplicationUserRole, [Validators.required]],
     address: ['', [Validators.required, Validators.minLength(3)]],
+    nationalId: [''],
+    experience: [''],
+    maxTravelDistance: [0],
   });
 
-  readonly fallbackInitials = computed(() => {
-    const fullName = this.fullNameValue().trim();
+  setRole(role: Extract<ApplicationUserRole, 'Customer' | 'Technician'>): void {
+    this.selectedRole.set(role);
+    this.form.controls.applicationUserRole.setValue(role);
+    this.form.controls.nationalId.clearValidators();
+    this.form.controls.experience.clearValidators();
+    this.form.controls.maxTravelDistance.clearValidators();
 
-    if (!fullName) {
-      return 'NS';
+    if (role === 'Technician') {
+      this.form.controls.nationalId.setValidators([Validators.required, Validators.minLength(8)]);
+      this.form.controls.experience.setValidators([Validators.required, Validators.minLength(10)]);
+      this.form.controls.maxTravelDistance.setValidators([Validators.required, Validators.min(1)]);
     }
 
-    const nameParts = fullName.split(/\s+/).filter(Boolean);
-
-    if (nameParts.length > 1) {
-      return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase();
-    }
-
-    return fullName.slice(0, Math.min(2, fullName.length)).toUpperCase();
-  });
-
-  constructor() {
-    this.form.controls.fullName.valueChanges.subscribe((fullName) => {
-      this.fullNameValue.set(fullName);
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.revokeAvatarPreview();
-  }
-
-  onAvatarSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith('image/')) {
-      this.apiError.set('Please choose an image file.');
-      input.value = '';
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      this.apiError.set('Profile photo must be 5 MB or smaller.');
-      input.value = '';
-      return;
-    }
-
-    this.revokeAvatarPreview();
-    this.selectedAvatarFile.set(file);
-    this.avatarPreviewUrl.set(URL.createObjectURL(file));
-    this.apiError.set(null);
+    this.form.controls.nationalId.updateValueAndValidity();
+    this.form.controls.experience.updateValueAndValidity();
+    this.form.controls.maxTravelDistance.updateValueAndValidity();
   }
 
   submit(): void {
@@ -95,30 +61,25 @@ export class RegisterComponent implements OnDestroy {
     this.isSubmitting.set(true);
     const formValue = this.form.getRawValue();
 
-    const photoUpload$ = this.selectedAvatarFile()
-      ? this.authService.uploadUserPhoto(this.selectedAvatarFile() as File)
-      : of({ photoUrl: '' });
-
-    photoUpload$
+    this.authService
+      .geocodeAddress(formValue.address)
       .pipe(
-        switchMap(({ photoUrl }) =>
-          this.authService.geocodeAddress(formValue.address).pipe(
-            switchMap((location) => {
-              const request: RegisterRequest = {
-                fullName: formValue.fullName,
-                email: formValue.email,
-                photo: photoUrl,
-                password: formValue.password,
-                age: formValue.age,
-                applicationUserRole: formValue.applicationUserRole,
-                latitude: location.latitude,
-                longitude: location.longitude,
-              };
+        switchMap((location) => {
+          const request: RegisterRequest = {
+            fullName: formValue.fullName,
+            email: formValue.email,
+            password: formValue.password,
+            age: formValue.age,
+            applicationUserRole: formValue.applicationUserRole,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            nationalId: formValue.nationalId,
+            experience: formValue.experience,
+            maxTravelDistance: formValue.maxTravelDistance,
+          };
 
-              return this.authService.register(request);
-            }),
-          ),
-        ),
+          return this.authService.register(request);
+        }),
       )
       .subscribe({
         next: () => {
@@ -141,7 +102,10 @@ export class RegisterComponent implements OnDestroy {
       | 'password'
       | 'age'
       | 'applicationUserRole'
-      | 'address',
+      | 'address'
+      | 'nationalId'
+      | 'experience'
+      | 'maxTravelDistance',
     errorName: string,
   ): boolean {
     const control = this.form.controls[controlName];
@@ -186,15 +150,5 @@ export class RegisterComponent implements OnDestroy {
 
   private isErrorObject(error: unknown): error is Record<string, unknown> {
     return typeof error === 'object' && error !== null;
-  }
-
-  private revokeAvatarPreview(): void {
-    const previewUrl = this.avatarPreviewUrl();
-
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-
-    this.avatarPreviewUrl.set(null);
   }
 }

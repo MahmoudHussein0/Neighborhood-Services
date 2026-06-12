@@ -14,6 +14,9 @@ export interface RegisterRequest {
   applicationUserRole: ApplicationUserRole;
   latitude: number;
   longitude: number;
+  nationalId?: string;
+  experience?: string;
+  maxTravelDistance?: number;
 }
 
 export interface RegisterFormValue {
@@ -23,6 +26,9 @@ export interface RegisterFormValue {
   age: number;
   applicationUserRole: ApplicationUserRole;
   address: string;
+  nationalId?: string;
+  experience?: string;
+  maxTravelDistance?: number;
 }
 
 export interface GeocodingResult {
@@ -42,6 +48,17 @@ export interface AuthResponse {
 
 export interface RegisterResponse {
   id: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  succeeded: boolean;
+  message: string;
+  errors: string[];
 }
 
 export type SafeAuthUser = AuthResponse;

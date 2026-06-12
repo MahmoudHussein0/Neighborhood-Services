@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
+import { ChangePasswordFormValue, ChangePasswordModalComponent } from '../../../../shared/components/change-password-modal/change-password-modal.component';
 import { AuthService } from '../../../auth/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import {
@@ -13,7 +14,7 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
 
 @Component({
   selector: 'app-customer-profile',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ChangePasswordModalComponent],
   styles: `
     .profile-avatar-picker {
       align-items: center;
@@ -121,12 +122,16 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
               <label class="form-label" for="role">Role</label>
               <input id="role" class="form-control" [value]="profile()?.applicationUserRole || 'Customer'" readonly />
             </div>
-            <div class="col-12">
+            <div class="col-12 d-flex flex-wrap gap-2">
               <button class="btn btn-primary" type="submit" [disabled]="savingProfile()">
                 @if (savingProfile()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                 }
                 Save profile
+              </button>
+              <button class="btn btn-outline-primary" type="button" (click)="openChangePasswordModal()">
+                <i class="bi bi-shield-lock me-2" aria-hidden="true"></i>
+                Change password
               </button>
             </div>
           </form>
@@ -262,6 +267,15 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
       </div>
       <div class="modal-backdrop fade show"></div>
     }
+
+    @if (changePasswordModalOpen()) {
+      <app-change-password-modal
+        [busy]="changingPassword()"
+        [apiError]="passwordError()"
+        (submitPassword)="changePassword($event)"
+        (cancel)="closeChangePasswordModal()"
+      />
+    }
   `,
 })
 export class CustomerProfileComponent implements OnInit, OnDestroy {
@@ -275,7 +289,10 @@ export class CustomerProfileComponent implements OnInit, OnDestroy {
   readonly savingAddress = signal(false);
   readonly locatingCurrentAddress = signal(false);
   readonly deletingAddress = signal(false);
+  readonly changingPassword = signal(false);
+  readonly changePasswordModalOpen = signal(false);
   readonly error = signal<string | null>(null);
+  readonly passwordError = signal<string | null>(null);
   readonly success = signal<string | null>(null);
   readonly profile = signal<CustomerProfile | null>(null);
   readonly customer = signal<CustomerRecord | null>(null);
@@ -407,6 +424,42 @@ export class CustomerProfileComponent implements OnInit, OnDestroy {
         this.savingProfile.set(false);
       },
       });
+  }
+
+  openChangePasswordModal(): void {
+    this.passwordError.set(null);
+    this.changePasswordModalOpen.set(true);
+  }
+
+  closeChangePasswordModal(): void {
+    if (this.changingPassword()) {
+      return;
+    }
+
+    this.changePasswordModalOpen.set(false);
+    this.passwordError.set(null);
+  }
+
+  changePassword(value: ChangePasswordFormValue): void {
+    this.changingPassword.set(true);
+    this.passwordError.set(null);
+    this.error.set(null);
+    this.success.set(null);
+
+    this.authService.changePassword({
+      currentPassword: value.currentPassword,
+      newPassword: value.newPassword,
+    }).subscribe({
+      next: (response) => {
+        this.changingPassword.set(false);
+        this.changePasswordModalOpen.set(false);
+        this.success.set(response.message || 'Password changed successfully.');
+      },
+      error: (error) => {
+        this.changingPassword.set(false);
+        this.passwordError.set(this.getPasswordError(error));
+      },
+    });
   }
 
   onAvatarSelected(event: Event): void {
@@ -624,5 +677,16 @@ export class CustomerProfileComponent implements OnInit, OnDestroy {
     }
 
     this.avatarPreviewUrl.set(null);
+  }
+
+  private getPasswordError(error: unknown): string {
+    if (typeof error === 'object' && error && 'error' in error) {
+      const response = (error as { error?: { message?: string; errors?: string[] } }).error;
+      const firstError = response?.errors?.[0];
+
+      return firstError || response?.message || 'Unable to change password.';
+    }
+
+    return 'Unable to change password.';
   }
 }

@@ -49,16 +49,16 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                 throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
             }
 
-            await CreateRoleProfileAsync(user.Id, request.ApplicationUserRole, cancellationToken);
+            await CreateRoleProfileAsync(user.Id, request, cancellationToken);
             return user.Id;
         }
 
         private async Task CreateRoleProfileAsync(
             string applicationUserId,
-            ApplicationUserRole role,
+            CreateUserCommand request,
             CancellationToken cancellationToken)
         {
-            switch (role)
+            switch (request.ApplicationUserRole)
             {
                 case ApplicationUserRole.Customer:
                     if (await _customerRepository.GetByUserIdAsync(applicationUserId) is null)
@@ -80,9 +80,9 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                         await _technicianRepository.CreateAsync(new Technician
                         {
                             ApplicationUserId = applicationUserId,
-                            NationalId = string.Empty,
-                            Experience = string.Empty,
-                            MaxTravelDistance = 0,
+                            NationalId = request.NationalId?.Trim() ?? string.Empty,
+                            Experience = request.Experience?.Trim() ?? string.Empty,
+                            MaxTravelDistance = request.MaxTravelDistance ?? 0,
                             Rating = 0,
                             VerificationStatus = TechnicianVerificationStatus.Pending,
                             IsAvailable = false,

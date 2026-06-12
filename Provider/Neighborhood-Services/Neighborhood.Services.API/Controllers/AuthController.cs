@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -154,6 +155,20 @@ namespace Neighborhood.Services.API.Controllers
             });
 
             return Ok(new { Message = "Logged out successfully" });
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         private void AppendAccessTokenCookie(string token, DateTime expiresAt)

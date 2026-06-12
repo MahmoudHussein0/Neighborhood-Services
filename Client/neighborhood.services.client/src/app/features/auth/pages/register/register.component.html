@@ -17,24 +17,31 @@
 
           <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
             <div class="row g-3">
-              <div class="col-12 d-flex justify-content-center">
-                <label class="avatar-picker" for="avatarFile" aria-label="Choose profile photo">
-                  @if (avatarPreviewUrl()) {
-                    <img [src]="avatarPreviewUrl()" alt="Selected profile photo preview" />
-                  } @else {
-                    <span>{{ fallbackInitials() }}</span>
-                  }
-                  <span class="avatar-camera">
-                    <i class="bi bi-camera"></i>
-                  </span>
-                </label>
-                <input
-                  id="avatarFile"
-                  class="visually-hidden"
-                  type="file"
-                  accept="image/*"
-                  (change)="onAvatarSelected($event)"
-                />
+              <div class="col-12">
+                <div class="register-tabs" role="tablist" aria-label="Account type">
+                  <button
+                    class="register-tab"
+                    type="button"
+                    role="tab"
+                    [class.active]="selectedRole() === 'Customer'"
+                    [attr.aria-selected]="selectedRole() === 'Customer'"
+                    (click)="setRole('Customer')"
+                  >
+                    <i class="bi bi-house-heart" aria-hidden="true"></i>
+                    Customer
+                  </button>
+                  <button
+                    class="register-tab"
+                    type="button"
+                    role="tab"
+                    [class.active]="selectedRole() === 'Technician'"
+                    [attr.aria-selected]="selectedRole() === 'Technician'"
+                    (click)="setRole('Technician')"
+                  >
+                    <i class="bi bi-tools" aria-hidden="true"></i>
+                    Technician
+                  </button>
+                </div>
               </div>
 
               <div class="col-12">
@@ -105,23 +112,6 @@
                 }
               </div>
 
-              <div class="col-12 col-md-6">
-                <label for="applicationUserRole" class="form-label">Account type</label>
-                <select
-                  id="applicationUserRole"
-                  class="form-select"
-                  formControlName="applicationUserRole"
-                  [class.is-invalid]="form.controls.applicationUserRole.touched && form.controls.applicationUserRole.invalid"
-                >
-                  @for (role of roleOptions; track role) {
-                    <option [value]="role">{{ role }}</option>
-                  }
-                </select>
-                @if (hasError('applicationUserRole', 'required')) {
-                  <div class="invalid-feedback">Account type is required.</div>
-                }
-              </div>
-
               <div class="col-12">
                 <label for="address" class="form-label">Location Address</label>
                 <input
@@ -138,6 +128,56 @@
                   <div class="invalid-feedback">Enter a more specific address.</div>
                 }
               </div>
+
+              @if (selectedRole() === 'Technician') {
+                <div class="col-12 col-md-6">
+                  <label for="nationalId" class="form-label">National ID</label>
+                  <input
+                    id="nationalId"
+                    class="form-control"
+                    formControlName="nationalId"
+                    [class.is-invalid]="form.controls.nationalId.touched && form.controls.nationalId.invalid"
+                  />
+                  @if (hasError('nationalId', 'required')) {
+                    <div class="invalid-feedback">National ID is required.</div>
+                  } @else if (hasError('nationalId', 'minlength')) {
+                    <div class="invalid-feedback">National ID must be at least 8 characters.</div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="maxTravelDistance" class="form-label">Max travel distance</label>
+                  <input
+                    id="maxTravelDistance"
+                    type="number"
+                    class="form-control"
+                    formControlName="maxTravelDistance"
+                    min="1"
+                    [class.is-invalid]="form.controls.maxTravelDistance.touched && form.controls.maxTravelDistance.invalid"
+                  />
+                  @if (hasError('maxTravelDistance', 'required')) {
+                    <div class="invalid-feedback">Max travel distance is required.</div>
+                  } @else if (hasError('maxTravelDistance', 'min')) {
+                    <div class="invalid-feedback">Max travel distance must be greater than 0.</div>
+                  }
+                </div>
+
+                <div class="col-12">
+                  <label for="experience" class="form-label">Experience</label>
+                  <textarea
+                    id="experience"
+                    class="form-control"
+                    rows="4"
+                    formControlName="experience"
+                    [class.is-invalid]="form.controls.experience.touched && form.controls.experience.invalid"
+                  ></textarea>
+                  @if (hasError('experience', 'required')) {
+                    <div class="invalid-feedback">Experience is required.</div>
+                  } @else if (hasError('experience', 'minlength')) {
+                    <div class="invalid-feedback">Experience must be at least 10 characters.</div>
+                  }
+                </div>
+              }
             </div>
 
             <button class="btn btn-primary w-100 mt-4" type="submit" [disabled]="isSubmitting()">
