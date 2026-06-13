@@ -24,7 +24,7 @@ namespace Neighborhood.Services.Application.Conversations.Queries
         public async Task <List<ConversationSelectedDto>> Handle(GetMyConvsQDto request, CancellationToken cancellationToken)
         {
             //var item =await  _convrepository.GetByBookingId(request.id);
-            var items = await _convrepository.GetWithLastMessageSenderbyUserId("0b6c2e03-1110-4cb6-9ad0-98c79ee97d1c");
+            var items = await _convrepository.GetWithLastMessageSenderbyUserId(_current.UserId);
           // var image = await _convrepository.GetAvatar("0b6c2e03-1110-4cb6-9ad0-98c79ee97d1c");
             if (items == null) return null!;
             return items.Select(item => new ConversationSelectedDto
@@ -34,9 +34,10 @@ namespace Neighborhood.Services.Application.Conversations.Queries
                 lastMessage = (_convrepository.GetLastMessage(item.Id)).Result.content,
                // lastMessage = item.lastMessage.content,
                 bookingDescription = item.Booking.Description,
-                //coversationImage= _convrepository.GetAvatar(item.Id,"0b6c2e03-1110-4cb6-9ad0-98c79ee97d1c").Result??null!,
-                coversationImage= item.lastMessage?.Sender?.Photo??null!,
-                messageSenderId=item.lastMessage.SenderId,
+                coversationImage= _convrepository.GetAvatar(item.Id,_current.UserId).Result??null!,
+                othersName=_convrepository.GetOther(item.Id, _current.UserId).Result ?? null!,
+                //coversationImage= item.lastMessage?.Sender?.Photo??null!,
+                messageSenderId =item.lastMessage.SenderId,
                 messageSenderName=item.lastMessage.Sender.FullName,
                 updatedAt=item.lastMessage.createdAt,
                

@@ -54,6 +54,10 @@ namespace Neighborhood.Services.Application.Favorites.Commands
            {await _technicianPhotoRepo.GetByIdAsync(request.technicianId) ??
            throw new NotFoundException("No Technician with the given Id")};
 
+            var exists = await _favrepo.CheckIfExists(_currentUser.UserId, request.technicianId);
+            if (exists)
+            { throw new Exception("Item is already in favorites"); }
+
             TechnicianPhoto? chosenPhoto = addedPhotos.FirstOrDefault(e => e.PhotoUrl != null) ?? null ;
 
             var customer = await _customerRepo.GetByUserIdAsync(_currentUser.UserId)?? throw new NotFoundException("Invalid Customer Id");
@@ -79,4 +83,5 @@ namespace Neighborhood.Services.Application.Favorites.Commands
             };
         }
     }
+}
 }

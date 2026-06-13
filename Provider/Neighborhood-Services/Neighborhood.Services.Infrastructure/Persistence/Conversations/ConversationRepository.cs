@@ -94,6 +94,20 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Conversations
             return message?.Sender?.Photo;
         }
 
+        public async Task<string?> GetOther(
+    int conversationId,
+    string currentUserId)
+        {
+            var message = await _context.Messages
+                .Include(m => m.Sender)
+                .Where(m =>
+                    m.ConversationId == conversationId &&
+                    m.SenderId != currentUserId)
+                .FirstOrDefaultAsync();
+
+            return message?.Sender?.FullName;
+        }
+
         Task<ApplicationUser> IConversationRepository.GetClient(int roomId)
         {
             throw new NotImplementedException();

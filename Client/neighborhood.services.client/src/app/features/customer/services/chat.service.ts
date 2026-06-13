@@ -71,8 +71,10 @@ constructor(private apiService: ApiService,private messagesService: MessagesServ
 
  initializeChat(bookingId: number) {
         this.hubConnection.start().then(() => {
+      //     this.hubConnection.invoke('JoinGroup', bookingId.toString())
+      // .catch(err => console.error(err));
 
-            
+            console.log("initializaing hub")
             this.hubConnection.on('ReceiveMessage', (message: MessageDto) => {
                 this.ngZone.run(() => {
                     this.AllMessagesForBooking.update(msgs => [...msgs, message]);
@@ -81,6 +83,7 @@ constructor(private apiService: ApiService,private messagesService: MessagesServ
 
             this.messagesService.getMessagesForBooking(bookingId).subscribe({
                 next: (messages) => {
+                  console.log(messages);
                     this.ngZone.run(() => {
                         this.AllMessagesForBooking.set(
                             messages.sort((a, b) =>

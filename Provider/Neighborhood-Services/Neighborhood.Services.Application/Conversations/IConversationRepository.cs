@@ -22,6 +22,8 @@ namespace Neighborhood.Services.Application.Conversations
         public Task<List<Conversation>> GetWithLastMessageSenderbyUserId(string UserId);
 
         public Task<string?> GetAvatar( int conversationId,string currentUserId);
+
+        public Task<string?> GetOther( int conversationId,string currentUserId);
     }
         
 }

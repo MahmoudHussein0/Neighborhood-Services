@@ -20,7 +20,7 @@ import { ChatRoomComponent } from '../../features/customer/components/chat-room/
     <app-navbar />
   
     <main class="flex-grow-1">
-    <app-chat-room />
+ 
    <app-customer-chats />
   
    <!--  <app-favorite-list />-->

@@ -25,7 +25,7 @@ favItems?: FavoriteItem[];
   AddToMyFavorites(technicianId: number): Observable<FavoriteItem[]> {
   return this.apiService.put<FavoriteItem[]>(
     `${this.Endpoint}/${technicianId}`,
-    {}
+  null
   );
 }
 

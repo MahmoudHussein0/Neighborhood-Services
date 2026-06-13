@@ -26,6 +26,18 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Favorites
                 .ToListAsync();
         }
 
+        public async Task<bool> CheckIfExists(string userId,int TechnicianId)
+        {
+            var res = await
+                   _context.Favorites
+                  .Include(e => e.Technician)
+                  .Include(e => e.Customer)
+                  .Where(e => e.TechnicianId == TechnicianId && e.UserId == userId)
+                  .ToListAsync();
+
+            return res.Count>0;
+        }
+
         public override async Task<IReadOnlyList<Favorite>> GetAllAsync()
         {
             return await _context.Favorites.Where(e => e.IsDeleted == false).ToListAsync();
