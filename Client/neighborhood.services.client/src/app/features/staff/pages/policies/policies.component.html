@@ -1,0 +1,250 @@
+<section class="container-fluid p-4 policy-page">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="fw-bold text-black mb-1">{{"policy.cancellationPolicies" | translate}}</h3>
+            <p class="text-black opacity-75 mb-0">{{ "policy.manageCancellationRulesForCustomersTechnicians" |
+                translate}}</p>
+        </div>
+        <button class="btn btn-primary px-4" (click)="openAddModal()" data-bs-toggle="modal"
+            data-bs-target="#policyModal">+ {{ "policy.addPolicy" |translate}}</button>
+    </div>
+
+
+
+
+
+
+    <!-- FILTERS -->
+    <div class="card filter-card mb-3">
+        <div class="card-body d-flex flex-wrap gap-3 align-items-end">
+
+            <!-- Applies To -->
+            <div>
+                <label class="form-label">{{"policy.appliesTo" |translate}}</label>
+                <select class="form-select border border-2 " [(ngModel)]="    filterPolicy.appliesTo "
+                    (change)="applyFilter(  )">
+
+                    <option value="Both">{{"policy.both" |translate}}</option>
+                    <option value="Customer">{{"policy.customer" |translate}}</option>
+                    <option value="Technican">{{"policy.technician" |translate}}</option>
+                </select>
+            </div>
+
+            <!-- Hours -->
+            <div>
+                <label class="form-label  ">{{"policy.hoursBefore" |translate}}</label>
+                <select class="form-select  border  border-2" [(ngModel)]="     filterPolicy.hoursBeforeBooking    "
+                    (change)="applyFilter()">
+                    <!-- <option value="" selected>{{ filterPolicy.hoursBeforeBooking }} </option> -->
+                    @for (hour of uniqueHours() ; track $index)
+                    {
+                    <option [value]=" hour "> {{ hour }} </option>
+                    }
+
+                </select>
+            </div>
+
+            <button class="btn bg-info   border  border-2 " (click)="resetFilter()">
+                {{"policy.reset" |translate}}
+            </button>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card table-card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{{"policy.appliesTo" |translate}}</th>
+                            <th>{{"policy.hoursBefore" |translate}}</th>
+                            <th>{{"policy.penalty" |translate}} %</th>
+                            <th>{{"policy.createdAt" |translate}}</th>
+                            <th class="text-end">{{"policy.actions" |translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(filteredPolicy())
+                        {
+                        <tr>
+                            <td>
+                                <span class="badge"
+                                    [class]="filteredPolicy()?.appliesTo === 'Customer' ? 'bg-primary' : 'bg-warning text-dark'">
+                                    {{ filteredPolicy()?.appliesTo }}
+                                </span>
+                            </td>
+
+                            <td class="fw-bold">{{ filteredPolicy()?.hoursBeforeBooking }} {{"policy.hrs" |translate}}
+                            </td>
+
+                            <td>
+                                <span class="badge"
+                                    [class]="filteredPolicy()?.penaltyPct === 0 ? 'bg-success' : 'bg-danger'">
+                                    {{ filteredPolicy()?.penaltyPct }}%
+                                </span>
+                            </td>
+
+                            <td class="text-muted">
+                                {{ filteredPolicy()?.createdAt | date:'medium' }}
+                            </td>
+
+                            <td class="text-end">
+
+                                <button class="btn btn-sm btn-outline-primary me-2"
+                                    (click)="openEditModal(filteredPolicy()!)" data-bs-toggle="modal"
+                                    data-bs-target="#policyModal">
+                                    {{"policy.edit" |translate}}
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-danger"
+                                    (click)="openDeleteModal(filteredPolicy()!)" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                    {{"policy.delete" |translate}}
+                                </button>
+
+                            </td>
+                        </tr>
+                        }@else {
+                        @for (item of filteredPolicies(); track item.id) {
+                        <tr>
+                            <td>
+                                <span class="badge"
+                                    [class]="item.appliesTo === 'Customer' ? 'bg-primary' : 'bg-warning text-dark'">
+                                    {{ item.appliesTo }}
+                                </span>
+                            </td>
+
+                            <td class="fw-bold">{{ item.hoursBeforeBooking }} {{"policy.hrs" |translate}}</td>
+
+                            <td>
+                                <span class="badge" [class]="item.penaltyPct === 0 ? 'bg-success' : 'bg-danger'">
+                                    {{ item.penaltyPct }}%
+                                </span>
+                            </td>
+
+                            <td class="text-muted">
+                                {{ item.createdAt | date:'medium' }}
+                            </td>
+
+                            <td class="text-end">
+
+                                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(item)"
+                                    data-bs-toggle="modal" data-bs-target="#policyModal">
+                                    {{"policy.edit" |translate}}
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-danger  me-3" (click)="openDeleteModal(item)"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    {{"policy.delete" |translate}}
+                                </button>
+
+                            </td>
+                        </tr>
+                        }
+
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+<!-- Edit & Add Modal -->
+<div class="modal fade" id="policyModal">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dark">
+
+            <div class="modal-header">
+                <h5 class="modal-title text-black">
+                    {{ isEdit() ? ('policy.editPolicy' |translate) : ('policy.addPolicy' |translate) }}
+                </h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="policyForm">
+                    <div class="mb-3">
+                        <label class="form-label">{{"policy.appliesTo" |translate}}</label>
+                        <select class="form-select  border border-3" formControlName="appliesTo">
+                            <option value="Customer">{{"policy.customer" |translate}}</option>
+                            <option value="Technican">{{"policy.technician" |translate}}</option>
+                            <option value="Both">{{"policy.both" |translate}}</option>
+                        </select>
+
+                        @let appliesTo = policyForm.get("appliesTo");
+                        @if( appliesTo?.getError('required') && appliesTo?.touched ){
+                        <span class="text-danger"> {{"policy.appliesToIsRequired" |translate}}</span>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"policy.hoursBeforeBooking" |translate}}</label>
+                        <input type="number" class="form-control  border border-3" formControlName="hoursBeforeBooking">
+                        @let hoursBeforeBooking = policyForm.get("hoursBeforeBooking");
+                        @if( hoursBeforeBooking?.getError('required') && hoursBeforeBooking?.touched ){
+                        <span class="text-danger">{{"policy.hoursBeforeBookingIsRequired" |translate}}</span>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"policy.penalty" |translate}} %</label>
+                        <input type="number" class="form-control  border border-3" formControlName="penaltyPct">
+                        @let penaltyPct = policyForm.get("penaltyPct");
+                        @if( penaltyPct?.getError('required') && penaltyPct?.touched ){
+                        <span class="text-danger">{{"policy.penaltyIsRequired" |translate}}</span>
+                        }
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button #closeBtn class="btn btn-secondary" data-bs-dismiss="modal">{{"policy.cancle"
+                    |translate}}</button>
+                <button class="btn btn-primary" (click)="savePolicy()">
+                    {{"policy.save" |translate}}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Delete Modal  -->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dark text-center">
+            <div class="modal-body p-4">
+                <h5 class="text-black mb-3">{{"policy.deletePolicy" |translate}}</h5>
+                <p class="text-black opacity-75">
+                    {{"policy.thisActionCannotBeUndone" |translate}}
+                </p>
+                <button #closeBtn class="btn btn-secondary me-5" data-bs-dismiss="modal">
+                    {{"policy.cancle" |translate}}
+                </button>
+                <button class="btn btn-danger me-3 " (click)="confirmDelete()">
+                    {{"policy.delete" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

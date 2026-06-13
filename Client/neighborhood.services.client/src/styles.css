@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --brand-orange: #ff7a1a;
+  --btn-browse-bg: rgba(255, 255, 255, 0.1);
+  --btn-browse-border: rgba(255, 255, 255, 0.25);
+}
+
 /* Sidebar nav link (Bootstrap has no sidebar component, so this is custom) */
 .sidebar-link {
   display: flex;

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Neighborhood.Services.Application.Categories.DTOs;
 using Neighborhood.Services.Domain.Categories;
 using System;
 using System.Collections.Generic;

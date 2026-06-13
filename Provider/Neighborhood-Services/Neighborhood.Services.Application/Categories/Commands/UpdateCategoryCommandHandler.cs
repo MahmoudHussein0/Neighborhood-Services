@@ -28,9 +28,9 @@ namespace Neighborhood.Services.Application.Categories.Commands
             if (category is null) 
                 throw new NotFoundException("Category" , request.Id);
 
-           var isExists =  await _categoryRepo.IsNameExistsAsync(request.NameEn , request.NameAr);
+           var isExists =  await _categoryRepo.IsNameExistsAsync(request.NameEn , request.NameAr  ,request.Id);
 
-            if (isExists && category.NameEn != request.NameEn && category.NameAr != request.NameAr)
+            if (isExists)
                 throw new ValidationException("Category already exists");
 
             if(!string.IsNullOrWhiteSpace(request.NameEn))
@@ -43,9 +43,16 @@ namespace Neighborhood.Services.Application.Categories.Commands
                  category.Icon = request.Icon;
 
            await _categoryRepo.UpdateAsync(category);
-           await _unitOfWork.SaveChangesAsync();
+           await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-          return   category.Adapt<CategoryDto>();
+            var categoryDto = new CategoryDto()
+            {
+                Id = category.Id,
+                Name =  !string.IsNullOrWhiteSpace(category.NameEn) ? category.NameEn :  category.NameAr, 
+                Icon = category.Icon
+            };
+
+            return categoryDto;
 
         }
     }

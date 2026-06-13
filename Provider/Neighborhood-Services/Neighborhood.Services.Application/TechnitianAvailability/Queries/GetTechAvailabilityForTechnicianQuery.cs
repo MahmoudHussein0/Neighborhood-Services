@@ -8,13 +8,7 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Queries
 {
     public class GetTechAvailabilityForTechnicianQuery : IRequest< IReadOnlyList<TechnicianAvailabilityDetailsDTO>>
     {
-        public int  TechnicianId { get; set; }
-
-        public GetTechAvailabilityForTechnicianQuery(int technicianId)
-        {
-            TechnicianId = technicianId;
-        }
-
+       
 
     }
 }

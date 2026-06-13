@@ -43,11 +43,13 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
                 .HasForeignKey(m => m.TicketId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(t => t.User)
-                .WithMany()
+                 builder.HasOne(t => t.User)
+                .WithMany(u => u.SupportTickets)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(t => t.Booking)
+
+
+                 builder.HasOne(t => t.Booking)
                 .WithMany()
                 .HasForeignKey(t => t.BookingId)
                 .OnDelete(DeleteBehavior.NoAction);

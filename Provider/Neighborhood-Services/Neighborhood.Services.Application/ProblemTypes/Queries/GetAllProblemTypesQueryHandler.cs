@@ -25,7 +25,7 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
              p =>
             !p.IsDeleted
             &&
-            (lang == "en" ? (string.IsNullOrEmpty(request.SearchTerm))  ||    (p.DescriptionEn != null && p.DescriptionEn.Contains(request.SearchTerm))       : (string.IsNullOrEmpty(request.SearchTerm)) || (p.DescriptionAr != null && p.DescriptionAr.Contains(request.SearchTerm)))
+            (lang == "en" ? (string.IsNullOrEmpty(request.SearchTerm))  ||(p.DescriptionEn != null && p.DescriptionEn.Contains(request.SearchTerm))  : (string.IsNullOrEmpty(request.SearchTerm)) || (p.DescriptionAr != null && p.DescriptionAr.Contains(request.SearchTerm)))
             &&
             (!request.MinPrice.HasValue || p.MinPrice >= request.MinPrice.Value)
             &&

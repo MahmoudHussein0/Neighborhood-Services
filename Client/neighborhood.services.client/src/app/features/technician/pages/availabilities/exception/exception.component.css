@@ -1,0 +1,30 @@
+.item-card {
+    background: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* time badge */
+.time-badge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+
+
+/* Scrollbar شكلها أنظف */
+.exception-scroll::-webkit-scrollbar,
+.availability-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.exception-scroll::-webkit-scrollbar-thumb,
+.availability-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}

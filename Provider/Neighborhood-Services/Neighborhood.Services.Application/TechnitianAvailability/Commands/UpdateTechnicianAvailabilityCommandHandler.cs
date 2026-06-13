@@ -25,20 +25,20 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
         public async Task<TechnicianAvailabilityDTO> Handle(UpdateTechnicianAvailabilityCommand request, CancellationToken cancellationToken)
         {
 
-           var techAvailabilities = await _availabilityRepo.GetByConditionAsync(TA => TA.TechnicianId == request.Id);
-           var techAvailability = techAvailabilities.FirstOrDefault();
+           var techAvailability = await _availabilityRepo.GetByIdAsync(request.Id);
 
             if(techAvailability is null)
-                throw new NotFoundException("Availability" , request.Id);
+                throw new NotFoundException("Availability" , techAvailability.Id);
 
             if (request.EndTime <= request.StartTime)
             {
                 throw new ValidationException("End Time must be greater than Start Time.");}
 
 
-            if (await _availabilityRepo.HasOverlapAsync(techAvailability.TechnicianId, request.DayOfWeek, request.StartTime, request.EndTime, request.Id))
+            if (await _availabilityRepo.HasOverlapAsync(techAvailability.TechnicianId, request.DayOfWeek, request.StartTime, request.EndTime, techAvailability.Id))
             {
                 throw new ValidationException("This availability overlaps with an existing time slot.");}
+
 
 
             techAvailability.DayOfWeek = request.DayOfWeek;

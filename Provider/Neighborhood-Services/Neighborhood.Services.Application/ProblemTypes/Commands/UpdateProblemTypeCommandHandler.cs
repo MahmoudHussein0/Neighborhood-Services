@@ -43,19 +43,26 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             if(!string.IsNullOrWhiteSpace(request.DescriptionEn))
                     problemType.DescriptionEn = request.DescriptionEn;
 
-
-
             if (!string.IsNullOrWhiteSpace(request.DescriptionAr))
                 problemType.DescriptionAr = request.DescriptionAr;
+
 
             problemType.MinPrice = request.MinPrice;
             problemType.MaxPrice = request.MaxPrice;
 
 
             await _problemTypeRepo.UpdateAsync(problemType);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return problemType.Adapt<UpdateProblemTypeDto>();
+
+            var problemTypeDto = new UpdateProblemTypeDto()
+            {
+                Description = !string.IsNullOrWhiteSpace(request.DescriptionEn) ? request.DescriptionEn : request.DescriptionAr,
+                MinPrice = request.MinPrice,
+                MaxPrice = request.MaxPrice
+            };
+
+            return problemTypeDto;
         }
     }
 }

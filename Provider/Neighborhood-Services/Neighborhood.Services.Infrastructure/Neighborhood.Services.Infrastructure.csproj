@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <NoWarn>NU1903</NoWarn>
+	  
 
   </PropertyGroup>
 
@@ -34,6 +35,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+	  
+	  
+	  
+	  
+	  
+	  
     <PackageReference Include="MimeKit" Version="4.17.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.77.0" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />

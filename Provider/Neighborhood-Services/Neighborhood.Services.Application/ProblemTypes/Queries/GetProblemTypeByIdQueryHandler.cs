@@ -33,6 +33,7 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
                 Description = lang == "en" ?  problemType.DescriptionEn : problemType.DescriptionAr,
                 MaxPrice = problemType.MaxPrice,
                 MinPrice = problemType.MinPrice,
+                ImageUrl = problemType.ImageUrl,
                 CategoryName = lang == "en"  ? problemType.Category.NameEn : problemType.Category.NameAr,
                 CategoryIcon = problemType.Category.Icon,
             };
@@ -40,8 +41,8 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
              var techPriceing =   problemType.TechnicionPricing.Select(TP => new TechnicianPricingDto()
             {
                 ProblemTypeName = lang == "en"  ? TP.ProblemType.NameEn : TP.ProblemType.NameAr,
-                TechPriceMaxPrice = TP.MaxPrice,
-                TechPriceMinPrice = TP.MinPrice
+                TechMaxPrice = TP.MaxPrice,
+                TechMinPrice = TP.MinPrice
             }).ToList();
 
             problemTypeDetailsDto.TechnicionPricing.AddRange(techPriceing);

@@ -12,6 +12,7 @@ namespace Neighborhood.Services.Domain.ProblemTypes
         public string NameAr { get; set; } = null!;
         public string DescriptionEn { get; set; } = null!;
         public string DescriptionAr { get; set; } = null!;
+        public string? ImageUrl { get; set; } = null!;
 
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }

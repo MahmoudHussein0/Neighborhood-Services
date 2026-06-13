@@ -1,0 +1,114 @@
+/* =========================
+   HOW IT WORKS SECTION
+========================= */
+
+.how-it-works {
+    background: linear-gradient(180deg,
+            #f5f8ff 0%,
+            #ffffff 100%);
+    padding: 60px 0;
+}
+
+/* Title */
+.how-it-works h2 {
+    color: #0B1A30;
+    font-size: 2.2rem;
+}
+
+/* Card */
+.step-card {
+    background: #ffffff;
+    border-radius: 20px;
+    height: 100%;
+    padding: 25px;
+    transition: all 0.3s ease;
+
+    box-shadow: 0 4px 18px rgba(11, 26, 48, 0.06);
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 18px 40px rgba(11, 26, 48, 0.12);
+}
+
+/* IMAGE CONTAINER */
+.step-image {
+    height: 170px;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* Image */
+.step-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+
+    /* Blue clean tone (safe) */
+    filter: saturate(1.15) brightness(0.97) contrast(1.05);
+}
+
+/* Blue overlay (important for consistency) */
+.step-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: rgba(11, 26, 48, 0.10);
+
+    pointer-events: none;
+}
+
+/* STEP NUMBER */
+.step-number {
+    width: 48px;
+    height: 48px;
+
+    margin: -22px auto 0;
+
+    background: #0B1A30;
+    color: #fff;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    font-size: 1.1rem;
+
+    box-shadow: 0 8px 20px rgba(11, 26, 48, 0.25);
+}
+
+/* TITLE */
+.step-card h5 {
+    color: #0B1A30;
+    margin-top: 15px;
+}
+
+/* TEXT */
+.step-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #6c757d;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .step-image {
+        height: 150px;
+    }
+
+    .how-it-works h2 {
+        font-size: 1.8rem;
+    }
+
+}

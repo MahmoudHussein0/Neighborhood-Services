@@ -1,0 +1,75 @@
+<div class="card border-0 shadow-sm category-card h-100">
+
+    <!-- Header -->
+    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
+
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold">
+            {{ "staffCategory.category" | translate }}
+            #{{ category().id }}
+        </span>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body text-center">
+
+        <!-- Icon -->
+        <div class="category-icon mx-auto mb-4 pointer" [routerLink]="['/staff', 'details', category().id]">
+
+            <span class="">
+                <i class="bi fs-1" [class]="category().icon"></i>
+            </span>
+
+        </div>
+
+        <!-- Name -->
+        <h5 class="fw-bold mb-3 pointer category-title" [routerLink]="['/staff', 'details', category().id]">
+            {{ category().name }}
+        </h5>
+
+        <p class="text-muted small mb-4">
+            {{"staffCategory.clickToViewCategoryDetails" |translate}}
+        </p>
+
+        <!-- Actions -->
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+            <button (click)="edit.emit(category())" data-bs-toggle="modal" data-bs-target="#updateModal"
+                class="btn btn-outline-primary rounded-3 px-3">
+
+                <i class="fa-solid fa-pen-to-square me-2"></i>
+
+                {{ "staffCategory.update" | translate }}
+
+            </button>
+
+            <button (click)=" categoryId = category().id  " class="btn btn-outline-danger rounded-3 px-3"
+                data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+                <i class="fa-solid fa-trash me-2"></i>
+                {{ "staffCategory.delete" | translate }}
+
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="deleteCategoryModal">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dark text-center">
+            <div class="modal-body p-4">
+                <h5 class="text-black mb-3">{{"staffCategory.deleteCategory" |translate}}</h5>
+                <p class="text-black opacity-75">
+                    {{"staffCategory.thisActionCannotBeUndone" |translate}}
+                </p>
+                <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
+                    {{"staffCategory.close" |translate}}
+                </button>
+                <button class="btn btn-danger me-3" (click)="confirmDelete()">
+                    {{"staffCategory.delete" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

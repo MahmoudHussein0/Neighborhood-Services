@@ -1,0 +1,38 @@
+/* Custom styles only for exact color matching and gradient */
+
+.hero-section {
+    background: radial-gradient(circle, #224cb2 0%, #163380 100%);
+    /* min-height: 100vh; */
+    padding-block: 80px;
+}
+
+.text-orange {
+    color: var(--brand-orange) !important;
+}
+
+.bg-orange {
+    background-color: var(--brand-orange) !important;
+    border-color: var(--brand-orange) !important;
+}
+
+/* Styling for the semi-transparent "Browse Services" button */
+.btn-browse {
+    background-color: var(--btn-browse-bg);
+    border: 1px solid var(--btn-browse-border);
+    color: #ffffff;
+}
+
+.btn-browse:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Pill badge styling */
+.badge-pill-custom {
+    background-color: var(--brand-orange);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+}

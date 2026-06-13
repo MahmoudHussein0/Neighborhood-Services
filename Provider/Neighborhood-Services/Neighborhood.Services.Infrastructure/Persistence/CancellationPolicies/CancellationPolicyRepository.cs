@@ -17,7 +17,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.CancellationPolicies
         public async Task<CancellationPolicy?> GetPolicyAsync(int hoursBeforeBooking, CancellationPolicyTarget appliesTo)
         {
             return await _context.CancellationPolicies
-                .FirstOrDefaultAsync(cp => cp.HoursBeforeBooking <= hoursBeforeBooking
+                .FirstOrDefaultAsync(cp => !cp.IsDeleted  &&cp.HoursBeforeBooking <= hoursBeforeBooking
                     && cp.AppliesTo == appliesTo);
         }
     }

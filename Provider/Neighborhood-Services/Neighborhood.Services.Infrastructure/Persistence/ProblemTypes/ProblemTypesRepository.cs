@@ -15,8 +15,24 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ProblemTypes
         public ProblemTypesRepository(ApplicationDbContext context) : base(context)
         { }
 
-        public async Task<bool> IsExistsAsync(string nameAr , string nameEn , int categoryId )
-        => await _context.ProblemTypes.AnyAsync( P => (  EF.Functions.Like( P.NameEn.ToLower() , nameEn.ToLower())  || EF.Functions.Like(P.NameAr.ToLower(), nameAr.ToLower()))  && P.CategoryId == categoryId);
+        public async Task<bool> IsExistsAsync(string nameEn , string nameAr , int categoryId)
+        {
+            var normalizedNameEn = nameEn?.Trim().ToLower();
+            var normalizedNameAr = nameAr?.Trim().ToLower();
 
+            return await _context.ProblemTypes.AnyAsync(P =>
+                !P.IsDeleted &&
+                P.CategoryId == categoryId &&
+                (
+                    (!string.IsNullOrWhiteSpace(normalizedNameEn) &&
+                     P.NameEn.Trim().ToLower() == normalizedNameEn)
+
+                    ||
+
+                    (!string.IsNullOrWhiteSpace(normalizedNameAr) &&
+                     P.NameAr.Trim().ToLower() == normalizedNameAr)
+                )
+            );
+        }
     }
 }

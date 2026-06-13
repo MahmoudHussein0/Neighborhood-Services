@@ -8,7 +8,7 @@ namespace Neighborhood.Services.Domain.TechniciansAvailability
 {
     public class TechnicianAvailability :BaseEntity<int>
     {
-        public int TechnicianId { get; set; }
+        public int  TechnicianId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }

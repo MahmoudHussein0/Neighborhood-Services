@@ -1,10 +1,39 @@
-<footer class="bg-white border-top py-4 mt-auto">
-  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-    <span class="text-muted small">© 2026 Neighborhood Services. All rights reserved.</span>
-    <div class="d-flex gap-3 small">
-      <a routerLink="/" class="text-muted text-decoration-none">Home</a>
-      <a routerLink="/about" class="text-muted text-decoration-none">About</a>
-      <a routerLink="/contact" class="text-muted text-decoration-none">Contact</a>
+<footer class="custom-footer py-5 mt-auto">
+  <div class="container">
+
+    <div class="row mb-4">
+      <div class="col-12 d-flex align-items-center flex-wrap gap-3">
+        <span class="text-white-50"> {{ "footer.followusWerefriendly" | translate}}</span>
+        <div class="social-icons d-flex gap-3">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-tiktok"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-secondary my-4">
+
+    <div class="row gy-4">
+
+      <div class="col-sm-6 col-md-4">
+        <h5 class="footer-heading mb-3">{{"footer.discover" |translate }}</h5>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a>{{ "footer.becomeATechnician" | translate }} </a></li>
+          <li><a routerLink="services">{{"footer.allServices" | translate}}</a></li>
+        </ul>
+      </div>
+
+      <div class="col-sm-6 col-md-4">
+        <h5 class="footer-heading mb-3">{{"footer.company" |translate}}</h5>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a routerLink="  about ">{{"footer.aboutUs" |translate}}</a></li>
+        </ul>
+      </div>
+
+
     </div>
   </div>
 </footer>

@@ -1,0 +1,61 @@
+i {
+    color: #fff;
+}
+
+.custom-modal {
+    border: none;
+    border-radius: 1.25rem;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.12);
+}
+
+.custom-input {
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.custom-input:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.modal-body {
+    padding: 1rem 1.5rem;
+}
+
+.modal-footer {
+    padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.icon-preview {
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(11, 26, 48, 0.08);
+
+    color: #0B1A30;
+}
+
+[dir="rtl"] .rtl-close {
+    margin: 0;
+    transform: scaleX(-1);
+}

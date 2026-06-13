@@ -12,10 +12,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailabilit
         public TechnitianAvailabilityRepository(ApplicationDbContext context):base(context)
         {}
 
-        public Task<bool> HasOverlapAsync(int technicianId, DayOfWeek dayOfWeek, TimeOnly startDate, TimeOnly endDate , int? techAvailiabilityId = null )
+        public async  Task<bool> HasOverlapAsync(int technicianId, DayOfWeek dayOfWeek, TimeOnly startDate, TimeOnly endDate , int? techAvailiabilityId = null )
         {
 
-          return   _context.TechnicianAvailabilities.AnyAsync(
+          return  await _context.TechnicianAvailabilities.AnyAsync(
                              TA => ( TA.TechnicianId == technicianId  &&
                                      TA.DayOfWeek == dayOfWeek &&
                                      startDate < TA.EndTime &&

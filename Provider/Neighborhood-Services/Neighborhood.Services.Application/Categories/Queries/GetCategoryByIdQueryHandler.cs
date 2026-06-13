@@ -25,7 +25,7 @@ namespace Neighborhood.Services.Application.Categories.Queries
 
             if (category is null) throw new NotFoundException("Category", request.Id);
 
-            var problemTypes = category.ProblemTypes.Select(P => new ProblemTypeDto
+            var problemTypes = category.ProblemTypes.Where( P =>!(P.IsDeleted)).Select(P => new ProblemTypeDto
             {
                 Id = P.Id,
                 Name = lang == "en" ? P.NameEn : P.NameAr,

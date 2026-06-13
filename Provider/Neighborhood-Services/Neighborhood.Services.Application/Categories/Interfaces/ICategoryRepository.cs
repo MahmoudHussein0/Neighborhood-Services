@@ -10,7 +10,7 @@ namespace Neighborhood.Services.Application.Categories.Interfaces
     {
 
 
-        Task<bool> IsNameExistsAsync(string nameEn , string nameAr);
+        Task<bool> IsNameExistsAsync(string nameEn , string nameAr, int? categoryId = null);
        
     }
 }

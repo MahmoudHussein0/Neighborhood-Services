@@ -8,12 +8,10 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Queries
     {
 
         public string Lang  { get; set; }
-        public int  TechnicianId { get; set; }
 
-        public GetPricingForProblemTypeQuery(string lang, int technicianId)
+        public GetPricingForProblemTypeQuery(string lang)
         {
             Lang = lang;
-            TechnicianId = technicianId;
         }
     }
 

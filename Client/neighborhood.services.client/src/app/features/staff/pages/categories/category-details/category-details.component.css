@@ -1,0 +1,53 @@
+.pointer {
+    cursor: pointer;
+}
+
+.category-row {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.category-row:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.03);
+}
+
+.description-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+
+    .description-cell {
+        max-width: 150px;
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+    }
+
+}

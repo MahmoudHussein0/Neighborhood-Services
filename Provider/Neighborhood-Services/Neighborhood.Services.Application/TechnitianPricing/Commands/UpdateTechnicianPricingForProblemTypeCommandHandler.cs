@@ -30,26 +30,26 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
             if (pricing is null)
                 throw new NotFoundException("Pricing", request.Id);
 
-            if (request.MinPrice <= 0)
+            if (request.TechMinPrice <= 0)
             {
                 throw new ValidationException("MinPrice must be greater than zero.");}
 
 
-            if (request.MaxPrice <= 0)
+            if (request.TechMaxPrice <= 0)
             {
                 throw new ValidationException("MaxPrice must be greater than zero.");
             }
 
 
 
-            if (request.MinPrice >= request.MaxPrice)
+            if (request.TechMinPrice >= request.TechMaxPrice)
             {
                 throw new ValidationException("MinPrice must be less than MaxPrice."); }
 
 
 
-            pricing.MinPrice = request.MinPrice;
-            pricing.MaxPrice = request.MaxPrice;
+            pricing.MinPrice = request.TechMinPrice;
+            pricing.MaxPrice = request.TechMaxPrice;
             pricing.UpdatedAt = DateTime.UtcNow;
 
             await _pricingRepo.UpdateAsync(pricing);
@@ -59,7 +59,7 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
             {
                 ProblemTypeId = pricing.ProblemTypeId,
                 Region = "",
-                AveragePrice = (request.MinPrice + request.MaxPrice) / 2,
+                AveragePrice = (request.TechMinPrice + request.TechMaxPrice) / 2,
                 MaterialCost = 0
             };
 

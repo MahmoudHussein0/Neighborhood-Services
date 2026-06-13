@@ -14,31 +14,45 @@ namespace Neighborhood.Services.API.Helper
             _timeToLive = timeToLive;
         }
 
-
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var responseService =  context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
+            var responseService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<CacheAttribute>>();
             var key = GetCacheKeyFromRequest(context.HttpContext.Request);
 
-            var cachedResponse = await responseService.GetCachedResponseAsync(key);
-
-            if(cachedResponse is not null)
+            try
             {
-                var result = new ContentResult()
+                var cachedResponse = await responseService.GetCachedResponseAsync(key);
+
+                if (cachedResponse is not null)
                 {
-                    Content = cachedResponse,
-                    StatusCode = 200 ,
-                    ContentType = "application/json"
-                };
-                context.Result = result;
-                return;
+                    var result = new ContentResult()
+                    {
+                        Content = cachedResponse,
+                        StatusCode = 200,
+                        ContentType = "application/json"
+                    };
+                    context.Result = result;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving data from cache ");
             }
 
-           var actionExecutedContext = await next.Invoke();
-              
-            if( actionExecutedContext.Result  is OkObjectResult okObjectResult &&   okObjectResult.Value is not null  )
+            var actionExecutedContext = await next.Invoke();
+
+            if (actionExecutedContext.Result is OkObjectResult okObjectResult && okObjectResult.Value is not null)
             {
-               await responseService.CacheResponseAsync(key, okObjectResult.Value , TimeSpan.FromSeconds(_timeToLive) );
+                try
+                {
+                    await responseService.CacheResponseAsync(key, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLive));
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error occurred while retrieving data from cache ");
+                }
             }
         }
 
@@ -46,7 +60,7 @@ namespace Neighborhood.Services.API.Helper
         {
             var cacheKey = new StringBuilder();
             cacheKey.Append(request.Path);
-            foreach (var (key , value) in request.Query.OrderBy(q => q.Key)) 
+            foreach (var (key, value) in request.Query.OrderBy(q => q.Key))
             {
                 cacheKey.Append($"|{key}-{value}");
             }
