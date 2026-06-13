@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,6 +19,18 @@ export class CustomerWalletComponent implements OnInit, OnDestroy {
   transactions = signal<Transaction[]>([]);
   paymentMethods = signal<PaymentMethod[]>([]);
 
+  // Pagination
+  currentPage = signal<number>(1);
+  readonly pageSize = 6;
+
+  paginatedTransactions = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.transactions().slice(start, start + this.pageSize);
+  });
+
+  totalPages = computed(() => {
+    return Math.ceil(this.transactions().length / this.pageSize) || 1;
+  });
   // Top Up Modal State
   topUpAmount = signal<number>(100);
   selectedPaymentMethodId = signal<number | null>(null);
@@ -110,8 +122,20 @@ export class CustomerWalletComponent implements OnInit, OnDestroy {
       next: (w) => this.wallet.set(w)
     });
     this.walletService.getMyTransactions().subscribe({
-      next: (t) => this.transactions.set(t)
+      next: (t) => {
+        this.transactions.set(t);
+        // Adjust current page if it's out of bounds after refresh
+        if (this.currentPage() > this.totalPages()) {
+          this.currentPage.set(Math.max(1, this.totalPages()));
+        }
+      }
     });
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
   }
 
   initiateTopUp(): void {

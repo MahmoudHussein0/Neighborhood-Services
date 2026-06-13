@@ -6,56 +6,22 @@
   </div>
 
   <div class="row mb-4">
-    <!-- Balance Card -->
-    <div class="col-md-6 col-lg-4 mb-3 mb-md-0">
+    <!-- Balance Card Centered -->
+    <div class="col-md-8 col-lg-6 mx-auto mb-3 mb-md-0">
       <div class="card bg-primary text-white h-100 border-0 shadow-sm wallet-card">
         <div class="card-body d-flex flex-column justify-content-between p-4">
-          <div>
+          <div class="text-center">
             <h6 class="text-white-50 text-uppercase mb-1">{{ 'wallet.currentBalance' | translate }}</h6>
-            <h1 class="display-5 fw-bold mb-0">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</h1>
+            <h1 class="display-4 fw-bold mb-0">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</h1>
           </div>
-          <div class="mt-4 d-flex gap-2">
-            <button class="btn btn-light fw-bold px-4" data-bs-toggle="modal" data-bs-target="#topUpModal">
+          <div class="mt-4 d-flex justify-content-center gap-3">
+            <button class="btn btn-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#topUpModal">
               <i class="bi bi-plus-circle me-2"></i>{{ 'wallet.topUp' | translate }}
             </button>
-            <button class="btn btn-outline-light fw-bold px-4" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+            <button class="btn btn-outline-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#withdrawModal">
               <i class="bi bi-arrow-up-circle me-2"></i>Withdraw
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Payment Methods -->
-    <div class="col-md-6 col-lg-8">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center pt-4 pb-0 px-4">
-          <h5 class="fw-bold mb-0">{{ 'wallet.paymentMethods' | translate }}</h5>
-          <small class="text-muted d-block mt-1">Cards are automatically saved when you pay</small>
-        </div>
-        <div class="card-body p-4">
-          @if (paymentMethods().length === 0) {
-            <p class="text-muted">{{ 'wallet.noPaymentMethods' | translate }}</p>
-          } @else {
-            <div class="row g-3">
-              @for (pm of paymentMethods(); track pm.id) {
-                <div class="col-md-6">
-                  <div class="p-3 border rounded d-flex justify-content-between align-items-center bg-light">
-                    <div class="d-flex align-items-center gap-3">
-                      <i class="bi bi-credit-card fs-4 text-primary"></i>
-                      <div>
-                        <div class="fw-bold">**** **** **** {{ pm.lastFourDigits }}</div>
-                        <small class="text-muted">{{ pm.expiryMonth }}/{{ pm.expiryYear }}</small>
-                      </div>
-                    </div>
-                    <button class="btn btn-sm btn-outline-danger border-0" (click)="deletePaymentMethod(pm.id)">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          }
         </div>
       </div>
     </div>
@@ -71,10 +37,10 @@
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th class="ps-4">{{ 'wallet.date' | translate }}</th>
-              <th>{{ 'wallet.type' | translate }}</th>
-              <th>{{ 'wallet.amount' | translate }}</th>
-              <th>{{ 'wallet.status' | translate }}</th>
+              <th class="ps-4 text-center">{{ 'wallet.date' | translate }}</th>
+              <th class="text-center">{{ 'wallet.type' | translate }}</th>
+              <th class="text-center">{{ 'wallet.amount' | translate }}</th>
+              <th class="text-center">{{ 'wallet.status' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -83,17 +49,19 @@
                 <td colspan="4" class="text-center py-4 text-muted">{{ 'wallet.noTransactions' | translate }}</td>
               </tr>
             }
-            @for (tx of transactions(); track tx.id) {
+            @for (tx of paginatedTransactions(); track tx.id) {
               <tr>
-                <td class="ps-4">{{ tx.createdAt | date:'medium' }}</td>
-                <td>
-                  <span class="badge bg-light text-dark border">{{ getTypeLabel(tx.type) }}</span>
+                <td class="ps-4 text-center">{{ tx.createdAt | date:'medium' }}</td>
+                <td class="text-center">
+                  <span class="badge bg-light text-dark border d-inline-block text-center" style="width: 120px;">
+                    {{ getTypeLabel(tx.type) }}
+                  </span>
                 </td>
-                <td class="fw-bold" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
+                <td class="fw-bold text-center" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
                   {{ tx.toWalletId === wallet()?.id ? '+' : '-' }}{{ tx.amount | number:'1.2-2' }} {{ tx.currency }}
                 </td>
-                <td>
-                  <span class="badge" [ngClass]="getStatusBadgeClass(tx.status)">
+                <td class="text-center">
+                  <span class="badge d-inline-block text-center" style="width: 100px;" [ngClass]="getStatusBadgeClass(tx.status)">
                     {{ getStatusLabel(tx.status) }}
                   </span>
                 </td>
@@ -102,6 +70,30 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="d-flex justify-content-center p-3 border-top">
+          <nav aria-label="Transaction pagination">
+            <ul class="pagination mb-0">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <button class="page-link" (click)="changePage(currentPage() - 1)">Previous</button>
+              </li>
+              
+              <!-- Simple pagination dots / numbers -->
+              <li class="page-item disabled">
+                <span class="page-link text-muted">
+                  Page {{ currentPage() }} of {{ totalPages() }}
+                </span>
+              </li>
+
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <button class="page-link" (click)="changePage(currentPage() + 1)">Next</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
     </div>
   </div>
 </div>
@@ -122,15 +114,7 @@
             <input type="number" class="form-control" [ngModel]="topUpAmount()" (ngModelChange)="topUpAmount.set($event)" min="10">
           </div>
         </div>
-        <div class="mb-4">
-          <label class="form-label text-muted">{{ 'wallet.selectPaymentMethod' | translate }}</label>
-          <select class="form-select form-select-lg" [ngModel]="selectedPaymentMethodId()" (ngModelChange)="selectedPaymentMethodId.set($event)">
-            <option [ngValue]="null">💳 New Card (Enter details in Paymob)</option>
-            @for (pm of paymentMethods(); track pm.id) {
-              <option [ngValue]="pm.id">**** **** **** {{ pm.lastFourDigits }}</option>
-            }
-          </select>
-        </div>
+          <!-- Payment Method Removed: Now assumes default redirection -->
         <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="initiateTopUp()" data-bs-dismiss="modal">
           {{ 'wallet.proceedToPayment' | translate }}
         </button>

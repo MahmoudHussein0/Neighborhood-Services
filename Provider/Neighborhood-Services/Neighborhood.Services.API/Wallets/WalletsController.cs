@@ -148,14 +148,14 @@ namespace Neighborhood.Services.API.Wallets
                 Amount = request.Amount,
                 Currency = "EGP",
                 Type = TransactionType.Withdrawal,
-                Status = TransactionStatus.Pending
+                Status = TransactionStatus.Completed
             };
 
             await _transactionRepository.AddAsync(transaction);
             await _walletRepository.DebitAsync(wallet.Id, request.Amount);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Ok(new { message = "Withdrawal initiated successfully.", transactionId = transaction.Id });
+            return Ok(new { message = "Withdrawal completed successfully.", transactionId = transaction.Id });
         }
 
         public record WithdrawRequest(decimal Amount);
