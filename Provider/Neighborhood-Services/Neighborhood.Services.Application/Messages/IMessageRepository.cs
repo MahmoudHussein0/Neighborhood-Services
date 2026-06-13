@@ -10,7 +10,11 @@ namespace Neighborhood.Services.Application.Messages
 {
     public interface IMessageRepository:IGenericRepository<Message,int>
     {
-        Task<List<Message>> GetByConversationIdAsync(string conversationId, int skip, int limit);
+        Task<List<Message>> GetByConversationIdAsync(int conversationId);
+
+        Task<List<Message>> GetByConversationAndUserIdAsync(int conversationId,string userId);
+
+        public Task<List<Message>> GetByBookingIdAsync(int BookingId);
 
     }
 }

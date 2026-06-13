@@ -49,10 +49,10 @@ public NotificationHub(ILogger<NotificationHub> logger)
           ;
 
             //using the enum role
-            var ur = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => Enum.IsDefined(typeof(ApplicationUserRole), c))?.Value;
-            _logger.LogInformation($"\n\nuser role2: {ur}");
+           // var ur = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => Enum.IsDefined(typeof(ApplicationUserRole), c))?.Value;
+           // _logger.LogInformation($"\n\nuser role2: {ur}");
 
-            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value;
             _logger.LogInformation($"\n\nbusiness: {businessUserId}");
 
 

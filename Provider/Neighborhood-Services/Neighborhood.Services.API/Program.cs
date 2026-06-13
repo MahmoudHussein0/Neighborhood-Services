@@ -53,13 +53,23 @@ namespace Neighborhood.Services.API
                     }
                 });
             });
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                {policy.WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+
+                });
+            });
 
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowJs", policy =>
                 {
                     
-                        policy.WithOrigins("https://127.0.0.1:5500")
+                        policy.WithOrigins("http://127.0.0.1:5500")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials();
@@ -174,7 +184,7 @@ namespace Neighborhood.Services.API
 
             //Mapping Notification Hub
             app.MapHub<Neighborhood.Services.Infrastructure.Services.NotificationService.NotificationHub>("/notificationHub");
-            //app.MapHub<ChatHub>("/chattt");
+            app.MapHub<Neighborhood.Services.Infrastructure.Services.ChatService.ChatHub>("/chatHub");
             //app.MapHub<NotificationHub>("/notf");
 
             //END OF ARWA
@@ -211,7 +221,8 @@ namespace Neighborhood.Services.API
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
             //app.UseCors("Frontend");
-            app.UseCors("AllowJs");
+            //app.UseCors("AllowJs");
+            app.UseCors("AllowAngular");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHangfireDashboard("/hangfire");

@@ -3,9 +3,12 @@ using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Domain.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
+using Neighborhood.Services.Application.Technicians.DTOs;
+
 
 namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
 {
+   
     public class TechnicianRepository : GenericRepository<Technician, int>, ITechnicianRepository
     {
         public TechnicianRepository(ApplicationDbContext context) : base(context)
@@ -54,5 +57,44 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
                 .Where(technician => technician.IsAvailable && technician.IsActive && !technician.IsDeleted)
                 .ToListAsync();
         }
+
+       
+        //arwa
+        public async Task<List<ComprehensiveTechDTO>> GetWithUserDetails()
+        {
+            var q1= await _context.Technicians
+                .Join(_context.Users, t => t.ApplicationUserId, u => u.Id,
+               
+                (t, u) => new ComprehensiveTechDTO
+                {
+                    technicianId=t.Id,
+                    fullName=u.FullName,
+                    technicianUserId=u.Id
+
+                   
+              }).ToListAsync();
+
+            return q1;
+               
+        }
+
+        public async Task<ComprehensiveTechDTO?> GetWithUserDetailsById( int techId)
+        {
+            var q1 = await _context.Technicians.Where(e => e.Id == techId)
+                .Join(_context.Users, t => t.ApplicationUserId, u => u.Id,
+
+                (t, u) => new ComprehensiveTechDTO
+                {
+                    technicianId = t.Id,
+                    fullName = u.FullName,
+                    technicianUserId = u.Id
+
+
+                }).FirstOrDefaultAsync();
+
+            return q1;
+
+        }
+        //end of arwa
     }
 }

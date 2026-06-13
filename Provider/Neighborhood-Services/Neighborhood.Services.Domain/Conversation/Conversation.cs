@@ -25,9 +25,7 @@ namespace Neighborhood.Services.Domain.Conversation
 
 
         //Nav propbs:
-        //public ServiceRequest ServiceRequest {set; get;}
-       // public ServiceRequest ServiceRequest { get; set; } =null;
-        //public Booking Booking {set; get;}
+      
         public Booking Booking {  get; set; }=null;
         public ICollection <Message.Message> Messages { get; set; } = new List<Message.Message> ();
     }

@@ -21,11 +21,13 @@ namespace Neighborhood.Services.Application.Conversations.Queries
         public async Task <List<ConversationSelectedDto>> Handle(GetAllConvQDto request, CancellationToken cancellationToken)
         {
             var items = await _convrepository.GetAllAsync();
+           
             return items.Select(item => new ConversationSelectedDto
             {
-                Id = item.Id,
-                BookingId=item.BookingId,
-                LastMessage = item.Messages.Count > 0 ? item.lastMessage.content : "no mssgs yet"
+                id = item.Id,
+                bookingId=item.BookingId,
+                lastMessage= (_convrepository.GetLastMessage(item.Id)).Result.content
+                // LastMessage = item.Messages.Count > 0 ? item.lastMessage.content : "no mssgs yet"
 
             })
                 .ToList();

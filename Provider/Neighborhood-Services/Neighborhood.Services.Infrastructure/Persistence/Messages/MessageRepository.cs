@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 //using Neighborhood.Services.Application.Modules.Messages;
 using Neighborhood.Services.Domain.Message;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -17,20 +18,38 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Messages
     {
         public MessageRepository(ApplicationDbContext context) : base(context){}
 
-             public async Task<Message> GetByUserId(string userId)
+             public async Task<Message?> GetByUserId(string userId)
         {
-            return _context.Messages.FirstOrDefault(e => e.SenderId == userId);
+            var res=await _context.Messages.FirstOrDefaultAsync(e => e.SenderId == userId && !e.IsDeleted);
+            return res;
         }
 
-        public async Task<Message> GetBConversationId(string convId)
+        //public async Task<Message> GetBConversationId(string convId)
+        //{
+        //    return _context.Messages.FirstOrDefault(e => e.ConversationId.ToString() == convId);
+        //}
+
+        public async Task<List<Message>> GetByConversationIdAsync(int conversationId)
         {
-            return _context.Messages.FirstOrDefault(e => e.ConversationId.ToString() == convId);
+            var res = await _context.Messages.Include(e=>e.Sender).Where(e=>e.ConversationId==conversationId && !e.IsDeleted).ToListAsync();
+            return res;
         }
 
-        public Task<List<Message>> GetByConversationIdAsync(string conversationId, int skip, int limit)
+        public async Task<List<Message>> GetByConversationAndUserIdAsync(int conversationId, string userId)
         {
-            throw new NotImplementedException();
+           var res= await _context.Messages
+                .Where(e=>e.SenderId==userId&& e.ConversationId == conversationId&& !e.IsDeleted)
+                .ToListAsync();
+            return res;
+        }
+
+        public async Task<List<Message>> GetByBookingIdAsync(int BookingId)
+        {
+            var res = await _context.Messages.Include(e=>e.Sender).Include(e=>e.Conversation).ThenInclude(e=>e.Booking)
+                .Where(e=>e.Conversation.BookingId==BookingId).ToListAsync();
+            return res;
         }
     }
-
     }
+
+    

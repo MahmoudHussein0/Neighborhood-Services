@@ -30,7 +30,6 @@
     <ProjectReference Include="..\Neighborhood.Services.Infrastructure\Neighborhood.Services.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\Message\" />
     <Folder Include="Controllers\Newsletter\" />
   </ItemGroup>
 </Project>

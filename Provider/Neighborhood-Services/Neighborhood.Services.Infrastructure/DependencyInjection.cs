@@ -99,11 +99,12 @@
     using Neighborhood.Services.Infrastructure.Shared;
     using Neighborhood.Services.Infrastructure.Services.NotificationService;
     using Qdrant.Client;
+using Neighborhood.Services.Infrastructure.Services.ChatService;
 
 
 
 
-    namespace Neighborhood.Services.Infrastructure
+namespace Neighborhood.Services.Infrastructure
     {
         public static class DependencyInjection
         {
@@ -168,12 +169,15 @@
                 services.AddScoped<IFavoritesRepository, FavoritesRepository>();
                 services.AddScoped<IEmailService, EmailService>();
                 services.AddScoped<INotificationService, NotificationService>();
-            
-
-                services.AddSingleton<IResponseCacheService, ResponseCacheService>();
-
+                services.AddScoped<IChatService, ChatService>();
                 services.Configure<EmailConfiguration>(configuration.GetSection("EmailSettings"));
-                //End of Arwa's
+            //End of Arwa's
+
+
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
+              
 
            
                 services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
