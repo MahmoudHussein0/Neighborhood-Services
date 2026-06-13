@@ -15,10 +15,10 @@
             <h1 class="display-4 fw-bold mb-0">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</h1>
           </div>
           <div class="mt-4 d-flex justify-content-center gap-3">
-            <button class="btn btn-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#topUpModal">
+            <button class="btn btn-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#topUpModal" (click)="focusInput('topUpAmountInput')">
               <i class="bi bi-plus-circle me-2"></i>{{ 'wallet.topUp' | translate }}
             </button>
-            <button class="btn btn-outline-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+            <button class="btn btn-outline-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#withdrawModal" (click)="focusInput('withdrawAmountInput')">
               <i class="bi bi-arrow-up-circle me-2"></i>{{ 'wallet.withdraw' | translate }}
             </button>
           </div>
@@ -51,19 +51,33 @@
             }
             @for (tx of paginatedTransactions(); track tx.id) {
               <tr>
-                <td class="ps-4 text-center" dir="ltr">{{ tx.createdAt | date:'medium' }}</td>
+                <td class="ps-4 text-center"><span dir="ltr" class="d-inline-block">{{ tx.createdAt | date:'dd/MM/yyyy, hh:mm a' }}</span></td>
                 <td class="text-center">
                   <span class="badge bg-light text-dark border d-inline-block text-center" style="width: 120px;">
                     {{ getTypeLabel(tx.type) | translate }}
                   </span>
                 </td>
-                <td class="fw-bold text-center" dir="ltr" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
-                  {{ tx.toWalletId === wallet()?.id ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }} {{ tx.currency }}
+                <td class="fw-bold text-center" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
+                  <span dir="ltr" class="d-inline-block">{{ tx.toWalletId === wallet()?.id ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }} {{ tx.currency }}</span>
                 </td>
                 <td class="text-center">
                   <span class="badge d-inline-block text-center" style="width: 100px;" [ngClass]="getStatusBadgeClass(tx.status)">
                     {{ getStatusLabel(tx.status) | translate }}
                   </span>
+                </td>
+              </tr>
+            }
+            @for (empty of emptyRows(); track $index) {
+              <tr style="visibility: hidden;">
+                <td class="ps-4 text-center border-0"><span dir="ltr" class="d-inline-block">01/01/2000, 12:00 AM</span></td>
+                <td class="text-center border-0">
+                  <span class="badge bg-light text-dark border d-inline-block text-center" style="width: 120px;">&nbsp;</span>
+                </td>
+                <td class="fw-bold text-center border-0">
+                  <span dir="ltr" class="d-inline-block">- 0.00 EGP</span>
+                </td>
+                <td class="text-center border-0">
+                  <span class="badge d-inline-block text-center" style="width: 100px;">&nbsp;</span>
                 </td>
               </tr>
             }
@@ -111,11 +125,11 @@
           <label class="form-label text-muted">{{ 'wallet.amount' | translate }}</label>
           <div class="input-group input-group-lg">
             <span class="input-group-text bg-white">EGP</span>
-            <input type="number" class="form-control" [ngModel]="topUpAmount()" (ngModelChange)="topUpAmount.set($event)" min="10" [placeholder]="'wallet.enterAmount' | translate">
+            <input id="topUpAmountInput" type="number" class="form-control" [ngModel]="topUpAmount()" (ngModelChange)="topUpAmount.set($event)" min="10" [placeholder]="'wallet.enterAmount' | translate" (keydown.enter)="topUpBtn.click()">
           </div>
         </div>
           <!-- Payment Method Removed: Now assumes default redirection -->
-        <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="initiateTopUp()" data-bs-dismiss="modal">
+        <button #topUpBtn type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="initiateTopUp()" data-bs-dismiss="modal">
           {{ 'wallet.proceedToPayment' | translate }}
         </button>
       </div>
@@ -140,10 +154,10 @@
           <label class="form-label text-muted">{{ 'wallet.withdrawalAmount' | translate }}</label>
           <div class="input-group input-group-lg">
             <span class="input-group-text bg-white">EGP</span>
-            <input type="number" class="form-control" [ngModel]="withdrawAmount()" (ngModelChange)="withdrawAmount.set($event)" min="1" [max]="wallet()?.balance || 0" [placeholder]="'wallet.enterAmount' | translate">
+            <input id="withdrawAmountInput" type="number" class="form-control" [ngModel]="withdrawAmount()" (ngModelChange)="withdrawAmount.set($event)" min="1" [max]="wallet()?.balance || 0" [placeholder]="'wallet.enterAmount' | translate" (keydown.enter)="withdrawBtn.click()">
           </div>
         </div>
-        <button type="button" class="btn btn-danger w-100 py-2 fw-bold" (click)="initiateWithdraw()" data-bs-dismiss="modal" [disabled]="isWithdrawing()">
+        <button #withdrawBtn type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="initiateWithdraw()" data-bs-dismiss="modal" [disabled]="isWithdrawing()">
           @if (isWithdrawing()) {
             <span class="spinner-border spinner-border-sm me-2"></span>{{ 'wallet.processing' | translate }}
           } @else {

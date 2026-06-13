@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { Wallet, Transaction, TransactionStatus, TransactionType } from '../../m
   templateUrl: './technician-wallet.component.html',
   styleUrls: ['./technician-wallet.component.css']
 })
-export class TechnicianWalletComponent implements OnInit {
+export class TechnicianWalletComponent implements OnInit, AfterViewInit {
   wallet = signal<Wallet | null>(null);
   transactions = signal<Transaction[]>([]);
 
@@ -24,6 +24,12 @@ export class TechnicianWalletComponent implements OnInit {
   paginatedTransactions = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
     return this.transactions().slice(start, start + this.pageSize);
+  });
+
+  emptyRows = computed(() => {
+    const currentRecords = this.paginatedTransactions().length;
+    if (currentRecords === 0 || currentRecords === this.pageSize) return [];
+    return Array(this.pageSize - currentRecords).fill(0);
   });
 
   totalPages = computed(() => {
@@ -45,6 +51,16 @@ export class TechnicianWalletComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  ngAfterViewInit(): void {
+    // Event listeners removed due to unreliability across language changes
+  }
+
+  focusInput(inputId: string): void {
+    setTimeout(() => {
+      document.getElementById(inputId)?.focus();
+    }, 500);
   }
 
   loadData(): void {

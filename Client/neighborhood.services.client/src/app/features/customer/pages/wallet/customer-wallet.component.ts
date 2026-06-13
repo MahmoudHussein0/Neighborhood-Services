@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { Wallet, Transaction, PaymentMethod, PaymentProvider, PaymentType, Trans
   templateUrl: './customer-wallet.component.html',
   styleUrls: ['./customer-wallet.component.css']
 })
-export class CustomerWalletComponent implements OnInit, OnDestroy {
+export class CustomerWalletComponent implements OnInit, OnDestroy, AfterViewInit {
   wallet = signal<Wallet | null>(null);
   transactions = signal<Transaction[]>([]);
   paymentMethods = signal<PaymentMethod[]>([]);
@@ -26,6 +26,12 @@ export class CustomerWalletComponent implements OnInit, OnDestroy {
   paginatedTransactions = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
     return this.transactions().slice(start, start + this.pageSize);
+  });
+
+  emptyRows = computed(() => {
+    const currentRecords = this.paginatedTransactions().length;
+    if (currentRecords === 0 || currentRecords === this.pageSize) return [];
+    return Array(this.pageSize - currentRecords).fill(0);
   });
 
   totalPages = computed(() => {
@@ -91,8 +97,20 @@ export class CustomerWalletComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Poll every 5 seconds to pick up new transactions (e.g., after Paymob callback)
-    this.pollingInterval = setInterval(() => this.refreshTransactions(), 5000);
+    // Poll transactions every 10 seconds
+    this.pollingInterval = setInterval(() => {
+      this.refreshTransactions();
+    }, 10000);
+  }
+
+  ngAfterViewInit(): void {
+    // Event listeners removed due to unreliability across language changes
+  }
+
+  focusInput(inputId: string): void {
+    setTimeout(() => {
+      document.getElementById(inputId)?.focus();
+    }, 500);
   }
 
   ngOnDestroy(): void {
