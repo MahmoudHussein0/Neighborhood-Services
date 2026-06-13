@@ -74,13 +74,11 @@ namespace Neighborhood.Services.Infrastructure.Persistence.QA
                 throw new Exception("Invalid AI JSON response.");
             }
 
-            await _mediator.Send(new AddReviewAnalysisCommand()
-            {
-                 ReviewId = reviewId,
-                 Sentiment = reviewAnalysisDto.Sentiment,
-                 IsFlagged = reviewAnalysisDto.FlagAbuse,
-                 QualityScore = reviewAnalysisDto.QualityScore
-             });
+            await _mediator.Send(new CreateReviewAnalysisCommand(
+                reviewId,
+                reviewAnalysisDto.Sentiment,
+                reviewAnalysisDto.FlagAbuse,
+                reviewAnalysisDto.QualityScore));
             return reviewAnalysisDto;
         }
 

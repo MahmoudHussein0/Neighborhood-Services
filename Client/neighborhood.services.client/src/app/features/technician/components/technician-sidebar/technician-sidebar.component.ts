@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { LayoutService } from '../../../../core/services/layout.service';
 
 @Component({
   selector: 'app-technician-sidebar',
@@ -9,7 +10,7 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class TechnicianSidebarComponent implements OnInit {
 
-
+  readonly layout = inject(LayoutService);
   private readonly activatedRoute = inject(ActivatedRoute);
   technicianId: WritableSignal<number> = signal<number>(0)
   collapsed = signal(false);

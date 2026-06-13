@@ -45,7 +45,13 @@
                 (click)="ChangeLang(currentLang === 'en' ? 'ar' : 'en')">
           {{ currentLang === 'en' ? 'AR' : 'EN' }}
         </button>
-        <a class="btn btn-sm btn-primary" routerLink="/auth/login">{{ "navbar.login" | translate }}</a>
+        @if (user()) {
+          <a class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1" [routerLink]="dashboardLink()">
+            <i class="bi bi-speedometer2"></i> {{ "navbar.dashboard" | translate }}
+          </a>
+        } @else {
+          <a class="btn btn-sm btn-primary" routerLink="/auth/login">{{ "navbar.login" | translate }}</a>
+        }
       </div>
     </div>
   </div>

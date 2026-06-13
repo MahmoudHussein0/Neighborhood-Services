@@ -37,7 +37,7 @@
 using Neighborhood.Services.Application.QA.Interface;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
     using Neighborhood.Services.Application.Reviews.Interfaces;
-using Neighborhood.Services.Application.ReviewsAnalysis;
+using Neighborhood.Services.Application.ReviewsAnalysis.Interfaces;
     using Neighborhood.Services.Application.ServiceRequests.Interfaces;
     using Neighborhood.Services.Application.Shared;
     using Neighborhood.Services.Application.Shared.Email;
@@ -160,9 +160,7 @@ namespace Neighborhood.Services.Infrastructure
 
                 services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
                 services.AddScoped<IReviewRepository, ReviewRepository>();
-                services.AddScoped<IReviewAnalysisRepository, ReviewAyalysisRepository>();
                 services.AddScoped<IDisputeRepository, DisputeRepository>();
-                //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
                 services.AddScoped<IHistoricalPriceRepository, HistoricalPriceRepository>();
 
                 //Arwa's

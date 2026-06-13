@@ -44,6 +44,36 @@
   justify-content: center;
 }
 
+/* Mobile: turn the sidebar into an off-canvas drawer that slides in over the
+   page. Hidden by default; the topbar hamburger toggles `.mobile-open`. On
+   desktop (>992px) none of this applies and the sidebar stays a normal column. */
+@media (max-width: 992px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    inset-inline-start: 0;
+    height: 100vh;
+    z-index: 1050;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  /* Slide from the right when the document is RTL. */
+  [dir="rtl"] .sidebar {
+    transform: translateX(100%);
+  }
+
+  /* Open state wins over the LTR/RTL closed transforms (higher specificity). */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Always show the full drawer on mobile — ignore the desktop icon-collapse. */
+  .sidebar.collapsed {
+    width: 16rem;
+  }
+}
+
 .logo-badge {
   width: 2rem;
   height: 2rem;

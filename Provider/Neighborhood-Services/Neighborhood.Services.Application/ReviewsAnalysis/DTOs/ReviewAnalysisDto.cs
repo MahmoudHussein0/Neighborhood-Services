@@ -1,9 +1,6 @@
-﻿using Neighborhood.Services.Domain.Reviews;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Neighborhood.Services.Domain.Reviews;
 
-namespace Neighborhood.Services.Application.Reviews.DTOs
+namespace Neighborhood.Services.Application.ReviewsAnalysis.DTOs
 {
     public class ReviewAnalysisDto
     {
@@ -19,5 +16,4 @@ namespace Neighborhood.Services.Application.Reviews.DTOs
 
         public DateTime CreatedAt { get; set; }
     }
-
 }

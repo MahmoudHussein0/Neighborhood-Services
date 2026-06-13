@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Neighborhood.Services.Application.Reviews.Commands;
-using Neighborhood.Services.Application.Reviews.DTOs;
-using Neighborhood.Services.Application.Reviews.Queries;
+using Neighborhood.Services.Application.ReviewsAnalysis.Commands;
+using Neighborhood.Services.Application.ReviewsAnalysis.DTOs;
+using Neighborhood.Services.Application.ReviewsAnalysis.Queries;
 
 namespace Neighborhood.Services.API.Controllers.Reviews
 {

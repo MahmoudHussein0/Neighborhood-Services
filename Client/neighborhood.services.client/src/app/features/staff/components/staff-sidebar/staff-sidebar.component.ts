@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { LayoutService } from '../../../../core/services/layout.service';
 
 @Component({
   selector: 'app-staff-sidebar',
@@ -8,6 +9,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './staff-sidebar.component.css',
 })
 export class StaffSidebarComponent {
+  readonly layout = inject(LayoutService);
   collapsed = signal(false);
 
   toggle() {

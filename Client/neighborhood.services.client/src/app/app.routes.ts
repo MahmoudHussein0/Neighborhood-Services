@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { guestGuard } from './core/guards/guest.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { CustomerLayoutComponent } from './layouts/customer-layout/customer-layout.component';
 import { TechnicianLayoutComponent } from './layouts/technician-layout/technician-layout.component';
@@ -54,8 +55,8 @@ export const routes: Routes = [
       { path: 'problemType/:id', component: ProblemTypeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'auth/login', component: LoginComponent },
-      { path: 'auth/register', component: RegisterComponent },
+      { path: 'auth/login', component: LoginComponent, canActivate: [guestGuard] },
+      { path: 'auth/register', component: RegisterComponent, canActivate: [guestGuard] },
       { path: 'auth/external-callback', component: ExternalCallbackComponent },
     ],
   },

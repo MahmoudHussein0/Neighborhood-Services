@@ -1,18 +1,15 @@
-﻿using MediatR;
-using Neighborhood.Services.Application.Reviews.DTOs;
-using Neighborhood.Services.Application.Reviews.Interfaces;
-using Neighborhood.Services.Application.Reviews.Queries;
+using MediatR;
+using Neighborhood.Services.Application.ReviewsAnalysis.DTOs;
+using Neighborhood.Services.Application.ReviewsAnalysis.Interfaces;
+using Neighborhood.Services.Application.ReviewsAnalysis.Queries;
 using Neighborhood.Services.Application.Shared.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Neighborhood.Services.Application.Reviews.Handlers
+namespace Neighborhood.Services.Application.ReviewsAnalysis.Handlers
 {
     public class GetAllReviewAnalysisQueryHandler
-     : IRequestHandler<
-         GetAllReviewAnalysisQuery,
-         IReadOnlyList<ReviewAnalysisDto>>
+        : IRequestHandler<
+            GetAllReviewAnalysisQuery,
+            IReadOnlyList<ReviewAnalysisDto>>
     {
         private readonly IReviewAnalysisRepository _repository;
 

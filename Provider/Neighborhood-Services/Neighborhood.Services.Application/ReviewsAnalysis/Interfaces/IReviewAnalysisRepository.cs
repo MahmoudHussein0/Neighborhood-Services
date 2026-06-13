@@ -1,13 +1,10 @@
-﻿using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Reviews;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Neighborhood.Services.Application.Reviews.Interfaces
+namespace Neighborhood.Services.Application.ReviewsAnalysis.Interfaces
 {
     public interface IReviewAnalysisRepository
-     : IGenericRepository<ReviewAnalysis, int>
+        : IGenericRepository<ReviewAnalysis, int>
     {
         Task<ReviewAnalysis?> GetByReviewIdAsync(
             int reviewId,

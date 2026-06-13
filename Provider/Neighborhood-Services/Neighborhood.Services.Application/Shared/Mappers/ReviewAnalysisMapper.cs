@@ -1,4 +1,4 @@
-﻿using Neighborhood.Services.Application.Reviews.DTOs;
+﻿using Neighborhood.Services.Application.ReviewsAnalysis.DTOs;
 using Neighborhood.Services.Domain.Reviews;
 using System;
 using System.Collections.Generic;

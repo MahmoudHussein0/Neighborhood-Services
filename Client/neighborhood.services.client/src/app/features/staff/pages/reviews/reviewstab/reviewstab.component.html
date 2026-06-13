@@ -87,14 +87,14 @@
               <div class="d-flex gap-1">
                 <button
                   class="btn btn-sm btn-outline-success"
-                  *ngIf="r.status === 'Pending'"
+                  *ngIf="r.status !== 'Approved'"
                   (click)="updateStatus(r, 'Approved')"
                   title="Approve">
                   <i class="bi bi-check"></i>
                 </button>
                 <button
                   class="btn btn-sm btn-outline-danger"
-                  *ngIf="r.status === 'Pending'"
+                  *ngIf="r.status !== 'Rejected'"
                   (click)="updateStatus(r, 'Rejected')"
                   title="Reject">
                   <i class="bi bi-x"></i>
@@ -108,7 +108,7 @@
                 </button>
                 <button
                   class="btn btn-sm btn-outline-secondary"
-                  (click)="deleteReview(r)"
+                  (click)="askDelete(r)"
                   title="Delete">
                   <i class="bi bi-trash"></i>
                 </button>
@@ -161,14 +161,14 @@
           <div class="d-flex justify-content-end gap-1 border-top pt-3">
             <button
               class="btn btn-sm btn-outline-success"
-              *ngIf="r.status === 'Pending'"
+              *ngIf="r.status !== 'Approved'"
               (click)="updateStatus(r, 'Approved')"
               title="Approve">
               <i class="bi bi-check"></i> Approve
             </button>
             <button
               class="btn btn-sm btn-outline-danger"
-              *ngIf="r.status === 'Pending'"
+              *ngIf="r.status !== 'Rejected'"
               (click)="updateStatus(r, 'Rejected')"
               title="Reject">
               <i class="bi bi-x"></i> Reject
@@ -182,7 +182,7 @@
             </button>
             <button
               class="btn btn-sm btn-outline-secondary"
-              (click)="deleteReview(r)"
+              (click)="askDelete(r)"
               title="Delete">
               <i class="bi bi-trash"></i> Delete
             </button>
@@ -217,5 +217,27 @@
           (click)="goPage(currentPage() + 1)">
           ›
         </button>
+      </div>
+    </div>
+
+    <!-- Delete confirmation modal (replaces native confirm()) -->
+    <div *ngIf="pendingDelete() as r" class="review-modal-backdrop" (click)="cancelDelete()">
+      <div class="review-confirm-card shadow-lg" (click)="$event.stopPropagation()">
+        <div class="d-flex align-items-start gap-3 p-4">
+          <div class="confirm-icon text-danger bg-danger-subtle">
+            <i class="bi bi-trash"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Delete review #{{ r.id }}?</h6>
+            <p class="text-muted mb-0 small">This permanently removes the review. This cannot be undone.</p>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 px-4 pb-4">
+          <button class="btn btn-light" [disabled]="deleting()" (click)="cancelDelete()">Cancel</button>
+          <button class="btn btn-danger" [disabled]="deleting()" (click)="confirmDelete()">
+            <span *ngIf="deleting()" class="spinner-border spinner-border-sm me-1"></span>
+            Delete
+          </button>
+        </div>
       </div>
     </div>

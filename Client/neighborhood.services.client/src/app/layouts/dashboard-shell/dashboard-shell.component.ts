@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { AuthService } from '../../features/auth/services/auth.service';
+import { LayoutService } from '../../core/services/layout.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -14,6 +15,7 @@ import { environment } from '../../environments/environment';
 export class DashboardShellComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  readonly layout = inject(LayoutService);
 
   /** Page title shown in the topbar. Each role's layout passes its own. */
   title = input<string>('Dashboard');

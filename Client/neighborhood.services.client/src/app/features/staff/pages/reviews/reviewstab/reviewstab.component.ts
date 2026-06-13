@@ -1,6 +1,7 @@
 import {Component, OnInit, inject, signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { ReviewsService } from '../../../services/Reviews.service';
 import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.model';
 
@@ -15,12 +16,17 @@ import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.m
 
 export class ReviewsTabComponent implements OnInit {
   private svc = inject(ReviewsService);
+  private toastr = inject(ToastrService);
 
   reviews = signal<ReviewDto[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
   currentPage = signal(1);
   readonly perPage = 8;
+
+  // The review pending delete confirmation (drives the in-app modal; replaces native confirm()).
+  pendingDelete = signal<ReviewDto | null>(null);
+  deleting = signal(false);
 
   filters: ReviewFilters = { search: '', status: '', rating: '', revieweeId: '' };
 
@@ -81,16 +87,38 @@ export class ReviewsTabComponent implements OnInit {
         this.reviews.update(list =>
           list.map(r => r.id === updated.id ? updated : r)
         );
+        this.toastr.success(`Review #${updated.id} marked ${status}.`);
       },
-      error: () => alert('Failed to update status.')
+      error: () => this.toastr.error('Failed to update review status.')
     });
   }
 
-  deleteReview(review: ReviewDto) {
-    if (!confirm(`Delete review #${review.id}?`)) return;
+  // ── Delete with in-app confirmation modal ──────────────────────────────────
+
+  askDelete(review: ReviewDto) {
+    this.pendingDelete.set(review);
+  }
+
+  cancelDelete() {
+    this.pendingDelete.set(null);
+  }
+
+  confirmDelete() {
+    const review = this.pendingDelete();
+    if (!review) return;
+
+    this.deleting.set(true);
     this.svc.delete(review.id).subscribe({
-      next: () => this.reviews.update(list => list.filter(r => r.id !== review.id)),
-      error: () => alert('Failed to delete review.')
+      next: () => {
+        this.reviews.update(list => list.filter(r => r.id !== review.id));
+        this.deleting.set(false);
+        this.pendingDelete.set(null);
+        this.toastr.success(`Review #${review.id} deleted.`);
+      },
+      error: () => {
+        this.deleting.set(false);
+        this.toastr.error('Failed to delete review.');
+      }
     });
   }
 

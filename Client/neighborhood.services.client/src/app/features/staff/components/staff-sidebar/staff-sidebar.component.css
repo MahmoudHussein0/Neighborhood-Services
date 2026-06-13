@@ -1,12 +1,3 @@
-@media (max-width: 992px) {
-
-  .sidebar {
-    position: fixed;
-    z-index: 1050;
-    height: 100vh;
-    left: 0;
-    top: 0;
-  }
-
-}/* Structural styles (.sidebar, .sidebar-link, .logo-badge) are global in styles.css.
+/* Structural styles (.sidebar, .sidebar-link, .logo-badge) and the mobile
+   off-canvas drawer behaviour are global in styles.css.
    Add staff-sidebar-specific tweaks here if ever needed. */

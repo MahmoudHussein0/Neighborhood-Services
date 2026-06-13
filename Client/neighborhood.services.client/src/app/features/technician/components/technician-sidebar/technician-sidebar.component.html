@@ -1,4 +1,4 @@
-<aside class="sidebar bg-white border-end d-flex flex-column" [class.collapsed]="collapsed()">
+<aside class="sidebar bg-white border-end d-flex flex-column" [class.collapsed]="collapsed()" [class.mobile-open]="layout.mobileOpen()">
 
   <!-- Brand + collapse toggle -->
   <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
@@ -8,7 +8,7 @@
       <span class="fw-bold">NeighborServ</span>
     </div>
     }
-    <button class="btn btn-sm btn-light" type="button" (click)="toggle()">
+    <button class="btn btn-sm btn-light d-none d-lg-inline-flex" type="button" (click)="toggle()">
       <i class="bi" [class.bi-chevron-left]="!collapsed()" [class.bi-chevron-right]="collapsed()"></i>
     </button>
   </div>
