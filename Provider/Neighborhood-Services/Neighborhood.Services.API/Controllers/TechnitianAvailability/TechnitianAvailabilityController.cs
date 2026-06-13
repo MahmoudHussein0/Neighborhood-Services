@@ -27,6 +27,14 @@ namespace Neighborhood.Services.API.Controllers.TechnitianAvailability
             return Ok(await _mediator.Send(new GetTechAvailabilityForTechnicianQuery()));
         }
 
+        // GET /api/technitianavailability/{technicianId} — a specific technician's days + hours
+        // (used by customers in the create-booking modal)
+        [HttpGet("{technicianId:int}")]
+        public async Task<ActionResult<IReadOnlyList<TechnicianAvailabilityDetailsDTO>>> GetByTechnicianId(int technicianId)
+        {
+            return Ok(await _mediator.Send(new GetTechAvailabilityByTechnicianIdQuery { TechnicianId = technicianId }));
+        }
+
 
 
         [HttpPost]

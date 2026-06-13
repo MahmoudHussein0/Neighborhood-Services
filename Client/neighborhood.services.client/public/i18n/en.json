@@ -205,6 +205,11 @@
             "cancellationReason": "Cancellation Reason",
             "created": "Created",
             "loadError": "Could not load booking details.",
+            "promoLabel": "Promo Code",
+            "promoPlaceholder": "Enter code",
+            "promoApply": "Apply",
+            "promoSuccess": "Promo code applied — total updated.",
+            "promoEmpty": "Please enter a promo code.",
             "photos": "Photos",
             "photoType": {
                 "Before": "Before",

@@ -205,6 +205,11 @@
             "cancellationReason": "سبب الإلغاء",
             "created": "تاريخ الإنشاء",
             "loadError": "تعذر تحميل تفاصيل الحجز.",
+            "promoLabel": "كود الخصم",
+            "promoPlaceholder": "أدخل الكود",
+            "promoApply": "تطبيق",
+            "promoSuccess": "تم تطبيق كود الخصم — تم تحديث الإجمالي.",
+            "promoEmpty": "من فضلك أدخل كود الخصم.",
             "photos": "الصور",
             "photoType": {
                 "Before": "قبل",
