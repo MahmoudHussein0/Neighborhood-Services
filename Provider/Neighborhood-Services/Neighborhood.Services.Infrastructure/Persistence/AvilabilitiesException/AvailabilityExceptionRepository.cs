@@ -14,7 +14,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.AvilabilitiesExceptio
         public AvailabilityExceptionRepository(ApplicationDbContext context):base(context)
         {}
 
-        public async Task<bool> IsDateExists(string technicianId, DateOnly date , int? exceptionId = null)
+        public async Task<bool> IsDateExists(int technicianId, DateOnly date , int? exceptionId = null)
         => await _context.AvailabilityExceptions.AnyAsync(AE => AE.TechnicianId == technicianId && AE.Date == date && (!exceptionId.HasValue ||   AE.Id != exceptionId));
 
      }

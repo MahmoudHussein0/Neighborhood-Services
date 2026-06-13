@@ -21,20 +21,33 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
         private readonly ITechnicianRepository _technicianRepo;
         private readonly IProblemTypeRepository _problemTypeRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public AddTechnicianPricingForProblemTypeCommandHandler(ITechnicianPricingRepository technicianPricingRepo, IHistoricalPriceRepository historicalRepository, ITechnicianRepository technicianRepo, IProblemTypeRepository problemTypeRepo, IUnitOfWork unitOfWork)
+        public AddTechnicianPricingForProblemTypeCommandHandler(ITechnicianPricingRepository technicianPricingRepo, IHistoricalPriceRepository historicalRepository, ITechnicianRepository technicianRepo, IProblemTypeRepository problemTypeRepo, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _technicianPricingRepo = technicianPricingRepo;
             _historicalRepository = historicalRepository;
             _technicianRepo = technicianRepo;
             _problemTypeRepo = problemTypeRepo;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
 
         public async Task<int> Handle(AddTechnicianPricingForProblemTypeCommand request, CancellationToken cancellationToken)
         {
-            var technicianPricing = (await _technicianPricingRepo.GetByConditionAsync(TP => TP.TechnicianId == request.TechnicianId && TP.ProblemTypeId == request.ProblemTypeId)).FirstOrDefault();
+
+            string? userId = _currentUserService.UserId;
+
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new UnauthorizedException("User is not authenticated");
+
+            var technician = await _technicianRepo.GetByUserIdAsync(userId);
+
+            if (technician is null)
+                throw new ForbiddenException("User is not a technician");
+
+            var technicianPricing = (await _technicianPricingRepo.GetByConditionAsync(TP => TP.TechnicianId == technician.Id && TP.ProblemTypeId == request.ProblemTypeId)).FirstOrDefault();
 
             if (request.TechMinPrice <= 0)
             {
@@ -51,34 +64,32 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
                 throw new ValidationException("MinPrice must be less than MaxPrice.");
             }
 
-            if (technicianPricing is not null)
+            if (technicianPricing is not null && !technicianPricing.IsDeleted)
+                throw new ValidationException("pricing already existing.");
+
+
+
+            if (technicianPricing is not null && technicianPricing.IsDeleted)
             {
                 technicianPricing.IsDeleted = false;
+                technicianPricing.MinPrice = request.TechMinPrice;
+                technicianPricing.MaxPrice = request.TechMaxPrice;
                 await _technicianPricingRepo.UpdateAsync(technicianPricing);
             }
             else
             {
-                var technician = await _technicianRepo.GetByIdAsync(request.TechnicianId);
                 var problemType = await _problemTypeRepo.GetByIdAsync(request.ProblemTypeId);
-                if (technician is null)
-                    throw new NotFoundException("Technician", request.TechnicianId);
-
 
                 if (problemType is null)
                     throw new NotFoundException("Problem", request.ProblemTypeId);
 
-
-                if (await _technicianPricingRepo.IsExistsAsync(request.TechnicianId, request.ProblemTypeId))
-                {
-                    throw new ValidationException("Technician already has pricing for this problem.");
-                }
 
 
 
 
                 technicianPricing = new TechnicianPricing()
                 {
-                    TechnicianId = request.TechnicianId,
+                    TechnicianId = technician.Id,
                     ProblemTypeId = request.ProblemTypeId,
                     MinPrice = request.TechMinPrice,
                     MaxPrice = request.TechMaxPrice,
@@ -88,7 +99,7 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 
             }
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return technicianPricing.Id;
         }
     }

@@ -21,19 +21,18 @@ namespace Neighborhood.Services.API.Controllers.TechnitianAvailability
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IReadOnlyList<TechnicianAvailabilityDetailsDTO>>> GetById(int id)
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<TechnicianAvailabilityDetailsDTO>>> GetById()
         {
-            return Ok(await _mediator.Send(new GetTechAvailabilityForTechnicianQuery(id)));
+            return Ok(await _mediator.Send(new GetTechAvailabilityForTechnicianQuery()));
         }
 
 
 
-        [HttpPost("{technicianId}")]
-        public async Task<ActionResult<int>> Add(int technicianId, AddTechnicianAvailabilityCommand command)
+        [HttpPost]
+        public async Task<ActionResult<int>> Add( AddTechnicianAvailabilityCommand command)
         {
 
-            command.TechnicianId = technicianId;
             return await _mediator.Send(command);
         }
 

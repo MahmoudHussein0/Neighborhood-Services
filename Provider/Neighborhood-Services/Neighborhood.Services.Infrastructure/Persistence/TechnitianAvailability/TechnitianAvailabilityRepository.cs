@@ -12,7 +12,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianAvailabilit
         public TechnitianAvailabilityRepository(ApplicationDbContext context):base(context)
         {}
 
-        public async  Task<bool> HasOverlapAsync(string technicianId, DayOfWeek dayOfWeek, TimeOnly startDate, TimeOnly endDate , int? techAvailiabilityId = null )
+        public async  Task<bool> HasOverlapAsync(int technicianId, DayOfWeek dayOfWeek, TimeOnly startDate, TimeOnly endDate , int? techAvailiabilityId = null )
         {
 
           return  await _context.TechnicianAvailabilities.AnyAsync(

@@ -19,15 +19,14 @@ namespace Neighborhood.Services.API.Controllers.TechnicianPricing
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TechnicianPricingDto>> Get(int id, [FromQuery] string lang = "en")
-        => Ok(await _mediator.Send(new GetPricingForProblemTypeQuery(lang, id)));
+        [HttpGet]
+        public async Task<ActionResult<TechnicianPricingDto>> Get( [FromQuery] string lang = "en")
+        => Ok(await _mediator.Send(new GetPricingForProblemTypeQuery(lang)));
 
 
-        [HttpPost("{technicianId}")]
-        public async Task<ActionResult<int>> Add(int technicianId, AddTechnicianPricingForProblemTypeCommand command)
+        [HttpPost]
+        public async Task<ActionResult<int>> Add( AddTechnicianPricingForProblemTypeCommand command)
         {
-            command.TechnicianId = technicianId;
             return Ok(await _mediator.Send(command));
         }
 

@@ -18,16 +18,15 @@ namespace Neighborhood.Services.API.Controllers.AvilabilitiesException
         }
 
 
-        [HttpGet("{technicianId}")]
-        public async Task<ActionResult<IReadOnlyList<AvailiabilityExceptionDTO>>> Get(int technicianId)
-             => Ok(await _mediator.Send(new GetAvabilityExceptionForSpecificTechQuery(technicianId)));
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<AvailiabilityExceptionDTO>>> Get()
+             => Ok(await _mediator.Send(new GetAvabilityExceptionForSpecificTechQuery()));
 
 
 
-        [HttpPost("{technicianId}")]
-        public async Task<ActionResult<int>> Add(int technicianId, AddAvailabilityExceptionCommand command)
+        [HttpPost]
+        public async Task<ActionResult<int>> Add( AddAvailabilityExceptionCommand command)
         {
-            command.TechnicianId = technicianId;
             return Ok(await _mediator.Send(command));
         }
 

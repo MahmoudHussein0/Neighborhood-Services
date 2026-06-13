@@ -7,7 +7,6 @@ namespace Neighborhood.Services.Application.TechnitianPricing.Commands
 {
     public class AddTechnicianPricingForProblemTypeCommand : IRequest<int>
     {
-        public int TechnicianId { get; set; }
         public int ProblemTypeId { get; set; }
         public decimal TechMinPrice { get; set; }
         public decimal TechMaxPrice { get; set; }

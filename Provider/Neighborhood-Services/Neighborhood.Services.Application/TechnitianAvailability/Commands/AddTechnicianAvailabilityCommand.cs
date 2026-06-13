@@ -7,7 +7,6 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
 {
     public class AddTechnicianAvailabilityCommand : IRequest<int>
     {
-        public int TechnicianId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }

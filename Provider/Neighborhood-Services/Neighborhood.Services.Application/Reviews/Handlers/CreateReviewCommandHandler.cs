@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Neighborhood.Services.Application.Bookings.Interface;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.QA.Interface;
 using Neighborhood.Services.Application.Reviews.Commands;
 using Neighborhood.Services.Application.Reviews.DTOs;
@@ -18,13 +19,15 @@ namespace Neighborhood.Services.Application.Reviews.Handlers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBookingRepository _bookingRepository;
         private readonly IQaAgent _qaAgent;
+        private readonly ICurrentUserService _currentUser;
 
-        public CreateReviewCommandHandler(IReviewRepository repository, IUnitOfWork unitOfWork, IBookingRepository bookingRepository , IQaAgent qaAgent)
+        public CreateReviewCommandHandler(IReviewRepository repository, IUnitOfWork unitOfWork, IBookingRepository bookingRepository , IQaAgent qaAgent , ICurrentUserService currentUserService)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _bookingRepository = bookingRepository;
            _qaAgent = qaAgent;
+            _currentUser = currentUserService;
         }
 
         public async Task<ReviewDto> Handle(CreateReviewCommand request, CancellationToken cancellationToken)

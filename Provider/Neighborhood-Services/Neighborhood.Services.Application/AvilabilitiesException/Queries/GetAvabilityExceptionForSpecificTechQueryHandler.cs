@@ -4,9 +4,7 @@ using Neighborhood.Services.Application.AvilabilitiesException.DTOs;
 using Neighborhood.Services.Application.AvilabilitiesException.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Neighborhood.Services.Application.Technicians.Interfaces;
 
 namespace Neighborhood.Services.Application.AvilabilitiesException.Queries
 {
@@ -14,19 +12,34 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Queries
     {
 
         private readonly IAvailabilityExceptionRepository _exceptionRepo;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly ITechnicianRepository _technicianRepo;
 
-        public GetAvabilityExceptionForSpecificTechQueryHandler(IAvailabilityExceptionRepository exceptionRepo)
+        public GetAvabilityExceptionForSpecificTechQueryHandler(IAvailabilityExceptionRepository exceptionRepo , ICurrentUserService currentUserService, ITechnicianRepository technicianRepo)
         {
             _exceptionRepo = exceptionRepo;
+           _currentUserService = currentUserService;
+           _technicianRepo = technicianRepo;
         }
         public async Task<IReadOnlyList<AvailiabilityExceptionDTO>> Handle(GetAvabilityExceptionForSpecificTechQuery request, CancellationToken cancellationToken)
         {
 
-          var techAvabilityException =  await _exceptionRepo.GetByConditionAsync( AE => (!AE.IsDeleted) &&  AE.TechnicianId == request.TechnicianId );
+            string? userId = _currentUserService.UserId;
+
+
+            if (userId is null)
+                throw new UnauthorizedException("User not autherized");
+
+
+            var technician = await _technicianRepo.GetByUserIdAsync(userId);
+
+            if (technician is null)
+                throw new ForbiddenException("User is not a technician");
+
+            var techAvabilityException =  await _exceptionRepo.GetByConditionAsync( AE => (!AE.IsDeleted) &&  AE.TechnicianId == technician.Id );
 
             if (techAvabilityException is null || !techAvabilityException.Any()) 
-            {
-                throw new ValidationException("No exception found for this technician.");}
+            { return []; }
 
             return techAvabilityException.OrderByDescending(AE => AE.Date).Adapt<IReadOnlyList<AvailiabilityExceptionDTO>>();
 

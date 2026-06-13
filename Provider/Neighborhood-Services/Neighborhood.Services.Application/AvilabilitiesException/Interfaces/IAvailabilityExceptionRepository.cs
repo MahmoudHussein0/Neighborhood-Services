@@ -8,6 +8,6 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Interfaces
 {
     public interface IAvailabilityExceptionRepository : IGenericRepository<AvailabilityException , int>
     {
-        Task<bool> IsDateExists( string technicianId , DateOnly date , int? exceptionId = null);
+        Task<bool> IsDateExists( int technicianId , DateOnly date , int? exceptionId = null);
     }
 }
