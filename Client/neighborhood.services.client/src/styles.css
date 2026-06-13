@@ -75,10 +75,11 @@
 }
 
 .logo-badge {
+  position: relative;
   width: 2rem;
   height: 2rem;
-  border-radius: 0.5rem;
-  background-color: #1d4ed8;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8 70%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -86,4 +87,52 @@
   font-size: 0.7rem;
   font-weight: 700;
   flex-shrink: 0;
+  overflow: visible;
+  box-shadow: 0 0 0 1px rgba(29, 78, 216, 0.25);
+}
+
+/* Saturn ring — a tilted ellipse that slowly spins around the NS planet. */
+.logo-badge::before {
+  content: '';
+  position: absolute;
+  inset: -3px -7px;
+  border: 1.5px solid rgba(147, 197, 253, 0.85);
+  border-radius: 50%;
+  transform: rotate(-22deg) scaleY(0.42);
+  animation: ns-ring 7s linear infinite;
+  pointer-events: none;
+}
+
+/* Orbiting moon — a small dot circling the badge. */
+.logo-badge::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 4px rgba(251, 191, 36, 0.9);
+  animation: ns-orbit 3.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes ns-orbit {
+  from { transform: rotate(0deg) translateX(15px); }
+  to   { transform: rotate(360deg) translateX(15px); }
+}
+
+@keyframes ns-ring {
+  from { transform: rotate(-22deg) scaleY(0.42); }
+  to   { transform: rotate(338deg) scaleY(0.42); }
+}
+
+/* Respect users who prefer no motion. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-badge::before,
+  .logo-badge::after {
+    animation: none;
+  }
 }
