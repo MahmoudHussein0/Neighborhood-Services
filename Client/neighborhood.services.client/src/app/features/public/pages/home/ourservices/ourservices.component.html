@@ -1,0 +1,39 @@
+<section class="p-5">
+    <div class="container text-center py-4">
+        <h2 class="fw-bold mb-2" style="color: #0B1A30;">
+            {{ 'services.title' | translate }}
+        </h2>
+        <p class="text-secondary mb-5">
+            {{ 'services.subtitle' | translate }}
+        </p>
+        <div>
+            <owl-carousel-o [options]="customOptions">
+                @for (category of categories(); track category.id) {
+                <ng-template carouselSlide [id]="category.id.toString()">
+
+                    <div class="card border-0 rounded-4 text-center me-4 p-4 h-100 category-card">
+                        <div class="mb-3">
+                            <div class="icon-wrapper mx-auto">
+                                <i class="bi fs-1" [class]="category.icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <h5 class="card-title fw-bold mb-3">
+                                {{ category.name }}
+                            </h5>
+                            <span class="badge bg-light text-secondary rounded-pill px-3 py-1.5 border fw-normal">
+                                <i class="bi bi-people-fill me-1 text-primary"></i> {{ category.technicians }}
+                                {{"services.technicians" |translate}}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </ng-template>
+                }
+
+            </owl-carousel-o>
+        </div>
+    </div>
+</section>

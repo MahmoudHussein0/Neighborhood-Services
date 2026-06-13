@@ -1,0 +1,161 @@
+<!-- Exceptions -->
+<div>
+    <div class="card shadow-sm border-0 h-100 custom-card ">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-calendar-x"></i>
+                {{ "exception.exception" |translate}}
+            </h5>
+
+            <button (click)="addExceptiomModal()" data-bs-toggle="modal" data-bs-target="#exceptionModal"
+                class="btn btn-light btn-sm rounded-pill">
+                <i class="bi bi-plus-circle me-1"></i>
+                {{"exception.add" |translate}}
+            </button>
+        </div>
+
+        <div class="card-body p-3 exception-scroll">
+
+            @for (exception of exceptions(); track exception.date) {
+            <div class="item-card mb-3 p-3 rounded-3 border">
+
+                <div class="d-flex justify-content-between flex-wrap gap-3">
+
+                    <div>
+                        <h6 class="fw-semibold mb-1">
+                            {{ exception.date | date:'EEEE, MMM d, y' }}
+                        </h6>
+
+                        <p class="text-muted mb-2 small">
+                            {{ exception.reason }}
+                        </p>
+
+                        @if(exception.startTime) {
+                        <span class="badge bg-dark-subtle text-dark time-badge">
+                            {{ exception.startTime | time12 }} - {{ exception.endTime | time12 }}
+                        </span>
+                        }
+                    </div>
+
+                    <div class="text-end">
+
+                        <span class="badge mb-2" [class]="exception.isAvailable ? 'bg-success' : 'bg-secondary'">
+                            {{ exception.isAvailable ? 'Available' : 'Unavailable' }}
+                        </span>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button class="btn btn-outline-primary btn-sm rounded-pill"
+                                (click)="updateExceptiomModal(exception)" data-bs-toggle="modal"
+                                data-bs-target="#exceptionModal">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <button (click)="  exceptionId =  exception.id  "
+                                class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="modal"
+                                data-bs-target="#deleteExceptionModal">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            }@empty {
+            <p class=" p-5 bg-danger-subtle text-black border fw-bold rounded-1  text-center"> {{
+                "exception.noException" |
+                translate}} </p>
+
+
+            }
+
+        </div>
+    </div>
+</div>
+
+<!-- Exception Modal -->
+<div class="modal fade" id="exceptionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title"> {{ exceptiomMode === 'edit' ? ("exception.updateException" |translate) :
+                    ("exception.addException" |translate) }} </h5>
+            </div>
+
+            <div class="modal-body">
+
+                <form [formGroup]="exceptionForm">
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"exception.date" |translate}}</label>
+                        <input type="date" class="form-control" formControlName="date">
+
+                        @let date = exceptionForm.get("date");
+                        @if(date?.getError('required') && date?.touched )
+                        {
+                        <small class="text-danger">
+                            {{ "availiability.dateIsRequired" | translate }}
+                        </small>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"exception.reason" |translate}}</label>
+                        <input type="text" class="form-control" formControlName="reason">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"exception.startTime" |translate}}</label>
+                        <input type="time" class="form-control" formControlName="startTime">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{"exception.endTime" |translate}}</label>
+                        <input type="time" class="form-control" formControlName="endTime">
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" formControlName="isAvailable">
+                        <label class="form-check-label">{{"exception.isAvailable" |translate}}</label>
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button #closeBtn class="btn btn-secondary" data-bs-dismiss="modal">{{"exception.cancle"
+                    |translate}}</button>
+                <button (click)="saveException() " class="btn btn-danger">{{"exception.save" |translate}}
+                    @if(loadFlag())
+                    {
+                    <i class="fa-solid fa-spinner fa-spin ms-2"></i>
+                    } </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="deleteExceptionModal">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dark text-center">
+            <div class="modal-body p-4">
+                <h5 class="text-black mb-3">{{"staffCategory.deleteCategory" |translate}}</h5>
+                <p class="text-black opacity-75">
+                    {{"staffCategory.thisActionCannotBeUndone" |translate}}
+                </p>
+                <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
+                    {{"staffCategory.close" |translate}}
+                </button>
+                <button class="btn btn-danger me-3" (click)="confirmDelete()">
+                    {{"staffCategory.delete" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

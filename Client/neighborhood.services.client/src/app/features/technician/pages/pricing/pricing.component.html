@@ -1,0 +1,225 @@
+<section class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white border-0 py-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">
+                    {{"pricing.technicianPricing" | translate }}
+                </h3>
+
+                <p class="text-muted mb-0">
+                    {{"pricing.managePricingForEachProblemtype" |translate}}
+                </p>
+            </div>
+
+            <button (click)=" addModal()  " data-bs-toggle="modal" data-bs-target="#pricingModal"
+                class="btn btn-primary rounded-pill px-4">
+                <i class="fa-solid fa-plus me-2"></i>
+                {{"pricing.addPricing" |translate}}
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="row g-4">
+
+            @for(pricing of pricing(); track pricing.id)
+            {
+            <div class="col-12 col-lg-6">
+                <div class="pricing-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-1">
+                                {{ pricing.problemTypeName }}
+                            </h5>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <button (click)=" editModal(pricing)  " class="dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#pricingModal">
+
+                                        <i class="fa-solid fa-pen me-2 text-primary"></i>
+                                        {{"pricing.edit" |translate}}
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button (click)="  deletePricing( pricing.id)  " class="dropdown-item text-danger">
+                                        <i class="fa-solid fa-trash me-2"></i>
+                                        {{"pricing.delete" |translate}}
+                                    </button>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-muted small mb-4">
+                        {{ pricing.problemTypeDescription }}
+                    </p>
+
+                    <div class="price-section">
+
+                        <div class="price-box">
+
+                            <span class="label">
+                                {{"pricing.minimumPrice" |translate}}
+                            </span>
+
+                            <h4 class="mb-0">
+                                {{ pricing.techMinPrice }}
+                                <small>{{"pricing.egp" |translate}}</small>
+                            </h4>
+
+                        </div>
+
+                        <div class="price-box">
+
+                            <span class="label">
+                                {{"pricing.maximumPrice" |translate}}
+                            </span>
+
+                            <h4 class="mb-0">
+                                {{ pricing.techMaxPrice }}
+                                <small>{{"pricing.egp" |translate}}</small>
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            }
+            @empty {
+            <p class=" p-5 bg-info-subtle fw-bold text-black border rounded-1  text-center"> {{
+                "pricing.noPricing" |
+                translate}} </p>
+            }
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+<div class="modal fade" id="pricingModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <!-- Header -->
+            <div class="modal-header border-0 px-4 pt-4 pb-3">
+                <div>
+                    <h4 class="fw-bold mb-1">
+                        {{ isEditMode ? ('pricing.editPricing' |translate) : ('pricing.addNewPricing' |translate) }}
+                    </h4>
+                    <p class="text-muted mb-0 small">
+                        {{"pricing.setThePricingRangeForThisProblemType" |translate}}
+                    </p>
+                </div>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body px-4 pb-4">
+                <form [formGroup]="pricingForm">
+                    <div class="row g-4">
+                        <!-- Problem Type -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                {{"pricing.problemType" |translate}}
+                            </label>
+
+                            @if(isEditMode){
+                            <input type="text" class="form-select" readonly
+                                [value]=" this.existingprice?.problemTypeName ?? '' ">
+                            }
+
+                            @if(!isEditMode) {
+                            <select class="form-select custom-input" formControlName="problemTypeId">
+                                <option value="">
+                                    {{"pricing.selectProblemType" |translate}}
+                                </option>
+
+                                @for(problem of problemTypes(); track problem.id) {
+                                <option [value]="problem.id">
+                                    {{ problem.name }}
+                                </option>
+                                }
+                            </select>
+                            }
+                        </div>
+
+                        <!-- Min Price -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {{"pricing.minimumPrice" |translate}} ({{ "pricing.egp" | translate }})
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+                                    {{"pricing.egp" |translate}}
+                                </span>
+
+                                <input type="number" class="form-control custom-input" formControlName="techMinPrice"
+                                    placeholder="{{'pricing.enterMinimumPrice'  |translate}}">
+
+                            </div>
+                        </div>
+
+                        <!-- Max Price -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {{"pricing.maximumPrice" |translate}} ({{ "pricing.egp" | translate }})
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+                                    {{"pricing.egp" |translate}}
+                                </span>
+
+                                <input type="number" class="form-control custom-input" formControlName="techMaxPrice"
+                                    placeholder="{{'pricing.enterMaximumPrice'  |translate}}">
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0 px-4 pb-4">
+                <button #closeBtn type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                    {{"pricing.cancle" |translate}}
+                </button>
+
+                <button type="button" class="btn btn-primary rounded-pill px-4" [disabled]="pricingForm.invalid"
+                    (click)="savePricing()">
+
+                    <i class="fa-solid" [class.fa-plus]="!isEditMode" [class.fa-floppy-disk]="isEditMode">
+                    </i>
+
+                    <span class="ms-2">
+                        {{ isEditMode ? ('pricing.editPricing' |translate) : ('pricing.addPricing' |translate)}}
+                    </span>
+
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>

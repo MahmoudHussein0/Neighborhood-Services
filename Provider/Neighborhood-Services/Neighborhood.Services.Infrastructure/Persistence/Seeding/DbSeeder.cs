@@ -68,7 +68,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             {
                 if (!context.Categories.Any())
                 {
-                    var categoriesPath = Path.Combine(environment.ContentRootPath, "Persistence", "Seeding", "Categories.json");
+                    var categoriesPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "Seeding", "Categories.json");
                     if (File.Exists(categoriesPath))
                     {
                         var categoriesDate = await File.ReadAllTextAsync(categoriesPath);
@@ -87,7 +87,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
                     }
                 }
 
-                var problemTypesPath = Path.Combine(environment.ContentRootPath, "Persistence", "Seeding", "ProblemTypes.json");
+                var problemTypesPath = Path.Combine(AppContext.BaseDirectory, "Persistence", "Seeding", "ProblemTypes.json");
                 var problemTypes = new List<ProblemType>();
 
                 if (File.Exists(problemTypesPath))

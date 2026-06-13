@@ -6,7 +6,8 @@
     "DescriptionAr": "خدمة تنظيف عميق أو دوري للمنزل بالكامل، بما يشمل غرف النوم والحمامات والمطبخ وغرف المعيشة.",
     "MinPrice": 500,
     "MaxPrice": 2500,
-    "CategoryId": 1
+    "CategoryId": 1,
+    "ImageUrl": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Carpet Cleaning",
@@ -15,7 +16,8 @@
     "DescriptionAr": "تنظيف عميق بالبخار وإزالة البقع من السجاد والموكيت لاستعادة النظافة والتخلص من مسببات الحساسية.",
     "MinPrice": 300,
     "MaxPrice": 1200,
-    "CategoryId": 1
+    "CategoryId": 1,
+    "ImageUrl": "https://images.unsplash.com/photo-1558317374-067fb5f30001?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Junk Removal",
@@ -24,7 +26,8 @@
     "DescriptionAr": "خدمات نقل والتخلص من الأثاث القديم والأجهزة والمخلفات بطريقة آمنة وصديقة للبيئة.",
     "MinPrice": 400,
     "MaxPrice": 2000,
-    "CategoryId": 1
+    "CategoryId": 1,
+    "ImageUrl": "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Pressure Washing",
@@ -33,7 +36,8 @@
     "DescriptionAr": "تنظيف الأسطح الخارجية باستخدام المياه عالية الضغط لإزالة الأتربة والعفن من الممرات والواجهات.",
     "MinPrice": 350,
     "MaxPrice": 1500,
-    "CategoryId": 1
+    "CategoryId": 1,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323302143497871457/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Appliance Repair or Maintenance",
@@ -42,7 +46,8 @@
     "DescriptionAr": "خدمات احترافية لإصلاح وصيانة الثلاجات والغسالات والأفران وغيرها من الأجهزة المنزلية.",
     "MinPrice": 50.0,
     "MaxPrice": 250.0,
-    "CategoryId": 2
+    "CategoryId": 2,
+    "ImageUrl": "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Lock Installation and Repair",
@@ -51,7 +56,8 @@
     "DescriptionAr": "خدمات تركيب وإعادة برمجة وإصلاح الأقفال للأبواب السكنية والتجارية لتعزيز الأمان.",
     "MinPrice": 40.0,
     "MaxPrice": 180.0,
-    "CategoryId": 2
+    "CategoryId": 2,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327880768015540380/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Furniture Assembly",
@@ -60,7 +66,8 @@
     "DescriptionAr": "تجميع وتركيب احترافي لجميع أنواع الأثاث بما في ذلك الأسرة والمكاتب والكراسي والمجموعات المعقدة.",
     "MinPrice": 35.0,
     "MaxPrice": 150.0,
-    "CategoryId": 2
+    "CategoryId": 2,
+    "ImageUrl": "https://images.unsplash.com/photo-1581428982868-e410dd047a90?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Holiday Lighting Installation and Removal",
@@ -69,7 +76,8 @@
     "DescriptionAr": "خدمة متكاملة لتصميم وتركيب وإزالة إضاءة وزينة المناسبات والأعياد بطريقة آمنة.",
     "MinPrice": 120.0,
     "MaxPrice": 600.0,
-    "CategoryId": 2
+    "CategoryId": 2,
+    "ImageUrl": "https://images.unsplash.com/photo-1512389142860-9c449e58a543?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Lawn Mowing and Trimming",
@@ -78,7 +86,8 @@
     "DescriptionAr": "خدمات احترافية لقص وتهذيب الحشائش للحفاظ على الحديقة مرتبة وصحية وجميلة.",
     "MinPrice": 40.0,
     "MaxPrice": 120.0,
-    "CategoryId": 3
+    "CategoryId": 3,
+    "ImageUrl": "https://images.unsplash.com/photo-1533460004989-cef01064af7e?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Tree Trimming and Removal",
@@ -87,7 +96,8 @@
     "DescriptionAr": "تشذيب وتشكيل الأغصان وإزالة الأشجار الميتة أو الخطرة بشكل آمن لحماية الممتلكات.",
     "MinPrice": 150.0,
     "MaxPrice": 850.0,
-    "CategoryId": 3
+    "CategoryId": 3,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327880768015540380/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Sprinkler and Irrigation System Repair and Maintenance",
@@ -96,7 +106,8 @@
     "DescriptionAr": "إصلاح شامل لرؤوس الرش التالفة واكتشاف التسربات وبرمجة المؤقتات والصيانة الدورية لأنظمة الري.",
     "MinPrice": 75.0,
     "MaxPrice": 300.0,
-    "CategoryId": 3
+    "CategoryId": 3,
+    "ImageUrl": "https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Full Service Lawn Care",
@@ -105,7 +116,8 @@
     "DescriptionAr": "خدمات متكاملة للعناية بالحدائق تشمل التسميد ومكافحة الحشائش والتهوية والتنظيف الدوري.",
     "MinPrice": 200.0,
     "MaxPrice": 600.0,
-    "CategoryId": 3
+    "CategoryId": 3,
+    "ImageUrl": "https://images.unsplash.com/photo-1557429287-b2e26467fc2b?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Packing and Unpacking",
@@ -114,7 +126,8 @@
     "DescriptionAr": "خدمات احترافية لتغليف وفك تغليف الأغراض مع ضمان ترتيبها ونقلها بأمان.",
     "MinPrice": 150,
     "MaxPrice": 600,
-    "CategoryId": 4
+    "CategoryId": 4,
+    "ImageUrl": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Long Distance Moving",
@@ -123,7 +136,8 @@
     "DescriptionAr": "خدمات نقل آمنة وموثوقة للمنازل والمكاتب عبر مسافات طويلة.",
     "MinPrice": 1200,
     "MaxPrice": 5000,
-    "CategoryId": 4
+    "CategoryId": 4,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327880768015540380/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Furniture Moving and Heavy Lifting",
@@ -132,7 +146,8 @@
     "DescriptionAr": "نقل ورفع وإعادة ترتيب الأثاث الثقيل والأجهزة والأغراض كبيرة الحجم باحترافية.",
     "MinPrice": 100,
     "MaxPrice": 450,
-    "CategoryId": 4
+    "CategoryId": 4,
+    "ImageUrl": "https://images.unsplash.com/photo-1534081333815-ae5019106622?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Piano Moving",
@@ -141,7 +156,8 @@
     "DescriptionAr": "خدمة متخصصة لنقل البيانو باستخدام معدات حماية وتجهيزات مخصصة.",
     "MinPrice": 250,
     "MaxPrice": 800,
-    "CategoryId": 4
+    "CategoryId": 4,
+    "ImageUrl": "https://images.unsplash.com/photo-1552422535-c45813c61732?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Emergency Plumbing",
@@ -150,7 +166,8 @@
     "DescriptionAr": "خدمات سباكة طارئة على مدار الساعة للتعامل مع التسربات وانفجار المواسير والفيضانات.",
     "MinPrice": 150.0,
     "MaxPrice": 600.0,
-    "CategoryId": 5
+    "CategoryId": 5,
+    "ImageUrl": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Water Heater Repair or Maintenance",
@@ -159,7 +176,8 @@
     "DescriptionAr": "إصلاح وصيانة وتنظيف سخانات المياه التقليدية والفورية.",
     "MinPrice": 80.0,
     "MaxPrice": 350.0,
-    "CategoryId": 5
+    "CategoryId": 5,
+    "ImageUrl": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Septic System Repair, Maintenance or Inspection",
@@ -168,7 +186,8 @@
     "DescriptionAr": "خدمات الفحص والشفط والإصلاح الكاملة لأنظمة الصرف الصحي المنزلية.",
     "MinPrice": 200.0,
     "MaxPrice": 1200.0,
-    "CategoryId": 5
+    "CategoryId": 5,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302055975251869744/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Plumbing Pipe Repair",
@@ -177,7 +196,8 @@
     "DescriptionAr": "إصلاح مواسير المياه والصرف المتشققة أو المتسربة باستخدام مواد عالية الجودة.",
     "MinPrice": 100.0,
     "MaxPrice": 500.0,
-    "CategoryId": 5
+    "CategoryId": 5,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179513946325002/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Electrical and Wiring Repair",
@@ -186,7 +206,8 @@
     "DescriptionAr": "خدمات احترافية لإصلاح مشاكل الأسلاك الكهربائية والدوائر القصيرة وأضواء الوميض لضمان السلامة.",
     "MinPrice": 50.0,
     "MaxPrice": 250.0,
-    "CategoryId": 6
+    "CategoryId": 6,
+    "ImageUrl": "http://production-next-images-cdn.thumbtack.com/i/323234017399922695/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Switch and Outlet Installation",
@@ -195,7 +216,8 @@
     "DescriptionAr": "تركيب واستبدال مفاتيح الحائط الحديثة ومفاتيح الإضاءة المتغيرة (الديمر) والأفياش الذكية أو العادية.",
     "MinPrice": 30.0,
     "MaxPrice": 120.0,
-    "CategoryId": 6
+    "CategoryId": 6,
+    "ImageUrl": "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Wiring Installation",
@@ -204,7 +226,8 @@
     "DescriptionAr": "تركيب تمديدات كهربائية كاملة أو جزئية للمباني الجديدة أو أعمال التجديد أو الإضافات.",
     "MinPrice": 500.0,
     "MaxPrice": 2500.0,
-    "CategoryId": 6
+    "CategoryId": 6,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179552890101760/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Generator Installation",
@@ -213,7 +236,8 @@
     "DescriptionAr": "تركيب احترافي للمولدات الاحتياطية ومولدات المنازل مع إعداد مفتاح التحويل لضمان استمرار الكهرباء.",
     "MinPrice": 400.0,
     "MaxPrice": 1800.0,
-    "CategoryId": 6
+    "CategoryId": 6,
+    "ImageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=600&auto=format&fit=crop"
   },
   {
     "NameEn": "Wallpaper Installation or Repair",
@@ -222,7 +246,8 @@
     "DescriptionAr": "تركيب ورق حائط فاخر أو عادي مع إصلاح التمزقات أو التقشير بطريقة احترافية.",
     "MinPrice": 500.0,
     "MaxPrice": 3500.0,
-    "CategoryId": 7
+    "CategoryId": 7,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327801557475221553/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Interior Painting",
@@ -231,7 +256,8 @@
     "DescriptionAr": "خدمة دهان كاملة للجدران والأسقف والديكورات باستخدام دهانات عالية الجودة وصديقة للبيئة منخفضة الانبعاثات.",
     "MinPrice": 1200.0,
     "MaxPrice": 8000.0,
-    "CategoryId": 7
+    "CategoryId": 7,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323761857295261793/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Exterior Painting",
@@ -240,7 +266,8 @@
     "DescriptionAr": "دهان شامل للواجهات الخارجية مع تنظيف الأسطح وإزالة الطلاء القديم وطبقة حماية مقاومة للعوامل الجوية.",
     "MinPrice": 3000.0,
     "MaxPrice": 15000.0,
-    "CategoryId": 7
+    "CategoryId": 7,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323468071300677642/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Fence Painting",
@@ -249,7 +276,8 @@
     "DescriptionAr": "دهان وحماية الأسوار الخشبية أو المعدنية أو البلاستيكية لتحسين الشكل العام وحمايتها من التلف.",
     "MinPrice": 400.0,
     "MaxPrice": 2000.0,
-    "CategoryId": 7
+    "CategoryId": 7,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302057049177768086/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Duct and Vent Cleaning",
@@ -258,7 +286,8 @@
     "DescriptionAr": "تنظيف احترافي لقنوات الهواء والمخارج لتحسين جودة الهواء وكفاءة أنظمة التكييف.",
     "MinPrice": 150.0,
     "MaxPrice": 350.0,
-    "CategoryId": 8
+    "CategoryId": 8,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302056217768902836/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Heating System Installation or Replacement",
@@ -267,7 +296,8 @@
     "DescriptionAr": "تركيب أو استبدال أنظمة التدفئة المنزلية مثل الأفران أو المضخات الحرارية.",
     "MinPrice": 2500.0,
     "MaxPrice": 6000.0,
-    "CategoryId": 8
+    "CategoryId": 8,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302056948788437086/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Heating System Repair or Maintenance",
@@ -276,7 +306,8 @@
     "DescriptionAr": "صيانة دورية وإصلاحات طارئة لأنظمة التدفئة المختلفة لضمان الأداء الجيد.",
     "MinPrice": 80.0,
     "MaxPrice": 300.0,
-    "CategoryId": 8
+    "CategoryId": 8,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302055786985382021/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Fireplace and Chimney Cleaning or Repair",
@@ -285,7 +316,8 @@
     "DescriptionAr": "فحص وتنظيف وإصلاح المدافئ والمداخن لإزالة السخام وضمان السلامة والأداء.",
     "MinPrice": 120.0,
     "MaxPrice": 450.0,
-    "CategoryId": 8
+    "CategoryId": 8,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/330220976614588623/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "General Carpentry",
@@ -294,7 +326,8 @@
     "DescriptionAr": "خدمات نجارة احترافية تشمل إصلاح الأخشاب والأرفف المخصصة والهياكل وتركيب الديكورات الخشبية.",
     "MinPrice": 150.0,
     "MaxPrice": 1200.0,
-    "CategoryId": 9
+    "CategoryId": 9,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323234363833507850/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Home Remodeling",
@@ -303,7 +336,8 @@
     "DescriptionAr": "خدمات تجديد شاملة للمنازل تشمل المطابخ والحمامات وغرف المعيشة.",
     "MinPrice": 5000.0,
     "MaxPrice": 45000.0,
-    "CategoryId": 9
+    "CategoryId": 9,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/498412528672317458/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Demolition Services",
@@ -312,7 +346,8 @@
     "DescriptionAr": "هدم آمن وسريع للمباني السكنية مع إزالة المخلفات وتنظيف الموقع.",
     "MinPrice": 800.0,
     "MaxPrice": 6000.0,
-    "CategoryId": 9
+    "CategoryId": 9,
+    "ImageUrl":"https://production-next-images-cdn.thumbtack.com/i/323233884617859141/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Water Damage Cleanup and Restoration",
@@ -321,7 +356,8 @@
     "DescriptionAr": "خدمات طوارئ لسحب المياه والتجفيف وإعادة ترميم المناطق المتضررة من تسرب المياه.",
     "MinPrice": 1200.0,
     "MaxPrice": 8500.0,
-    "CategoryId": 9
+    "CategoryId": 9,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179219892379648/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Swimming Pool Repair",
@@ -330,7 +366,8 @@
     "DescriptionAr": "خدمات احترافية لإصلاح حمامات السباحة تشمل كشف التسربات، إصلاح المضخات، وترميم البنية.",
     "MinPrice": 150,
     "MaxPrice": 1200,
-    "CategoryId": 10
+    "CategoryId": 10,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327878315088421054/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Hot Tub and Spa Repair",
@@ -339,7 +376,8 @@
     "DescriptionAr": "إصلاح احترافي لأحواض الجاكوزي والسبا يشمل السخانات، النفاثات، ولوحات التحكم.",
     "MinPrice": 100,
     "MaxPrice": 800,
-    "CategoryId": 10
+    "CategoryId": 10,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302056146185683124/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Swimming Pool Cleaning, Maintenance, and Inspection",
@@ -348,16 +386,18 @@
     "DescriptionAr": "خدمات شاملة لحمامات السباحة تشمل فحص المياه، موازنة المواد الكيميائية، التنظيف، وفحوصات الأمان.",
     "MinPrice": 80,
     "MaxPrice": 300,
-    "CategoryId": 10
+    "CategoryId": 10,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323302079622160481/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Hot Tub and Spa Cleaning and Maintenance",
     "NameAr": "تنظيف وصيانة أحواض السبا والجاكوزي",
-    "DescriptionEn": "Routine cleaning, draining, sanitizing, and filter replacement services tailored for hot tubs and spas.",
+    "DescriptionEn": "Routine cleaning, draining,  sanitizing, and filter replacement services tailored for hot tubs and spas.",
     "DescriptionAr": "تنظيف وصيانة دورية لأحواض السبا تشمل التفريغ، التعقيم، واستبدال الفلاتر.",
     "MinPrice": 60,
     "MaxPrice": 200,
-    "CategoryId": 10
+    "CategoryId": 10,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179391531106314/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Gutter Cleaning and Maintenance",
@@ -366,7 +406,8 @@
     "DescriptionAr": "تنظيف احترافي للمزاريب ومجاري تصريف المياه مع إزالة الأوراق والمخلفات وفحص تدفق المياه.",
     "MinPrice": 150,
     "MaxPrice": 350,
-    "CategoryId": 11
+    "CategoryId": 11,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323234414494916677/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Roof Repair or Maintenance",
@@ -375,7 +416,8 @@
     "DescriptionAr": "إصلاح تسربات الأسقف، واستبدال القرميد التالف، وإجراء صيانة دورية لإطالة عمر السقف.",
     "MinPrice": 250,
     "MaxPrice": 800,
-    "CategoryId": 11
+    "CategoryId": 11,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323302369127555169/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Duct and Vent Installation or Removal",
@@ -384,7 +426,8 @@
     "DescriptionAr": "تركيب أو استبدال أو إزالة فتحات التهوية ومراوح العادم وأنظمة التهوية لضمان تدفق الهواء بشكل مثالي.",
     "MinPrice": 200,
     "MaxPrice": 600,
-    "CategoryId": 11
+    "CategoryId": 11,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302057814491504790/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Roof Installation or Replacement",
@@ -393,7 +436,8 @@
     "DescriptionAr": "إزالة السقف القديم بالكامل وتركيب سقف جديد باستخدام القرميد أو البلاط أو المعادن الحديثة.",
     "MinPrice": 3500,
     "MaxPrice": 12000,
-    "CategoryId": 11
+    "CategoryId": 11,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179452817932293/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Garage Door Repair",
@@ -402,7 +446,8 @@
     "DescriptionAr": "إصلاح أبواب الجراج يشمل استبدال النوابض، إصلاح المحرك، وضبط المسارات.",
     "MinPrice": 500,
     "MaxPrice": 3500,
-    "CategoryId": 12
+    "CategoryId": 12,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323648038949085194/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Window Repair",
@@ -411,7 +456,8 @@
     "DescriptionAr": "إصلاح النوافذ الزجاجية المكسورة، الإطارات التالفة، وتسربات الهواء.",
     "MinPrice": 300,
     "MaxPrice": 1500,
-    "CategoryId": 12
+    "CategoryId": 12,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179426217762821/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Window Treatment Installation or Repair",
@@ -420,7 +466,8 @@
     "DescriptionAr": "تركيب وإصلاح الستائر والستائر الدوارة والشاتر لتعزيز الخصوصية والتحكم في الإضاءة.",
     "MinPrice": 200,
     "MaxPrice": 1200,
-    "CategoryId": 12
+    "CategoryId": 12,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/327971119498248203/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Door Installation",
@@ -429,7 +476,8 @@
     "DescriptionAr": "تركيب الأبواب الداخلية والخارجية مع الإطارات والمفصلات والأقفال.",
     "MinPrice": 800,
     "MaxPrice": 5000,
-    "CategoryId": 12
+    "CategoryId": 12,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323468821266366591/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Concrete Repair and Maintenance",
@@ -438,7 +486,8 @@
     "DescriptionAr": "إصلاح التشققات والحفر وأضرار الأسطح الخرسانية في الممرات والأرصفة والأساسات.",
     "MinPrice": 150,
     "MaxPrice": 800,
-    "CategoryId": 13
+    "CategoryId": 13,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302056322140643507/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Concrete Installation",
@@ -447,7 +496,8 @@
     "DescriptionAr": "تنفيذ أعمال الخرسانة الجديدة مثل الممرات والباحات والأرصفة مع التشطيب الاحترافي.",
     "MinPrice": 1200,
     "MaxPrice": 5000,
-    "CategoryId": 13
+    "CategoryId": 13,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323306553580912650/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Stucco Application",
@@ -456,7 +506,8 @@
     "DescriptionAr": "تطبيق اللياسة الخارجية التقليدية أو الصناعية للأسطح الخارجية لتوفير حماية ومظهر جمالي.",
     "MinPrice": 2500,
     "MaxPrice": 7500,
-    "CategoryId": 13
+    "CategoryId": 13,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302055732073750622/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Masonry Construction Services",
@@ -465,7 +516,8 @@
     "DescriptionAr": "بناء الطوب والبلوك والحجر للجدران والمداخن والمدافئ الخارجية والتشطيبات الديكورية.",
     "MinPrice": 800,
     "MaxPrice": 4500,
-    "CategoryId": 13
+    "CategoryId": 13,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/323301774370095201/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Rodent and Animal Removal",
@@ -474,7 +526,8 @@
     "DescriptionAr": "إزالة القوارض والحيوانات غير المرغوب فيها مع سد مداخلها بشكل احترافي.",
     "MinPrice": 150,
     "MaxPrice": 450,
-    "CategoryId": 14
+    "CategoryId": 14,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/498412397966008326/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Termite Control Services",
@@ -483,7 +536,8 @@
     "DescriptionAr": "فحص وعلاج شامل للنمل الأبيض مع حماية المباني الخشبية ومنع عودته.",
     "MinPrice": 500,
     "MaxPrice": 2500,
-    "CategoryId": 14
+    "CategoryId": 14,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302057878934208560/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Bed Bug Extermination",
@@ -492,7 +546,8 @@
     "DescriptionAr": "إبادة بق الفراش باستخدام الحرارة والمواد الكيميائية مع متابعة لضمان القضاء التام.",
     "MinPrice": 300,
     "MaxPrice": 1200,
-    "CategoryId": 14
+    "CategoryId": 14,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/302057878934208560/desktop/retina/centered_large_thumb"
   },
   {
     "NameEn": "Pest Control Services",
@@ -501,6 +556,7 @@
     "DescriptionAr": "مكافحة عامة للحشرات المنزلية مثل النمل والعناكب والصراصير والدبابير.",
     "MinPrice": 80,
     "MaxPrice": 250,
-    "CategoryId": 14
+    "CategoryId": 14,
+    "ImageUrl": "https://production-next-images-cdn.thumbtack.com/i/557179266143092745/desktop/retina/centered_large_thumb"
   }
 ]

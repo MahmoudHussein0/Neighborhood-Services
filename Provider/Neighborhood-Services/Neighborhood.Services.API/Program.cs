@@ -75,8 +75,15 @@ namespace Neighborhood.Services.API
 
             builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
             {
+                try
+                {
                 var connection = builder.Configuration.GetConnectionString("Redis");
                 return ConnectionMultiplexer.Connect(connection);
+                }
+                catch
+                {
+                    return null;
+                }
             });
 
 
@@ -118,14 +125,12 @@ namespace Neighborhood.Services.API
                             return Task.CompletedTask;
                         }
                     };
-                })
-                .AddGoogle(options =>
-                {
-                    //options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
-                    //options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
-                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "dummy-google-client-id";
-                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "dummy-google-client-secret";
                 });
+                //.AddGoogle(options =>
+                //{
+                //    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+                //    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+                //});
             // Add authorization policies for each permission type (Amira)
             builder.Services.AddAuthorization(options =>
             {

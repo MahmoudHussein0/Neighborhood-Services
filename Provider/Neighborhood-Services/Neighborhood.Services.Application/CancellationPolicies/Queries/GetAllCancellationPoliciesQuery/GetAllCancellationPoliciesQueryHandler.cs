@@ -15,7 +15,7 @@ namespace Neighborhood.Services.Application.CancellationPolicies.Queries.GetAllC
 
         public async Task<IEnumerable<CancellationPolicyDto>> Handle(GetAllCancellationPoliciesQuery request, CancellationToken cancellationToken)
         {
-            var policies = await _policyRepository.GetAllAsync();
+            var policies = await _policyRepository.GetByConditionAsync(P => !P.IsDeleted);
 
             return policies.Select(p => new CancellationPolicyDto
             {

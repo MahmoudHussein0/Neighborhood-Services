@@ -10,6 +10,6 @@ export class OfferService {
 
   /** POST /api/offers/{id}/accept — accept an offer; returns the new booking id */
   accept(offerId: number): Observable<{ bookingId: number }> {
-    return this.api.post<{ bookingId: number }>(`/api/offers/${offerId}/accept`, {});
+    return this.api.post<{ bookingId: number }>(`/offers/${offerId}/accept`, {});
   }
 }

@@ -19,11 +19,9 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Queries
         }
         public async Task<IReadOnlyList<CategoryDto>> Handle(GetTechnicianCategoryQuery request, CancellationToken cancellationToken)
         {
-
-            var lang = request.Lang.ToLower() ?? "en";  
+            var lang = request.Lang.ToLower();  
 
             return (await _technicianCategoryRepo.GetByConditionAsync( 
-                
                                 TC =>
                                 (!TC.IsDeleted)
                                 &&

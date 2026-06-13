@@ -22,6 +22,11 @@ namespace Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRe
             if (sr is null)
                 throw new NotFoundException(nameof(ServiceRequest), request.ServiceRequestId);
 
+            // Offers only carry TechnicianId; resolve each technician's name for the offer cards.
+            var technicianIds = sr.Offers?.Select(o => o.TechnicianId).Distinct().ToList()
+                ?? new List<int>();
+            var technicianNames = await _serviceRequestRepository.GetTechnicianNamesAsync(technicianIds);
+
             return new ServiceRequestWithOffersDto
             {
                 Id = sr.Id,
@@ -47,6 +52,8 @@ namespace Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRe
                     Message = o.Message,
                     Status = o.Status,
                     TechnicianId = o.TechnicianId,
+                    TechnicianName = technicianNames.GetValueOrDefault(o.TechnicianId, string.Empty),
+                    TechnicianRating = o.Technician != null ? (double)o.Technician.Rating : 0,
                     CreatedAt = o.CreatedAt
                 }).ToList() ?? new List<OfferSummaryDto>()
             };

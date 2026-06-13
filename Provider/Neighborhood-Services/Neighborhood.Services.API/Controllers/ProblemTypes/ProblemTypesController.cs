@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.API.Helper;
+using Neighborhood.Services.Application.Cache;
 using Neighborhood.Services.Application.ProblemTypes.Commands;
 using Neighborhood.Services.Application.ProblemTypes.DTOs;
 using Neighborhood.Services.Application.ProblemTypes.Queries;
@@ -14,14 +15,14 @@ namespace Neighborhood.Services.API.Controllers.ProblemTypes
     {
         private readonly IMediator _mediator;
 
-        public ProblemTypesController(IMediator mediator)
+        public ProblemTypesController(IMediator mediator )
         {
             _mediator = mediator;
         }
 
 
-        [HttpGet]
         [Cache(600)]
+        [HttpGet]
         public async Task<ActionResult<ProblemTypeDetailsDto>> GetAll([FromQuery] string? searchTerm, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice , [FromQuery] string lang = "en")
         =>  Ok(await _mediator.Send(new GetAllProblemTypesQuery(lang , searchTerm , minPrice , maxPrice )));
         

@@ -1,0 +1,55 @@
+<section class="problem-hero p-5">
+    <img [src]="problemDetails().imageUrl" [alt]="problemDetails().name" class="hero-image">
+
+    <div class="hero-overlay"></div>
+
+    <div class="container position-relative h-100 d-flex align-items-center">
+
+        <div class="info-card  w-50  mx-auto">
+
+            <span class="category-badge">
+                {{ problemDetails().categoryName }}
+            </span>
+
+            <h1 class="problem-title mt-3">
+                {{ problemDetails().name }}
+            </h1>
+
+            <p class="problem-description">
+                {{ problemDetails().description }}
+            </p>
+
+            <div class="price-box mb-4">
+
+                <small class="d-block text-black opacity-75 mb-1">
+                    {{"problemType.startingFrom" |translate}}
+                </small>
+
+                <h5 class="mb-0 fw-bold text-black">
+                    {{"problemType.egp" |translate}} {{ problemDetails().minPrice }}
+                    -
+                    {{"problemType.egp" |translate}} {{ problemDetails().maxPrice }}
+                </h5>
+
+            </div>
+
+            <div class="d-flex flex-wrap gap-3">
+                <button class="btn btn-warning btn-lg px-4 py-2 fw-semibold">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    {{"problemType.bookNow" |translate}}
+                </button>
+
+                <button class="btn btn-outline-black btn-lg px-4 py-2" onclick="window.history.back()">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    {{"problemType.back" |translate}}
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<howitworks></howitworks>

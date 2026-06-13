@@ -25,47 +25,47 @@ export class RecurringBookingService {
     query.set('page', String(params.page ?? 1));
     query.set('pageSize', String(params.pageSize ?? 10));
 
-    return this.api.get<PagedResult<RecurringBooking>>(`/api/recurringbookings/mine?${query.toString()}`);
+    return this.api.get<PagedResult<RecurringBooking>>(`/recurringbookings/mine?${query.toString()}`);
   }
 
   /** POST /api/recurringbookings — customer creates a recurring arrangement */
   create(body: CreateRecurringBooking): Observable<{ id: number }> {
-    return this.api.post<{ id: number }>('/api/recurringbookings', body);
+    return this.api.post<{ id: number }>('/recurringbookings', body);
   }
 
   /** GET /api/recurringbookings/{id} — single arrangement */
   getById(id: number): Observable<RecurringBooking> {
-    return this.api.get<RecurringBooking>(`/api/recurringbookings/${id}`);
+    return this.api.get<RecurringBooking>(`/recurringbookings/${id}`);
   }
 
   /** PUT /api/recurringbookings/{id} — edit schedule/address (resets to Awaiting Price) */
   update(id: number, body: UpdateRecurringBooking): Observable<void> {
-    return this.api.put<void>(`/api/recurringbookings/${id}`, body);
+    return this.api.put<void>(`/recurringbookings/${id}`, body);
   }
 
   /** POST /api/recurringbookings/{id}/approve — customer approves the proposed price (→ Active) */
   approve(id: number): Observable<void> {
-    return this.api.post<void>(`/api/recurringbookings/${id}/approve`, {});
+    return this.api.post<void>(`/recurringbookings/${id}/approve`, {});
   }
 
   /** POST /api/recurringbookings/{id}/reject-price — customer rejects price (→ PendingApproval) */
   rejectPrice(id: number): Observable<void> {
-    return this.api.post<void>(`/api/recurringbookings/${id}/reject-price`, {});
+    return this.api.post<void>(`/recurringbookings/${id}/reject-price`, {});
   }
 
   /** POST /api/recurringbookings/{id}/pause */
   pause(id: number): Observable<void> {
-    return this.api.post<void>(`/api/recurringbookings/${id}/pause`, {});
+    return this.api.post<void>(`/recurringbookings/${id}/pause`, {});
   }
 
   /** POST /api/recurringbookings/{id}/resume */
   resume(id: number): Observable<void> {
-    return this.api.post<void>(`/api/recurringbookings/${id}/resume`, {});
+    return this.api.post<void>(`/recurringbookings/${id}/resume`, {});
   }
 
   /** POST /api/recurringbookings/{id}/cancel */
   cancel(id: number, cancellationReason?: string): Observable<boolean> {
-    return this.api.post<boolean>(`/api/recurringbookings/${id}/cancel`, {
+    return this.api.post<boolean>(`/recurringbookings/${id}/cancel`, {
       recurringBookingId: id,
       cancellationReason: cancellationReason ?? null,
     });

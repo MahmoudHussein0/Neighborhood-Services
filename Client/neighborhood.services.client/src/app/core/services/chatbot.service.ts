@@ -46,16 +46,16 @@ export class ChatbotService {
 
   /** POST /api/chatbot — send a message (works for guests and logged-in users). */
   sendMessage(body: SendChatMessageRequest): Observable<ChatReply> {
-    return this.api.post<ChatReply>('/api/chatbot', body);
+    return this.api.post<ChatReply>('/chatbot', body);
   }
 
   /** GET /api/chatbot/sessions — the current user's past chats (login required). */
   getSessions(): Observable<ChatSession[]> {
-    return this.api.get<ChatSession[]>('/api/chatbot/sessions');
+    return this.api.get<ChatSession[]>('/chatbot/sessions');
   }
 
   /** GET /api/chatbot/sessions/{id} — one chat with its full message history. */
   getSession(id: number): Observable<ChatSessionDetail> {
-    return this.api.get<ChatSessionDetail>(`/api/chatbot/sessions/${id}`);
+    return this.api.get<ChatSessionDetail>(`/chatbot/sessions/${id}`);
   }
 }

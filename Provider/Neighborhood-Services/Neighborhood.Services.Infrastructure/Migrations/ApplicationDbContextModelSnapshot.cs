@@ -610,6 +610,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -1239,6 +1242,9 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     b.Property<string>("DescriptionEn")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -2077,9 +2083,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("BookingId")
                         .HasColumnType("int");
 
@@ -2129,8 +2132,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("BookingId")
                         .HasDatabaseName("IX_SupportTickets_BookingId");
@@ -2815,10 +2816,6 @@ namespace Neighborhood.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("SupportTicket", b =>
                 {
-                    b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", null)
-                        .WithMany("SupportTickets")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Neighborhood.Services.Domain.Bookings.Booking", "Booking")
                         .WithMany()
                         .HasForeignKey("BookingId")
@@ -2833,7 +2830,7 @@ namespace Neighborhood.Services.Infrastructure.Migrations
                         .HasForeignKey("PromoCodeUsageId");
 
                     b.HasOne("Neighborhood.Services.Domain.ApplicationUsers.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("SupportTickets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
 

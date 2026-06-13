@@ -58,6 +58,7 @@ namespace Neighborhood.Services.Application.Bookings.Commands.RaiseDisputeComman
             await _mediator.Send(new CreateDisputeCommand
             {
                 BookingId = booking.Id,
+                RaisedByUserId = userId,
                 DisputeType = request.DisputeType,
                 Reason = request.Reason
             }, cancellationToken);

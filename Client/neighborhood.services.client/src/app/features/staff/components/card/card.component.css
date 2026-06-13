@@ -1,0 +1,48 @@
+i {
+
+    color: #fff;
+}
+
+
+.pointer {
+    cursor: pointer;
+}
+
+.category-card {
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.12) !important;
+}
+
+.category-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(0, 87, 218, 0.08);
+    color: var(--bs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.08);
+    background: rgba(13, 110, 253, 0.15);
+}
+
+.category-title {
+    transition: color 0.2s ease;
+}
+
+.category-title:hover {
+    color: var(--bs-primary);
+}
+
+.pointer {
+    cursor: pointer;
+}

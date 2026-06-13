@@ -37,10 +37,8 @@ namespace Neighborhood.Services.Application.Disputes.Handlers
 
             var dispute = new Dispute
             {
-                //BookingId = request.BookingId,
-                BookingId = 1,
-                //RaisedByUserId = _currentUser.UserId, // لما نشغل ال Auth نبقي نرجعها ونلغي اللي تحت
-                RaisedByUserId = request.RaisedByUserId,
+                BookingId = request.BookingId,
+                RaisedByUserId = request.RaisedByUserId ?? _currentUser.UserId,
                 DisputeType = request.DisputeType,
                 Reason = request.Reason,
                 Status = DisputeStatus.Open,

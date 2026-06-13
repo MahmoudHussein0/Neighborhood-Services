@@ -1,0 +1,299 @@
+<section class="container py-4">
+    <!-- ================= HEADER ================= -->
+    <div class="card border-0 shadow-sm mb-4 rounded-4">
+        <div class="card-body p-4">
+
+            <div class="row align-items-center g-3">
+
+                <div class="col-12 col-md-6 text-center text-md-start">
+
+                    <h3 class="fw-bold text-primary mb-1">
+                        {{ categoryDetails().name }}
+                    </h3>
+
+                    <div class="d-flex justify-content-center justify-content-md-start align-items-center gap-2">
+
+                        <span class="badge bg-primary rounded-pill px-3 py-2">
+                            {{ categoryDetails().problemTypes.length }}
+                        </span>
+
+                        <span class="text-muted">
+                            {{ "staffCategory.problemTypes" | translate }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="col-12 col-md-6 text-center text-md-end">
+
+                    <button class="btn btn-primary rounded-pill px-4 shadow-sm w-100 w-md-auto" data-bs-toggle="modal"
+                        data-bs-target="#addModal">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        {{ "staffCategory.addProblem" | translate }}
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= TABLE ================= -->
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0 fw-semibold text-primary">
+                {{ "staffCategory.problemTypes" | translate }}
+            </h5>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle table-hover mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>{{ "staffCategory.name" | translate }}</th>
+                        <th class="d-none d-md-table-cell">{{ "staffCategory.description" | translate }}</th>
+                        <th>{{ "staffCategory.minPrice" | translate }}</th>
+                        <th>{{ "staffCategory.maxPrice" | translate }}</th>
+                        <th class="text-center">{{ "staffCategory.actions" | translate }}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (problemType of categoryDetails().problemTypes; track problemType.id) {
+
+                    <tr>
+
+                        <td class="fw-semibold text-dark">
+                            {{ problemType.name }}
+                        </td>
+
+                        <td class="text-muted d-none d-md-table-cell">
+                            {{ problemType.description }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                {{ problemType.minPrice }} {{"staffCategory.egp" |translate}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                {{ problemType.maxPrice }} {{"staffCategory.egp" |translate}}
+                            </span>
+                        </td>
+
+                        <td class="text-center">
+
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <button class="btn btn-outline-warning btn-sm rounded-circle" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal" (click)="updateModal(problemType)">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                                <button class="btn btn-outline-danger btn-sm rounded-circle" data-bs-toggle="modal"
+                                    data-bs-target="#deleteProblemModal" (click)=" ProblemTypeId =  problemType.id  ">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= UPDATE MODAL ================= -->
+    <div class="modal fade" id="updateModal" tabindex="-1">
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content rounded-4">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-primary">
+                        {{ "staffCategory.updateProblemType" | translate }}
+                    </h5>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <form [formGroup]="updateModalForm">
+
+                        <label class="form-label fw-semibold">
+                            {{ "staffCategory.problemTypeDescription" | translate }}
+                        </label>
+
+                        <textarea class="form-control mb-3" rows="4" formControlName="descriptionEn"></textarea>
+
+                        <div class="row g-2">
+
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
+                                <input type="number" class="form-control" formControlName="minPrice">
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
+                                <input type="number" class="form-control" formControlName="maxPrice">
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
+                        {{ "staffCategory.close" | translate }}
+                    </button>
+                    <button class="btn btn-success w-100 w-md-auto" (click)="updateProblemtype()">
+                        {{ "staffCategory.saveChanges" | translate }}
+                        @if(loadFlag()){
+                        <span class="spinner-border spinner-border-sm ms-2"></span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ADD MODAL ================= -->
+    <div class="modal fade" id="addModal" tabindex="-1">
+
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content rounded-4">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-primary">
+                        {{ "staffCategory.addProblem" | translate }}
+                    </h5>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <form [formGroup]="addProblemForm">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.nameInEnglish"
+                                    |translate}}</label>
+                                <input class="form-control" formControlName="nameEn">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.nameInArabic"
+                                    |translate}}</label>
+                                <input class="form-control" formControlName="nameAr">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.descInEnglish"
+                                    |translate}}</label>
+                                <textarea class="form-control" rows="3" formControlName="descriptionEn"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.descInArabic"
+                                    |translate}}</label>
+                                <textarea class="form-control" rows="3" formControlName="descriptionAr"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
+                                <input class="form-control" type="number" formControlName="minPrice">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
+                                <input class="form-control" type="number" formControlName="maxPrice">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    {{ "staffCategory.category" | translate }}
+                                </label>
+
+                                <input class="form-control bg-light" [value]="categoryDetails().name" readonly>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
+                        {{ "staffCategory.close" | translate }}
+                    </button>
+
+                    <button class="btn btn-success w-100 w-md-auto" (click)="AddProblemType()">
+
+                        {{ "staffCategory.saveChanges" | translate }}
+
+                        @if(loadFlag()){
+                        <span class="spinner-border spinner-border-sm ms-2"></span>
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= DELETE MODAL ================= -->
+    <div class="modal fade" id="deleteProblemModal">
+        <div class="modal-dialog">
+            <div class="modal-content modal-dark text-center">
+                <div class="modal-body p-4">
+                    <h5 class="text-black mb-3">{{"staffCategory.deleteCategory" |translate}}</h5>
+                    <p class="text-black opacity-75">
+                        {{"staffCategory.thisActionCannotBeUndone" |translate}}
+                    </p>
+                    <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
+                        {{"staffCategory.close" |translate}}
+                    </button>
+                    <button class="btn btn-danger me-3" (click)="confirmDelete()">
+                        {{"staffCategory.delete" |translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

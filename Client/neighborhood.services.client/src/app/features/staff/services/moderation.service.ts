@@ -22,17 +22,17 @@ export class ModerationService {
   /** GET /api/servicerequests/flagged — the moderation queue (staff only). */
   getFlagged(page = 1, pageSize = 10): Observable<PagedResult<FlaggedServiceRequest>> {
     return this.api.get<PagedResult<FlaggedServiceRequest>>(
-      `/api/servicerequests/flagged?page=${page}&pageSize=${pageSize}`
+      `/servicerequests/flagged?page=${page}&pageSize=${pageSize}`
     );
   }
 
   /** POST /api/servicerequests/{id}/approve — Flagged -> Open. */
   approve(id: number): Observable<void> {
-    return this.api.post<void>(`/api/servicerequests/${id}/approve`, {});
+    return this.api.post<void>(`/servicerequests/${id}/approve`, {});
   }
 
   /** POST /api/servicerequests/{id}/reject — Flagged -> Closed. */
   reject(id: number): Observable<void> {
-    return this.api.post<void>(`/api/servicerequests/${id}/reject`, {});
+    return this.api.post<void>(`/servicerequests/${id}/reject`, {});
   }
 }

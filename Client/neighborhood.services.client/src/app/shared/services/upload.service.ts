@@ -34,7 +34,7 @@ export class UploadService {
 
   /** Uploads a file to Cloudinary and resolves to its secure URL. */
   upload(file: File): Observable<string> {
-    return this.api.post<CloudinarySignature>('/api/files/signature', {}).pipe(
+    return this.api.post<CloudinarySignature>('/files/signature', {}).pipe(
       switchMap((sig) => {
         // Only the params the backend signed (just timestamp) — nothing extra.
         const form = new FormData();

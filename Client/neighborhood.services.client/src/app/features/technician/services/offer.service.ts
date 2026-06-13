@@ -23,16 +23,16 @@ export class OfferService {
     query.set('page', String(params.page ?? 1));
     query.set('pageSize', String(params.pageSize ?? 10));
 
-    return this.api.get<PagedResult<Offer>>(`/api/offers/mine?${query.toString()}`);
+    return this.api.get<PagedResult<Offer>>(`/offers/mine?${query.toString()}`);
   }
 
   /** POST /api/offers — submit an offer on a service request. */
   create(body: CreateOffer): Observable<{ offerId: number; warnings: string[] }> {
-    return this.api.post<{ offerId: number; warnings: string[] }>('/api/offers', body);
+    return this.api.post<{ offerId: number; warnings: string[] }>('/offers', body);
   }
 
   /** POST /api/offers/{id}/withdraw — withdraw the technician's own offer. */
   withdraw(id: number): Observable<void> {
-    return this.api.post<void>(`/api/offers/${id}/withdraw`, {});
+    return this.api.post<void>(`/offers/${id}/withdraw`, {});
   }
 }

@@ -15,11 +15,11 @@ export class CatalogService {
 
   /** GET /api/categories — all categories */
   getCategories(lang = 'en'): Observable<Category[]> {
-    return this.api.get<Category[]>(`/api/categories?lang=${lang}`);
+    return this.api.get<Category[]>(`/categories?lang=${lang}`);
   }
 
   /** GET /api/categories/{id} — a category with its problem types */
   getCategory(id: number, lang = 'en'): Observable<CategoryDetails> {
-    return this.api.get<CategoryDetails>(`/api/categories/${id}?lang=${lang}`);
+    return this.api.get<CategoryDetails>(`/categories/${id}?lang=${lang}`);
   }
 }

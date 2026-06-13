@@ -2,71 +2,85 @@
   {
     "NameEn": "Cleaners",
     "NameAr": "عمال النظافة",
-    "Icon": "🧹"
+    "Icon": "bi bi-bucket",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_640/v4derwxej8iigyyri4ua"
   },
   {
     "NameEn": "Handymen",
     "NameAr": "فنيون متعددو المهام",
-    "Icon": "🔨"
+    "Icon": "bi bi-tools",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_640/iakiz9oyfy0rt5tcw74k"
   },
   {
     "NameEn": "Landscapers",
     "NameAr": "تنسيق الحدائق",
-    "Icon": "🌱"
+    "Icon": "bi bi-tree",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_640/vg0ayodhdpmqj07ypkoa"
   },
   {
     "NameEn": "Movers",
     "NameAr": "خدمات نقل الأثاث",
-    "Icon": "📦"
+    "Icon": "bi bi-box-seam",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_640/qsneajnue7udlov0smkb"
   },
   {
     "NameEn": "Plumbers",
     "NameAr": "سباكون",
-    "Icon": "🔧"
+    "Icon": "bi bi-droplet",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_1920/b6dxspg7gqqjbullzavv"
   },
   {
     "NameEn": "Electrical pros",
     "NameAr": "فنيون كهرباء",
-    "Icon": "💡"
+    "Icon": "bi bi-lightning-charge",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_1920/f4bzfpd3suxm8bfpt75g"
   },
   {
     "NameEn": "Painters",
     "NameAr": "دهانون",
-    "Icon": "🎨"
+    "Icon": "bi bi-brush",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_640/uvhli36lpkyxpgrkwblj"
   },
   {
     "NameEn": "HVAC pros",
     "NameAr": "فنيو التكييف والتبريد",
-    "Icon": "❄️"
+    "Icon": "bi bi-snow",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_1920/h8ppgqxwm7wj2xqwhmw3"
   },
   {
     "NameEn": "Contractors",
     "NameAr": "مقاولون",
-    "Icon": "🏗️"
+    "Icon": "bi bi-building-gear",
+    "Image": "https://www.shutterstock.com/image-photo/cost-management-construction-planning-structural-600nw-2465912037.jpg"
   },
   {
     "NameEn": "Pool & spa",
     "NameAr": "المسابح والجاكوزي",
-    "Icon": "🏊"
+    "Icon": "bi bi-water",
+    "Image": "https://www.poolandspascene.com/wp-stuff/uploads/2020/11/rioPools_1.jpg"
   },
   {
     "NameEn": "Roofing",
     "NameAr": "أعمال الأسقف",
-    "Icon": "🏠"
+    "Icon": "bi bi-house-gear",
+    "Image": "https://plus.unsplash.com/premium_photo-1682617326551-4749611516f6?fm=jpg&q=60&w=3000&auto=format&fit=crop"
   },
   {
     "NameEn": "Windows & doors",
     "NameAr": "النوافذ والأبواب",
-    "Icon": "🚪"
+    "Icon": "bi bi-door-open",
+    "Image": "https://res.cloudinary.com/taskrabbit-com/image/upload/c_limit,f_auto,q_auto,w_1920/w5d6c0pif273pppyiihr"
   },
   {
     "NameEn": "Concrete & masonry",
     "NameAr": "الخرسانة والبناء",
-    "Icon": "🧱"
+    "Icon": "bi bi-bricks",
+    "Image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNzJwC_xOife4a9hU9TsySUn9hscMDicueJg&s"
   },
   {
     "NameEn": "Exterminators",
     "NameAr": "مكافحة الحشرات",
-    "Icon": "🕷️"
+    "Icon": "bi bi-bug",
+    "Image": "https://www.dandrpestcontrol.com/wp-content/uploads/2022/06/When-You-Should-Call-an-Exterminator-to-Take-Care-of-Pests.jpg"
   }
 ]

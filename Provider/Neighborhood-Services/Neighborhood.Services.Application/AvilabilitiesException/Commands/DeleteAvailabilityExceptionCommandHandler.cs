@@ -24,13 +24,13 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
 
         public async Task<bool> Handle(DeleteAvailabilityExceptionCommand request, CancellationToken cancellationToken)
         {
-            var exception = await _exceptionRepo.GetByIdAsync(request.Id);
+            var exception = await _exceptionRepo.GetByIdAsync( request.Id );
 
             if (exception is null)
-                throw new NotFoundException("AvabilityException " , request.Id);
+                throw new NotFoundException("AvabilityException " , exception.Id);
 
            await _exceptionRepo.DeleteAsync(exception.Id);
-           return await _unitOfWork.SaveChangesAsync() > 0;
+           return await _unitOfWork.SaveChangesAsync(cancellationToken) > 0;
         }
     }
 }

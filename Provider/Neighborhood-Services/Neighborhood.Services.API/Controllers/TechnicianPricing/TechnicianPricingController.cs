@@ -14,33 +14,36 @@ namespace Neighborhood.Services.API.Controllers.TechnicianPricing
         private readonly IMediator _mediator;
 
         public TechnicianPricingController(IMediator mediator)
-        { 
+        {
             _mediator = mediator;
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TechnicianPricingDto>> Get(int id ,[FromQuery] string lang = "en")
-        => Ok(await _mediator.Send( new GetPricingForProblemTypeQuery(lang , id) ));
+        [HttpGet]
+        public async Task<ActionResult<TechnicianPricingDto>> Get( [FromQuery] string lang = "en")
+        => Ok(await _mediator.Send(new GetPricingForProblemTypeQuery(lang)));
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> Add (AddTechnicianPricingForProblemTypeCommand  command)
-        => Ok( await   _mediator.Send(command)) ;
+        public async Task<ActionResult<int>> Add( AddTechnicianPricingForProblemTypeCommand command)
+        {
+            return Ok(await _mediator.Send(command));
+        }
+
 
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdatePricingDTO>> Update(int id ,  UpdateTechnicianPricingForProblemTypeCommand command)
+        public async Task<ActionResult<UpdatePricingDTO>> Update(int id, UpdateTechnicianPricingForProblemTypeCommand command)
         {
-          command.Id = id;
-          return Ok(await _mediator.Send(command));
+            command.Id = id;
+            return Ok(await _mediator.Send(command));
         }
 
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<UpdatePricingDTO>> Delete(int id)
-            => Ok(await _mediator.Send(new  DeleteTechnicianPricingForProblemTypeCommand (id) ));
+            => Ok(await _mediator.Send(new DeleteTechnicianPricingForProblemTypeCommand(id)));
 
 
     }

@@ -1,0 +1,132 @@
+<section class="service-hero d-flex align-items-center">
+    <div class="container text-center">
+        <div class="hero-content mx-auto">
+            <h1 class="fw-bold text-white mb-3">
+                {{"services.yourTodoListIsOnUs" | translate}}
+            </h1>
+            <p class="text-white mb-0">
+                {{"services.findtrustedProfessionalsForEveryHomeServiceYouNeed" |translate}}
+            </p>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">{{"services.hireaTrustedTechnicianPresto" |translate}}.</h2>
+        </div>
+        <div class="row g-4">
+            @for(category of categories(); track category.id){
+            <div class="col-lg-4 col-md-6">
+                <div class="card service-card border-0 shadow-sm h-100">
+                    <div class="category-image-wrapper">
+                        <img [src]="category.image" [alt]="category.name" class="category-image">
+                        <div class="category-overlay">
+                            <h4 class="fw-bold text-white mb-1">
+                                {{category.name}}
+                            </h4>
+                            <small class="text-white">
+                                {{category.technicians}}
+                                {{"services.techniciansAvailable" |translate}}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="problem-list">
+
+                            @for(problem of category.problemTypes; track problem.id){
+                            <button class="problem-item" [routerLink]=" [ '/problemType' , problem.id  ] ">
+
+                                <span>{{ problem.name }}</span>
+
+                                <i class="bi bi-chevron-right"></i>
+
+                            </button>
+
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<div class="modal fade" id="problemModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered custom-modal">
+        <div class="modal-content  border-0 overflow-hidden">
+            <div class="modal-body p-0">
+                <div class="modal-hero">
+                    <img [src]="selectedCategory().image" alt="" class="modal-bg">
+                    <div class="overlay"></div>
+                    <div class="content p-5">
+                        <span class="badge bg-warning text-dark mb-3">
+                            {{selectedCategory().name}}
+                        </span>
+
+                        <h2 class="text-white fw-bold mb-3">
+                            {{selectedProblem().name}}
+                        </h2>
+
+                        <p class="text-light mb-4">
+
+                            {{selectedProblem().description}}
+
+                        </p>
+
+                        <div class="price-box mb-4">
+
+                            <span class="fw-semibold">
+
+                                {{"services.estimatedPrice" |translate}}:
+
+                            </span>
+
+                            {{"services.egp" |translate}} {{selectedProblem().minPrice}}
+                            -
+                            {{"services.egp" |translate}} {{selectedProblem().maxPrice}}
+
+                        </div>
+
+                        <div class="d-flex gap-3 flex-wrap">
+
+                            <button class="btn btn-warning px-4">
+
+                                {{"services.bookNow" |translate}}
+
+                            </button>
+
+                            <button class="btn btn-outline-light" data-bs-dismiss="modal">
+                                {{"services.cancle" |translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

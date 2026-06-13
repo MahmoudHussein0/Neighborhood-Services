@@ -80,6 +80,21 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
                 .FirstOrDefaultAsync(sr => sr.Id == serviceRequestId && !sr.IsDeleted);
         }
 
+        public async Task<Dictionary<int, string>> GetTechnicianNamesAsync(IEnumerable<int> technicianIds)
+        {
+            var ids = technicianIds as ICollection<int> ?? technicianIds.ToList();
+            if (ids.Count == 0)
+                return new Dictionary<int, string>();
+
+            // Technician has no ApplicationUser navigation, so join on ApplicationUserId for the name.
+            return await (
+                from t in _context.Technicians.AsNoTracking()
+                where ids.Contains(t.Id)
+                join u in _context.Users on t.ApplicationUserId equals u.Id
+                select new { t.Id, u.FullName }
+            ).ToDictionaryAsync(x => x.Id, x => x.FullName);
+        }
+
         public async Task<PagedResult<ServiceRequest>> GetByStatusPagedAsync(ServiceRequestStatus status, int page, int pageSize)
         {
             var query = _context.ServiceRequests

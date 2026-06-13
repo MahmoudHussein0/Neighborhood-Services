@@ -23,7 +23,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnitianPricing
                    .HasDefaultValue(false);
 
 
-            builder.HasQueryFilter(TP => !TP.IsDeleted);
+            //builder.HasQueryFilter(TP => !TP.IsDeleted);
 
             builder.Property(TP => TP.CreatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");

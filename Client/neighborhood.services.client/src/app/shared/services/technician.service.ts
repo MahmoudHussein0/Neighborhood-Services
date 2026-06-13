@@ -16,21 +16,21 @@ export class TechnicianService {
 
   /** GET /api/technicians — all technicians */
   getAll(): Observable<TechnicianSummary[]> {
-    return this.api.get<TechnicianSummary[]>('/api/technicians');
+    return this.api.get<TechnicianSummary[]>('/technicians');
   }
 
   /** GET /api/technicians/available — currently available technicians */
   getAvailable(): Observable<TechnicianSummary[]> {
-    return this.api.get<TechnicianSummary[]>('/api/technicians/available');
+    return this.api.get<TechnicianSummary[]>('/technicians/available');
   }
 
   /** GET /api/technicians/browse — customer-facing cards (name/photo/location + categories) */
   getForBrowse(): Observable<TechnicianCard[]> {
-    return this.api.get<TechnicianCard[]>('/api/technicians/browse');
+    return this.api.get<TechnicianCard[]>('/technicians/browse');
   }
 
   /** GET /api/technitianavailability/{technicianId} — the technician's working days + hours */
   getAvailability(technicianId: number): Observable<TechnicianAvailabilitySlot[]> {
-    return this.api.get<TechnicianAvailabilitySlot[]>(`/api/technitianavailability/${technicianId}`);
+    return this.api.get<TechnicianAvailabilitySlot[]>(`/technitianavailability/${technicianId}`);
   }
 }

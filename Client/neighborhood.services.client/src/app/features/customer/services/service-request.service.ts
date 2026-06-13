@@ -31,21 +31,21 @@ export class ServiceRequestService {
     query.set('page', String(params.page ?? 1));
     query.set('pageSize', String(params.pageSize ?? 10));
 
-    return this.api.get<PagedResult<ServiceRequestSummary>>(`/api/servicerequests/mine?${query.toString()}`);
+    return this.api.get<PagedResult<ServiceRequestSummary>>(`/servicerequests/mine?${query.toString()}`);
   }
 
   /** GET /api/servicerequests/{id} */
   getById(id: number): Observable<ServiceRequestDetails> {
-    return this.api.get<ServiceRequestDetails>(`/api/servicerequests/${id}`);
+    return this.api.get<ServiceRequestDetails>(`/servicerequests/${id}`);
   }
 
   /** GET /api/servicerequests/{id}/with-offers — request + the offers received */
   getWithOffers(id: number): Observable<ServiceRequestWithOffers> {
-    return this.api.get<ServiceRequestWithOffers>(`/api/servicerequests/${id}/with-offers`);
+    return this.api.get<ServiceRequestWithOffers>(`/servicerequests/${id}/with-offers`);
   }
 
   /** POST /api/servicerequests — post a new request */
   create(body: CreateServiceRequest): Observable<{ id: number }> {
-    return this.api.post<{ id: number }>('/api/servicerequests', body);
+    return this.api.post<{ id: number }>('/servicerequests', body);
   }
 }

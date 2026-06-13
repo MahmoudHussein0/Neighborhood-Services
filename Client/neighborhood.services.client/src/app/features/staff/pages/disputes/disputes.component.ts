@@ -40,6 +40,12 @@ implements OnInit, OnDestroy {
 
   selectedDisputeId: number | null = null;
 
+  // Resolve modal state (replaces the native prompt()).
+  resolveTargetId: number | null = null;
+  resolutionText = '';
+  resolveSubmitting = false;
+  resolveError = '';
+
   loading = false;
 
   filters = {
@@ -178,6 +184,11 @@ implements OnInit, OnDestroy {
     this.selectedDisputeId = id;
     this.cdr.markForCheck();
   }
+
+  closeDispute() {
+    this.selectedDisputeId = null;
+    this.cdr.markForCheck();
+  }
   startReview(id: number): void {
 
   const body = {
@@ -193,14 +204,32 @@ implements OnInit, OnDestroy {
       }
     });
 }
-resolveDispute(id: number): void {
+openResolve(id: number): void {
+  this.resolveTargetId = id;
+  this.resolutionText = '';
+  this.resolveError = '';
+  this.cdr.markForCheck();
+}
 
-  const resolution =
-    prompt('Enter resolution');
+cancelResolve(): void {
+  this.resolveTargetId = null;
+  this.cdr.markForCheck();
+}
 
-  if (!resolution) {
+submitResolve(): void {
+
+  const id = this.resolveTargetId;
+  const resolution = this.resolutionText.trim();
+
+  if (!id || !resolution) {
+    this.resolveError = 'Please enter a resolution.';
+    this.cdr.markForCheck();
     return;
   }
+
+  this.resolveSubmitting = true;
+  this.resolveError = '';
+  this.cdr.markForCheck();
 
   const body = {
     id,
@@ -213,7 +242,17 @@ resolveDispute(id: number): void {
     .updateDispute(id, body)
     .subscribe({
       next: () => {
+        this.resolveSubmitting = false;
+        this.resolveTargetId = null;
         this.loadDisputes();
+      },
+      error: (err) => {
+        this.resolveSubmitting = false;
+        this.resolveError =
+          err?.error?.detail ||
+          err?.error?.message ||
+          'Failed to resolve the dispute.';
+        this.cdr.markForCheck();
       }
     });
 }

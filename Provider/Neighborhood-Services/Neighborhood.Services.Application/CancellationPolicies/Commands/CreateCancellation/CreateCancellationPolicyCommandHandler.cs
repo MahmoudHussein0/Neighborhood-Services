@@ -24,7 +24,8 @@ namespace Neighborhood.Services.Application.CancellationPolicies.Commands.Create
             var existing = await _policyRepository
                  .GetPolicyAsync(request.HoursBeforeBooking, request.AppliesTo);
 
-            if (existing != null)
+
+            if (existing != null && !existing.IsDeleted)
                 throw new ConflictException("A policy already exists for this hours and target combination");
 
             // validate if the penality is percent is okay.
@@ -35,24 +36,40 @@ namespace Neighborhood.Services.Application.CancellationPolicies.Commands.Create
                 throw new ValidationException("Hours before booking must be positive");
 
 
-            var policy = new CancellationPolicy
-            {
-                HoursBeforeBooking = request.HoursBeforeBooking,
-                PenaltyPct = request.PenaltyPct,
-                AppliesTo = request.AppliesTo,
-                CreatedAt = DateTime.UtcNow
-            };
 
-            await _policyRepository.AddAsync(policy);
+
+            if (existing != null && existing.IsDeleted)
+            {
+                existing.IsDeleted = false;
+                await _policyRepository.UpdateAsync(existing);
+
+            }
+            else
+            {
+
+                existing = new CancellationPolicy
+                {
+                    HoursBeforeBooking = request.HoursBeforeBooking,
+                    PenaltyPct = request.PenaltyPct,
+                    AppliesTo = request.AppliesTo,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _policyRepository.AddAsync(existing);
+            }
+
+
+
+
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new CancellationPolicyDto
             {
-                Id = policy.Id,
-                HoursBeforeBooking = policy.HoursBeforeBooking,
-                PenaltyPct = policy.PenaltyPct,
-                AppliesTo = policy.AppliesTo,
-                CreatedAt = policy.CreatedAt
+                Id = existing.Id,
+                HoursBeforeBooking = existing.HoursBeforeBooking,
+                PenaltyPct = existing.PenaltyPct,
+                AppliesTo = existing.AppliesTo,
+                CreatedAt = existing.CreatedAt
             };
         }
     }

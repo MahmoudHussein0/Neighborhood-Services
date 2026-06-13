@@ -16,7 +16,8 @@ namespace Neighborhood.Services.Application.ProblemTypes.DTOs
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
         public string  CategoryName  { get; set; } 
-        public string  CategoryIcon  { get; set; } 
+        public string  CategoryIcon  { get; set; }
+        public string ImageUrl { get; set; }
         public List<TechnicianPricingDto> TechnicionPricing { get; set; }
 
         public ProblemTypeDetailsDto()

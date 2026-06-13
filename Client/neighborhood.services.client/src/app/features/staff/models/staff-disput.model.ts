@@ -12,4 +12,14 @@ export interface DisputeDto {
 
   createdAt: string;
   resolvedAt?: string | null;
+
+  // Enrichment returned only by GET /disputes/{id} (details view).
+  customerUserId?: string | null;
+  technicianUserId?: string | null;
+  customerName?: string | null;
+  technicianName?: string | null;
+
+  escrowId?: number | null;
+  escrowStatus?: string | null;   // Held | Released | Refunded
+  escrowAmount?: number | null;
 }

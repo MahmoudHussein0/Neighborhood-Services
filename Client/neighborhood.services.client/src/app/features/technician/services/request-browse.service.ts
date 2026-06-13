@@ -16,6 +16,6 @@ export class RequestBrowseService {
       longitude: String(longitude),
       radiusInMeters: String(radiusInMeters),
     });
-    return this.api.get<ServiceRequestSummary[]>(`/api/servicerequests/open?${query.toString()}`);
+    return this.api.get<ServiceRequestSummary[]>(`/servicerequests/open?${query.toString()}`);
   }
 }

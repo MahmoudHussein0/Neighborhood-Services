@@ -108,7 +108,7 @@
                 <button
                   *ngIf="dispute.status === 'UnderReview'"
                   class="btn btn-sm btn-success"
-                  (click)="resolveDispute(dispute.id)">
+                  (click)="openResolve(dispute.id)">
                   Resolve
                 </button>
               </div>
@@ -165,7 +165,7 @@
           <button
             *ngIf="dispute.status === 'UnderReview'"
             class="btn btn-sm btn-success"
-            (click)="resolveDispute(dispute.id)">
+            (click)="openResolve(dispute.id)">
             Resolve
           </button>
         </div>
@@ -180,9 +180,45 @@
     <p class="text-muted small mb-0">No disputes match the selected filters.</p>
   </div>
 
-  <!-- Details Card Slot -->
+  <!-- Details Modal -->
   <app-dispute-details
     *ngIf="selectedDisputeId"
-    [disputeId]="selectedDisputeId">
+    [disputeId]="selectedDisputeId"
+    (closed)="closeDispute()"
+    (changed)="loadDisputes()">
   </app-dispute-details>
+
+  <!-- Resolve Modal (replaces native prompt()) -->
+  <div *ngIf="resolveTargetId" class="resolve-modal-backdrop" (click)="cancelResolve()">
+    <div class="resolve-modal-dialog" (click)="$event.stopPropagation()">
+      <div class="card border-0 shadow-lg">
+        <div class="card-header bg-success text-white py-3 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold m-0 d-flex align-items-center gap-2">
+            <i class="bi bi-check2-circle"></i>
+            Resolve Dispute #{{ resolveTargetId }}
+          </h6>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="cancelResolve()"></button>
+        </div>
+        <div class="card-body p-4">
+          <label class="form-label small text-muted">Resolution details</label>
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="resolutionText"
+            placeholder="Describe how this dispute was resolved..."></textarea>
+          <div *ngIf="resolveError" class="alert alert-danger d-flex align-items-center gap-2 mt-3 mb-0 py-2">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span class="small">{{ resolveError }}</span>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-top p-3 d-flex justify-content-end gap-2">
+          <button class="btn btn-light" [disabled]="resolveSubmitting" (click)="cancelResolve()">Cancel</button>
+          <button class="btn btn-success" [disabled]="resolveSubmitting" (click)="submitResolve()">
+            <span *ngIf="resolveSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+            Mark Resolved
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

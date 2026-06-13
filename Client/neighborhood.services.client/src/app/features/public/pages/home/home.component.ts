@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
+import { HeroSectionComponent } from "./hero-section/hero-section.component";
+import { HowitworksComponent } from "./howitworks/howitworks.component";
+import { OurservicesComponent } from "./ourservices/ourservices.component";
 
 @Component({
   selector: 'app-home',
-  imports: [],
-  template: `
-    <div class="container py-5 text-center">
-      <h1 class="fw-bold mb-3">Neighborhood Services</h1>
-      <p class="text-muted">Home page placeholder — public layout preview.</p>
-    </div>
-  `,
+  imports: [HeroSectionComponent, HowitworksComponent, OurservicesComponent],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css',
 })
-export class HomeComponent {}
+export class HomeComponent { }

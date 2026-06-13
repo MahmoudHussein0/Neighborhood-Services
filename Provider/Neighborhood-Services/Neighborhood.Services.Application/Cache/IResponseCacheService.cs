@@ -10,6 +10,8 @@ namespace Neighborhood.Services.Application.Cache
 
         Task<string?> GetCachedResponseAsync(string key);
 
+        Task RemoveByPatternAsync(string pattern);
+
 
     }
 }

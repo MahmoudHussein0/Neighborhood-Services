@@ -37,11 +37,11 @@ export class StaffBookingService {
     if (params.search?.trim()) q.set('search', params.search.trim());
     q.set('page', String(params.page ?? 1));
     q.set('pageSize', String(params.pageSize ?? 10));
-    return this.api.get<PagedResult<StaffBooking>>(`/api/bookings/staff?${q.toString()}`);
+    return this.api.get<PagedResult<StaffBooking>>(`/bookings/staff?${q.toString()}`);
   }
 
   /** POST /api/bookings/{id}/staff-cancel — admin cancel (no refund/reassign). */
   cancel(id: number, reason: string): Observable<void> {
-    return this.api.post<void>(`/api/bookings/${id}/staff-cancel`, { cancellationReason: reason });
+    return this.api.post<void>(`/bookings/${id}/staff-cancel`, { cancellationReason: reason });
   }
 }

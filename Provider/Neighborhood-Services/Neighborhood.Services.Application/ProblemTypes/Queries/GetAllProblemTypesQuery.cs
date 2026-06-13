@@ -11,7 +11,6 @@ namespace Neighborhood.Services.Application.ProblemTypes.Queries
 
         public string Lang  { get; set; }
         public string? SearchTerm  { get; set; }
-
         public decimal?  MinPrice { get; set; }
         public decimal?  MaxPrice { get; set; }
 

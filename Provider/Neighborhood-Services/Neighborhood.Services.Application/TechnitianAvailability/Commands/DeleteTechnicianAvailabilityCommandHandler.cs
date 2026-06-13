@@ -24,7 +24,7 @@ namespace Neighborhood.Services.Application.TechnitianAvailability.Commands
            var availability = await _availabilityRepo.GetByIdAsync(request.Id);
 
             if(availability is null)
-                throw new NotFoundException("Availability " , request.Id);
+                throw new NotFoundException("Availability ");
 
            await _availabilityRepo.DeleteAsync(availability.Id);
 

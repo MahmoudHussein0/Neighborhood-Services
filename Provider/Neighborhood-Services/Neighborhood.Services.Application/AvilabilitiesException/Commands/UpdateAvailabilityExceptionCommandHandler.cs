@@ -25,10 +25,10 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
         public async Task<AvailiabilityExceptionDTO> Handle(UpdateAvailabilityExceptionCommand request, CancellationToken cancellationToken)
         {
 
-          var exception =   await _exceptionRepo.GetByIdAsync(request.Id);
+            var exception = await _exceptionRepo.GetByIdAsync( request.Id );
 
             if (exception is null)
-                throw new NotFoundException("AvabilityException" , request.Id);
+                throw new NotFoundException("AvabilityException" , exception.Id);
 
 
             if (request.StartTime.HasValue || request.EndTime.HasValue)
@@ -43,7 +43,7 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
             }
 
 
-            if (await _exceptionRepo.IsDateExists(exception.TechnicianId, request.Date, request.Id))
+            if (await _exceptionRepo.IsDateExists(exception.TechnicianId, request.Date, exception.Id))
             {
                 throw new ValidationException("An exception already exists for this date.");}
 
@@ -56,7 +56,6 @@ namespace Neighborhood.Services.Application.AvilabilitiesException.Commands
             await _exceptionRepo.UpdateAsync(exception);
 
             await _unitOfWork.SaveChangesAsync();
-
 
             return exception.Adapt<AvailiabilityExceptionDTO>();
 
