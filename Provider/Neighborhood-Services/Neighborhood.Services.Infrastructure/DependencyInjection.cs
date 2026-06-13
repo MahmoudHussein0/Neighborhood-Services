@@ -183,7 +183,7 @@ namespace Neighborhood.Services.Infrastructure
            
                 services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
                 services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
-
+                services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
                 services.AddScoped<IJwtTokenService, JwtTokenService>();
