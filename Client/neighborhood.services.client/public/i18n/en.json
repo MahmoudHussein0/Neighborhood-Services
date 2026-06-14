@@ -232,6 +232,7 @@
         "quotedCallout": "Technician quoted {{price}}",
         "acceptQuote": "Accept",
         "rejectQuote": "Reject",
+        "promoPlaceholder": "Promo code (optional)",
         "acceptQuotePrompt": "Accept the quote of EGP {{price}}? This holds the amount in escrow until the job is confirmed.",
         "rejectQuotePrompt": "Reject this quote? The technician will be asked to re-quote.",
         "quoteAccepted": "Quote accepted — booking confirmed.",
@@ -338,6 +339,8 @@
             "price": "Price",
             "duration": "Estimated Duration",
             "min": "min",
+            "promoLabel": "Promo Code",
+            "promoPlaceholder": "Enter a code",
             "accept": "Accept Offer"
         }
     },

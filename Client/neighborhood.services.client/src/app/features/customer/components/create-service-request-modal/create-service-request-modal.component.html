@@ -63,7 +63,7 @@
       <!-- Scheduled at -->
       <div class="col-md-6">
         <label class="form-label">{{ 'serviceRequests.form.dateTime' | translate }}</label>
-        <input type="datetime-local" class="form-control" formControlName="scheduledAt" />
+        <input type="datetime-local" class="form-control" formControlName="scheduledAt" [min]="minDateTime" />
         @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
           <div class="text-danger small mt-1">{{ 'serviceRequests.form.errDateTime' | translate }}</div>
         }

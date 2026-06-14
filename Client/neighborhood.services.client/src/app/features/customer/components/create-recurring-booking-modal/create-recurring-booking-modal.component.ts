@@ -37,6 +37,11 @@ export class CreateRecurringBookingModalComponent {
   // Set once the user tries to submit, so the (required) location error can show inline.
   submitAttempted = signal(false);
 
+  // Earliest selectable date (local "today") for the min attribute — "yyyy-MM-dd".
+  readonly minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+
   form = this.fb.group({
     technicianId: this.fb.control<number | null>(null, Validators.required),
     categoryId: this.fb.control<number | null>(null, Validators.required),

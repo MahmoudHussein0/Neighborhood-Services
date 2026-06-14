@@ -102,10 +102,13 @@ namespace Neighborhood.Services.API.Bookings
         }
 
         // POST /api/bookings/{id}/accept-quote  (customer accepts the quote -> escrow held -> Confirmed)
+        // Optional body { promoCode } discounts the quoted FinalPrice before escrow.
         [HttpPost("{id:int}/accept-quote")]
-        public async Task<IActionResult> AcceptQuote(int id)
+        public async Task<IActionResult> AcceptQuote(int id, [FromBody] AcceptQuoteCommand? command = null)
         {
-            await _mediator.Send(new AcceptQuoteCommand { BookingId = id });
+            command ??= new AcceptQuoteCommand();
+            command.BookingId = id;
+            await _mediator.Send(command);
             return NoContent();
         }
 

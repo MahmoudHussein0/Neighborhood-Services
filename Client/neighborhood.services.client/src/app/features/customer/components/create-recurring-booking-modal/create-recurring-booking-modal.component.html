@@ -109,7 +109,7 @@
       <!-- Dates -->
       <div class="col-md-6">
         <label class="form-label">{{ 'recurring.form.startDate' | translate }}</label>
-        <input type="date" class="form-control" formControlName="startDate" />
+        <input type="date" class="form-control" formControlName="startDate" [min]="minDate" />
         @if (form.controls.startDate.touched && form.controls.startDate.invalid) {
           <div class="text-danger small mt-1">{{ 'recurring.form.errStartDate' | translate }}</div>
         }
@@ -117,7 +117,7 @@
 
       <div class="col-md-6">
         <label class="form-label">{{ 'recurring.form.endDate' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
-        <input type="date" class="form-control" formControlName="endDate" />
+        <input type="date" class="form-control" formControlName="endDate" [min]="form.controls.startDate.value || minDate" />
       </div>
 
       <!-- Address -->

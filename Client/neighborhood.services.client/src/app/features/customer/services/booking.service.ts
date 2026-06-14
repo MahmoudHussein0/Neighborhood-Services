@@ -95,9 +95,9 @@ export class BookingService {
       );
   }
 
-  /** POST /api/bookings/{id}/accept-quote — customer accepts the tech's quote (holds escrow). */
-  acceptQuote(id: number): Observable<void> {
-    return this.api.post<void>(`/bookings/${id}/accept-quote`, {});
+  /** POST /api/bookings/{id}/accept-quote — customer accepts the tech's quote (optional promo code; holds escrow). */
+  acceptQuote(id: number, promoCode?: string | null): Observable<void> {
+    return this.api.post<void>(`/bookings/${id}/accept-quote`, { promoCode: promoCode ?? null });
   }
 
   /** POST /api/bookings/{id}/reject-quote — customer rejects; booking goes back to Pending. */
@@ -114,25 +114,4 @@ export class BookingService {
   createReview(bookingId: number, rating: number, comment: string): Observable<void> {
     return this.api.post<void>('/reviews', { bookingId, rating, comment });
   }
-
-  /**
-   * POST /api/promocodes/apply — apply a promo code to a booking.
-   * Backend validates the code + adjusts the booking's FinalPrice; UserId is taken from the token.
-   * Re-fetch the booking afterwards to read the new total.
-   */
-  applyPromoCode(bookingId: number, code: string): Observable<PromoCodeResult> {
-    return this.api.post<PromoCodeResult>('/promocodes/apply', { code, bookingId });
-  }
-}
-
-/** Mirrors PromoCodeResponseDto (POST /api/promocodes/apply). */
-export interface PromoCodeResult {
-  id: number;
-  code: string;
-  discountPercentage: number;
-  maxUses: number;
-  usedCount: number;
-  expiresAt: string;
-  isActive: boolean;
-  createdAt: string;
 }
