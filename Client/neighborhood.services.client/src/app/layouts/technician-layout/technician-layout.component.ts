@@ -6,7 +6,7 @@ import { TechnicianSidebarComponent } from '../../features/technician/components
   selector: 'app-technician-layout',
   imports: [DashboardShellComponent, TechnicianSidebarComponent],
   template: `
-    <app-dashboard-shell title="Technician Dashboard">
+    <app-dashboard-shell pageTitle="Technician Dashboard">
       <app-technician-sidebar sidebar />
     </app-dashboard-shell>
   `,

@@ -36,7 +36,7 @@ namespace Neighborhood.Services.Application.Messages.Commands
             if (mssg == null) { return null;}
             mssg.isRead = true;
 
-            await _messagerepository.AddAsync(mssg);
+            await _messagerepository.UpdateAsync(mssg);
             await _unitOfWork.SaveChangesAsync();
             return new MessageUpdatedDto
             {

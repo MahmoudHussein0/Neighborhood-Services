@@ -29,8 +29,8 @@ namespace Neighborhood.Services.Application.Messages.Commands
         {
             Message mssg = await _messagerepository.GetByIdAsync(request.MessageId);
 
-            if (mssg == null) { return null; }
-            mssg.isRead = true;
+            if (mssg == null) { return null!; }
+           
 
             await _messagerepository.DeleteAsync(mssg.Id);
             await _unitOfWork.SaveChangesAsync();

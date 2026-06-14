@@ -8,6 +8,41 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  /* Frosted white surface with a soft separator instead of a hard border */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 #eef1f6, 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+/* Page title with a small gradient accent bar on the leading edge */
+.topbar h1 {
+  position: relative;
+  color: #0f172a;
+  padding-inline-start: 0.85rem;
+  letter-spacing: -0.01em;
+}
+
+.topbar h1::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 1.3rem;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+}
+
+/* Pill buttons across the topbar (logout, mobile hamburger, etc.) */
+.topbar .btn {
+  border-radius: 999px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.topbar .btn:hover {
+  transform: translateY(-1px);
 }
 
 /* Dimmed overlay behind the mobile sidebar drawer (below sidebar z-index 1050). */
@@ -23,17 +58,19 @@
 }
 
 .avatar {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 50%;
-  background-color: #dbeafe;
-  color: #1d4ed8;
+  background: linear-gradient(135deg, #60a5fa, #1d4ed8);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   overflow: hidden;
+  /* White inner ring + soft brand glow */
+  box-shadow: 0 0 0 2px #fff, 0 2px 8px rgba(29, 78, 216, 0.3);
 }
 
 .avatar img {
@@ -43,9 +80,13 @@
 }
 
 .user-summary {
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .user-role {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #94a3b8 !important;
 }

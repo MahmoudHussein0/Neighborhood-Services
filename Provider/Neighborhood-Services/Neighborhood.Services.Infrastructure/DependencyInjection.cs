@@ -103,6 +103,7 @@ using Neighborhood.Services.Infrastructure.Persistence.ReviewsAnalysis;
     using Neighborhood.Services.Infrastructure.Services.Payments;
     using Neighborhood.Services.Infrastructure.Shared;
     using Qdrant.Client;
+using Neighborhood.Services.Infrastructure.Services.ChatService;
 
 
 
@@ -171,12 +172,15 @@ namespace Neighborhood.Services.Infrastructure
                 services.AddScoped<IFavoritesRepository, FavoritesRepository>();
                 services.AddScoped<IEmailService, EmailService>();
                 services.AddScoped<INotificationService, NotificationService>();
-            
-
-                services.AddSingleton<IResponseCacheService, ResponseCacheService>();
-
+                services.AddScoped<IChatService, ChatService>();
                 services.Configure<EmailConfiguration>(configuration.GetSection("EmailSettings"));
-                //End of Arwa's
+            //End of Arwa's
+
+
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
+              
 
            
                 services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();

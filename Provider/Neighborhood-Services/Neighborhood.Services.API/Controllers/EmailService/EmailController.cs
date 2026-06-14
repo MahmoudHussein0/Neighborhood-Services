@@ -48,5 +48,19 @@ namespace Neighborhood.Services.API.Controllers.EmailService
             return Ok(result);
 
         }
+
+        [HttpPost("SendNewsLetter")]
+        public async Task<IActionResult> NewsletterEmail(string mail, string url)
+        {
+
+            var time = DateTime.UtcNow;
+            var result = await _emailService.SendNewsletterEmailAsync(mail, url);
+
+
+            return Ok(result);
+
+        }
+
+        //SendNewsletterEmailAsync
     }
 }

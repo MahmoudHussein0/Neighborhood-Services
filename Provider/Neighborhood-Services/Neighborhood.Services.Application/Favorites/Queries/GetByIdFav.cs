@@ -26,10 +26,12 @@ namespace Neighborhood.Services.Application.Favorites.Queries
             if (item == null) return null;
             return new FavoriteDto()
             {
-                FavoriteId = item.Id,
-                UserId = item.UserId,
-                TechnicianId = item.TechnicianId,
-                addedAt = item.addedAt
+                favoriteId = item.Id,
+                userId = item.UserId,
+                technicianId = item.TechnicianId,
+                addedAt = item.addedAt,
+                customerId = item.CustomerId,
+                imageURL = item.Technician.TechnicianPhotos.FirstOrDefault()?.PhotoUrl?? "https://www.flaticon.com/free-icon/technician_1085421"
             };
 
         }

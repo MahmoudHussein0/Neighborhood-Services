@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
+using Neighborhood.Services.Application.Newsletter;
 using Neighborhood.Services.Application.Shared.Email;
 using Neighborhood.Services.Domain.ProblemTypes;
 using System;
@@ -15,23 +16,26 @@ using System.Text;
 
 namespace Neighborhood.Services.Infrastructure.Services.EmailService
 {
-    
-    public class EmailService:IEmailService
+
+    public class EmailService : IEmailService
     {
         private readonly EmailConfiguration _config;
         private readonly EmailContentHelper _contentHelper;
         private readonly IWebHostEnvironment _environment;
+        private readonly INewsletterRepository _newsRepo;
 
         public EmailService(IOptions<EmailConfiguration> config,
-       // EmailContentHelper contentHelper,
-        IWebHostEnvironment _environment
+        // EmailContentHelper contentHelper,
+        IWebHostEnvironment _environment,
+        INewsletterRepository NewsRepo
 
         )
         {
             _config = config.Value;
             _contentHelper = new EmailContentHelper(_environment);
+            _newsRepo = NewsRepo;
         }
-        
+
 
         public async Task SendEmailAsync(EmailMessageDto message)
         {
@@ -39,7 +43,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             using var email = new MimeMessage();
             email.From.Add(new MailboxAddress(_config.CompanyName, _config.FromAddress));
             //email.To.AddRange(message.ToGroup?? (Enumerable.Empty<MailboxAddress>()).Append(message.To));
-            email.To.AddRange(message.ToGroup ?? new List<MailboxAddress>() { message?.To ?? new MailboxAddress("","") });
+            email.To.AddRange(message.ToGroup ?? new List<MailboxAddress>() { message?.To ?? new MailboxAddress("", "") });
             email.Subject = message.Subject;
             var bodyBuilder = new BodyBuilder
             {
@@ -75,18 +79,18 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             }
 
         }
-    
 
-    public async Task <EmailSendingResult>SendEmailVerificationEmailAsync(string EmailReceiver,
-        string ConfirmationURL,string title="Confirm your email", IEnumerable<EmailAttachmentDto>? emailAttachments=null!)
+
+        public async Task<EmailSendingResult> SendEmailVerificationEmailAsync(string EmailReceiver,
+            string ConfirmationURL, string title = "Confirm your email", IEnumerable<EmailAttachmentDto>? emailAttachments = null!)
         {
-            string genratedHTML = _contentHelper.BuildVerificationEmailContent(ConfirmationURL,null!);
+            string genratedHTML = _contentHelper.BuildVerificationEmailContent(ConfirmationURL, null!);
             EmailMessageDto message = new EmailMessageDto()
             {
                 To = MailboxAddress.Parse(EmailReceiver),
                 HtmlContent = genratedHTML,
-                Subject=title,
-                Attachments=emailAttachments
+                Subject = title,
+                Attachments = emailAttachments
 
 
             };
@@ -186,16 +190,16 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
             {
                 await client.DisconnectAsync(true);
             }
-            
+
         }
 
         public async Task<EmailSendingResult> SendBookingVerificationEmainAsync(
             string EmailReceiver,
      int BookingId,
      DateTime Time,
-     string Problem, 
-     string TechnicianName, 
-     string title = "Booking is Verified", 
+     string Problem,
+     string TechnicianName,
+     string title = "Booking is Verified",
      IEnumerable<EmailAttachmentDto>? emailAttachments = null!)
         {
             string genratedHTML = _contentHelper.BuildVerificationBookingMailContent(BookingId, TechnicianName, Time, Problem, null);
@@ -234,7 +238,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
 
             if (string.IsNullOrWhiteSpace(_config.SmtpServer))
                 throw new InvalidOperationException("EmailHost configuration is missing");
-            if (_config.Port<0)
+            if (_config.Port < 0)
                 throw new InvalidOperationException("Invalid Port configuration");
             if (string.IsNullOrWhiteSpace(_config.Username))
                 throw new InvalidOperationException("EmailUsername configuration is missing");
@@ -244,7 +248,7 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
 
             try
             {
-               await client.ConnectAsync(_config.SmtpServer, _config.Port,_config.EnableSsl);
+                await client.ConnectAsync(_config.SmtpServer, _config.Port, _config.EnableSsl);
                 //client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_config.Username, _config.Password);
@@ -261,19 +265,80 @@ namespace Neighborhood.Services.Infrastructure.Services.EmailService
                 };
 
             }
-        
-            
+
+
             finally
             {
                 await client.DisconnectAsync(true);
-                
-               
+
+
             }
-           
+
 
         }
 
         //Sending Newsletter Emails
+
+        public async Task<EmailSendingResult> SendNewsletterEmailAsync(string subject,
+           string htmlContent,
+     IEnumerable<EmailAttachmentDto>? emailAttachments = null!)
+        {
+            List<string> Emails = await _newsRepo.GetEmails();
+            EmailMessageDto message = new EmailMessageDto()
+            {
+                Subject=subject,
+                HtmlContent = htmlContent,
+                ToGroup = Emails.Select(e => MailboxAddress.Parse(e)),
+                Attachments = emailAttachments
+
+
+            };
+
+
+            using var email = new MimeMessage();
+            email.From.Add(new MailboxAddress(_config.CompanyName, _config.FromAddress));
+            email.To.AddRange(message.ToGroup);
+            email.Subject = message.Subject;
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = message.HtmlContent
+            };
+
+            // Add attachments
+            if (message.Attachments != null)
+            {
+                foreach (var attachment in message.Attachments)
+                {
+                    bodyBuilder.Attachments.Add(
+                    attachment.FileName,
+                    attachment.Content,
+                    ContentType.Parse(attachment.MimeType));
+                }
+            }
+            email.Body = bodyBuilder.ToMessageBody();
+            using var client = new MailKit.Net.Smtp.SmtpClient();
+
+            try
+            {
+                await client.ConnectAsync(_config.SmtpServer, _config.Port,
+        _config.EnableSsl);
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                await client.AuthenticateAsync(_config.Username, _config.Password);
+                await client.SendAsync(email);
+                return new EmailSendingResult()
+                {
+                    content = message.Subject,
+                    To = message.ToGroup.ToString()??"group"
+
+                };
+            }
+            finally
+            {
+                await client.DisconnectAsync(true);
+            }
+
+        
+    }
     }
 
 }

@@ -14,9 +14,7 @@ namespace Neighborhood.Services.Application.Newsletter.Commands
     public class CreateNewsCommandDTO : IRequest<CreateNewsCommandDTO>
     {
         public string email { get; set; }
-        public int id { get; set; }
-        public DateTime subscribedAt { get; set; }
-        public bool isDeleted { set; get; }
+       
 
     }//end of dto class
 
@@ -37,7 +35,7 @@ namespace Neighborhood.Services.Application.Newsletter.Commands
 
         public async Task<CreateNewsCommandDTO> Handle(CreateNewsCommandDTO request, CancellationToken cancellationToken)
         {
-var news=new Domain.Newsletter.Newsletter() { email=request.email, subscribedAt=DateTime.UtcNow};
+var news=new Domain.Newsletter.Newsletter() { email=request.email, subscribedAt=DateTime.UtcNow,IsDeleted=false};
            
             await _newsrepository.AddAsync(news);
             await _unitOfWork.SaveChangesAsync();
@@ -46,11 +44,10 @@ var news=new Domain.Newsletter.Newsletter() { email=request.email, subscribedAt=
 
             return new CreateNewsCommandDTO
             {
-                id = news.Id,
+               
                 email =news.email,
                 
-                subscribedAt=news.subscribedAt,
-                isDeleted=news.IsDeleted
+               
                 
             };
 

@@ -45,6 +45,7 @@ import { PricingComponent } from './features/technician/pages/pricing/pricing.co
 import { ProblemTypeComponent } from './features/public/pages/services/problem-type/problem-type.component';
 import { PoliciesComponent } from './features/staff/pages/policies/policies.component';
 import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
+import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 
 export const routes: Routes = [
   {
@@ -76,6 +77,7 @@ export const routes: Routes = [
       { path: 'service-requests', component: ServiceRequestsComponent },
       { path: 'service-requests/:id', component: ServiceRequestDetailsComponent },
       { path: 'find-technician', component: FindTechnicianComponent },
+      { path: 'technician/:id', component: PublicProfileComponent, data: { role: 'technician' } },
       { path: 'recurring-bookings', component: RecurringBookingsComponent },
       { path: 'favorites', component: CustomerPlaceholderComponent, data: { title: 'Favorites' } },
       { path: 'wallet', component: CustomerWalletComponent },
@@ -101,6 +103,7 @@ export const routes: Routes = [
       { path: 'browse-requests', component: TechnicianBrowseRequestsComponent },
       { path: 'offers', component: TechnicianOffersComponent },
       { path: 'recurring-jobs', component: TechnicianRecurringJobsComponent },
+      { path: 'customer/:id', component: PublicProfileComponent, data: { role: 'customer' } },
       { path: 'profile', component: TechnicianProfileComponent },
       { path: 'wallet', component: TechnicianWalletComponent },
       { path: 'earnings', component: TechnicianEarningsComponent },

@@ -1,0 +1,65 @@
+
+        @import url('https://rsms.me/inter/inter-ui.css');
+section {
+  align-items: center;
+  background: linear-gradient(-45deg, #322ff7, #e77f09);
+  display: flex;
+  font-family: 'Inter UI', sans-serif;
+  height: 50vh;
+  justify-content: center;
+  margin: 0;
+  width: 100vw;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+ 
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  height: 200px;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  width: 80%;
+   margin: auto auto;
+   align-items: center;
+   align-content: center;
+}
+.title {
+  font-size: 1.5em;
+  height: 29px;
+  margin-bottom: 0;
+}
+.text {
+  color: #667;
+  font-size: 1em;
+  height: 38px;
+  margin: 5px 0 0;
+}
+
+.input {
+  background-color: antiquewhite;
+  border: 0;
+  box-sizing: border-box;
+  font-size: 15px;
+  height: 60px;
+  margin: 0 auto;
+  margin-top: 20px;
+  border: 1px dashed rgb(93, 4, 235);
+
+  outline: none !important;
+  position: relative;
+  width: 300px;
+  
+}
+@keyframes Rotate {
+  0% { transform: rotate(0); opacity: 1; }
+  25% { transform: rotate(360deg); opacity: 1; }
+  50% { transform: rotate(720deg); opacity: 1; }
+  75% { transform: rotate(1080deg); opacity: 1; stroke-dasharray: 6 48; stroke-dashoffset: -42;}
+  100% { transform: rotate(1080deg); opacity: 1; stroke-dashoffset: 0; stroke-dasharray: 36 48;}
+}
+@keyframes ScaleDown {
+  0% { transform: scale(1); }
+  100% { transform: scale(0);}
+}

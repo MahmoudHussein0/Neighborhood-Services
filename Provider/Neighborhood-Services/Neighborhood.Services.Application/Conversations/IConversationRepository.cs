@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Conversations
 {
-    public interface IConversationRepository:IGenericRepository<Conversation,int>
+    public interface IConversationRepository : IGenericRepository<Conversation, int>
     {
         public Task<Conversation> GetByUserId(string userId);
         public Task<Conversation> GetByBookingId(int bookingId);
@@ -17,6 +17,13 @@ namespace Neighborhood.Services.Application.Conversations
         public Task<ApplicationUser> GetTechnician(int roomId);
         public Task<ApplicationUser> GetClient(int roomId);
 
+        public Task<Conversation> GetWithLastMessageSender(int bookingId);
 
+        public Task<List<Conversation>> GetWithLastMessageSenderbyUserId(string UserId);
+
+        public Task<string?> GetAvatar( int conversationId,string currentUserId);
+
+        public Task<string?> GetOther( int conversationId,string currentUserId);
     }
+        
 }

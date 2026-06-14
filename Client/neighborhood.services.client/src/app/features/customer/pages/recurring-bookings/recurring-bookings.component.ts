@@ -25,6 +25,7 @@ interface Tab {
   selector: 'app-recurring-bookings',
   imports: [CurrencyPipe, DatePipe, TranslatePipe],
   templateUrl: './recurring-bookings.component.html',
+  styleUrl: './recurring-bookings.component.css',
 })
 export class RecurringBookingsComponent implements OnInit {
   private readonly service = inject(RecurringBookingService);

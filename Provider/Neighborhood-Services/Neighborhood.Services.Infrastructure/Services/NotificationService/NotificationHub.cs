@@ -29,6 +29,7 @@ public NotificationHub(ILogger<NotificationHub> logger)
 
             //using the role in identity
             var userRole = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+           
             _logger.LogInformation($"\n\nuser role: {userRole}");
             Connections.TryAdd(Context.ConnectionId, userRole);
             _logger.LogInformation("Hello from hub!");
@@ -48,18 +49,18 @@ public NotificationHub(ILogger<NotificationHub> logger)
           ;
 
             //using the enum role
-            var ur = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => Enum.IsDefined(typeof(ApplicationUserRole), c))?.Value;
-            _logger.LogInformation($"\n\nuser role2: {ur}");
+           // var ur = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => Enum.IsDefined(typeof(ApplicationUserRole), c))?.Value;
+           // _logger.LogInformation($"\n\nuser role2: {ur}");
 
-            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value;
             _logger.LogInformation($"\n\nbusiness: {businessUserId}");
 
 
             if (!string.IsNullOrEmpty(userRole))
                 await Groups.AddToGroupAsync(Context.ConnectionId, userRole);
 
-            if (!string.IsNullOrEmpty(ur))
-                await Groups.AddToGroupAsync(Context.ConnectionId, ur);
+            //if (!string.IsNullOrEmpty(ur))
+            //    await Groups.AddToGroupAsync(Context.ConnectionId, ur);
 
 
             if (!string.IsNullOrEmpty(businessUserId))

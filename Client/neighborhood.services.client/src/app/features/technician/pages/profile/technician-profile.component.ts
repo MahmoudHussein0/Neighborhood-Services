@@ -12,6 +12,7 @@ import {
   TechnicianUserProfile,
 } from '../../models/technician-profile.model';
 import { TechnicianProfileService } from '../../services/technician-profile.service';
+import { UploadService } from '../../../../shared/services/upload.service';
 
 @Component({
   selector: 'app-technician-profile',
@@ -311,6 +312,7 @@ import { TechnicianProfileService } from '../../services/technician-profile.serv
 export class TechnicianProfileComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly technicianProfileService = inject(TechnicianProfileService);
+  private readonly uploadService = inject(UploadService);
   private readonly formBuilder = inject(FormBuilder);
 
   readonly loading = signal(true);
@@ -438,8 +440,8 @@ export class TechnicianProfileComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(() =>
           this.selectedAvatarFile()
-            ? this.technicianProfileService.uploadUserPhoto(this.selectedAvatarFile() as File).pipe(
-                switchMap(({ photoUrl }) =>
+            ? this.uploadService.upload(this.selectedAvatarFile() as File).pipe(
+                switchMap((photoUrl) =>
                   this.technicianProfileService.updateUserPhoto(user.userId, photoUrl).pipe(
                     switchMap(() => of(photoUrl)),
                   ),
