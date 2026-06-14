@@ -20,40 +20,47 @@ namespace Neighborhood.Services.Application.Categories.Commands
             _categoryRepo = categoryRepo;
             _unitOfWork = unitOfWork;
         }
-        public async Task<CategoryDto> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+    
+
+    public async Task<CategoryDto> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
+            var category = await _categoryRepo.GetByIdAsync(request.Id);
 
-             var category =  await _categoryRepo.GetByIdAsync(request.Id);
+            if (category is null)
+                throw new NotFoundException("Category", request.Id);
 
-            if (category is null) 
-                throw new NotFoundException("Category" , request.Id);
+            var newNameEn = request.NameEn;
+            var newNameAr = request.NameAr;
 
-           var isExists =  await _categoryRepo.IsNameExistsAsync(request.NameEn , request.NameAr  ,request.Id);
+            var isExists = await _categoryRepo.IsNameExistsAsync(
+                newNameEn,
+                newNameAr,
+                request.Id
+            );
 
             if (isExists)
                 throw new ValidationException("Category already exists");
 
-            if(!string.IsNullOrWhiteSpace(request.NameEn))
-                 category.NameEn = request.NameEn;
+            if (!string.IsNullOrWhiteSpace(newNameEn))
+                category.NameEn = newNameEn;
 
-            if (!string.IsNullOrWhiteSpace(request.NameAr))
-                category.NameAr = request.NameAr;
+            if (!string.IsNullOrWhiteSpace(newNameAr))
+                category.NameAr = newNameAr;
 
             if (!string.IsNullOrWhiteSpace(request.Icon))
-                 category.Icon = request.Icon;
+                category.Icon = request.Icon;
 
-           await _categoryRepo.UpdateAsync(category);
-           await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _categoryRepo.UpdateAsync(category);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var categoryDto = new CategoryDto()
+            return new CategoryDto
             {
-                Id = category.Id,
-                Name =  !string.IsNullOrWhiteSpace(category.NameEn) ? category.NameEn :  category.NameAr, 
-                Icon = category.Icon
+                Id = category.Id, 
+                Icon = category.Icon,
+                Image = category.Image ,
+                NameEn = newNameEn,
+                NameAr = newNameAr,
             };
-
-            return categoryDto;
-
         }
     }
 }

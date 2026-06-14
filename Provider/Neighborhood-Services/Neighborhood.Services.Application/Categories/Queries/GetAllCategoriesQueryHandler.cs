@@ -22,12 +22,14 @@ namespace Neighborhood.Services.Application.Categories.Queries
 
             var categoriesDto = categories.Select(c => new CategoryDto()
             {
+                NameEn = c.NameEn ,
+                NameAr = c.NameAr ,
                 Name = lang == "en" ? c.NameEn : c.NameAr,
                 Icon = c.Icon,
                 Id = c.Id ,
                 Image = c.Image ,
                 Technicians = c.TechnicianCategories.Count(),
-                ProblemTypes = c.ProblemTypes.Select( p => new ProblemTypes.DTOs.ProblemTypeDto ()
+                ProblemTypes = c.ProblemTypes.Where(p => !p.IsDeleted).Select( p => new ProblemTypes.DTOs.ProblemTypeDto ()
                 {
                     Name = lang == "en" ? p.NameEn : p.NameAr,
                     Description = lang == "en" ? p.DescriptionEn : p.DescriptionAr,
@@ -37,8 +39,7 @@ namespace Neighborhood.Services.Application.Categories.Queries
                 }).ToList()
              }).ToList();
 
-        
-
+       
            return categoriesDto;
         }
     }

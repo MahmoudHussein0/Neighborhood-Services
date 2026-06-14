@@ -40,7 +40,15 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
                 throw new ValidationException("MinPrice must be less than MaxPrice.");
 
 
-            if(!string.IsNullOrWhiteSpace(request.DescriptionEn))
+
+            if (!string.IsNullOrWhiteSpace(request.NameEn))
+                problemType.NameEn = request.NameEn;
+
+
+            if (!string.IsNullOrWhiteSpace(request.NameAr))
+                problemType.NameAr = request.NameAr;
+
+            if (!string.IsNullOrWhiteSpace(request.DescriptionEn))
                     problemType.DescriptionEn = request.DescriptionEn;
 
             if (!string.IsNullOrWhiteSpace(request.DescriptionAr))
@@ -58,6 +66,7 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             var problemTypeDto = new UpdateProblemTypeDto()
             {
                 Description = !string.IsNullOrWhiteSpace(request.DescriptionEn) ? request.DescriptionEn : request.DescriptionAr,
+                
                 MinPrice = request.MinPrice,
                 MaxPrice = request.MaxPrice
             };

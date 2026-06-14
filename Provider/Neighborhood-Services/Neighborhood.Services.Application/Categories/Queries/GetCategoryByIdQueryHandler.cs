@@ -29,6 +29,10 @@ namespace Neighborhood.Services.Application.Categories.Queries
             {
                 Id = P.Id,
                 Name = lang == "en" ? P.NameEn : P.NameAr,
+                NameAr = P.NameAr,
+                NameEn = P.NameEn,
+                DescriptionAr = P.DescriptionAr,
+                DescriptionEn =P.DescriptionEn,
                 Description = lang == "en" ? P.DescriptionEn : P.DescriptionAr,
                 MinPrice = P.MinPrice,
                 MaxPrice = P.MaxPrice
