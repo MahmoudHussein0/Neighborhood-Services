@@ -16,28 +16,28 @@ export class CategoriesService {
 
 
   getAllCategories(): Observable<any> {
-    return this.apiService.get(`/api/Categories`);
+    return this.apiService.get(`/Categories`);
   }
 
 
   updateCategory(body: object, categoryId: number): Observable<any> {
-    return this.apiService.put(`/api/Categories/${categoryId}`, body);
+    return this.apiService.put(`/Categories/${categoryId}`, body);
   }
 
 
 
   AddCategory(body: object): Observable<any> {
-    return this.apiService.post("/api/Categories/", body);
+    return this.apiService.post("/Categories/", body);
   }
 
 
   deletCategory(id: number): Observable<any> {
-    return this.apiService.delete(`/api/Categories/${id}`);
+    return this.apiService.delete(`/Categories/${id}`);
   }
 
 
-  getCategoryDetails(id: number, lang: string): Observable<any> {
-    return this.apiService.get(`/api/Categories/${id}?lang=${lang}`)
+  getCategoryDetails(id: number): Observable<any> {
+    return this.apiService.get(`/Categories/${id}`)
   }
 
 

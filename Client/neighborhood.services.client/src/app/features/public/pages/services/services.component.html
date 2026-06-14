@@ -32,6 +32,17 @@
             <h2 class="fw-bold">{{"services.hireaTrustedTechnicianPresto" |translate}}.</h2>
         </div>
         <div class="row g-4">
+
+
+            @if (isLoading()) {
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">{{"services.loading" |translate}}</span>
+                </div>
+            </div>
+            }
+
+            @else {
             @for(category of categories(); track category.id){
             <div class="col-lg-4 col-md-6">
                 <div class="card service-card border-0 shadow-sm h-100">
@@ -66,7 +77,15 @@
                     </div>
                 </div>
             </div>
+            }@empty {
+            <p class=" p-5 bg-info-subtle fw-bold text-black border rounded-1  text-center"> {{
+                "services.noServices" | translate }} </p>
+
             }
+
+            }
+
+
         </div>
     </div>
 </section>

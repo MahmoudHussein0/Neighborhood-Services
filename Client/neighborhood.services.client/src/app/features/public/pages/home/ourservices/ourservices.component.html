@@ -8,10 +8,19 @@
         </p>
         <div>
             <owl-carousel-o [options]="customOptions">
+
+                @if( isLoading() ){
+                <div class="d-flex justify-content-center align-items-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                }@else {
+
                 @for (category of categories(); track category.id) {
                 <ng-template carouselSlide [id]="category.id.toString()">
 
-                    <div class="card border-0 rounded-4 text-center me-4 p-4 h-100 category-card">
+                    <div class="card border-0 rounded-4 text-center   h-100 category-card">
                         <div class="mb-3">
                             <div class="icon-wrapper mx-auto">
                                 <i class="bi fs-1" [class]="category.icon"></i>
@@ -31,7 +40,17 @@
                     </div>
 
                 </ng-template>
+                }@empty{
+
+
+
+                <p class=" p-5 bg-info-subtle fw-bold text-black border rounded-1  text-center"> {{
+                    "services.noServices" |
+                    translate}} </p>
                 }
+                }
+
+
 
             </owl-carousel-o>
         </div>

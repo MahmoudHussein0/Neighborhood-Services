@@ -1,4 +1,6 @@
 import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeAr from '@angular/common/locales/ar';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -11,11 +13,13 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { langInterceptor } from './core/interceptors/lang.interceptor';
 
+registerLocaleData(localeAr)
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' }), withViewTransitions(), withHashLocation()),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, langInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor, langInterceptor])),
     provideAnimations(),
     provideToastr(),
     // Locale for DatePipe/CurrencyPipe, taken from the saved language (applies on load/refresh)
@@ -27,7 +31,6 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json'
       })
     }),
-
 
 
 

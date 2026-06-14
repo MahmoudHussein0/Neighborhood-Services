@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MyTranslateService } from '../../../core/services/my-translate.service';
+import { LangService } from '../../../core/services/lang.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,7 @@ export class NavbarComponent {
 
   private readonly myTranslateService = inject(MyTranslateService);
   private readonly translateService = inject(TranslateService);
+  private readonly langService = inject(LangService);
 
   currentLang: string;
   menuOpen = signal(false);
@@ -28,5 +30,6 @@ export class NavbarComponent {
   ChangeLang(lang: string) {
     this.myTranslateService.ChangeLang(lang);
     this.currentLang = this.translateService.getCurrentLang();
+    this.langService.setLanguage(lang);
   }
 }

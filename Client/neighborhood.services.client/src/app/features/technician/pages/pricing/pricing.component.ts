@@ -1,5 +1,6 @@
+import { DeleteComponent } from './../../../../shared/components/delete/delete.component';
 import { Pricing } from './../../models/pricing';
-import { Component, ElementRef, inject, OnDestroy, OnInit, Signal, signal, viewChild, WritableSignal } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, Signal, signal, viewChild, viewChildren, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PricingService } from '../../services/pricing.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,10 +10,11 @@ import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { Subscription } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LangService } from '../../../../core/services/lang.service';
 
 @Component({
   selector: 'app-pricing',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DeleteComponent],
   templateUrl: './pricing.component.html',
   styleUrl: './pricing.component.css',
 })
@@ -22,15 +24,17 @@ export class PricingComponent implements OnInit, OnDestroy {
   private readonly pricingService = inject(PricingService);
   private readonly problemTypeService = inject(ProblemTypeService);
   private readonly toastrService = inject(ToastrService);
+  private readonly langService = inject(LangService);
   private readonly fb = inject(FormBuilder);
 
-  technicianId!: number;
+  pricingId!: number;
   isEditMode: boolean = false;
   existingprice: Pricing | null = null;
   $Sub: Subscription = new Subscription();
   lang: string | null = localStorage.getItem("lang");
 
-  closeBtn: Signal<ElementRef<any> | undefined> = viewChild<ElementRef>('closeBtn');
+  deleteModal = viewChild(DeleteComponent);
+  closeBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
   pricing: WritableSignal<Pricing[]> = signal<Pricing[]>([]);
   problemTypes: WritableSignal<ProblemTypes[]> = signal<ProblemTypes[]>([]);
 
@@ -41,14 +45,22 @@ export class PricingComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.getTechnicianId();
-    this.getPricing();
-    this.getProblemTypes();
+
+
+
+    this.langService.lang$
+      .subscribe(() => {
+        this.getPricing();
+        this.getProblemTypes();
+
+      });
+
+
+
+
+
   }
 
-  getTechnicianId(): void {
-    this.technicianId = Number(this.activatedRoute.parent?.snapshot.paramMap.get('id'));
-  }
 
   getPricing(): void {
 
@@ -115,13 +127,12 @@ export class PricingComponent implements OnInit, OnDestroy {
         this.$Sub = this.pricingService.updatePricing(this.existingprice?.id, value).subscribe({
           next: (res => {
             console.log(res);
-            this.toastrService.success("Pricing updated successfully", 'NS');
+            this.toastrService.success("Pricing updated successfully");
             this.closeModal();
             this.getPricing();
 
           }),
           error: (err => {
-            this.toastrService.error(err.error.detail);
           })
         })
       }
@@ -131,13 +142,15 @@ export class PricingComponent implements OnInit, OnDestroy {
         this.$Sub = this.pricingService.addPricing(this.pricingForm.value).subscribe({
           next: (res => {
             console.log(res);
-            this.toastrService.success("Pricing added successfully", 'NS');
+            this.toastrService.success("Pricing added successfully");
             this.closeModal();
             this.getPricing();
 
           }),
           error: (err => {
             console.log(err);
+            this.toastrService.error(err.error.detail);
+
           })
         })
       }
@@ -148,29 +161,15 @@ export class PricingComponent implements OnInit, OnDestroy {
 
   }
 
-  deletePricing(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to recover this item!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.confirmDelete(id);
-      }
-    });
-  }
 
-
-  confirmDelete(id: number): void {
-    this.pricingService.deletePricing(id).subscribe({
+  confirmDelete(): void {
+    this.pricingService.deletePricing(this.pricingId).subscribe({
       next: (res => {
         console.log(res);
         if (res) {
-          this.toastrService.success("your Price for this problem deleted successfully ");
+          this.toastrService.show("your Price for this problem deleted successfully");
           this.getPricing();
+          this.deleteModal()?.close();
         }
 
       }),
@@ -182,7 +181,7 @@ export class PricingComponent implements OnInit, OnDestroy {
 
 
   closeModal(): void {
-    this.closeBtn()?.nativeElement.click();
+    this.closeBtn()?.forEach(btn => btn.nativeElement.click())
   }
 
 

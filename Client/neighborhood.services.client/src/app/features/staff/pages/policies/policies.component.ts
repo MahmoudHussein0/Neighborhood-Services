@@ -9,10 +9,11 @@ import { DatePipe } from '@angular/common';
 import { Policies } from '../../models/policies';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DeleteComponent } from "../../../../shared/components/delete/delete.component";
 
 @Component({
   selector: 'app-policies',
-  imports: [FormsModule, DatePipe, ReactiveFormsModule, TranslatePipe],
+  imports: [FormsModule, DatePipe, ReactiveFormsModule, TranslatePipe, DeleteComponent],
   templateUrl: './policies.component.html',
   styleUrl: './policies.component.css',
 })
@@ -27,16 +28,18 @@ export class PoliciesComponent implements OnInit {
   filteredPolicies: WritableSignal<Policies[]> = signal<Policies[]>([]);
   filteredPolicy: WritableSignal<Policies | null> = signal<Policies | null>(null);
   hours: WritableSignal<number[]> = signal<number[]>([]);
+  isLoading = signal<boolean>(false);
   uniqueHours: WritableSignal<number[]> = signal<number[]>([]);
   isEdit: WritableSignal<boolean> = signal<boolean>(true);
+  deleteModal = viewChild(DeleteComponent);
   closeBtns: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef>('closeBtn')
 
 
 
   policyForm = this.fb.group({
-    appliesTo: ['', [Validators.required]],
-    hoursBeforeBooking: [0, [Validators.required]],
-    penaltyPct: [0, [Validators.required]]
+    appliesTo: this.fb.control<null | string>(null, [Validators.required]),
+    hoursBeforeBooking: [0, [Validators.min(1)]],
+    penaltyPct: [0, [Validators.min(1)]]
   });
 
   filterPolicy = {
@@ -53,12 +56,17 @@ export class PoliciesComponent implements OnInit {
 
 
   getPolicies(): void {
+    this.isLoading.set(true);
     this.policiesService.getPolicies().subscribe({
       next: (res => {
         console.log(res);
         this.hours.set(res.map(record => record.hoursBeforeBooking));
         this.uniqueHours.set([... new Set(this.hours())])
         this.filteredPolicies.set(res);
+        this.isLoading.set(false);
+      }),
+      error: (err => {
+        this.isLoading.set(false);
       })
     })
   }
@@ -92,8 +100,6 @@ export class PoliciesComponent implements OnInit {
       }),
       error: (err => {
         console.log(err);
-
-        this.toastrService.error(err.error.detail)
       })
     })
 
@@ -146,8 +152,8 @@ export class PoliciesComponent implements OnInit {
           &&
           this.existingPolicy.penaltyPct == value.penaltyPct;
         if (hasChanged) {
-          this.toastrService.info('Policy not changes');
           this.closeModal();
+          return;
         } else {
           this.$Sub = this.policiesService.editPolicy(this.existingPolicy.id, value).subscribe({
             next: (res => {
@@ -170,9 +176,10 @@ export class PoliciesComponent implements OnInit {
       next: (res => {
         console.log(res);
 
-        this.toastrService.success("Policy deleted successfully");
+        this.toastrService.show("Policy deleted successfully");
         this.getPolicies();
-        this.closeModal();
+        this.deleteModal()?.close();
+
       }),
       error: (err => {
         console.log(err);

@@ -1,5 +1,5 @@
 import { Category } from './../../../../core/models/category';
-import { Component, ElementRef, inject, input, InputSignal, OnDestroy, OnInit, output, OutputEmitterRef, Signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, InputSignal, OnDestroy, OnInit, output, OutputEmitterRef, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CategoriesService } from '../../../../core/services/categories.service';
@@ -13,7 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './card.component.html',
   styleUrl: './card.component.css',
 })
-export class CardComponent implements OnInit {
+export class CardComponent {
 
   private readonly categoriesService = inject(CategoriesService);
   private readonly toastrService = inject(ToastrService);
@@ -21,33 +21,9 @@ export class CardComponent implements OnInit {
 
   category: InputSignal<Category> = input.required<Category>();
   edit: OutputEmitterRef<Category> = output<Category>()
+  delete: OutputEmitterRef<number> = output<number>()
   closeBtn: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef>('closeBtn');
 
-
-  updateCategoryForm!: FormGroup;
-  categoryId!: number;
-  ngOnInit(): void {
-    this.updateCategoryForm = this.fb.group({
-      name: ['', [Validators.required]],
-      icon: ['', Validators.required]
-    })
-
-  }
-
-  confirmDelete() {
-    this.categoriesService.deletCategory(this.categoryId).subscribe({
-      next: (res => {
-        if (res) {
-          this.toastrService.success("Category Deleted Successful");
-          this.categoriesService.categories.update(categories => categories.filter(c => c.id !== this.categoryId))
-          this.closeBtn()?.nativeElement.click()
-        }
-      }),
-      error: (err => {
-        this.toastrService.error("Can't Delete Category");
-      })
-    })
-  }
 }
 
 
