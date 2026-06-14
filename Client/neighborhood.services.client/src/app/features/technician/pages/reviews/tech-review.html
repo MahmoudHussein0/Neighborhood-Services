@@ -1,0 +1,103 @@
+<div class="approved-reviews" dir="ltr">
+
+  <header class="header">
+    <div class="header-text">
+      <h2 class="title">Your Approved Reviews</h2>
+      <p class="subtitle">
+        These are the reviews submitted by clients after service completion, reviewed and approved by the management team.
+      </p>
+    </div>
+
+    <div class="gauge">
+      <svg
+        viewBox="0 0 200 115"
+        class="gauge-svg"
+        role="img"
+        [attr.aria-label]="'Average rating ' + averageRatingLabel + ' out of 5'"
+      >
+        <path [attr.d]="gaugeBackgroundPath" class="gauge-track"></path>
+        <path [attr.d]="gaugeProgressPath" class="gauge-progress"></path>
+
+        <line
+          *ngFor="let tick of gaugeTicks"
+          [attr.x1]="tick.x1"
+          [attr.y1]="tick.y1"
+          [attr.x2]="tick.x2"
+          [attr.y2]="tick.y2"
+          class="gauge-tick"
+        ></line>
+
+        <line
+          [attr.x1]="100"
+          [attr.y1]="100"
+          [attr.x2]="gaugeNeedleEnd.x"
+          [attr.y2]="gaugeNeedleEnd.y"
+          class="gauge-needle"
+        ></line>
+
+        <circle cx="100" cy="100" r="5" class="gauge-pivot"></circle>
+      </svg>
+
+      <div class="gauge-readout">
+        <span class="gauge-value">{{ averageRatingLabel }}</span>
+        <span class="gauge-caption">Out of 5 - Based on {{ reviews.length }} reviews</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="demo-banner" *ngIf="isDemo">
+    <span class="demo-icon" aria-hidden="true">!</span>
+    <span *ngIf="status === 'error'">
+      Unable to connect to the API. The data shown is currently for preview purposes only.
+    </span>
+    <span *ngIf="status !== 'error'">
+      No real data provided (revieweeId). The data shown is for preview purposes.
+    </span>
+  </div>
+
+  <div class="reviews-list">
+
+    <div class="state loading" *ngIf="status === 'loading'">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>Loading your reviews...</span>
+    </div>
+
+    <div class="state empty" *ngIf="status === 'empty'">
+      <p class="empty-title">No approved reviews yet</p>
+      <p class="empty-text">
+        Once a client submits a review for a service you provided and it is approved by management, it will appear here.
+      </p>
+    </div>
+
+    <article class="review-card" *ngFor="let review of reviews; trackBy: trackById">
+      <header class="review-head">
+        <div class="reviewer">
+          <div class="avatar">
+            <span *ngIf="!review.reviewerLoading">{{ initial(review.reviewerName) }}</span>
+            <span class="spinner small" *ngIf="review.reviewerLoading" aria-hidden="true"></span>
+          </div>
+          <div class="reviewer-meta">
+            <p class="reviewer-name">
+              {{ review.reviewerLoading ? 'Loading name...' : (review.reviewerName || 'Client') }}
+            </p>
+            <p class="review-date">{{ formatDate(review.createdAt) }}</p>
+          </div>
+        </div>
+
+        <div class="stars" aria-hidden="true">
+          <span class="star" *ngFor="let filled of stars(review.rating)" [class.filled]="filled">★</span>
+        </div>
+      </header>
+
+      <div class="booking-line">
+        <span class="booking-label">Service:</span>
+        <span>
+          {{ review.bookingLoading ? 'Loading booking details...' : (review.bookingDescription || 'No details available') }}
+        </span>
+      </div>
+
+      <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+    </article>
+
+  </div>
+</div>
