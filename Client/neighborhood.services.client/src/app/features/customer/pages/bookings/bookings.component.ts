@@ -15,6 +15,7 @@ import { RaiseDisputeModalComponent } from '../../components/raise-dispute-modal
 import { LeaveReviewModalComponent } from '../../components/leave-review-modal/leave-review-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 type StatusTab = 'All' | BookingStatus;
 
@@ -30,6 +31,7 @@ export class BookingsComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
   private readonly confirmDialog = inject(ConfirmService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: StatusTab[] = ['All', 'Pending', 'Quoted', 'Confirmed', 'Completed', 'Cancelled', 'Disputed'];
   readonly pageSize = 10;
@@ -53,6 +55,11 @@ export class BookingsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. quote received, booking completed).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {

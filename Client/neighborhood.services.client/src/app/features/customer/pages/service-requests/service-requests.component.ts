@@ -11,6 +11,7 @@ import { ServiceRequestService } from '../../services/service-request.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { ServiceRequestSummary, ServiceRequestStatus } from '../../models/service-request.model';
 import { CreateServiceRequestModalComponent } from '../../components/create-service-request-modal/create-service-request-modal.component';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 type StatusTab = 'All' | ServiceRequestStatus;
 
@@ -26,6 +27,7 @@ export class ServiceRequestsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: StatusTab[] = ['All', 'Open', 'Closed', 'Expired'];
   readonly pageSize = 10;
@@ -45,6 +47,11 @@ export class ServiceRequestsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. a new offer came in).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {

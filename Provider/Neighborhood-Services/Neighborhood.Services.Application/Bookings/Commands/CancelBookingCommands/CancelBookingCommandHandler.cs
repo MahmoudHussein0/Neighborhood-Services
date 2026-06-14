@@ -1,8 +1,10 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Escrows.Commands.RefundEscrow;
 using Neighborhood.Services.Application.Escrows.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.Escrows;
@@ -16,19 +18,25 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CancelBookingComma
         private readonly IEscrowRepository _escrowRepository;
         private readonly IMediator _mediator;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<CancelBookingCommandHandler> _logger;
 
         public CancelBookingCommandHandler(
             IBookingRepository bookingRepository,
             IUnitOfWork unitOfWork,
             IEscrowRepository escrowRepository,
             IMediator mediator,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            INotificationService notificationService,
+            ILogger<CancelBookingCommandHandler> logger)
         {
             _bookingRepository = bookingRepository;
             _unitOfWork = unitOfWork;
             _escrowRepository = escrowRepository;
             _mediator = mediator;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
@@ -66,6 +74,23 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CancelBookingComma
 
             await _bookingRepository.UpdateAsync(booking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the other party that the booking was cancelled — best effort.
+            try
+            {
+                var otherUserId = cancelledByCustomer
+                    ? booking.Technician.ApplicationUserId
+                    : booking.Customer.ApplicationUserId;
+
+                if (!string.IsNullOrEmpty(otherUserId))
+                    await _notificationService.SendNotificationToUser(
+                        otherUserId,
+                        $"Booking #{booking.Id} was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Cancel-booking notification failed for booking {Id}.", booking.Id);
+            }
 
             return true;
         }
