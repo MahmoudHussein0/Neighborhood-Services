@@ -38,16 +38,7 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
                     "Current staff not found.");
             }
 
-            var hasFullAccess = await _repository.HasPermissionAsync(
-                currentStaff.Id,
-                PermissionType.FullAccess,
-                cancellationToken);
-
-            if (!hasFullAccess)
-            {
-                throw new UnauthorizedAccessException(
-                    "Only Super Admin can update staff.");
-            }
+           
 
             var staff = await _repository.GetByIdAsync(request.Id);
 

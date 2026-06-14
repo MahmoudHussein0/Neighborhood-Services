@@ -1,3 +1,4 @@
+
 <div class="container-fluid py-3 py-lg-4" dir="ltr">
 
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -109,7 +110,7 @@
   </div>
 
 </div></div>
-              
+
             </td>
             <td class="text-secondary">{{ staff.email }}</td>
             <td>
@@ -304,71 +305,74 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content border-0 shadow-lg text-start">
         <div class="modal-header bg-primary text-white justify-content-between">
-          <h5 class="modal-title fw-bold m-0">{{ isEditMode ? 'Edit Staff Member' : 'Assign New Staff Member' }}</h5>
+          <h5 class="modal-title fw-bold m-0">{{ isEditMode ? 'Edit Staff Member' : 'Create &amp; Assign New Staff Member' }}</h5>
           <button type="button" class="btn-close btn-close-white m-0" (click)="toggleModal(false)"></button>
         </div>
         <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
           <div class="modal-body">
 
-           <!-- يظهر فقط عند Add -->
-<div class="mb-3" *ngIf="!isEditMode">
+            <!-- يظهر فقط عند Add: فورم إنشاء يوزر جديد بدور Staff -->
+            <div *ngIf="!isEditMode">
 
-  <label class="form-label fw-semibold text-dark">
-    Select User
-  </label>
+              <h6 class="fw-bold text-primary mb-3">New User Account</h6>
 
-  <select
-    formControlName="userId"
-    class="form-select"
-    [ngClass]="{
-      'is-invalid':
-      staffForm.get('userId')?.touched &&
-      staffForm.get('userId')?.invalid
-    }">
+              <div class="row g-3 mb-3">
 
-    <option value="">
-      -- Choose User --
-    </option>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold text-dark">Full Name</label>
+                  <input type="text" formControlName="fullName" class="form-control"
+                    [ngClass]="{'is-invalid': staffForm.get('fullName')?.touched && staffForm.get('fullName')?.invalid}">
+                  <div class="invalid-feedback">Full name is required.</div>
+                </div>
 
-    <option
-      *ngFor="let user of usersList"
-      [value]="user.id">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold text-dark">Email</label>
+                  <input type="email" formControlName="email" class="form-control"
+                    [ngClass]="{'is-invalid': staffForm.get('email')?.touched && staffForm.get('email')?.invalid}">
+                  <div class="invalid-feedback">A valid email is required.</div>
+                </div>
 
-      {{ user.fullName }}
-      • {{ user.email }}
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold text-dark">Password</label>
+                  <input type="password" formControlName="password" class="form-control"
+                    [ngClass]="{'is-invalid': staffForm.get('password')?.touched && staffForm.get('password')?.invalid}">
+                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                </div>
 
-    </option>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold text-dark">Age</label>
+                  <input type="number" formControlName="age" class="form-control"
+                    [ngClass]="{'is-invalid': staffForm.get('age')?.touched && staffForm.get('age')?.invalid}">
+                  <div class="invalid-feedback">Age must be 18 or older.</div>
+                </div>
 
-  </select>
+              </div>
 
-  <div class="invalid-feedback">
-    Please select a user.
-  </div>
+              <hr class="my-3">
 
-  <small class="text-muted">
-    {{ usersList.length }} available users
-  </small>
+            </div>
 
-</div>
-<div *ngIf="isEditMode && selectedStaff" class="mb-3">
+            <!-- يظهر فقط عند Edit -->
+            <div *ngIf="isEditMode && selectedStaff" class="mb-3">
 
-  <label class="form-label fw-semibold">
-    Staff Member
-  </label>
+              <label class="form-label fw-semibold">
+                Staff Member
+              </label>
 
-  <div class="form-control bg-light">
+              <div class="form-control bg-light">
 
-    <div class="fw-semibold">
-      {{ selectedStaff.fullName }}
-    </div>
+                <div class="fw-semibold">
+                  {{ selectedStaff.fullName }}
+                </div>
 
-    <small class="text-muted">
-      {{ selectedStaff.email }}
-    </small>
+                <small class="text-muted">
+                  {{ selectedStaff.email }}
+                </small>
 
-  </div>
+              </div>
 
-</div>
+            </div>
+
             <div class="mb-3">
               <label class="form-label fw-semibold text-dark">System Role</label>
               <select formControlName="role" class="form-select">
@@ -384,6 +388,7 @@
                   *ngFor="let perm of permissionsList">
                   <input class="form-check-input ms-0" type="checkbox" [id]="'perm-' + perm.id"
                     [checked]="staffForm.get('selectedPermissions')?.value?.includes(perm.id)"
+                    [disabled]="perm.id !== 9 && isFullAccessSelected()"
                     (change)="onPermissionChange(perm.id, $event)">
                   <label class="form-check-label text-dark ms-2" [for]="'perm-' + perm.id">
                     {{ perm.name }}
@@ -399,7 +404,7 @@
               [disabled]="staffForm.invalid || isSubmitting">
               <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
              <span>
-  {{ isEditMode ? 'Update Staff' : 'Save & Activate Staff' }}
+  {{ isEditMode ? 'Update Staff' : 'Create & Assign Staff' }}
 </span>
             </button>
           </div>

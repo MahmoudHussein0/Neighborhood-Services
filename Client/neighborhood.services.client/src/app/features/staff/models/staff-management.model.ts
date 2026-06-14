@@ -15,6 +15,7 @@ export enum PermissionType {
   FullAccess = 9
 }
 
+
 export enum StaffRole {
   Admin = 1,
   TechnicalSupport = 2
@@ -40,7 +41,7 @@ export interface StaffDto {
   permissions: StaffPermissionDto[];
   createdAt: Date;
   updatedAt: Date;
-  
+
   // بيانات الـ ApplicationUser المحقونة داخل الـ DTO
   fullName: string;
   email: string;
@@ -64,18 +65,21 @@ export interface UpdateStaffCommand {
   isActive: boolean;     // حالة الحساب (تفعيل/تعطيل)
   permissions: PermissionType[]; // القائمة الجديدة الكاملة للصلاحيات كأرقام
 }
-export interface UserLookupDto {
 
-  id: string;
-
+// مطابق للـ Endpoint: POST /api/Users
+// يُستخدم لإنشاء مستخدم جديد (بدور Staff) قبل ربطه بجدول الـ Staff
+export interface CreateUserCommand {
   fullName: string;
-
   email: string;
-
   photo: string;
-
-  isActive: boolean;
-
-  applicationUserRole: string;
+  password: string;
+  age: number;
+  applicationUserRole: string; // 'Staff'
+  latitude: number;
+  longitude: number;
+  nationalId?: string;
+  experience?: string;
+  maxTravelDistance?: number;
 }
+
 // ملاحظة: الـ DeleteStaffCommand لا يحتاج لـ Interface مستقل لأنه يرسل الـ Id مباشرة في الـ URL كـ Parameter
