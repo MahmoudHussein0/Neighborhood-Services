@@ -45,6 +45,8 @@
         "addMethod": "Add Method",
         "noPaymentMethods": "You don't have any saved payment methods.",
         "transactions": "Transaction History",
+        "allTypes": "All Types",
+        "allStatuses": "All Statuses",
         "date": "Date",
         "type": "Type",
         "amount": "Amount",
@@ -54,7 +56,32 @@
         "selectPaymentMethod": "Select Payment Method",
         "chooseMethod": "Choose a method...",
         "proceedToPayment": "Proceed to Payment",
-        "availableForPayout": "Available for next payout"
+        "availableForPayout": "Available for next payout",
+        "withdraw": "Withdraw",
+        "withdrawFunds": "Withdraw Funds",
+        "availableBalance": "Available balance",
+        "withdrawalAmount": "Withdrawal Amount",
+        "enterAmount": "Enter amount",
+        "confirmWithdrawal": "Confirm Withdrawal",
+        "amountExceedsBalance": "Amount exceeds available balance.",
+        "processing": "Processing...",
+        "previous": "Previous",
+        "next": "Next",
+        "pageOf": "Page {{current}} of {{total}}",
+        "statusType": {
+            "pending": "Pending",
+            "completed": "Completed",
+            "failed": "Failed",
+            "reversed": "Reversed"
+        },
+        "transactionType": {
+            "topUp": "Top Up",
+            "transfer": "Transfer",
+            "withdrawal": "Withdrawal",
+            "bookingPayment": "Booking Payment",
+            "refund": "Refund",
+            "reversal": "Reversal"
+        }
     },
     "earnings": {
         "title": "Earnings & Invoices",

@@ -45,6 +45,8 @@
         "addMethod": "إضافة طريقة",
         "noPaymentMethods": "ليس لديك طرق دفع محفوظة.",
         "transactions": "سجل المعاملات",
+        "allTypes": "جميع الأنواع",
+        "allStatuses": "جميع الحالات",
         "date": "التاريخ",
         "type": "النوع",
         "amount": "المبلغ",
@@ -54,7 +56,32 @@
         "selectPaymentMethod": "اختر طريقة الدفع",
         "chooseMethod": "اختر طريقة...",
         "proceedToPayment": "المتابعة للدفع",
-        "availableForPayout": "متاح للسحب القادم"
+        "availableForPayout": "متاح للسحب القادم",
+        "withdraw": "سحب الرصيد",
+        "withdrawFunds": "سحب الأموال",
+        "availableBalance": "الرصيد المتاح",
+        "withdrawalAmount": "مبلغ السحب",
+        "enterAmount": "أدخل المبلغ",
+        "confirmWithdrawal": "تأكيد السحب",
+        "amountExceedsBalance": "المبلغ يتجاوز الرصيد المتاح.",
+        "processing": "جارٍ المعالجة...",
+        "previous": "السابق",
+        "next": "التالي",
+        "pageOf": "صفحة {{current}} من {{total}}",
+        "statusType": {
+            "pending": "قيد الانتظار",
+            "completed": "مكتلمة",
+            "failed": "فشلت",
+            "reversed": "معكوس"
+        },
+        "transactionType": {
+            "topUp": "شحن",
+            "transfer": "تحويل",
+            "withdrawal": "سحب",
+            "bookingPayment": "دفع حجز",
+            "refund": "استرداد",
+            "reversal": "عكس معاملة"
+        }
     },
     "earnings": {
         "title": "الأرباح والفواتير",
