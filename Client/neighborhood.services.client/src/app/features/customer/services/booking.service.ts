@@ -95,9 +95,9 @@ export class BookingService {
       );
   }
 
-  /** POST /api/bookings/{id}/accept-quote — customer accepts the tech's quote (holds escrow). */
-  acceptQuote(id: number): Observable<void> {
-    return this.api.post<void>(`/bookings/${id}/accept-quote`, {});
+  /** POST /api/bookings/{id}/accept-quote — customer accepts the tech's quote (optional promo code; holds escrow). */
+  acceptQuote(id: number, promoCode?: string | null): Observable<void> {
+    return this.api.post<void>(`/bookings/${id}/accept-quote`, { promoCode: promoCode ?? null });
   }
 
   /** POST /api/bookings/{id}/reject-quote — customer rejects; booking goes back to Pending. */

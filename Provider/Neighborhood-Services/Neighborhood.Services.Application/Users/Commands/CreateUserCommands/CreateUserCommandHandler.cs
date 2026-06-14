@@ -4,10 +4,12 @@ using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.Users.Interfaces;
+using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Customers;
 using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Domain.Technicians;
+using Neighborhood.Services.Domain.Wallets;
 using NetTopologySuite.Geometries;
 
 namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
@@ -17,12 +19,14 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
         ICustomerRepository customerRepository,
         ITechnicianRepository technicianRepository,
         IStaffRepository staffRepository,
+        IWalletRepository walletRepository,
         IUnitOfWork unitOfWork) : IRequestHandler<CreateUserCommand, string>
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly ICustomerRepository _customerRepository = customerRepository;
         private readonly ITechnicianRepository _technicianRepository = technicianRepository;
         private readonly IStaffRepository _staffRepository = staffRepository;
+        private readonly IWalletRepository _walletRepository = walletRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -72,6 +76,18 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                             UpdatedAt = DateTime.UtcNow
                         });
                     }
+                    // Create a wallet for the new customer if they don't have one
+                    if (await _walletRepository.GetByUserIdAsync(applicationUserId) is null)
+                    {
+                        await _walletRepository.AddAsync(new Wallet
+                        {
+                            UserId = applicationUserId,
+                            Balance = 0,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        });
+                        await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    }
                     break;
 
                 case ApplicationUserRole.Technician:
@@ -91,6 +107,18 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow
                         });
+                    }
+                    // Create a wallet for the new technician if they don't have one
+                    if (await _walletRepository.GetByUserIdAsync(applicationUserId) is null)
+                    {
+                        await _walletRepository.AddAsync(new Wallet
+                        {
+                            UserId = applicationUserId,
+                            Balance = 0,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        });
+                        await _unitOfWork.SaveChangesAsync(cancellationToken);
                     }
                     break;
 

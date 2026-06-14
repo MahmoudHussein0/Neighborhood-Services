@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { AuthService } from '../../features/auth/services/auth.service';
+import { LayoutService } from '../../core/services/layout.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -14,9 +15,12 @@ import { environment } from '../../environments/environment';
 export class DashboardShellComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  readonly layout = inject(LayoutService);
 
-  /** Page title shown in the topbar. Each role's layout passes its own. */
-  title = input<string>('Dashboard');
+  /** Page title shown in the topbar. Each role's layout passes its own.
+   *  Named `pageTitle` (not `title`) so it doesn't leak to the host element's
+   *  native `title` attribute, which the browser renders as a hover tooltip. */
+  pageTitle = input<string>('Dashboard');
 
   readonly isLoggingOut = signal(false);
   readonly currentUser = this.authService.currentUser;

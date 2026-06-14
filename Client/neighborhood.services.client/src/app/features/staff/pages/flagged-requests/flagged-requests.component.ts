@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe, CurrencyPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { ModerationService, FlaggedServiceRequest } from '../../services/moderation.service';
@@ -7,7 +8,7 @@ import { PagedResult } from '../../../../core/models/paged-result.model';
 
 @Component({
   selector: 'app-flagged-requests',
-  imports: [DatePipe, CurrencyPipe],
+  imports: [DatePipe, CurrencyPipe, TranslatePipe],
   templateUrl: './flagged-requests.component.html',
 })
 export class FlaggedRequestsComponent implements OnInit {

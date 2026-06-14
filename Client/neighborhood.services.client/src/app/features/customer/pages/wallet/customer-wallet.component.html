@@ -6,75 +6,76 @@
   </div>
 
   <div class="row mb-4">
-    <!-- Balance Card -->
-    <div class="col-md-6 col-lg-4 mb-3 mb-md-0">
-      <div class="card bg-primary text-white h-100 border-0 shadow-sm wallet-card">
+    <!-- Balance Card Centered -->
+    <div class="col-md-8 col-lg-6 mx-auto mb-3 mb-md-0">
+      <div class="card text-white h-100 border-0 shadow wallet-card" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); border-radius: 1.5rem;">
         <div class="card-body d-flex flex-column justify-content-between p-4">
-          <div>
+          <div class="text-center">
             <h6 class="text-white-50 text-uppercase mb-1">{{ 'wallet.currentBalance' | translate }}</h6>
-            <h1 class="display-5 fw-bold mb-0">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</h1>
+            <h1 class="display-4 fw-bold mb-0">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</h1>
           </div>
-          <div class="mt-4 d-flex gap-2">
-            <button class="btn btn-light fw-bold px-4" data-bs-toggle="modal" data-bs-target="#topUpModal">
+          <div class="mt-4 d-flex justify-content-center gap-3">
+            <button class="btn btn-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#topUpModal" (click)="topUpAmount.set(null); focusInput('topUpAmountInput')">
               <i class="bi bi-plus-circle me-2"></i>{{ 'wallet.topUp' | translate }}
             </button>
-            <button class="btn btn-outline-light fw-bold px-4" data-bs-toggle="modal" data-bs-target="#withdrawModal">
-              <i class="bi bi-arrow-up-circle me-2"></i>Withdraw
+            <button class="btn btn-outline-light fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#withdrawModal" (click)="withdrawAmount.set(null); focusInput('withdrawAmountInput')">
+              <i class="bi bi-arrow-up-circle me-2"></i>{{ 'wallet.withdraw' | translate }}
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Payment Methods -->
-    <div class="col-md-6 col-lg-8">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center pt-4 pb-0 px-4">
-          <h5 class="fw-bold mb-0">{{ 'wallet.paymentMethods' | translate }}</h5>
-          <small class="text-muted d-block mt-1">Cards are automatically saved when you pay</small>
-        </div>
-        <div class="card-body p-4">
-          @if (paymentMethods().length === 0) {
-            <p class="text-muted">{{ 'wallet.noPaymentMethods' | translate }}</p>
-          } @else {
-            <div class="row g-3">
-              @for (pm of paymentMethods(); track pm.id) {
-                <div class="col-md-6">
-                  <div class="p-3 border rounded d-flex justify-content-between align-items-center bg-light">
-                    <div class="d-flex align-items-center gap-3">
-                      <i class="bi bi-credit-card fs-4 text-primary"></i>
-                      <div>
-                        <div class="fw-bold">**** **** **** {{ pm.lastFourDigits }}</div>
-                        <small class="text-muted">{{ pm.expiryMonth }}/{{ pm.expiryYear }}</small>
-                      </div>
-                    </div>
-                    <button class="btn btn-sm btn-outline-danger border-0" (click)="deletePaymentMethod(pm.id)">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          }
         </div>
       </div>
     </div>
   </div>
 
   <!-- Transaction History -->
-  <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white border-0 pt-4 px-4">
-      <h5 class="fw-bold mb-0">{{ 'wallet.transactions' | translate }}</h5>
+  <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+    <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center flex-wrap gap-3" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+      <h5 class="fw-bold mb-0 text-dark d-flex align-items-center"><i class="bi bi-clock-history me-2 text-primary fs-4"></i>{{ 'wallet.transactions' | translate }}</h5>
+      
+      <div class="d-flex align-items-center bg-light rounded-pill border p-1 filter-container shadow-sm" style="flex-wrap: nowrap;">
+        <i class="bi bi-funnel-fill text-primary ms-3 me-2"></i>
+        
+        <!-- Type Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light bg-transparent border-0 text-secondary fw-medium dropdown-toggle d-flex justify-content-between align-items-center pe-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 140px; box-shadow: none;">
+            <span class="text-dark">{{ getFilterTypeLabel(filterType()) | translate }}</span>
+          </button>
+          <ul class="dropdown-menu border-0 shadow" style="border-radius: 1rem; min-width: 160px; font-size: 0.95rem; padding: 0.5rem;">
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === ''" [class.text-primary]="filterType() === ''" (click)="filterType.set(''); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.allTypes' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === TransactionType.TopUp" [class.text-primary]="filterType() === TransactionType.TopUp" (click)="filterType.set(TransactionType.TopUp); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.transactionType.topUp' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === TransactionType.Withdrawal" [class.text-primary]="filterType() === TransactionType.Withdrawal" (click)="filterType.set(TransactionType.Withdrawal); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.transactionType.withdrawal' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === TransactionType.BookingPayment" [class.text-primary]="filterType() === TransactionType.BookingPayment" (click)="filterType.set(TransactionType.BookingPayment); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.transactionType.bookingPayment' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === TransactionType.Refund" [class.text-primary]="filterType() === TransactionType.Refund" (click)="filterType.set(TransactionType.Refund); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.transactionType.refund' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterType() === TransactionType.Transfer" [class.text-primary]="filterType() === TransactionType.Transfer" (click)="filterType.set(TransactionType.Transfer); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem;">{{ 'wallet.transactionType.transfer' | translate }}</a></li>
+          </ul>
+        </div>
+        
+        <div class="vr text-secondary opacity-25 mx-1" style="min-height: 20px;"></div>
+        
+        <!-- Status Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light bg-transparent border-0 text-secondary fw-medium dropdown-toggle d-flex justify-content-between align-items-center pe-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 140px; box-shadow: none;">
+            <span class="text-dark">{{ getFilterStatusLabel(filterStatus()) | translate }}</span>
+          </button>
+          <ul class="dropdown-menu border-0 shadow" style="border-radius: 1rem; min-width: 160px; font-size: 0.95rem; padding: 0.5rem;">
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterStatus() === ''" [class.text-primary]="filterStatus() === ''" (click)="filterStatus.set(''); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.allStatuses' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterStatus() === TransactionStatus.Pending" [class.text-primary]="filterStatus() === TransactionStatus.Pending" (click)="filterStatus.set(TransactionStatus.Pending); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.statusType.pending' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterStatus() === TransactionStatus.Completed" [class.text-primary]="filterStatus() === TransactionStatus.Completed" (click)="filterStatus.set(TransactionStatus.Completed); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.statusType.completed' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterStatus() === TransactionStatus.Failed" [class.text-primary]="filterStatus() === TransactionStatus.Failed" (click)="filterStatus.set(TransactionStatus.Failed); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem; margin-bottom: 2px;">{{ 'wallet.statusType.failed' | translate }}</a></li>
+            <li><a class="dropdown-item py-2 px-3 fw-medium" [class.bg-light]="filterStatus() === TransactionStatus.Reversed" [class.text-primary]="filterStatus() === TransactionStatus.Reversed" (click)="filterStatus.set(TransactionStatus.Reversed); currentPage.set(1)" style="cursor: pointer; border-radius: 0.5rem;">{{ 'wallet.statusType.reversed' | translate }}</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body p-0" style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; overflow: hidden;">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th class="ps-4">{{ 'wallet.date' | translate }}</th>
-              <th>{{ 'wallet.type' | translate }}</th>
-              <th>{{ 'wallet.amount' | translate }}</th>
-              <th>{{ 'wallet.status' | translate }}</th>
+              <th class="ps-4 text-center">{{ 'wallet.date' | translate }}</th>
+              <th class="text-center">{{ 'wallet.type' | translate }}</th>
+              <th class="text-center">{{ 'wallet.amount' | translate }}</th>
+              <th class="text-center">{{ 'wallet.status' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -83,25 +84,69 @@
                 <td colspan="4" class="text-center py-4 text-muted">{{ 'wallet.noTransactions' | translate }}</td>
               </tr>
             }
-            @for (tx of transactions(); track tx.id) {
+            @for (tx of paginatedTransactions(); track tx.id) {
               <tr>
-                <td class="ps-4">{{ tx.createdAt | date:'medium' }}</td>
-                <td>
-                  <span class="badge bg-light text-dark border">{{ getTypeLabel(tx.type) }}</span>
-                </td>
-                <td class="fw-bold" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
-                  {{ tx.toWalletId === wallet()?.id ? '+' : '-' }}{{ tx.amount | number:'1.2-2' }} {{ tx.currency }}
-                </td>
-                <td>
-                  <span class="badge" [ngClass]="getStatusBadgeClass(tx.status)">
-                    {{ getStatusLabel(tx.status) }}
+                <td class="ps-4 text-center"><span dir="ltr" class="d-inline-block">{{ tx.createdAt | date:'dd/MM/yyyy, hh:mm a' }}</span></td>
+                <td class="text-center">
+                  <span class="badge bg-light text-dark border d-inline-block text-center rounded-pill px-3 py-2 fw-medium" style="width: 120px;">
+                    {{ getTypeLabel(tx.type) | translate }}
                   </span>
+                </td>
+                <td class="fw-bold text-center" [ngClass]="{'text-success': tx.toWalletId === wallet()?.id, 'text-danger': tx.fromWalletId === wallet()?.id}">
+                  <span dir="ltr" class="d-inline-block">{{ tx.toWalletId === wallet()?.id ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }} {{ tx.currency }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="badge d-inline-block text-center" style="width: 100px;" [ngClass]="getStatusBadgeClass(tx.status)">
+                    {{ getStatusLabel(tx.status) | translate }}
+                  </span>
+                </td>
+              </tr>
+            }
+            @for (empty of emptyRows(); track $index) {
+              <tr style="visibility: hidden;">
+                <td class="ps-4 text-center border-0"><span dir="ltr" class="d-inline-block">01/01/2000, 12:00 AM</span></td>
+                <td class="text-center border-0">
+                  <span class="badge bg-light bg-opacity-10 text-muted d-inline-block text-center rounded-pill" style="width: 120px;">&nbsp;</span>
+                </td>
+                <td class="fw-bold text-center border-0">
+                  <span dir="ltr" class="d-inline-block">- 0.00 EGP</span>
+                </td>
+                <td class="text-center border-0">
+                  <span class="badge d-inline-block text-center" style="width: 100px;">&nbsp;</span>
                 </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="d-flex justify-content-center p-4 bg-light border-top">
+          <nav aria-label="Transaction pagination">
+            <ul class="pagination pagination-sm mb-0 gap-2">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <a class="page-link border-0 shadow-sm rounded-pill px-3 fw-medium text-dark d-flex align-items-center" role="button" (click)="changePage(currentPage() - 1)">
+                  {{ 'wallet.previous' | translate }}
+                </a>
+              </li>
+              
+              <!-- Simple pagination dots / numbers -->
+              <li class="page-item disabled">
+                <span class="page-link border-0 bg-transparent text-secondary fw-bold px-3">
+                  {{ 'wallet.pageOf' | translate: { current: currentPage(), total: totalPages() } }}
+                </span>
+              </li>
+
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <a class="page-link border-0 shadow-sm rounded-pill px-3 fw-medium text-dark d-flex align-items-center" role="button" (click)="changePage(currentPage() + 1)">
+                  {{ 'wallet.next' | translate }}
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
     </div>
   </div>
 </div>
@@ -109,61 +154,60 @@
 <!-- Top Up Modal -->
 <div class="modal fade" id="topUpModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold">{{ 'wallet.topUpWallet' | translate }}</h5>
+    <div class="modal-content border-0 shadow" style="border-radius: 1.5rem; overflow: hidden;">
+      <div class="modal-header border-0 bg-light p-4 pb-3">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-plus-circle-fill text-primary me-2"></i>{{ 'wallet.topUpWallet' | translate }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label text-muted">{{ 'wallet.amount' | translate }}</label>
-          <div class="input-group input-group-lg">
-            <span class="input-group-text bg-white">EGP</span>
-            <input type="number" class="form-control" [ngModel]="topUpAmount()" (ngModelChange)="topUpAmount.set($event)" min="10">
+      <div class="modal-body p-4 pt-3">
+        <div class="mb-4">
+          <label class="form-label text-muted fw-semibold small text-uppercase">{{ 'wallet.amount' | translate }}</label>
+          <div class="input-group input-group-lg shadow-sm" style="border-radius: 1rem; overflow: hidden; border: 1px solid #dee2e6;">
+            <span class="input-group-text bg-light border-0 fw-bold text-primary">EGP</span>
+            <input id="topUpAmountInput" type="number" class="form-control border-0 px-3" style="box-shadow: none;" [ngModel]="topUpAmount()" (ngModelChange)="topUpAmount.set($event)" min="10" [placeholder]="'wallet.enterAmount' | translate" (keydown.enter)="topUpBtn.click()">
           </div>
         </div>
-        <div class="mb-4">
-          <label class="form-label text-muted">{{ 'wallet.selectPaymentMethod' | translate }}</label>
-          <select class="form-select form-select-lg" [ngModel]="selectedPaymentMethodId()" (ngModelChange)="selectedPaymentMethodId.set($event)">
-            <option [ngValue]="null">💳 New Card (Enter details in Paymob)</option>
-            @for (pm of paymentMethods(); track pm.id) {
-              <option [ngValue]="pm.id">**** **** **** {{ pm.lastFourDigits }}</option>
-            }
-          </select>
-        </div>
-        <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="initiateTopUp()" data-bs-dismiss="modal">
-          {{ 'wallet.proceedToPayment' | translate }}
+        <button #topUpBtn type="button" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm" (click)="initiateTopUp()" data-bs-dismiss="modal">
+          {{ 'wallet.proceedToPayment' | translate }} <i class="bi bi-arrow-right ms-1"></i>
         </button>
       </div>
     </div>
   </div>
 </div>
 
-
 <!-- Withdraw Modal -->
 <div class="modal fade" id="withdrawModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold"><i class="bi bi-arrow-up-circle me-2 text-danger"></i>Withdraw Funds</h5>
+    <div class="modal-content border-0 shadow" style="border-radius: 1.5rem; overflow: hidden;">
+      <div class="modal-header border-0 bg-light p-4 pb-3">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-arrow-up-circle-fill text-primary me-2"></i>{{ 'wallet.withdrawFunds' | translate }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div class="alert alert-info py-2 mb-3">
-          <small><i class="bi bi-info-circle me-1"></i>Available balance: <strong>EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</strong></small>
-        </div>
-        <div class="mb-4">
-          <label class="form-label text-muted">Withdrawal Amount</label>
-          <div class="input-group input-group-lg">
-            <span class="input-group-text bg-white">EGP</span>
-            <input type="number" class="form-control" [ngModel]="withdrawAmount()" (ngModelChange)="withdrawAmount.set($event)" min="1" [max]="wallet()?.balance || 0" placeholder="Enter amount">
+      <div class="modal-body p-4 pt-3">
+        <div class="alert alert-primary bg-primary bg-opacity-10 border-0 rounded-4 py-3 mb-4 d-flex align-items-center">
+          <i class="bi bi-info-circle-fill text-primary fs-4 me-3"></i>
+          <div>
+            <div class="small text-muted">{{ 'wallet.availableBalance' | translate }}</div>
+            <div class="fw-bold fs-5 text-dark">EGP {{ wallet()?.balance || 0 | number:'1.2-2' }}</div>
           </div>
         </div>
-        <button type="button" class="btn btn-danger w-100 py-2 fw-bold" (click)="initiateWithdraw()" data-bs-dismiss="modal" [disabled]="isWithdrawing()">
+        <div class="mb-4">
+          <label class="form-label text-muted fw-semibold small text-uppercase">{{ 'wallet.amount' | translate }}</label>
+          <div class="input-group input-group-lg shadow-sm" [class.border-danger]="(withdrawAmount() || 0) > (wallet()?.balance || 0)" style="border-radius: 1rem; overflow: hidden; border: 1px solid #dee2e6;">
+            <span class="input-group-text bg-light border-0 fw-bold text-primary">EGP</span>
+            <input id="withdrawAmountInput" type="number" class="form-control border-0 px-3" style="box-shadow: none;" [ngModel]="withdrawAmount()" (ngModelChange)="withdrawAmount.set($event)" min="1" [max]="wallet()?.balance || 0" [placeholder]="'wallet.enterAmount' | translate" (keydown.enter)="withdrawBtn.click()">
+          </div>
+          @if ((withdrawAmount() || 0) > (wallet()?.balance || 0)) {
+            <div class="text-danger small mt-2 fw-medium d-flex align-items-center">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ 'wallet.amountExceedsBalance' | translate }}
+            </div>
+          }
+        </div>
+        <button #withdrawBtn type="button" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm" (click)="initiateWithdraw()" data-bs-dismiss="modal" [disabled]="isWithdrawing() || !withdrawAmount() || (withdrawAmount() || 0) <= 0 || (withdrawAmount() || 0) > (wallet()?.balance || 0)">
           @if (isWithdrawing()) {
-            <span class="spinner-border spinner-border-sm me-2"></span>Processing...
+            <span class="spinner-border spinner-border-sm me-2"></span>{{ 'wallet.processing' | translate }}
           } @else {
-            <i class="bi bi-arrow-up-circle me-2"></i>Confirm Withdrawal
+            <i class="bi bi-check-circle-fill me-2"></i>{{ 'wallet.confirmWithdrawal' | translate }}
           }
         </button>
       </div>

@@ -26,11 +26,12 @@ namespace Neighborhood.Services.Application.Messages.Queries
             if (item == null) return null;
             return new MessageSelectedDto()
             {
-                MessageId = item.Id,
-                ConversationId = item.ConversationId,
-                Content = item.content,
-                Read = item.isRead,
-                Deleted = item.IsDeleted
+                messageId = item.Id,
+                conversationId = item.ConversationId,
+                content = item.content,
+                read = item.isRead,
+                deleted = item.IsDeleted,
+                //senderId=item.SenderId,
             };
 
         }

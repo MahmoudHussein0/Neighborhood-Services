@@ -37,7 +37,7 @@
 using Neighborhood.Services.Application.QA.Interface;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
     using Neighborhood.Services.Application.Reviews.Interfaces;
-using Neighborhood.Services.Application.ReviewsAnalysis;
+using Neighborhood.Services.Application.ReviewsAnalysis.Interfaces;
     using Neighborhood.Services.Application.ServiceRequests.Interfaces;
     using Neighborhood.Services.Application.Shared;
     using Neighborhood.Services.Application.Shared.Email;
@@ -103,6 +103,7 @@ using Neighborhood.Services.Infrastructure.Persistence.ReviewsAnalysis;
     using Neighborhood.Services.Infrastructure.Services.Payments;
     using Neighborhood.Services.Infrastructure.Shared;
     using Qdrant.Client;
+using Neighborhood.Services.Infrastructure.Services.ChatService;
 
 
 
@@ -160,9 +161,7 @@ namespace Neighborhood.Services.Infrastructure
 
                 services.AddScoped<IProblemTypeRepository, ProblemTypesRepository>();
                 services.AddScoped<IReviewRepository, ReviewRepository>();
-                services.AddScoped<IReviewAnalysisRepository, ReviewAyalysisRepository>();
                 services.AddScoped<IDisputeRepository, DisputeRepository>();
-                //services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
                 services.AddScoped<IHistoricalPriceRepository, HistoricalPriceRepository>();
 
                 //Arwa's
@@ -173,17 +172,20 @@ namespace Neighborhood.Services.Infrastructure
                 services.AddScoped<IFavoritesRepository, FavoritesRepository>();
                 services.AddScoped<IEmailService, EmailService>();
                 services.AddScoped<INotificationService, NotificationService>();
-            
-
-                services.AddSingleton<IResponseCacheService, ResponseCacheService>();
-
+                services.AddScoped<IChatService, ChatService>();
                 services.Configure<EmailConfiguration>(configuration.GetSection("EmailSettings"));
-                //End of Arwa's
+            //End of Arwa's
+
+
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
+              
 
            
                 services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
                 services.AddScoped<ISupportMessageRepository, SupportMessageRepository>();
-
+                services.AddScoped<IReviewAnalysisRepository, ReviewAnalysisRepository>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
                 services.AddScoped<IJwtTokenService, JwtTokenService>();

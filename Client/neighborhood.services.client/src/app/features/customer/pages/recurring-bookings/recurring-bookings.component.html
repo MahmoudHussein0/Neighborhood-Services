@@ -44,19 +44,25 @@
 
     <div class="d-flex flex-column gap-3">
       @for (rb of res.items; track rb.id) {
-        <div class="card border-0 shadow-sm rounded-3">
-          <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
-              <div>
-                <div class="fw-semibold">{{ scheduleText(rb) }}</div>
-                <div class="text-muted small">{{ rb.address }} · {{ rb.durationMinutes }} {{ 'recurring.min' | translate }}</div>
-                @if (nextVisit(rb); as nv) {
-                  <div class="text-primary small mt-1">
-                    <i class="bi bi-calendar-event me-1"></i>{{ 'recurring.nextVisit' | translate }}: {{ nv | date: 'EEE, MMM d' }} · {{ nv | date: 'HH:mm' }}
-                  </div>
-                }
+        <div class="ns-card card border-0 shadow-sm rounded-4" [attr.data-status]="rb.status">
+          <div class="card-body p-4">
+
+            <!-- Header: icon + schedule/meta · status badge -->
+            <div class="d-flex align-items-start gap-3">
+              <div class="icon-box"><i class="bi bi-arrow-repeat"></i></div>
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <h3 class="ns-card-title fw-semibold mb-1">{{ scheduleText(rb) }}</h3>
+                  <span class="badge rounded-pill flex-shrink-0" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
+                </div>
+                <div class="ns-meta text-muted small d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+                  <span><i class="bi bi-geo-alt me-1"></i>{{ rb.address }}</span>
+                  <span><i class="bi bi-clock me-1"></i>{{ rb.durationMinutes }} {{ 'recurring.min' | translate }}</span>
+                  @if (nextVisit(rb); as nv) {
+                    <span class="text-primary"><i class="bi bi-calendar-event me-1"></i>{{ 'recurring.nextVisit' | translate }}: {{ nv | date: 'EEE, MMM d' }} · {{ nv | date: 'HH:mm' }}</span>
+                  }
+                </div>
               </div>
-              <span class="badge rounded-pill" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
             </div>
 
             <!-- Proposed price call-out when awaiting customer -->
@@ -64,19 +70,22 @@
               <div class="alert alert-primary py-2 px-3 mt-3 mb-0 small">
                 {{ 'recurring.proposedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}
               </div>
-            } @else if (rb.agreedPrice != null) {
-              <div class="text-muted small mt-2">{{ 'recurring.agreedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}</div>
             }
 
-            <!-- Actions -->
-            <div class="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">
-              <div class="d-flex gap-2">
+            <!-- Footer: agreed price · actions -->
+            <div class="ns-card-footer d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 pt-3">
+              <div class="d-flex align-items-baseline gap-2">
+                @if (rb.status !== 'PendingCustomerApproval' && rb.agreedPrice != null) {
+                  <span class="ns-price fw-bold">{{ rb.agreedPrice | currency: 'EGP ' }}</span>
+                  <span class="text-muted small">{{ 'recurring.perVisit' | translate }}</span>
+                }
+              </div>
+
+              <div class="d-flex align-items-center gap-2 flex-wrap">
                 <button class="btn btn-sm btn-outline-secondary" (click)="details(rb)">{{ 'recurring.details' | translate }}</button>
                 @if (rb.status !== 'Cancelled') {
                   <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === rb.id" (click)="edit(rb)">{{ 'recurring.edit' | translate }}</button>
                 }
-              </div>
-              <div class="d-flex gap-2">
                 @if (rb.status === 'PendingCustomerApproval') {
                   <button class="btn btn-sm btn-primary" [disabled]="busyId() === rb.id" (click)="approve(rb)">{{ 'recurring.approve' | translate }}</button>
                   <button class="btn btn-sm btn-outline-secondary" [disabled]="busyId() === rb.id" (click)="rejectPrice(rb)">{{ 'recurring.rejectPrice' | translate }}</button>

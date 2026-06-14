@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Favorites.DTOs;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.favorites;
@@ -10,19 +11,19 @@ namespace Neighborhood.Services.Application.Favorites.Commands
 {
     public class DeleteFromFavoriteCommandDto : IRequest<FavoriteDto>
     {
-        public int TechnicianId { get; set; }
+        public int id { get; set; }
     }
 
     public class DeleteFromFavoriteCommandHandler : IRequestHandler<DeleteFromFavoriteCommandDto, FavoriteDto>
     {
         private readonly IFavoritesRepository _favrepo;
-        private readonly ICurrentUserService _currentUser;
+      //  private readonly ICurrentUserService _currentUser;
         private readonly IUnitOfWork _unitOfWork;
 
         public DeleteFromFavoriteCommandHandler(IFavoritesRepository FavRepo, ICurrentUserService currentUser, IUnitOfWork UnitofWork)
         {
             _favrepo = FavRepo;
-            _currentUser = currentUser;
+          //  _currentUser = currentUser;
             _unitOfWork = UnitofWork;
 
 
@@ -30,13 +31,13 @@ namespace Neighborhood.Services.Application.Favorites.Commands
 
         public async Task<FavoriteDto> Handle(DeleteFromFavoriteCommandDto request, CancellationToken cancellationToken)
         {
-            if (_currentUser == null) { return null; }
-            Favorite created = new Favorite { UserId = _currentUser.UserId, TechnicianId = request.TechnicianId };
-            await _favrepo.DeleteAsync(created.Id);
+           // if (_currentUser == null) { return null; }
+            Favorite deleted = await _favrepo.GetByIdAsync(request.id)??throw new NotFoundException("No favorite item with given Id");
+            await _favrepo.DeleteAsync(deleted.Id);
             await _unitOfWork.SaveChangesAsync();
 
 
-            return new FavoriteDto { FavoriteId = created.Id, UserId = created.UserId, TechnicianId = created.TechnicianId, addedAt = created.addedAt };
+            return new FavoriteDto { favoriteId = deleted.Id, userId = deleted.UserId, technicianId = deleted.TechnicianId,customerId=deleted.CustomerId, addedAt = deleted.addedAt};
         }
     }
 }

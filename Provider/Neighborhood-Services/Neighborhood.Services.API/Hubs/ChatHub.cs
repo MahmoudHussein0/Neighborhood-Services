@@ -8,7 +8,6 @@ using System.Security.Claims;
 using Jose;
 using Neighborhood.Services.Application.Messages;
 using Neighborhood.Services.Application.Messages.DTOs;
-using Neighborhood.Services.Application.Messages.Commands;
 
 namespace Neighborhood.Services.API.Hubs
 {
@@ -51,7 +50,7 @@ namespace Neighborhood.Services.API.Hubs
         //    try
         //    {
         //        var tokenHandler = new JwtSecurityTokenHandler();
-        //        var key = Encoding.UTF8.GetBytes("kkkkkkk");
+        //        var key = Encoding.UTF8.GetBytes(_jwtOptions.SecretKey);
         //        var validationParameters = new TokenValidationParameters
         //        {
         //            ValidateIssuer = true,
@@ -82,7 +81,7 @@ namespace Neighborhood.Services.API.Hubs
             var userId = Context.UserIdentifier;
 
             MessageCreatedDto savedMessage = await _mediator.Send(new CreateMessageCommand() {
-            SenderId =userId ,ConversationId=roomId,content=message});
+            SenderId =userId ,BookingId=roomId,content=message});
                    
 
             await Clients.Group(roomId.ToString()).SendAsync("ReceiveMessage",savedMessage);

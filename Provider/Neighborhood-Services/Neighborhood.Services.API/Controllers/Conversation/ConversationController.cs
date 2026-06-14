@@ -55,6 +55,15 @@ namespace Neighborhood.Services.API.Controllers.Conversation
             return result;
         }
 
+        //Get Conversations for current user
+        [HttpGet("GetForCurrentUser")]
+        public async Task<ActionResult<List<ConversationSelectedDto>>> GetMyConv()
+        {
+            var result = await _mediator.Send(new GetMyConvsQDto() );
+            if (result == null) { return Ok($"No Conversations for this user"); }
+            return result;
+        }
+
         //Update a Conversation By ID
         [HttpPost("post/{id}")]
         public async Task<ActionResult<ConversationSelectedDto>> UpdateConvById(int id,[FromBody] UpdateConversationCommandDTO command)

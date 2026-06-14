@@ -40,7 +40,7 @@ namespace Neighborhood.Services.Application.Conversations.Commands
         public async Task<ConversationUpdatedDto> Handle(UpdateConversationCommandDTO request, CancellationToken cancellationToken)
         {
             var updatedconv = await _convrepository.GetByBookingId(request.BookingId);
-            if (updatedconv == null) return null;
+            if (updatedconv == null) return null!;
             var addedMsg = new Message() {
                 content = request.Message ,
                 SenderId=request.senderId,
@@ -52,17 +52,21 @@ namespace Neighborhood.Services.Application.Conversations.Commands
 
             Console.WriteLine("Conversation Updated!");
             Console.WriteLine(updatedconv.lastMessage.content);
+           // var lastMessage = updatedconv.Messages?.LastOrDefault();
 
-            return new ConversationUpdatedDto() { 
-            BookingId = updatedconv.BookingId,
-            Message=updatedconv.Messages.LastOrDefault().content,
-            MessageSenderId=updatedconv.Messages.LastOrDefault().SenderId,
-            MessageSenderName=updatedconv.Messages.LastOrDefault().Sender.UserName,
-            LastMessage=updatedconv.lastMessage.content,
-            UpdatedAt=DateTime.UtcNow
-    
 
-    };//end of returned DTO
+            return new ConversationUpdatedDto()
+            {
+                BookingId = updatedconv.BookingId,
+
+                Message = (updatedconv.Messages?.LastOrDefault() ?? null!)?.content ?? null!,
+                MessageSenderId = (updatedconv.Messages?.LastOrDefault() ?? null!)?.SenderId ?? null!,
+                MessageSenderName = (updatedconv.Messages?.LastOrDefault() ?? null!)?.Sender?.UserName??null!,
+                LastMessage = updatedconv.lastMessage.content,
+                UpdatedAt = DateTime.UtcNow
+
+
+            }; ;//end of returned DTO
 
             //Sending Notification
             

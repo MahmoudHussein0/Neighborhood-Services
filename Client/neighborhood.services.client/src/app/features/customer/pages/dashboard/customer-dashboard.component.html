@@ -1,0 +1,138 @@
+<div class="ov-dash">
+
+  <div class="dash-header">
+    <div>
+      <h2 class="dash-title">Welcome back, {{ firstName() }} 👋</h2>
+      <p class="dash-subtitle">Your activity at a glance</p>
+    </div>
+    <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
+      <span class="refresh-icon" [class.spinning]="loading()">↻</span> Refresh
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-grid">
+      @for (i of [1,2,3,4,5,6]; track i) { <div class="skeleton-card"></div> }
+    </div>
+    <div class="skeleton-grid"><div class="skeleton-card tall" style="grid-column:1/-1"></div></div>
+  } @else {
+
+    <!-- Stat cards -->
+    <div class="stats-grid">
+      <a routerLink="/customer/bookings" class="stat-card">
+        <div class="stat-icon" style="background:#3b82f6"><i class="bi bi-calendar-check"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ totalBookings() }}</span>
+          <span class="stat-label">Total Bookings</span>
+          <span class="stat-sub">{{ completed() }} completed</span>
+        </div>
+        <div class="stat-accent" style="background:#3b82f6"></div>
+      </a>
+
+      <a routerLink="/customer/bookings" class="stat-card">
+        <div class="stat-icon" style="background:#8b5cf6"><i class="bi bi-lightning-charge-fill"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ active() }}</span>
+          <span class="stat-label">Active</span>
+          <span class="stat-sub">Confirmed jobs</span>
+        </div>
+        <div class="stat-accent" style="background:#8b5cf6"></div>
+      </a>
+
+      <a routerLink="/customer/service-requests" class="stat-card">
+        <div class="stat-icon" style="background:#f59e0b"><i class="bi bi-megaphone"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ openRequests() }}</span>
+          <span class="stat-label">Open Requests</span>
+          <span class="stat-sub">Awaiting offers</span>
+        </div>
+        <div class="stat-accent" style="background:#f59e0b"></div>
+      </a>
+
+      <a routerLink="/customer/recurring-bookings" class="stat-card">
+        <div class="stat-icon" style="background:#10b981"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ activeRecurring() }}</span>
+          <span class="stat-label">Recurring</span>
+          <span class="stat-sub">Active plans</span>
+        </div>
+        <div class="stat-accent" style="background:#10b981"></div>
+      </a>
+
+      <a routerLink="/customer/bookings" class="stat-card">
+        <div class="stat-icon" style="background:#f43f5e"><i class="bi bi-hourglass-split"></i></div>
+        <div class="stat-body">
+          <span class="stat-value">{{ pending() }}</span>
+          <span class="stat-label">Pending</span>
+          <span class="stat-sub">Awaiting technician</span>
+        </div>
+        <div class="stat-accent" style="background:#f43f5e"></div>
+      </a>
+    </div>
+
+    <!-- Insights: wallet + completion donut + status bars -->
+    <div class="insights-row">
+      <a routerLink="/customer/wallet" class="wallet-card">
+        <span class="wallet-top"><i class="bi bi-wallet2"></i> Wallet balance</span>
+        <span class="wallet-balance">{{ walletBalance() | currency: 'EGP ' }}</span>
+        <span class="wallet-cta">Top up →</span>
+      </a>
+
+      <div class="panel-card panel-pad donut-card">
+        <h3 class="panel-title" style="margin-bottom:0">Completion</h3>
+        <div class="mini-donut" [style]="donutStyle()">
+          <div class="hole">
+            <span class="pct">{{ completionPct() }}%</span>
+            <span class="lbl">Completed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card panel-pad">
+        <h3 class="panel-title">Bookings by Status</h3>
+        <div class="bar-list">
+          @for (bar of bars(); track bar.status) {
+            <div class="bar-item">
+              <div class="bar-meta">
+                <span class="bar-label">{{ bar.status }}</span>
+                <span class="bar-count">{{ bar.count }}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="bar.pct" [style.background]="bar.color"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="panel-card">
+        <div class="table-head-row">
+          <h3 class="panel-title" style="margin-bottom:0">Recent Bookings</h3>
+          <a routerLink="/customer/bookings" class="view-all">View all →</a>
+        </div>
+        <div class="table-scroll">
+          <table class="dash-table">
+            <thead>
+              <tr><th>#</th><th>Service</th><th>Type</th><th>Status</th><th>Scheduled</th><th>Price</th></tr>
+            </thead>
+            <tbody>
+              @for (b of recent(); track b.id) {
+                <tr>
+                  <td class="muted">{{ b.id }}</td>
+                  <td class="text-truncate" style="max-width:220px">{{ b.description }}</td>
+                  <td><span class="type-badge">{{ b.bookingType }}</span></td>
+                  <td><span [class]="'sbadge sbadge-' + b.status.toLowerCase()">{{ b.status }}</span></td>
+                  <td class="muted">{{ b.scheduledAt | date: 'dd MMM, HH:mm' }}</td>
+                  <td>{{ (b.finalPrice || b.estimatedPrice) | currency: 'EGP ' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="empty-row">No bookings yet</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+  }
+</div>

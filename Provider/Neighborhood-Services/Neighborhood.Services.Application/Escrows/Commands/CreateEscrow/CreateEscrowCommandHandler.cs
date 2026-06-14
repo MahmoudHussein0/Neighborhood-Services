@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Neighborhood.Services.Application.Escrows.DTOs;
+using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Escrows.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Transactions.Interfaces;
@@ -41,7 +42,7 @@ namespace Neighborhood.Services.Application.Escrows.Commands.CreateEscrow
                 ?? throw new KeyNotFoundException($"Wallet with ID {request.WalletId} not found.");
 
             if (wallet.Balance < request.Amount)
-                throw new InvalidOperationException("Insufficient wallet balance to create escrow.");
+                throw new BadRequestException("Insufficient wallet balance to confirm this booking.");
 
             var escrow = new Escrow
             {

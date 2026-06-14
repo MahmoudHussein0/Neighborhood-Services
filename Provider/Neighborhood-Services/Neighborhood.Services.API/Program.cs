@@ -53,6 +53,29 @@ namespace Neighborhood.Services.API
                     }
                 });
             });
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                {policy.WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+
+                });
+            });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowJs", policy =>
+                {
+                    
+                        policy.WithOrigins("http://127.0.0.1:5500")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    
+                });
+            });
 
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -176,7 +199,7 @@ namespace Neighborhood.Services.API
 
             //Mapping Notification Hub
             app.MapHub<Neighborhood.Services.Infrastructure.Services.NotificationService.NotificationHub>("/notificationHub");
-            //app.MapHub<ChatHub>("/chattt");
+            app.MapHub<Neighborhood.Services.Infrastructure.Services.ChatService.ChatHub>("/chatHub");
             //app.MapHub<NotificationHub>("/notf");
 
             //END OF ARWA
@@ -209,6 +232,11 @@ namespace Neighborhood.Services.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+           
+
+            //app.UseCors("Frontend");
+            //app.UseCors("AllowJs");
+            app.UseCors("AllowAngular");
             //app.UseCors("AllowJS");
             app.UseHttpsRedirection();
             app.UseExceptionHandler();

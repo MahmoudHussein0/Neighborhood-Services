@@ -6,12 +6,14 @@ namespace Neighborhood.Services.Domain.Notifications
 {
     public enum NotificationTypes
     {
+        general,
         booking,
         payment,
         review,
         dispute,
+        offer,
         support,
-        system,
-        general
+        system
+       
     }
 }

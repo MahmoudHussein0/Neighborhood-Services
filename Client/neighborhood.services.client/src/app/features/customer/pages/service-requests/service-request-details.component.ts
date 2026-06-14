@@ -56,10 +56,9 @@ export class ServiceRequestDetailsComponent implements OnInit {
     ref.componentInstance.duration = offer.estimatedDuration;
 
     ref.result.then(
-      (confirmed: boolean) => {
-        if (!confirmed) return;
+      (promoCode: string | null) => {
         this.accepting.set(true);
-        this.offerService.accept(offer.id).subscribe({
+        this.offerService.accept(offer.id, promoCode).subscribe({
           next: () => {
             this.accepting.set(false);
             this.toastr.success(this.translate.instant('serviceRequests.details.accepted'));

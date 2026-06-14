@@ -14,6 +14,7 @@ import { CompleteJobModalComponent } from '../../components/complete-job-modal/c
 import { RaiseDisputeModalComponent } from '../../../customer/components/raise-dispute-modal/raise-dispute-modal.component';
 import { LeaveReviewModalComponent } from '../../../customer/components/leave-review-modal/leave-review-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 interface Tab {
   value: 'All' | BookingStatus;
@@ -29,6 +30,7 @@ export class TechnicianJobsComponent implements OnInit {
   private readonly modal = inject(NgbModal);
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: Tab[] = [
     { value: 'All' },
@@ -58,6 +60,11 @@ export class TechnicianJobsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. new booking request, quote accepted).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {

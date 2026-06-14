@@ -54,6 +54,16 @@ namespace Neighborhood.Services.API.Customers
             return Ok(result);
         }
 
+        // Public profile (details + stats + approved reviews) — shown when a technician clicks a customer.
+        // Open to any authenticated user (technicians need this); does not expose private fields.
+        [Authorize]
+        [HttpGet("{id:int}/public-profile")]
+        public async Task<IActionResult> GetPublicProfile(int id)
+        {
+            var result = await _mediator.Send(new GetCustomerPublicProfileQuery { CustomerId = id });
+            return Ok(result);
+        }
+
         [Authorize(Roles = "Customer,Staff")]
         [HttpGet("user/{applicationUserId}")]
         public async Task<IActionResult> GetByUserId(string applicationUserId)

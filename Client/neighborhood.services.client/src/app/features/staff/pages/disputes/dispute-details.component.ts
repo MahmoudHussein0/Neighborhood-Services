@@ -10,6 +10,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 import { DisputeService } from '../../services/disputes.service';
@@ -20,7 +21,7 @@ type DisputeAction = 'banCustomer' | 'banTech' | 'refund' | 'release';
 @Component({
   selector: 'app-dispute-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './dispute-details.component.html',
   styleUrls: ['./dispute-details.component.css']
 })
@@ -54,8 +55,13 @@ export class DisputeDetailsComponent implements OnChanges {
 
   constructor(
     private disputeService: DisputeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
+
+  private t(key: string, params?: object): string {
+    return this.translate.instant('staffDisputes.details.' + key, params);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['disputeId']?.currentValue) {
@@ -78,7 +84,7 @@ export class DisputeDetailsComponent implements OnChanges {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.error = 'Failed to load dispute details';
+          this.error = this.t('loadFail');
           this.loading = false;
           this.cdr.markForCheck();
         }
@@ -100,9 +106,9 @@ export class DisputeDetailsComponent implements OnChanges {
     const name = this.dispute.customerName ?? this.dispute.customerUserId;
     this.pendingConfirm = {
       action: 'banCustomer',
-      title: 'Ban Customer',
-      message: `Ban the customer (${name})? They will no longer be able to use the platform.`,
-      confirmLabel: 'Ban Customer',
+      title: this.t('banCustomer'),
+      message: this.t('banCustomerMsg', { name }),
+      confirmLabel: this.t('banCustomer'),
       danger: true
     };
   }
@@ -112,9 +118,9 @@ export class DisputeDetailsComponent implements OnChanges {
     const name = this.dispute.technicianName ?? this.dispute.technicianUserId;
     this.pendingConfirm = {
       action: 'banTech',
-      title: 'Ban Technician',
-      message: `Ban the technician (${name})? They will no longer be able to use the platform.`,
-      confirmLabel: 'Ban Technician',
+      title: this.t('banTech'),
+      message: this.t('banTechMsg', { name }),
+      confirmLabel: this.t('banTech'),
       danger: true
     };
   }
@@ -123,9 +129,9 @@ export class DisputeDetailsComponent implements OnChanges {
     if (!this.canSettleEscrow) return;
     this.pendingConfirm = {
       action: 'refund',
-      title: 'Refund Customer',
-      message: 'Refund the held funds back to the customer? This cannot be undone.',
-      confirmLabel: 'Refund',
+      title: this.t('refundTitle'),
+      message: this.t('refundMsg'),
+      confirmLabel: this.t('refundConfirm'),
       danger: false
     };
   }
@@ -134,9 +140,9 @@ export class DisputeDetailsComponent implements OnChanges {
     if (!this.canSettleEscrow) return;
     this.pendingConfirm = {
       action: 'release',
-      title: 'Complete Transaction',
-      message: 'Release the held funds to the technician? This cannot be undone.',
-      confirmLabel: 'Release Funds',
+      title: this.t('completeTitle'),
+      message: this.t('completeMsg'),
+      confirmLabel: this.t('releaseConfirm'),
       danger: false
     };
   }
@@ -156,25 +162,25 @@ export class DisputeDetailsComponent implements OnChanges {
         if (this.dispute.customerUserId)
           this.runAction('banCustomer',
             this.disputeService.banUser(this.dispute.customerUserId),
-            'Customer has been banned.');
+            this.t('bannedCustomer'));
         break;
       case 'banTech':
         if (this.dispute.technicianUserId)
           this.runAction('banTech',
             this.disputeService.banUser(this.dispute.technicianUserId),
-            'Technician has been banned.');
+            this.t('bannedTech'));
         break;
       case 'refund':
         if (this.dispute.escrowId)
           this.runAction('refund',
             this.disputeService.refundEscrow(this.dispute.escrowId),
-            'Funds refunded to the customer.');
+            this.t('refunded'));
         break;
       case 'release':
         if (this.dispute.escrowId)
           this.runAction('release',
             this.disputeService.releaseEscrow(this.dispute.escrowId),
-            'Funds released to the technician.');
+            this.t('released'));
         break;
     }
   }
@@ -198,7 +204,7 @@ export class DisputeDetailsComponent implements OnChanges {
         this.actionError =
           err?.error?.detail ||
           err?.error?.message ||
-          'The action could not be completed.';
+          this.t('actionFail');
         this.cdr.markForCheck();
       }
     });

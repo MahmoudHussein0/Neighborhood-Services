@@ -8,6 +8,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Subject } from 'rxjs';
 import {
@@ -26,6 +27,7 @@ import { DisputeDetailsComponent } from './dispute-details.component';
   imports: [
     CommonModule,
     FormsModule,
+    TranslatePipe,
     DisputeDetailsComponent
   ],
   templateUrl: './disputes.component.html',
@@ -59,7 +61,8 @@ implements OnInit, OnDestroy {
 
   constructor(
     private disputeService: DisputeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -222,7 +225,7 @@ submitResolve(): void {
   const resolution = this.resolutionText.trim();
 
   if (!id || !resolution) {
-    this.resolveError = 'Please enter a resolution.';
+    this.resolveError = this.translate.instant('staffDisputes.enterResolution');
     this.cdr.markForCheck();
     return;
   }
@@ -251,7 +254,7 @@ submitResolve(): void {
         this.resolveError =
           err?.error?.detail ||
           err?.error?.message ||
-          'Failed to resolve the dispute.';
+          this.translate.instant('staffDisputes.resolveFail');
         this.cdr.markForCheck();
       }
     });

@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { OwlOptions } from 'ngx-owl-carousel-o';
-import { CarouselModule } from 'ngx-owl-carousel-o';
+import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { CategoriesService } from '../../../../../core/services/categories.service';
 import { Category } from '../../../../../core/models/category';
 import { skip, Subscription } from 'rxjs';

@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../../auth/services/auth.service';
 import { environment } from '../../../../environments/environment';
@@ -10,28 +11,28 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
 
 @Component({
   selector: 'app-staff-users',
-  imports: [FormsModule, ConfirmModalComponent],
+  imports: [FormsModule, ConfirmModalComponent, TranslatePipe],
   template: `
     <section class="bg-white border rounded-3 shadow-sm p-4">
       <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 mb-4">
         <div>
-          <h2 class="h4 fw-bold mb-1">Users</h2>
-          <p class="text-muted mb-0">View and manage application users.</p>
+          <h2 class="h4 fw-bold mb-1">{{ 'staffUsers.title' | translate }}</h2>
+          <p class="text-muted mb-0">{{ 'staffUsers.subtitle' | translate }}</p>
         </div>
 
         <div class="d-flex flex-column flex-md-row gap-2">
           <input
             class="form-control"
             type="search"
-            placeholder="Search name or email"
+            [placeholder]="'staffUsers.searchPlaceholder' | translate"
             [ngModel]="searchTerm()"
             (ngModelChange)="searchTerm.set($event)"
           />
           <select class="form-select" [ngModel]="roleFilter()" (ngModelChange)="changeRoleFilter($event)">
-            <option value="">All roles</option>
-            <option value="Customer">Customer</option>
-            <option value="Technician">Technician</option>
-            <option value="Staff">Staff</option>
+            <option value="">{{ 'staffUsers.allRoles' | translate }}</option>
+            <option value="Customer">{{ 'staffUsers.roles.Customer' | translate }}</option>
+            <option value="Technician">{{ 'staffUsers.roles.Technician' | translate }}</option>
+            <option value="Staff">{{ 'staffUsers.roles.Staff' | translate }}</option>
           </select>
         </div>
       </div>
@@ -44,19 +45,19 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
       }
 
       @if (loading()) {
-        <div class="text-muted">Loading users...</div>
+        <div class="text-muted">{{ 'staffUsers.loading' | translate }}</div>
       } @else if (filteredUsers().length === 0) {
-        <div class="text-muted">No users found.</div>
+        <div class="text-muted">{{ 'staffUsers.empty' | translate }}</div>
       } @else {
         <div class="table-responsive">
           <table class="table align-middle">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
+                <th>{{ 'staffUsers.name' | translate }}</th>
+                <th>{{ 'staffUsers.email' | translate }}</th>
+                <th>{{ 'staffUsers.role' | translate }}</th>
+                <th>{{ 'staffUsers.status' | translate }}</th>
+                <th class="text-end">{{ 'staffUsers.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -75,19 +76,19 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
                     </div>
                   </td>
                   <td>{{ user.email }}</td>
-                  <td><span class="badge text-bg-light border">{{ user.applicationUserRole }}</span></td>
+                  <td><span class="badge text-bg-light border">{{ ('staffUsers.roles.' + user.applicationUserRole) | translate }}</span></td>
                   <td>
                     <span class="badge" [class.text-bg-success]="user.isActive" [class.text-bg-secondary]="!user.isActive">
-                      {{ user.isActive ? 'Active' : 'Inactive' }}
+                      {{ (user.isActive ? 'staffUsers.active' : 'staffUsers.inactive') | translate }}
                     </span>
                   </td>
                   <td>
                     <div class="d-flex justify-content-end gap-2 flex-wrap">
-                      <button class="btn btn-sm btn-outline-primary" type="button" (click)="viewDetails(user)">Details</button>
+                      <button class="btn btn-sm btn-outline-primary" type="button" (click)="viewDetails(user)">{{ 'staffUsers.details' | translate }}</button>
                       @if (canManageUsers()) {
-                        <button class="btn btn-sm btn-outline-success" type="button" (click)="activate(user)" [disabled]="user.isActive">Activate</button>
-                        <button class="btn btn-sm btn-outline-warning" type="button" (click)="deactivate(user)" [disabled]="!user.isActive">Deactivate</button>
-                        <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteUser(user)">Delete</button>
+                        <button class="btn btn-sm btn-outline-success" type="button" (click)="activate(user)" [disabled]="user.isActive">{{ 'staffUsers.activate' | translate }}</button>
+                        <button class="btn btn-sm btn-outline-warning" type="button" (click)="deactivate(user)" [disabled]="!user.isActive">{{ 'staffUsers.deactivate' | translate }}</button>
+                        <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteUser(user)">{{ 'staffUsers.delete' | translate }}</button>
                       }
                     </div>
                   </td>
@@ -115,9 +116,9 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
                 <div>
                   <h3 class="modal-title h5 fw-bold mb-1" id="userDetailsTitle">{{ user.fullName }}</h3>
                   <div class="d-flex flex-wrap gap-2">
-                    <span class="badge text-bg-light border">{{ user.applicationUserRole }}</span>
+                    <span class="badge text-bg-light border">{{ ('staffUsers.roles.' + user.applicationUserRole) | translate }}</span>
                     <span class="badge" [class.text-bg-success]="user.isActive" [class.text-bg-secondary]="!user.isActive">
-                      {{ user.isActive ? 'Active' : 'Inactive' }}
+                      {{ (user.isActive ? 'staffUsers.active' : 'staffUsers.inactive') | translate }}
                     </span>
                   </div>
                 </div>
@@ -128,45 +129,45 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
               @if (detailsLoading()) {
                 <div class="d-flex align-items-center gap-2 text-muted py-4">
                   <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                  Loading details...
+                  {{ 'staffUsers.loadingDetails' | translate }}
                 </div>
               } @else {
                 <div class="row g-3">
                   <div class="col-12 col-md-6">
                     <div class="detail-card">
-                      <div class="text-muted small">Full name</div>
+                      <div class="text-muted small">{{ 'staffUsers.fullName' | translate }}</div>
                       <div class="fw-semibold text-break">{{ user.fullName }}</div>
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="detail-card">
-                      <div class="text-muted small">Email</div>
+                      <div class="text-muted small">{{ 'staffUsers.email' | translate }}</div>
                       <div class="fw-semibold text-break">{{ user.email }}</div>
                     </div>
                   </div>
                   <div class="col-12 col-md-4">
                     <div class="detail-card">
-                      <div class="text-muted small">Age</div>
-                      <div class="fw-semibold">{{ user.age || 'N/A' }}</div>
+                      <div class="text-muted small">{{ 'staffUsers.age' | translate }}</div>
+                      <div class="fw-semibold">{{ user.age || ('staffUsers.na' | translate) }}</div>
                     </div>
                   </div>
                   <div class="col-12 col-md-4">
                     <div class="detail-card">
-                      <div class="text-muted small">Role</div>
-                      <div class="fw-semibold">{{ user.applicationUserRole }}</div>
+                      <div class="text-muted small">{{ 'staffUsers.role' | translate }}</div>
+                      <div class="fw-semibold">{{ ('staffUsers.roles.' + user.applicationUserRole) | translate }}</div>
                     </div>
                   </div>
                   <div class="col-12 col-md-4">
                     <div class="detail-card">
-                      <div class="text-muted small">Status</div>
-                      <div class="fw-semibold">{{ user.isActive ? 'Active' : 'Inactive' }}</div>
+                      <div class="text-muted small">{{ 'staffUsers.status' | translate }}</div>
+                      <div class="fw-semibold">{{ (user.isActive ? 'staffUsers.active' : 'staffUsers.inactive') | translate }}</div>
                     </div>
                   </div>
                 </div>
               }
             </div>
             <div class="modal-footer border-0 pt-0">
-              <button class="btn btn-outline-secondary" type="button" (click)="closeDetails()">Close</button>
+              <button class="btn btn-outline-secondary" type="button" (click)="closeDetails()">{{ 'staffUsers.close' | translate }}</button>
             </div>
           </div>
         </div>
@@ -176,11 +177,11 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
 
     @if (pendingUserAction(); as pending) {
       <app-confirm-modal
-        [title]="pending.action === 'delete' ? 'Delete user?' : 'Deactivate user?'"
+        [title]="(pending.action === 'delete' ? 'staffUsers.deleteTitle' : 'staffUsers.deactivateTitle') | translate"
         [subtitle]="pending.user.fullName"
-        [message]="pending.action === 'delete' ? 'This user will be removed from active staff management.' : 'This user will not be able to use the account until it is activated again.'"
-        [confirmText]="pending.action === 'delete' ? 'Delete user' : 'Deactivate user'"
-        [busyText]="pending.action === 'delete' ? 'Deleting...' : 'Deactivating...'"
+        [message]="(pending.action === 'delete' ? 'staffUsers.deleteMsg' : 'staffUsers.deactivateMsg') | translate"
+        [confirmText]="(pending.action === 'delete' ? 'staffUsers.deleteConfirm' : 'staffUsers.deactivateConfirm') | translate"
+        [busyText]="(pending.action === 'delete' ? 'staffUsers.deletingBusy' : 'staffUsers.deactivatingBusy') | translate"
         [busy]="userActionBusy()"
         [variant]="pending.action === 'delete' ? 'danger' : 'warning'"
         (confirm)="confirmUserAction()"
@@ -237,6 +238,7 @@ type StaffUserConfirmAction = 'deactivate' | 'delete';
 export class StaffUsersComponent implements OnInit {
   private readonly staffUsersService = inject(StaffUsersService);
   private readonly authService = inject(AuthService);
+  private readonly translate = inject(TranslateService);
 
   readonly loading = signal(true);
   readonly detailsLoading = signal(false);
@@ -283,7 +285,7 @@ export class StaffUsersComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Unable to load users.');
+        this.error.set(this.translate.instant('staffUsers.msgLoadFail'));
         this.loading.set(false);
       },
     });
@@ -304,7 +306,7 @@ export class StaffUsersComponent implements OnInit {
         this.detailsLoading.set(false);
       },
       error: () => {
-        this.error.set('Unable to load user details.');
+        this.error.set(this.translate.instant('staffUsers.msgDetailsFail'));
         this.detailsLoading.set(false);
       },
     });
@@ -317,8 +319,8 @@ export class StaffUsersComponent implements OnInit {
 
   activate(user: StaffUserSummary): void {
     this.staffUsersService.activateUser(user.id).subscribe({
-      next: () => this.afterUserAction('User activated.'),
-      error: () => this.error.set('Unable to activate user.'),
+      next: () => this.afterUserAction(this.translate.instant('staffUsers.msgActivated')),
+      error: () => this.error.set(this.translate.instant('staffUsers.msgActivateFail')),
     });
   }
 
@@ -357,11 +359,11 @@ export class StaffUsersComponent implements OnInit {
       next: () => {
         this.userActionBusy.set(false);
         this.pendingUserAction.set(null);
-        this.afterUserAction(pending.action === 'delete' ? 'User deleted.' : 'User deactivated.');
+        this.afterUserAction(this.translate.instant(pending.action === 'delete' ? 'staffUsers.msgDeleted' : 'staffUsers.msgDeactivated'));
       },
       error: () => {
         this.userActionBusy.set(false);
-        this.error.set(pending.action === 'delete' ? 'Unable to delete user.' : 'Unable to deactivate user.');
+        this.error.set(this.translate.instant(pending.action === 'delete' ? 'staffUsers.msgDeleteFail' : 'staffUsers.msgDeactivateFail'));
       },
     });
   }

@@ -1,10 +1,10 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
   <div>
-    <h2 class="h4 fw-bold mb-0">Flagged Requests</h2>
-    <p class="text-muted small mb-0">Service requests the moderation agent held for review.</p>
+    <h2 class="h4 fw-bold mb-0">{{ 'staffFlagged.title' | translate }}</h2>
+    <p class="text-muted small mb-0">{{ 'staffFlagged.subtitle' | translate }}</p>
   </div>
   <button class="btn btn-sm btn-outline-secondary" (click)="load()">
-    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+    <i class="bi bi-arrow-clockwise me-1"></i> {{ 'staffFlagged.refresh' | translate }}
   </button>
 </div>
 
@@ -18,7 +18,7 @@
     <div class="card border-0 shadow-sm rounded-3">
       <div class="card-body text-center text-muted py-5">
         <i class="bi bi-shield-check fs-1 d-block mb-2"></i>
-        No flagged requests. The queue is clear.
+        {{ 'staffFlagged.empty' | translate }}
       </div>
     </div>
   } @else {
@@ -43,11 +43,11 @@
                       {{ sr.address }} · {{ sr.scheduledAt | date: 'mediumDate' }}
                     </div>
                   </div>
-                  <span class="badge rounded-pill text-bg-danger">Flagged</span>
+                  <span class="badge rounded-pill text-bg-danger">{{ 'staffFlagged.flagged' | translate }}</span>
                 </div>
                 <div class="d-flex align-items-center gap-3 small mt-2">
-                  <span class="fw-bold">Budget: {{ sr.budget | currency: 'EGP ' }}</span>
-                  <span class="text-muted">Posted {{ sr.createdAt | date: 'short' }}</span>
+                  <span class="fw-bold">{{ 'staffFlagged.budget' | translate }}: {{ sr.budget | currency: 'EGP ' }}</span>
+                  <span class="text-muted">{{ 'staffFlagged.posted' | translate }} {{ sr.createdAt | date: 'short' }}</span>
                 </div>
               </div>
             </div>
@@ -56,12 +56,12 @@
               <button class="btn btn-sm btn-outline-danger"
                       [disabled]="acting() === sr.id"
                       (click)="reject(sr)">
-                <i class="bi bi-x-lg me-1"></i> Reject
+                <i class="bi bi-x-lg me-1"></i> {{ 'staffFlagged.reject' | translate }}
               </button>
               <button class="btn btn-sm btn-success"
                       [disabled]="acting() === sr.id"
                       (click)="approve(sr)">
-                <i class="bi bi-check-lg me-1"></i> Approve &amp; Publish
+                <i class="bi bi-check-lg me-1"></i> {{ 'staffFlagged.approve' | translate }}
               </button>
             </div>
           </div>
@@ -72,14 +72,14 @@
     @if (res.totalPages > 1) {
       <div class="d-flex align-items-center justify-content-between mt-4">
         <span class="text-muted small">
-          Page {{ res.page }} of {{ res.totalPages }} ({{ res.totalCount }} total)
+          {{ 'common.pageInfo' | translate:{ page: res.page, total: res.totalPages, count: res.totalCount } }}
         </span>
         <div class="btn-group">
           <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">
-            Previous
+            {{ 'common.previous' | translate }}
           </button>
           <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">
-            Next
+            {{ 'common.next' | translate }}
           </button>
         </div>
       </div>

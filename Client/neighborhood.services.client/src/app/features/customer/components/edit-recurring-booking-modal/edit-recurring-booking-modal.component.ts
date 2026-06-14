@@ -21,6 +21,11 @@ export class EditRecurringBookingModalComponent {
 
   submitting = signal(false);
 
+  // Earliest selectable date (local "today") for the min attribute — "yyyy-MM-dd".
+  readonly minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+
   form = this.fb.group({
     pattern: this.fb.control<RecurringPattern | null>(null, Validators.required),
     dayOfWeek: this.fb.control<string | null>(null),

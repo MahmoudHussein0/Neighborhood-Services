@@ -16,6 +16,17 @@
       <div class="h5 fw-bold mb-0">{{ duration }} {{ 'serviceRequests.acceptModal.min' | translate }}</div>
     </div>
   </div>
+
+  <!-- Optional promo code, applied to this price on accept -->
+  <div class="mt-3">
+    <label class="form-label small mb-1">
+      {{ 'serviceRequests.acceptModal.promoLabel' | translate }}
+      <span class="text-muted">{{ 'common.optional' | translate }}</span>
+    </label>
+    <input type="text" class="form-control form-control-sm"
+           [ngModel]="promoCode()" (ngModelChange)="promoCode.set($event)"
+           [placeholder]="'serviceRequests.acceptModal.promoPlaceholder' | translate" />
+  </div>
 </div>
 
 <div class="modal-footer">
