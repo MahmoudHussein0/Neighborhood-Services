@@ -2,13 +2,13 @@
         @import url('https://rsms.me/inter/inter-ui.css');
 section {
   align-items: center;
-  background: linear-gradient(-45deg, #322ff7, #e77f09);
+  background: linear-gradient(-45deg, #ffa703, #120075);
   display: flex;
   font-family: 'Inter UI', sans-serif;
   height: 50vh;
   justify-content: center;
   margin: 0;
-  width: 100vw;
+  max-width: 100vw;
 }
 .card {
   background: white;
