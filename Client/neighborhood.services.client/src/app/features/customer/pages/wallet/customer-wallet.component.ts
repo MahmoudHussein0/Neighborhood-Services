@@ -137,10 +137,16 @@ export class CustomerWalletComponent implements OnInit, OnDestroy, AfterViewInit
             this.toastr.error('Payment failed. Please try again.');
           }
           this.loadData();
+          if (window.opener) {
+            setTimeout(() => window.close(), 2000);
+          }
         },
         error: (err) => {
           console.error('Finalize error (path params)', err);
           this.loadData();
+          if (window.opener) {
+            setTimeout(() => window.close(), 2000);
+          }
         }
       });
     } else {
@@ -161,10 +167,16 @@ export class CustomerWalletComponent implements OnInit, OnDestroy, AfterViewInit
               }
               this.router.navigate([], { queryParams: {} });
               this.loadData();
+              if (window.opener) {
+                setTimeout(() => window.close(), 2000);
+              }
             },
             error: (err) => {
               console.error('Finalize error (route params)', err);
               this.loadData();
+              if (window.opener) {
+                setTimeout(() => window.close(), 2000);
+              }
             }
           });
         } else {
@@ -185,10 +197,16 @@ export class CustomerWalletComponent implements OnInit, OnDestroy, AfterViewInit
                 }
                 // Silently refresh to show the updated transaction status
                 this.refreshTransactions();
+                if (window.opener) {
+                  setTimeout(() => window.close(), 2000);
+                }
               },
               error: (err) => {
                 console.error('Verify payment error', err);
                 this.refreshTransactions();
+                if (window.opener) {
+                  setTimeout(() => window.close(), 2000);
+                }
               }
             });
           } else {
