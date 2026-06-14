@@ -44,6 +44,7 @@ import { AvailiabilityAndExceptionComponent } from './features/technician/pages/
 import { PricingComponent } from './features/technician/pages/pricing/pricing.component';
 import { ProblemTypeComponent } from './features/public/pages/services/problem-type/problem-type.component';
 import { PoliciesComponent } from './features/staff/pages/policies/policies.component';
+import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 
 export const routes: Routes = [
@@ -107,6 +108,7 @@ export const routes: Routes = [
       { path: 'wallet', component: TechnicianWalletComponent },
       { path: 'earnings', component: TechnicianEarningsComponent },
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
+       { path: 'reviews', component: TechReviewsComponent },
       { path: 'pricing', component: PricingComponent },
       { path: '**', redirectTo: '' }
     ]
