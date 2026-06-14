@@ -17,8 +17,10 @@ export class DashboardShellComponent {
   private readonly router = inject(Router);
   readonly layout = inject(LayoutService);
 
-  /** Page title shown in the topbar. Each role's layout passes its own. */
-  title = input<string>('Dashboard');
+  /** Page title shown in the topbar. Each role's layout passes its own.
+   *  Named `pageTitle` (not `title`) so it doesn't leak to the host element's
+   *  native `title` attribute, which the browser renders as a hover tooltip. */
+  pageTitle = input<string>('Dashboard');
 
   readonly isLoggingOut = signal(false);
   readonly currentUser = this.authService.currentUser;

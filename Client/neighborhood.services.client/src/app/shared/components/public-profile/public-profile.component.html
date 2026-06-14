@@ -1,0 +1,131 @@
+<button class="btn btn-sm btn-outline-secondary mb-3" (click)="goBack()">
+  <i class="bi bi-arrow-left me-1"></i>{{ 'common.back' | translate }}
+</button>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (profile(); as p) {
+
+  <!-- Header -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
+    <div class="profile-cover"></div>
+    <div class="card-body pt-0">
+      <div class="d-flex flex-wrap align-items-end gap-3 profile-head">
+        <div class="profile-avatar">
+          @if (!avatarError() && photoSrc(p.photo)) {
+            <img [src]="photoSrc(p.photo)" [alt]="p.fullName" (error)="onAvatarError()" />
+          } @else {
+            <span>{{ initials(p.fullName) }}</span>
+          }
+        </div>
+        <div class="flex-grow-1 min-w-0 pb-1">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h2 class="h4 fw-bold mb-0">{{ p.fullName }}</h2>
+            <span class="badge rounded-pill" [class]="p.role === 'Technician' ? 'text-bg-primary' : 'text-bg-secondary'">
+              {{ ('publicProfile.role.' + p.role) | translate }}
+            </span>
+            @if (p.role === 'Technician' && p.verificationStatus === 'Verified') {
+              <span class="badge rounded-pill text-bg-success"><i class="bi bi-patch-check-fill me-1"></i>{{ 'publicProfile.verified' | translate }}</span>
+            }
+          </div>
+          <div class="text-muted small mt-1 d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+            <span><i class="bi bi-calendar3 me-1"></i>{{ 'publicProfile.memberSince' | translate }} {{ p.memberSince | date: 'MMM y' }}</span>
+            @if (mapsUrl(p.latitude, p.longitude); as url) {
+              <a [href]="url" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-geo-alt me-1"></i>{{ 'common.openInMaps' | translate }}</a>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-3 mt-2">
+        <div class="col-4">
+          <div class="stat-tile">
+            <div class="stat-value text-warning">{{ p.averageRating | number: '1.1-1' }} <i class="bi bi-star-fill"></i></div>
+            <div class="stat-label">{{ 'publicProfile.rating' | translate }}</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stat-tile">
+            <div class="stat-value">{{ p.reviewCount }}</div>
+            <div class="stat-label">{{ 'publicProfile.reviews' | translate }}</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stat-tile">
+            <div class="stat-value">{{ p.completedJobs }}</div>
+            <div class="stat-label">{{ 'publicProfile.completedJobs' | translate }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technician extras -->
+      @if (p.role === 'Technician') {
+        @if (p.categories.length) {
+          <div class="mt-3">
+            <div class="text-muted small fw-semibold mb-1">{{ 'publicProfile.services' | translate }}</div>
+            <div class="d-flex flex-wrap gap-2">
+              @for (c of p.categories; track c.id) {
+                <span class="badge rounded-pill text-bg-light border"><i class="bi {{ c.icon }} me-1"></i>{{ categoryName(c) }}</span>
+              }
+            </div>
+          </div>
+        }
+        @if (p.experience) {
+          <div class="mt-3">
+            <div class="text-muted small fw-semibold mb-1">{{ 'publicProfile.experience' | translate }}</div>
+            <p class="mb-0 small">{{ p.experience }}</p>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Reviews -->
+  <h3 class="h6 fw-bold mb-3">{{ 'publicProfile.reviewsTitle' | translate }} ({{ p.reviewCount }})</h3>
+
+  @if (p.reviews.length === 0) {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body text-center text-muted py-4">
+        <i class="bi bi-chat-square-text fs-3 d-block mb-2"></i>
+        {{ 'publicProfile.noReviews' | translate }}
+      </div>
+    </div>
+  } @else {
+    <div class="d-flex flex-column gap-2">
+      @for (r of p.reviews; track r.id) {
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body d-flex gap-3">
+            <div class="review-avatar flex-shrink-0">
+              @if (!reviewPhotoErrors().has(r.id) && photoSrc(r.reviewerPhoto)) {
+                <img [src]="photoSrc(r.reviewerPhoto)" [alt]="r.reviewerName" (error)="onReviewPhotoError(r.id)" />
+              } @else {
+                <span>{{ initials(r.reviewerName) }}</span>
+              }
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                <span class="fw-semibold">{{ r.reviewerName || ('publicProfile.anonymous' | translate) }}</span>
+                <span class="text-muted small">{{ r.createdAt | date: 'mediumDate' }}</span>
+              </div>
+              <div class="text-warning small my-1" [attr.aria-label]="r.rating + '/5'">
+                @for (s of range(stars(r.rating).full); track s) { <i class="bi bi-star-fill"></i> }
+                @if (stars(r.rating).half) { <i class="bi bi-star-half"></i> }
+                @for (s of range(stars(r.rating).empty); track s) { <i class="bi bi-star"></i> }
+              </div>
+              <p class="mb-0 small">{{ r.comment }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+} @else {
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body text-center text-muted py-5">
+      {{ 'publicProfile.loadError' | translate }}
+    </div>
+  </div>
+}

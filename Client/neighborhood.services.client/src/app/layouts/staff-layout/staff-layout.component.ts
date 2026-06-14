@@ -6,7 +6,7 @@ import { StaffSidebarComponent } from '../../features/staff/components/staff-sid
   selector: 'app-staff-layout',
   imports: [DashboardShellComponent, StaffSidebarComponent],
   template: `
-    <app-dashboard-shell title="Staff Dashboard">
+    <app-dashboard-shell pageTitle="Staff Dashboard">
       <app-staff-sidebar sidebar />
     </app-dashboard-shell>
   `,

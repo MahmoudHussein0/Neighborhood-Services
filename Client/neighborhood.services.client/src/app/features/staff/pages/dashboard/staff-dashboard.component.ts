@@ -9,7 +9,10 @@ import { StaffUsersService } from '../../services/staff-users.service';
 import { SupportTicketsService } from '../../services/support-ticket.service';
 import { DisputeService } from '../../services/disputes.service';
 import { ReviewsService } from '../../services/Reviews.service';
+import { KnowledgeService } from '../../services/knowledge.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
+import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-staff-dashboard',
@@ -24,10 +27,16 @@ import { PagedResult } from '../../../../core/models/paged-result.model';
           <h2 class="dash-title">Staff Overview</h2>
           <p class="dash-subtitle">Real-time snapshot of platform activity</p>
         </div>
-        <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
-          <span class="refresh-icon" [class.spinning]="loading()">↻</span>
-          Refresh
-        </button>
+        <div class="header-actions">
+          <button class="btn-refresh btn-reindex" (click)="reindexKnowledge()" [disabled]="reindexing()">
+            <span class="refresh-icon" [class.spinning]="reindexing()">{{ reindexing() ? '↻' : '🧠' }}</span>
+            {{ reindexing() ? 'Reindexing…' : 'Reindex Knowledge' }}
+          </button>
+          <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
+            <span class="refresh-icon" [class.spinning]="loading()">↻</span>
+            Refresh
+          </button>
+        </div>
       </div>
 
       <!-- Skeleton -->
@@ -268,6 +277,9 @@ import { PagedResult } from '../../../../core/models/paged-result.model';
     }
     .btn-refresh:hover  { background:#f1f5f9; }
     .btn-refresh:disabled { opacity:.5; cursor:not-allowed; }
+    .header-actions { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .btn-reindex { border-color:#c7d7fe; color:#1d4ed8; }
+    .btn-reindex:hover { background:#eff6ff; }
     .refresh-icon { font-size:1.1rem; display:inline-block; }
     .refresh-icon.spinning { animation: spin .7s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
@@ -424,9 +436,13 @@ export class StaffDashboardComponent implements OnInit {
   private ticketsSvc = inject(SupportTicketsService);
   private disputeSvc = inject(DisputeService);
   private reviewsSvc = inject(ReviewsService);
+  private knowledgeSvc = inject(KnowledgeService);
+  private confirm    = inject(ConfirmService);
+  private toastr     = inject(ToastrService);
 
   loading = signal(true);
   error   = signal(false);
+  reindexing = signal(false);
 
   // Raw signals
   private _bookings  = signal<StaffBooking[]>([]);
@@ -544,6 +560,31 @@ export class StaffDashboardComponent implements OnInit {
       error: () => {
         this.error.set(true);
         this.loading.set(false);
+      },
+    });
+  }
+
+  // Rebuild the RAG vector index from the catalog (deliberate, off-boot maintenance action).
+  async reindexKnowledge() {
+    if (this.reindexing()) return;
+
+    const ok = await this.confirm.confirm({
+      titleKey: 'reindex.confirmTitle',
+      messageKey: 'reindex.confirmBody',
+      confirmKey: 'reindex.confirmBtn',
+      variant: 'primary',
+    });
+    if (!ok) return;
+
+    this.reindexing.set(true);
+    this.knowledgeSvc.reindex().subscribe({
+      next: (res) => {
+        this.reindexing.set(false);
+        this.toastr.success(res?.message || 'Knowledge base reindexed.');
+      },
+      error: () => {
+        this.reindexing.set(false);
+        this.toastr.error('Reindex failed. Please try again.');
       },
     });
   }

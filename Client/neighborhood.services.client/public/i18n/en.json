@@ -115,6 +115,28 @@
         "confirm": "Confirm",
         "confirmTitle": "Please confirm"
     },
+    "publicProfile": {
+        "role": {
+            "Technician": "Technician",
+            "Customer": "Customer"
+        },
+        "verified": "Verified",
+        "memberSince": "Member since",
+        "rating": "Rating",
+        "reviews": "Reviews",
+        "completedJobs": "Completed jobs",
+        "services": "Services",
+        "experience": "Experience",
+        "reviewsTitle": "Reviews",
+        "noReviews": "No reviews yet.",
+        "anonymous": "Anonymous",
+        "loadError": "Could not load this profile."
+    },
+    "reindex": {
+        "confirmTitle": "Reindex knowledge base?",
+        "confirmBody": "This re-embeds changed catalog docs into the vector store. It may take a moment.",
+        "confirmBtn": "Reindex"
+    },
     "cancelDialog": {
         "title": "Cancel Booking",
         "prompt": "Why are you cancelling?",
@@ -329,6 +351,7 @@
         },
         "proposedPrice": "Technician proposed {{price}} — approve to activate.",
         "agreedPrice": "Agreed price: {{price}}",
+        "perVisit": "per visit",
         "approve": "Approve",
         "rejectPrice": "Reject price",
         "pause": "Pause",
@@ -543,6 +566,7 @@
             "budget": "Budget",
             "offers": "{{count}} offer(s)",
             "makeOffer": "Make Offer",
+            "viewCustomer": "View customer profile",
             "locationError": "We need your location to find nearby requests.",
             "retry": "Retry",
             "offerSent": "Offer sent.",

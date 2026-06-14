@@ -2,25 +2,28 @@
   width: 3rem;
   height: 3rem;
   border-radius: 0.85rem;
-  background-color: #eff6ff;
-  color: #1d4ed8;
+  background: linear-gradient(135deg, #60a5fa, #1d4ed8);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
   flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25);
 }
 
 /* Modern card shell — subtle lift on hover + status accent bar */
 .ns-card {
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid #eef1f6 !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .ns-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 0.75rem 1.75rem rgba(15, 23, 42, 0.1) !important;
 }
 
 /* Left status accent bar */
@@ -34,21 +37,23 @@
   background-color: #adb5bd;
 }
 
-.ns-card[data-status='Confirmed']::before { background-color: #0d6efd; }
-.ns-card[data-status='Completed']::before { background-color: #198754; }
-.ns-card[data-status='Pending']::before   { background-color: #ffc107; }
-.ns-card[data-status='Quoted']::before    { background-color: #0dcaf0; }
-.ns-card[data-status='Cancelled']::before { background-color: #dc3545; }
-.ns-card[data-status='Disputed']::before  { background-color: #6c757d; }
+.ns-card[data-status='Confirmed']::before { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+.ns-card[data-status='Completed']::before { background: linear-gradient(180deg, #22c55e, #15803d); }
+.ns-card[data-status='Pending']::before   { background: linear-gradient(180deg, #fbbf24, #d97706); }
+.ns-card[data-status='Quoted']::before    { background: linear-gradient(180deg, #38bdf8, #0284c7); }
+.ns-card[data-status='Cancelled']::before { background: linear-gradient(180deg, #f87171, #dc2626); }
+.ns-card[data-status='Disputed']::before  { background: linear-gradient(180deg, #94a3b8, #475569); }
 
 .ns-card-title {
   font-size: 1.05rem;
   line-height: 1.35;
+  color: #0f172a;
 }
 
 .ns-price {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
 /* Meta row spacing helpers */
@@ -63,6 +68,65 @@
 }
 
 .badge.rounded-pill {
-  padding: 0.4em 0.8em;
+  padding: 0.45em 0.85em;
   font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ── Buttons: pill-shaped, elevated, with smooth hover ───────────────────── */
+.ns-card .btn {
+  border-radius: 999px;
+  font-weight: 600;
+  padding-inline: 1.1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.ns-card .btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  box-shadow: 0 3px 10px rgba(29, 78, 216, 0.28);
+}
+
+.ns-card .btn-primary:hover,
+.ns-card .btn-primary:focus {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  box-shadow: 0 5px 16px rgba(29, 78, 216, 0.4);
+  transform: translateY(-1px);
+}
+
+.ns-card .btn-outline-secondary {
+  border-color: #e2e8f0;
+  color: #475569;
+  background: #fff;
+}
+
+.ns-card .btn-outline-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.ns-card .btn-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  box-shadow: 0 3px 10px rgba(22, 163, 74, 0.28);
+}
+
+.ns-card .btn-success:hover {
+  box-shadow: 0 5px 16px rgba(22, 163, 74, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Dropdown menu polish */
+.ns-card .dropdown-menu {
+  border: 1px solid #eef1f6;
+  border-radius: 0.85rem;
+  padding: 0.35rem;
+}
+
+.ns-card .dropdown-item {
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
 }

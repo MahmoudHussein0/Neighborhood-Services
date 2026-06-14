@@ -115,6 +115,28 @@
         "confirm": "تأكيد",
         "confirmTitle": "يرجى التأكيد"
     },
+    "publicProfile": {
+        "role": {
+            "Technician": "فني",
+            "Customer": "عميل"
+        },
+        "verified": "موثّق",
+        "memberSince": "عضو منذ",
+        "rating": "التقييم",
+        "reviews": "المراجعات",
+        "completedJobs": "أعمال مكتملة",
+        "services": "الخدمات",
+        "experience": "الخبرة",
+        "reviewsTitle": "المراجعات",
+        "noReviews": "لا توجد مراجعات بعد.",
+        "anonymous": "مجهول",
+        "loadError": "تعذّر تحميل هذا الملف الشخصي."
+    },
+    "reindex": {
+        "confirmTitle": "إعادة فهرسة قاعدة المعرفة؟",
+        "confirmBody": "سيعيد هذا تضمين مستندات الكتالوج المتغيّرة في مخزن المتجهات. قد يستغرق لحظات.",
+        "confirmBtn": "إعادة الفهرسة"
+    },
     "cancelDialog": {
         "title": "إلغاء الحجز",
         "prompt": "ما سبب الإلغاء؟",
@@ -329,6 +351,7 @@
         },
         "proposedPrice": "اقترح الفني {{price}} — وافق للتفعيل.",
         "agreedPrice": "السعر المتفق عليه: {{price}}",
+        "perVisit": "لكل زيارة",
         "approve": "موافقة",
         "rejectPrice": "رفض السعر",
         "pause": "إيقاف مؤقت",
@@ -543,6 +566,7 @@
             "budget": "الميزانية",
             "offers": "{{count}} عرض",
             "makeOffer": "تقديم عرض",
+            "viewCustomer": "عرض ملف العميل",
             "locationError": "نحتاج إلى موقعك للعثور على الطلبات القريبة.",
             "retry": "إعادة المحاولة",
             "offerSent": "تم إرسال العرض.",

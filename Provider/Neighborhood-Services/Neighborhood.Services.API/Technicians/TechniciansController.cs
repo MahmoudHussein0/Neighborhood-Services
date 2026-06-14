@@ -27,6 +27,15 @@ namespace Neighborhood.Services.API.Technicians
             return Ok(result);
         }
 
+        // Public profile (details + stats + approved reviews) — shown when a customer clicks a technician.
+        [Authorize]
+        [HttpGet("{id:int}/public-profile")]
+        public async Task<IActionResult> GetPublicProfile(int id)
+        {
+            var result = await _mediator.Send(new GetTechnicianPublicProfileQuery { TechnicianId = id });
+            return Ok(result);
+        }
+
         [Authorize]
         [HttpGet("user/{applicationUserId}")]
         public async Task<IActionResult> GetByUserId(string applicationUserId)

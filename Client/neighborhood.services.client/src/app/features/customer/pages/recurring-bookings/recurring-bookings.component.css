@@ -37,11 +37,11 @@
   background-color: #adb5bd;
 }
 
-.ns-card[data-status='Open']::before          { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
-.ns-card[data-status='Closed']::before        { background: linear-gradient(180deg, #94a3b8, #475569); }
-.ns-card[data-status='Expired']::before       { background: linear-gradient(180deg, #fbbf24, #d97706); }
-.ns-card[data-status='PendingReview']::before { background: linear-gradient(180deg, #38bdf8, #0284c7); }
-.ns-card[data-status='Flagged']::before       { background: linear-gradient(180deg, #f87171, #dc2626); }
+.ns-card[data-status='Active']::before                  { background: linear-gradient(180deg, #22c55e, #15803d); }
+.ns-card[data-status='Paused']::before                  { background: linear-gradient(180deg, #fbbf24, #d97706); }
+.ns-card[data-status='Cancelled']::before               { background: linear-gradient(180deg, #f87171, #dc2626); }
+.ns-card[data-status='PendingCustomerApproval']::before { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+.ns-card[data-status='PendingApproval']::before         { background: linear-gradient(180deg, #94a3b8, #475569); }
 
 .ns-card-title {
   font-size: 1.05rem;
@@ -90,5 +90,18 @@
 .ns-card .btn-primary:focus {
   background: linear-gradient(135deg, #2563eb, #1e40af);
   box-shadow: 0 5px 16px rgba(29, 78, 216, 0.4);
+  transform: translateY(-1px);
+}
+
+.ns-card .btn-outline-secondary {
+  border-color: #e2e8f0;
+  color: #475569;
+  background: #fff;
+}
+
+.ns-card .btn-outline-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
   transform: translateY(-1px);
 }
