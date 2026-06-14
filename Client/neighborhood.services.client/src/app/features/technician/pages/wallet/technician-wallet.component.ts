@@ -159,7 +159,7 @@ export class TechnicianWalletComponent implements OnInit, AfterViewInit {
   getStatusBadgeClass(status: any): string {
     const s = status?.toString();
     if (s === 'Completed' || s === '1') return 'bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill';
-    if (s === 'Pending' || s === '0') return 'bg-warning bg-opacity-10 text-dark fw-bold px-3 py-2 rounded-pill';
+    if (s === 'Pending' || s === '0') return 'bg-warning bg-opacity-10 text-pending-brown fw-bold px-3 py-2 rounded-pill';
     if (s === 'Failed' || s === '2') return 'bg-danger bg-opacity-10 text-danger fw-bold px-3 py-2 rounded-pill';
     if (s === 'Reversed' || s === '3') return 'bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-2 rounded-pill';
     return 'bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-2 rounded-pill';
