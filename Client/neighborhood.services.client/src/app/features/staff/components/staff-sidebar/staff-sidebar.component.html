@@ -17,47 +17,47 @@
   <nav class="flex-grow-1 p-2 overflow-auto">
     <a routerLink="/staff" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
       <i class="bi bi-grid-1x2"></i>
-      @if (!collapsed()) { <span>Overview</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.overview' | translate }}</span> }
     </a>
     <a routerLink="/staff/users" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-people"></i>
-      @if (!collapsed()) { <span>Users</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.users' | translate }}</span> }
     </a>
     <a routerLink="/staff/bookings" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-calendar-check"></i>
-      @if (!collapsed()) { <span>Bookings</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.bookings' | translate }}</span> }
     </a>
     <a routerLink="/staff/disputes" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-exclamation-triangle"></i>
-      @if (!collapsed()) { <span>Disputes</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.disputes' | translate }}</span> }
     </a>
     <a routerLink="/staff/flagged-requests" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-shield-exclamation"></i>
-      @if (!collapsed()) { <span>Flagged Requests</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.flaggedRequests' | translate }}</span> }
     </a>
     <a routerLink="/staff/reviews" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-star"></i>
-      @if (!collapsed()) { <span>Reviews</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.reviews' | translate }}</span> }
     </a>
     <a routerLink="/staff/support-tickets" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-life-preserver"></i>
-      @if (!collapsed()) { <span>Support Tickets</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.supportTickets' | translate }}</span> }
     </a>
     <a routerLink="/staff/categories" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-grid"></i>
-      @if (!collapsed()) { <span>Categories</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.categories' | translate }}</span> }
     </a>
     <a routerLink="/staff/policies" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-file-earmark-text"></i>
-      @if (!collapsed()) { <span>Policies</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.policies' | translate }}</span> }
     </a>
     <a routerLink="/staff/promo-codes" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-tag"></i>
-      @if (!collapsed()) { <span>Promo Codes</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.promoCodes' | translate }}</span> }
     </a>
     <a routerLink="/staff/staff-management" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-person-badge"></i>
-      @if (!collapsed()) { <span>Staff Management</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.staffManagement' | translate }}</span> }
     </a>
   </nav>
 
@@ -65,7 +65,7 @@
   <div class="p-2 border-top">
     <a routerLink="/" class="sidebar-link">
       <i class="bi bi-house"></i>
-      @if (!collapsed()) { <span>Go Home</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.goHome' | translate }}</span> }
     </a>
   </div>
 </aside>

@@ -6,7 +6,7 @@ import { CustomerSidebarComponent } from '../../features/customer/components/cus
   selector: 'app-customer-layout',
   imports: [DashboardShellComponent, CustomerSidebarComponent],
   template: `
-    <app-dashboard-shell title="Customer Dashboard">
+    <app-dashboard-shell pageTitle="Customer Dashboard">
       <app-customer-sidebar sidebar />
     </app-dashboard-shell>
   `,

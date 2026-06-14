@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ReviewAnalysisService } from '../../../services/Review-analysis.service';
 import { ReviewAnalysisDto } from '../../../models/ReviewAnalysis.model';
 
@@ -7,13 +8,14 @@ import { ReviewAnalysisDto } from '../../../models/ReviewAnalysis.model';
 @Component({
   selector: 'app-analysistab',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './analysistab.component.html',
   styleUrl: './analysistab.component.css'
 })
 export class AnalysisTabComponent implements OnInit {
 
   private svc = inject(ReviewAnalysisService);
+  private translate = inject(TranslateService);
 
   analyses = signal<ReviewAnalysisDto[]>([]);
   loading = signal(true);
@@ -32,7 +34,7 @@ export class AnalysisTabComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Failed to load review analysis.');
+        this.error.set(this.translate.instant('reviewsAnalysis.loadFail'));
         this.loading.set(false);
       }
     });

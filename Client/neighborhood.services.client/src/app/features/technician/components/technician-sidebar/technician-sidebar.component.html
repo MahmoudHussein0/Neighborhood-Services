@@ -18,51 +18,51 @@
     <a routerLink="/technician" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link">
       <i class="bi bi-grid-1x2"></i>
-      @if (!collapsed()) { <span>Overview</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.overview' | translate }}</span> }
     </a>
     <a routerLink="/technician/jobs" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-briefcase"></i>
-      @if (!collapsed()) { <span>My Jobs</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.myJobs' | translate }}</span> }
     </a>
     <a routerLink="/technician/browse-requests" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-clipboard"></i>
-      @if (!collapsed()) { <span>Browse Requests</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.browseRequests' | translate }}</span> }
     </a>
     <a routerLink="/technician/offers" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-tag"></i>
-      @if (!collapsed()) { <span>Offers</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.offers' | translate }}</span> }
     </a>
     <a routerLink="/technician/recurring-jobs" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-arrow-repeat"></i>
-      @if (!collapsed()) { <span>Recurring Jobs</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.recurringJobs' | translate }}</span> }
     </a>
     <a routerLink="/technician/availability" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-calendar-week"></i>
-      @if (!collapsed()) { <span>Availability</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.availability' | translate }}</span> }
     </a>
     <a routerLink="/technician/pricing" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-cash-coin"></i>
-      @if (!collapsed()) { <span>Pricing</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.pricing' | translate }}</span> }
     </a>
     <a routerLink="/technician/wallet" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-wallet2"></i>
-      @if (!collapsed()) { <span>Wallet</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.wallet' | translate }}</span> }
     </a>
     <a routerLink="/technician/earnings" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-graph-up"></i>
-      @if (!collapsed()) { <span>Earnings</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.earnings' | translate }}</span> }
     </a>
     <a routerLink="/technician/reviews" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-star"></i>
-      @if (!collapsed()) { <span>Reviews</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.reviews' | translate }}</span> }
     </a>
     <a routerLink="/technician/chat" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-chat-dots"></i>
-      @if (!collapsed()) { <span>Chat</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.chat' | translate }}</span> }
     </a>
     <a routerLink="/technician/profile" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-person"></i>
-      @if (!collapsed()) { <span>Profile</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.profile' | translate }}</span> }
     </a>
   </nav>
 
@@ -70,7 +70,7 @@
   <div class="p-2 border-top">
     <a routerLink="/" class="sidebar-link">
       <i class="bi bi-house"></i>
-      @if (!collapsed()) { <span>Go Home</span> }
+      @if (!collapsed()) { <span>{{ 'sidebar.goHome' | translate }}</span> }
     </a>
   </div>
 </aside>

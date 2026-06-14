@@ -93,23 +93,25 @@
 
               <!-- Identity -->
               <div class="d-flex align-items-center gap-3 mb-3">
-                @if (tech.photo) {
-                  <img [src]="tech.photo" [alt]="displayName(tech)" class="rounded-circle object-fit-cover" style="width:56px;height:56px;" />
-                } @else {
-                  <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
-                    {{ initials(tech) }}
+                <a [routerLink]="['/customer/technician', tech.id]" class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 text-reset text-decoration-none profile-link">
+                  @if (tech.photo) {
+                    <img [src]="tech.photo" [alt]="displayName(tech)" class="rounded-circle object-fit-cover" style="width:56px;height:56px;" />
+                  } @else {
+                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+                      {{ initials(tech) }}
+                    </div>
+                  }
+                  <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex align-items-center gap-1">
+                      <span class="fw-semibold text-truncate">{{ displayName(tech) }}</span>
+                      @if (isVerified(tech)) { <i class="bi bi-patch-check-fill text-primary" [title]="'findTech.verified' | translate"></i> }
+                    </div>
+                    <div class="small">
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <span class="fw-semibold ms-1">{{ tech.rating ? (tech.rating | number: '1.1-1') : ('findTech.noRating' | translate) }}</span>
+                    </div>
                   </div>
-                }
-                <div class="flex-grow-1 min-w-0">
-                  <div class="d-flex align-items-center gap-1">
-                    <span class="fw-semibold text-truncate">{{ displayName(tech) }}</span>
-                    @if (isVerified(tech)) { <i class="bi bi-patch-check-fill text-primary" [title]="'findTech.verified' | translate"></i> }
-                  </div>
-                  <div class="small">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <span class="fw-semibold ms-1">{{ tech.rating ? (tech.rating | number: '1.1-1') : ('findTech.noRating' | translate) }}</span>
-                  </div>
-                </div>
+                </a>
                 <span class="badge rounded-pill" [class.text-bg-success]="tech.isAvailable" [class.text-bg-secondary]="!tech.isAvailable">
                   {{ (tech.isAvailable ? 'findTech.available' : 'findTech.offline') | translate }}
                 </span>

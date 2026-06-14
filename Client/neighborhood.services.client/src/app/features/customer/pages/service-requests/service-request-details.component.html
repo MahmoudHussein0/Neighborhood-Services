@@ -38,15 +38,16 @@
         <div class="card border-0 shadow-sm rounded-3">
           <div class="card-body">
             <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
-              <div class="d-flex align-items-center gap-3">
+              <a [routerLink]="['/customer/technician', offer.technicianId]"
+                 class="d-flex align-items-center gap-3 text-reset text-decoration-none profile-link">
                 <div class="avatar-circle">{{ offer.technicianName.charAt(0) }}</div>
                 <div>
-                  <div class="fw-semibold">{{ offer.technicianName }}</div>
+                  <div class="fw-semibold">{{ offer.technicianName }} <i class="bi bi-box-arrow-up-right small text-muted ms-1"></i></div>
                   <div class="text-warning small">
                     <i class="bi bi-star-fill"></i> {{ offer.technicianRating }}
                   </div>
                 </div>
-              </div>
+              </a>
               <span class="badge rounded-pill" [class]="offerBadgeClass(offer.status)">
                 {{ ('serviceRequests.offerStatus.' + offer.status) | translate }}
               </span>

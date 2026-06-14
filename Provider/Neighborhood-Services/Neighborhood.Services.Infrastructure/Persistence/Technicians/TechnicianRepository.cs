@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Neighborhood.Services.Application.PublicProfiles.DTOs;
 using Neighborhood.Services.Application.Technicians.DTOs;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.Reviews;
 using Neighborhood.Services.Domain.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
@@ -84,6 +87,69 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
                     }).ToList()
                 }
             ).ToListAsync();
+        }
+
+        public async Task<PublicProfileDto?> GetPublicProfileAsync(int technicianId)
+        {
+            var profile = await (
+                from technician in _context.Technicians.AsNoTracking()
+                where technician.Id == technicianId && !technician.IsDeleted
+                join user in _context.Users on technician.ApplicationUserId equals user.Id
+                select new PublicProfileDto
+                {
+                    Role = "Technician",
+                    ApplicationUserId = technician.ApplicationUserId,
+                    FullName = user.FullName,
+                    Photo = user.Photo,
+                    Latitude = user.Location != null ? (double?)user.Location.Y : null,
+                    Longitude = user.Location != null ? (double?)user.Location.X : null,
+                    MemberSince = user.CreatedAt,
+                    AverageRating = technician.Rating,
+                    Experience = technician.Experience,
+                    VerificationStatus = technician.VerificationStatus.ToString(),
+                    Categories = technician.TechnicianCategories.Select(tc => new PublicProfileCategoryDto
+                    {
+                        Id = tc.Category.Id,
+                        NameEn = tc.Category.NameEn,
+                        NameAr = tc.Category.NameAr,
+                        Icon = tc.Category.Icon
+                    }).ToList()
+                }
+            ).FirstOrDefaultAsync();
+
+            if (profile is null)
+                return null;
+
+            profile.CompletedJobs = await _context.Bookings.AsNoTracking()
+                .CountAsync(b => b.TechnicianId == technicianId && b.Status == BookingStatus.Completed);
+
+            await PopulateReviewsAsync(profile);
+            return profile;
+        }
+
+        // Loads the approved reviews about this user (RevieweeId == their ApplicationUserId),
+        // joined with the reviewer's name/photo. The headline rating comes from Technician.Rating
+        // (the canonical value shown on browse/offer cards), so only the count is set here.
+        private async Task PopulateReviewsAsync(PublicProfileDto profile)
+        {
+            profile.Reviews = await (
+                from review in _context.Reviews.AsNoTracking()
+                where review.RevieweeId == profile.ApplicationUserId && review.Status == ReviewStatus.Approved
+                join reviewer in _context.Users on review.ReviewerId equals reviewer.Id into rj
+                from reviewer in rj.DefaultIfEmpty()
+                orderby review.CreatedAt descending
+                select new PublicReviewDto
+                {
+                    Id = review.Id,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt,
+                    ReviewerName = reviewer != null ? reviewer.FullName : string.Empty,
+                    ReviewerPhoto = reviewer != null ? reviewer.Photo : string.Empty
+                }
+            ).ToListAsync();
+
+            profile.ReviewCount = profile.Reviews.Count;
         }
     }
 }

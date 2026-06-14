@@ -42,62 +42,66 @@
     <!-- List -->
     <div class="d-flex flex-column gap-3">
       @for (b of res.items; track b.id) {
-        <div class="card border-0 shadow-sm rounded-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="ns-card card border-0 shadow-sm rounded-4" [attr.data-status]="b.status">
+          <div class="card-body p-4">
 
-              <div class="d-flex align-items-center gap-3">
-                <div class="icon-box"><i class="bi bi-tools"></i></div>
-                <div>
-                  <div class="fw-semibold">{{ b.description }}</div>
-                  <div class="text-muted small">
-                    {{ b.address }} · {{ b.scheduledAt | date: 'mediumDate' }}
-                    @if (mapsUrl(b.latitude, b.longitude); as url) {
-                      <a [href]="url" target="_blank" rel="noopener" class="ms-1 text-decoration-none"><i class="bi bi-geo-alt-fill me-1"></i>{{ 'common.openInMaps' | translate }}</a>
-                    }
-                  </div>
+            <!-- Header: icon + title/meta · status badge -->
+            <div class="d-flex align-items-start gap-3">
+              <div class="icon-box"><i class="bi bi-tools"></i></div>
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <h3 class="ns-card-title fw-semibold mb-1">{{ b.description }}</h3>
+                  <span class="badge rounded-pill flex-shrink-0" [class]="badgeClass(b.status)">
+                    {{ ('bookings.status.' + b.status) | translate }}
+                  </span>
+                </div>
+                <div class="ns-meta text-muted small d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+                  <span><i class="bi bi-geo-alt me-1"></i>{{ b.address }}</span>
+                  <span><i class="bi bi-calendar-event me-1"></i>{{ b.scheduledAt | date: 'mediumDate' }}</span>
+                  @if (mapsUrl(b.latitude, b.longitude); as url) {
+                    <a [href]="url" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-map me-1"></i>{{ 'common.openInMaps' | translate }}</a>
+                  }
                 </div>
               </div>
+            </div>
 
-              <div class="d-flex align-items-center gap-3 flex-wrap">
-                <span class="fw-bold">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</span>
-                <span class="badge rounded-pill" [class]="badgeClass(b.status)">
-                  {{ ('bookings.status.' + b.status) | translate }}
-                </span>
+            <!-- Footer: price · actions -->
+            <div class="ns-card-footer d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 pt-3">
+              <div class="d-flex align-items-baseline gap-2">
+                <span class="ns-price fw-bold">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</span>
+                @if (b.status === 'Completed' && b.clientConfirmed) {
+                  <span class="text-success small"><i class="bi bi-check-circle-fill me-1"></i>{{ 'bookings.youConfirmed' | translate }}</span>
+                }
+                @if (b.status === 'Completed' && b.clientConfirmed && b.hasReview) {
+                  <span class="badge text-bg-light border"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.done' | translate }}</span>
+                }
+              </div>
 
+              <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-sm btn-outline-secondary" (click)="openDetails(b.id)">
                   {{ 'bookings.details' | translate }}
                 </button>
 
-                @if (b.status === 'Completed' && b.clientConfirmed) {
-                  <span class="text-success small"><i class="bi bi-check-circle-fill me-1"></i>{{ 'bookings.youConfirmed' | translate }}</span>
-                }
-
                 @if (hasActions(b)) {
                   <div ngbDropdown class="d-inline-block">
-                    <button class="btn btn-sm btn-outline-primary" ngbDropdownToggle>
+                    <button class="btn btn-sm btn-primary" ngbDropdownToggle>
                       {{ 'bookings.actions' | translate }}
                     </button>
-                    <div ngbDropdownMenu>
+                    <div ngbDropdownMenu class="shadow-sm">
                       @if (canConfirm(b)) {
-                        <button ngbDropdownItem [disabled]="busyId() === b.id" (click)="confirm(b)">{{ 'bookings.confirmCompleted' | translate }}</button>
-                      }
-                      @if (canCancel(b.status)) {
-                        <button ngbDropdownItem class="text-danger" (click)="cancel(b)">{{ 'bookings.cancelBooking' | translate }}</button>
-                      }
-                      @if (canDispute(b.status)) {
-                        <button ngbDropdownItem class="text-danger" [disabled]="busyId() === b.id" (click)="raiseDispute(b)">{{ 'dispute.raise' | translate }}</button>
+                        <button ngbDropdownItem [disabled]="busyId() === b.id" (click)="confirm(b)"><i class="bi bi-check2-circle me-2"></i>{{ 'bookings.confirmCompleted' | translate }}</button>
                       }
                       @if (canReview(b)) {
-                        <button ngbDropdownItem class="text-primary" [disabled]="busyId() === b.id" (click)="leaveReview(b)">
-                          <i class="bi bi-star me-1"></i>{{ 'review.leave' | translate }}
-                        </button>
+                        <button ngbDropdownItem class="text-primary" [disabled]="busyId() === b.id" (click)="leaveReview(b)"><i class="bi bi-star me-2"></i>{{ 'review.leave' | translate }}</button>
+                      }
+                      @if (canCancel(b.status)) {
+                        <button ngbDropdownItem class="text-danger" (click)="cancel(b)"><i class="bi bi-x-circle me-2"></i>{{ 'bookings.cancelBooking' | translate }}</button>
+                      }
+                      @if (canDispute(b.status)) {
+                        <button ngbDropdownItem class="text-danger" [disabled]="busyId() === b.id" (click)="raiseDispute(b)"><i class="bi bi-exclamation-triangle me-2"></i>{{ 'dispute.raise' | translate }}</button>
                       }
                     </div>
                   </div>
-                }
-                @if (b.status === 'Completed' && b.clientConfirmed && b.hasReview) {
-                  <span class="badge text-bg-light border ms-2"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.done' | translate }}</span>
                 }
               </div>
             </div>

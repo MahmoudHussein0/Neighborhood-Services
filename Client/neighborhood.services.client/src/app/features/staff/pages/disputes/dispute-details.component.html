@@ -7,7 +7,7 @@
       <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold m-0 d-flex align-items-center gap-2">
           <i class="bi bi-exclamation-octagon-fill"></i>
-          <span>Dispute Details <span *ngIf="dispute">#{{ dispute.id }}</span></span>
+          <span>{{ 'staffDisputes.details.title' | translate }} <span *ngIf="dispute">#{{ dispute.id }}</span></span>
         </h5>
         <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="close()"></button>
       </div>
@@ -17,7 +17,7 @@
         <!-- Loading -->
         <div *ngIf="loading" class="text-center py-4">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading dispute details...</span>
+            <span class="visually-hidden">{{ 'staffDisputes.loading' | translate }}</span>
           </div>
         </div>
 
@@ -32,70 +32,70 @@
           <div class="row g-3">
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Booking ID</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.bookingId' | translate }}</span>
                 <span class="fw-semibold text-dark">#{{ dispute.bookingId }}</span>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Raised By User ID</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.raisedBy' | translate }}</span>
                 <span class="fw-semibold text-dark text-monospace small">{{ dispute.raisedByUserId }}</span>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Customer</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.customer' | translate }}</span>
                 <span class="fw-semibold text-dark">{{ dispute.customerName || '—' }}</span>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Technician</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.technician' | translate }}</span>
                 <span class="fw-semibold text-dark">{{ dispute.technicianName || '—' }}</span>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Dispute Type</span>
-                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded">{{ dispute.disputeType }}</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.disputeType' | translate }}</span>
+                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded">{{ ('staffDisputes.type_map.' + dispute.disputeType) | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Status</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.status' | translate }}</span>
                 <span class="badge px-3 py-2 rounded-pill"
                       [ngClass]="{
                         'bg-warning-subtle text-warning': dispute.status === 'Open',
                         'bg-info-subtle text-info': dispute.status === 'UnderReview',
                         'bg-success-subtle text-success': dispute.status === 'Resolved'
                       }">
-                  {{ dispute.status }}
+                  {{ ('staffDisputes.status_map.' + dispute.status) | translate }}
                 </span>
               </div>
             </div>
 
             <div class="col-12">
               <div class="p-3 bg-light rounded">
-                <span class="text-muted small d-block mb-1">Reason</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.reason' | translate }}</span>
                 <p class="mb-0 text-dark" style="white-space: pre-wrap;">{{ dispute.reason }}</p>
               </div>
             </div>
 
             <div class="col-12" *ngIf="dispute.resolution">
               <div class="p-3 bg-success-subtle text-success-emphasis rounded border border-success-subtle">
-                <span class="text-success small d-block mb-1 fw-bold">Resolution Details</span>
+                <span class="text-success small d-block mb-1 fw-bold">{{ 'staffDisputes.details.resolution' | translate }}</span>
                 <p class="mb-0 text-dark">{{ dispute.resolution }}</p>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Escrow</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.escrow' | translate }}</span>
                 <span *ngIf="dispute.escrowId; else noEscrow" class="fw-semibold text-dark">
                   {{ dispute.escrowAmount | currency:'EGP':'symbol':'1.0-2' }}
                   <span class="badge ms-2 px-2 py-1 rounded-pill"
@@ -107,13 +107,13 @@
                     {{ dispute.escrowStatus }}
                   </span>
                 </span>
-                <ng-template #noEscrow><span class="text-muted small">No escrow for this booking</span></ng-template>
+                <ng-template #noEscrow><span class="text-muted small">{{ 'staffDisputes.details.noEscrow' | translate }}</span></ng-template>
               </div>
             </div>
 
             <div class="col-md-6 col-12">
               <div class="p-3 bg-light rounded shadow-xs">
-                <span class="text-muted small d-block mb-1">Created At</span>
+                <span class="text-muted small d-block mb-1">{{ 'staffDisputes.details.createdAt' | translate }}</span>
                 <span class="text-dark small">{{ dispute.createdAt | date:'medium' }}</span>
               </div>
             </div>
@@ -140,7 +140,7 @@
             (click)="askBanCustomer()">
             <span *ngIf="actionInProgress === 'banCustomer'" class="spinner-border spinner-border-sm me-1"></span>
             <i *ngIf="actionInProgress !== 'banCustomer'" class="bi bi-person-x me-1"></i>
-            Ban Customer
+            {{ 'staffDisputes.details.banCustomer' | translate }}
           </button>
 
           <button
@@ -149,27 +149,27 @@
             (click)="askBanTech()">
             <span *ngIf="actionInProgress === 'banTech'" class="spinner-border spinner-border-sm me-1"></span>
             <i *ngIf="actionInProgress !== 'banTech'" class="bi bi-person-x me-1"></i>
-            Ban Technician
+            {{ 'staffDisputes.details.banTech' | translate }}
           </button>
 
           <button
             class="btn btn-warning"
             [disabled]="actionInProgress !== null || !canSettleEscrow"
-            [title]="canSettleEscrow ? '' : 'No held escrow to refund'"
+            [title]="canSettleEscrow ? '' : ('staffDisputes.details.noHeldRefund' | translate)"
             (click)="askRefund()">
             <span *ngIf="actionInProgress === 'refund'" class="spinner-border spinner-border-sm me-1"></span>
             <i *ngIf="actionInProgress !== 'refund'" class="bi bi-arrow-counterclockwise me-1"></i>
-            Refund
+            {{ 'staffDisputes.details.refund' | translate }}
           </button>
 
           <button
             class="btn btn-success"
             [disabled]="actionInProgress !== null || !canSettleEscrow"
-            [title]="canSettleEscrow ? '' : 'No held escrow to release'"
+            [title]="canSettleEscrow ? '' : ('staffDisputes.details.noHeldRelease' | translate)"
             (click)="askComplete()">
             <span *ngIf="actionInProgress === 'release'" class="spinner-border spinner-border-sm me-1"></span>
             <i *ngIf="actionInProgress !== 'release'" class="bi bi-check2-circle me-1"></i>
-            Complete Transaction
+            {{ 'staffDisputes.details.complete' | translate }}
           </button>
         </div>
       </div>
@@ -187,7 +187,7 @@
             </div>
           </div>
           <div class="d-flex justify-content-end gap-2 px-4 pb-4">
-            <button class="btn btn-light" (click)="cancelConfirm()">Cancel</button>
+            <button class="btn btn-light" (click)="cancelConfirm()">{{ 'staffDisputes.details.cancel' | translate }}</button>
             <button
               class="btn"
               [ngClass]="pendingConfirm.danger ? 'btn-danger' : 'btn-primary'"

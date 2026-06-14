@@ -96,6 +96,11 @@ export class BookingsComponent implements OnInit {
   openDetails(id: number) {
     const ref = this.modal.open(BookingDetailsModalComponent, { size: 'lg' });
     ref.componentInstance.bookingId = id;
+    // The modal closes with `true` when a promo code changed the total — refresh the list.
+    ref.result.then(
+      (changed: boolean) => { if (changed) this.load(); },
+      () => {}, // dismissed
+    );
   }
 
   confirm(b: MyBookingSummary) {

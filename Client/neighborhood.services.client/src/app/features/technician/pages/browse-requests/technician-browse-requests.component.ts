@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -10,7 +11,7 @@ import { MakeOfferModalComponent } from '../../components/make-offer-modal/make-
 
 @Component({
   selector: 'app-technician-browse-requests',
-  imports: [CurrencyPipe, DatePipe, TranslatePipe],
+  imports: [CurrencyPipe, DatePipe, RouterLink, TranslatePipe],
   templateUrl: './technician-browse-requests.component.html',
 })
 export class TechnicianBrowseRequestsComponent implements OnInit {

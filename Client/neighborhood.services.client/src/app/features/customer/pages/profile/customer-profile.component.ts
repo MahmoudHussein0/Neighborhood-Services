@@ -11,6 +11,7 @@ import {
   CustomerRecord,
 } from '../../models/customer-profile.model';
 import { CustomerProfileService } from '../../services/customer-profile.service';
+import { UploadService } from '../../../../shared/services/upload.service';
 
 @Component({
   selector: 'app-customer-profile',
@@ -281,6 +282,7 @@ import { CustomerProfileService } from '../../services/customer-profile.service'
 export class CustomerProfileComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly customerProfileService = inject(CustomerProfileService);
+  private readonly uploadService = inject(UploadService);
   private readonly formBuilder = inject(FormBuilder);
 
   readonly addressLabels: CustomerAddressLabel[] = ['Home', 'Work', 'Other'];
@@ -400,8 +402,8 @@ export class CustomerProfileComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(() =>
           this.selectedAvatarFile()
-            ? this.customerProfileService.uploadUserPhoto(this.selectedAvatarFile() as File).pipe(
-                switchMap(({ photoUrl }) =>
+            ? this.uploadService.upload(this.selectedAvatarFile() as File).pipe(
+                switchMap((photoUrl) =>
                   this.customerProfileService.updatePhoto(user.userId, photoUrl).pipe(
                     switchMap(() => of(photoUrl)),
                   ),

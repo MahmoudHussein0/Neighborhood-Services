@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MyTranslateService } from '../../../core/services/my-translate.service';
 import { AuthService } from '../../../features/auth/services/auth.service';
@@ -15,6 +15,9 @@ export class NavbarComponent {
   private readonly myTranslateService = inject(MyTranslateService);
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly isLoggingOut = signal(false);
 
   /** Reactive logged-in user — drives the Login ↔ Dashboard button. */
   readonly user = this.authService.currentUser;
@@ -39,5 +42,25 @@ export class NavbarComponent {
   ChangeLang(lang: string) {
     this.myTranslateService.ChangeLang(lang);
     this.currentLang = this.translateService.getCurrentLang();
+  }
+
+  logout() {
+    if (this.isLoggingOut()) {
+      return;
+    }
+
+    this.isLoggingOut.set(true);
+    this.menuOpen.set(false);
+
+    this.authService.logout().subscribe({
+      next: () => {
+        this.isLoggingOut.set(false);
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.isLoggingOut.set(false);
+        this.router.navigate(['/']);
+      },
+    });
   }
 }

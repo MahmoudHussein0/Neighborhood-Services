@@ -1,13 +1,14 @@
 import {Component, OnInit, inject, signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { ReviewsService } from '../../../services/Reviews.service';
 import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.model';
 
 @Component({
   selector: 'app-reviewstab',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './reviewstab.component.html',
   styleUrl: './reviewstab.component.css',
 })
@@ -17,6 +18,7 @@ import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.m
 export class ReviewsTabComponent implements OnInit {
   private svc = inject(ReviewsService);
   private toastr = inject(ToastrService);
+  private translate = inject(TranslateService);
 
   reviews = signal<ReviewDto[]>([]);
   loading = signal(true);
@@ -87,9 +89,12 @@ export class ReviewsTabComponent implements OnInit {
         this.reviews.update(list =>
           list.map(r => r.id === updated.id ? updated : r)
         );
-        this.toastr.success(`Review #${updated.id} marked ${status}.`);
+        this.toastr.success(this.translate.instant('reviewsTab.statusUpdated', {
+          id: updated.id,
+          status: this.translate.instant('reviewsTab.status_map.' + status)
+        }));
       },
-      error: () => this.toastr.error('Failed to update review status.')
+      error: () => this.toastr.error(this.translate.instant('reviewsTab.statusFail'))
     });
   }
 
@@ -113,11 +118,11 @@ export class ReviewsTabComponent implements OnInit {
         this.reviews.update(list => list.filter(r => r.id !== review.id));
         this.deleting.set(false);
         this.pendingDelete.set(null);
-        this.toastr.success(`Review #${review.id} deleted.`);
+        this.toastr.success(this.translate.instant('reviewsTab.deleted', { id: review.id }));
       },
       error: () => {
         this.deleting.set(false);
-        this.toastr.error('Failed to delete review.');
+        this.toastr.error(this.translate.instant('reviewsTab.deleteFail'));
       }
     });
   }

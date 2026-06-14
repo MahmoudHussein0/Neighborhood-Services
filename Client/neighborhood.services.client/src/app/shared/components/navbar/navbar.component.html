@@ -1,5 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
-  <div class="container">
+  <!-- Keep the bar layout LTR so the brand stays left and the auth controls stay right
+       in both languages; only the nav links reorder for Arabic (see the ul below). -->
+  <div class="container" dir="ltr">
 
     <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
@@ -16,7 +18,7 @@
     <div class="collapse navbar-collapse" [class.show]="menuOpen()">
 
       <!-- Public links -->
-      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'">
         <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active"
              [routerLinkActiveOptions]="{ exact: true }">{{ "navbar.home" | translate }}</a>
@@ -49,6 +51,15 @@
           <a class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1" [routerLink]="dashboardLink()">
             <i class="bi bi-speedometer2"></i> {{ "navbar.dashboard" | translate }}
           </a>
+          <button class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1" type="button"
+                  (click)="logout()" [disabled]="isLoggingOut()">
+            @if (isLoggingOut()) {
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            } @else {
+              <i class="bi bi-box-arrow-right"></i>
+            }
+            {{ "navbar.logout" | translate }}
+          </button>
         } @else {
           <a class="btn btn-sm btn-primary" routerLink="/auth/login">{{ "navbar.login" | translate }}</a>
         }

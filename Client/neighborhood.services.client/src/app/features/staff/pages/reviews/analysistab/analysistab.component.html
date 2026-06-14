@@ -15,7 +15,7 @@
     <div class="col-md-3">
       <div class="card stat-card">
         <div class="card-body">
-          <h6>Total Reviews</h6>
+          <h6>{{ 'reviewsAnalysis.totalReviews' | translate }}</h6>
           <h2>{{ totalReviews() }}</h2>
         </div>
       </div>
@@ -24,7 +24,7 @@
     <div class="col-md-3">
       <div class="card stat-card positive">
         <div class="card-body">
-          <h6>Positive</h6>
+          <h6>{{ 'reviewsAnalysis.positive' | translate }}</h6>
           <h2>{{ positiveCount() }}</h2>
         </div>
       </div>
@@ -33,7 +33,7 @@
     <div class="col-md-3">
       <div class="card stat-card negative">
         <div class="card-body">
-          <h6>Negative</h6>
+          <h6>{{ 'reviewsAnalysis.negative' | translate }}</h6>
           <h2>{{ negativeCount() }}</h2>
         </div>
       </div>
@@ -42,7 +42,7 @@
     <div class="col-md-3">
       <div class="card stat-card flagged">
         <div class="card-body">
-          <h6>Flagged</h6>
+          <h6>{{ 'reviewsAnalysis.flagged' | translate }}</h6>
           <h2>{{ flaggedCount() }}</h2>
         </div>
       </div>
@@ -54,7 +54,7 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
-      <h5>Average Quality Score</h5>
+      <h5>{{ 'reviewsAnalysis.avgQuality' | translate }}</h5>
       <div class="quality-score">
         {{ averageQuality() }}
       </div>
@@ -65,28 +65,28 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header fw-semibold">
-      Sentiment Summary
+      {{ 'reviewsAnalysis.sentimentSummary' | translate }}
     </div>
 
     <div class="card-body">
 
       <div class="mb-3">
         <strong class="text-success">
-          Positive:
+          {{ 'reviewsAnalysis.positive' | translate }}:
         </strong>
         {{ positiveCount() }}
       </div>
 
       <div class="mb-3">
         <strong class="text-warning">
-          Neutral:
+          {{ 'reviewsAnalysis.neutral' | translate }}:
         </strong>
         {{ neutralCount() }}
       </div>
 
       <div>
         <strong class="text-danger">
-          Negative:
+          {{ 'reviewsAnalysis.negative' | translate }}:
         </strong>
         {{ negativeCount() }}
       </div>
@@ -98,7 +98,7 @@
 
   <div class="card shadow-sm border-0">
     <div class="card-header fw-semibold">
-      Flagged Reviews
+      {{ 'reviewsAnalysis.flaggedReviews' | translate }}
     </div>
 
     <div class="table-responsive">
@@ -107,10 +107,10 @@
 
         <thead>
           <tr>
-            <th>Review Id</th>
-            <th>Sentiment</th>
-            <th>Quality Score</th>
-            <th>Date</th>
+            <th>{{ 'reviewsAnalysis.reviewId' | translate }}</th>
+            <th>{{ 'reviewsAnalysis.sentiment' | translate }}</th>
+            <th>{{ 'reviewsAnalysis.qualityScore' | translate }}</th>
+            <th>{{ 'reviewsAnalysis.date' | translate }}</th>
           </tr>
         </thead>
 
@@ -138,7 +138,7 @@
 
           <tr *ngIf="flaggedReviews().length === 0">
             <td colspan="4" class="text-center py-4 text-muted">
-              No flagged reviews found.
+              {{ 'reviewsAnalysis.empty' | translate }}
             </td>
           </tr>
 

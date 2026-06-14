@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' }), withViewTransitions(), withHashLocation()),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, langInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor, langInterceptor])),
     provideAnimations(),
     provideToastr(),
     // Locale for DatePipe/CurrencyPipe, taken from the saved language (applies on load/refresh)
