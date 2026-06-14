@@ -1,12 +1,10 @@
 <section class="container py-4">
+
     <!-- ================= HEADER ================= -->
     <div class="card border-0 shadow-sm mb-4 rounded-4">
         <div class="card-body p-4">
-
             <div class="row align-items-center g-3">
-
                 <div class="col-12 col-md-6 text-center text-md-start">
-
                     <h3 class="fw-bold text-primary mb-1">
                         {{ categoryDetails().name }}
                     </h3>
@@ -14,7 +12,9 @@
                     <div class="d-flex justify-content-center justify-content-md-start align-items-center gap-2">
 
                         <span class="badge bg-primary rounded-pill px-3 py-2">
+
                             {{ categoryDetails().problemTypes.length }}
+
                         </span>
 
                         <span class="text-muted">
@@ -25,7 +25,7 @@
 
                 </div>
 
-                <div class="col-12 col-md-6 text-center text-md-end">
+                <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
 
                     <button class="btn btn-primary rounded-pill px-4 shadow-sm w-100 w-md-auto" data-bs-toggle="modal"
                         data-bs-target="#addModal">
@@ -41,7 +41,6 @@
 
         </div>
     </div>
-
 
     <!-- ================= TABLE ================= -->
     <div class="card border-0 shadow-sm rounded-4">
@@ -59,19 +58,44 @@
                 <thead class="table-light">
                     <tr>
                         <th>{{ "staffCategory.name" | translate }}</th>
-                        <th class="d-none d-md-table-cell">{{ "staffCategory.description" | translate }}</th>
-                        <th>{{ "staffCategory.minPrice" | translate }}</th>
-                        <th>{{ "staffCategory.maxPrice" | translate }}</th>
-                        <th class="text-center">{{ "staffCategory.actions" | translate }}</th>
+
+                        <th class="d-none d-md-table-cell">
+                            {{ "staffCategory.description" | translate }}
+                        </th>
+
+                        <th class="d-none d-lg-table-cell">
+                            {{ "staffCategory.minPrice" | translate }}
+                        </th>
+
+                        <th class="d-none d-lg-table-cell">
+                            {{ "staffCategory.maxPrice" | translate }}
+                        </th>
+
+                        <th class="text-center">
+                            {{ "staffCategory.actions" | translate }}
+                        </th>
                     </tr>
                 </thead>
 
                 <tbody>
 
-                    @for (problemType of categoryDetails().problemTypes; track problemType.id) {
-
+                    @if (isLoadingAPI()) {
                     <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">
+                                    {{ "staffCategory.loading" | translate }}
+                                </span>
+                            </div>
 
+                        </td>
+                    </tr>
+
+                    } @else {
+                    @if( categoryDetails().problemTypes.length > 0 ) {
+
+                    @for (problemType of categoryDetails().problemTypes; track problemType.id) {
+                    <tr>
                         <td class="fw-semibold text-dark">
                             {{ problemType.name }}
                         </td>
@@ -80,21 +104,23 @@
                             {{ problemType.description }}
                         </td>
 
-                        <td>
+                        <td class="d-none d-lg-table-cell">
                             <span class="badge bg-light text-dark border">
-                                {{ problemType.minPrice }} {{"staffCategory.egp" |translate}}
+                                {{ problemType.minPrice }}
+                                {{ "staffCategory.egp" | translate }}
                             </span>
                         </td>
 
-                        <td>
+                        <td class="d-none d-lg-table-cell">
                             <span class="badge bg-light text-dark border">
-                                {{ problemType.maxPrice }} {{"staffCategory.egp" |translate}}
+                                {{ problemType.maxPrice }}
+                                {{ "staffCategory.egp" | translate }}
                             </span>
                         </td>
 
                         <td class="text-center">
 
-                            <div class="d-flex justify-content-center gap-2">
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                                 <button class="btn btn-outline-warning btn-sm rounded-circle" data-bs-toggle="modal"
                                     data-bs-target="#updateModal" (click)="updateModal(problemType)">
@@ -104,7 +130,7 @@
                                 </button>
 
                                 <button class="btn btn-outline-danger btn-sm rounded-circle" data-bs-toggle="modal"
-                                    data-bs-target="#deleteProblemModal" (click)=" ProblemTypeId =  problemType.id  ">
+                                    data-bs-target="#deleteProblemModal" (click)="selectedProblem  = problemType ">
 
                                     <i class="bi bi-trash"></i>
 
@@ -116,7 +142,21 @@
 
                     </tr>
 
+                    } @empty {
+
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+
+                            <div class="alert alert-info mb-0">
+                                {{ "staffCategory.noProblems" | translate }}
+                            </div>
+
+                        </td>
+                    </tr>
+
+                    } }
                     }
+
 
                 </tbody>
 
@@ -126,174 +166,320 @@
 
     </div>
 
+</section>
+<!-- ================= UPDATE MODAL ================= -->
+<div class="modal fade" id="updateModal" tabindex="-1">
 
-    <!-- ================= UPDATE MODAL ================= -->
-    <div class="modal fade" id="updateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4">
 
-            <div class="modal-content rounded-4">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-primary">
+                    {{ "staffCategory.updateProblemType" | translate }}
+                </h5>
+            </div>
 
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title fw-bold text-primary">
-                        {{ "staffCategory.updateProblemType" | translate }}
-                    </h5>
+            <div class="modal-body">
 
-                </div>
+                <form [formGroup]="updateModalForm">
 
-                <div class="modal-body">
 
-                    <form [formGroup]="updateModalForm">
-
+                    <div class="mb-3">
                         <label class="form-label fw-semibold">
-                            {{ "staffCategory.problemTypeDescription" | translate }}
+                            {{ "staffCategory.descInEnglish" | translate }}
                         </label>
-
                         <textarea class="form-control mb-3" rows="4" formControlName="descriptionEn"></textarea>
 
-                        <div class="row g-2">
 
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
-                                <input type="number" class="form-control" formControlName="minPrice">
-                            </div>
+                        @let descen = updateModalForm.get("descriptionEn");
+                        @if( descen?.getError('required') && descen?.touched ){
+                        <small class="text-danger"> {{ "staffCategory.englishDescriptionIsRequired" | translate }}
+                        </small>
+                        }
+                    </div>
 
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
-                                <input type="number" class="form-control" formControlName="maxPrice">
-                            </div>
+
+
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            {{ "staffCategory.nameInEnglish" | translate }}
+                        </label>
+                        <input type="text" class="form-control" formControlName="nameEn">
+
+
+
+                        @let nameen = updateModalForm.get("nameEn");
+                        @if( nameen?.getError('required') && nameen?.touched ){
+                        <small class="text-danger"> {{ "staffCategory.englishNameIsRequired" | translate }}
+                        </small>
+                        }
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            {{ "staffCategory.descInArabic" | translate }}
+                        </label>
+                        <textarea class="form-control mb-3" rows="4" formControlName="descriptionAr"></textarea>
+
+
+                        @let descar = updateModalForm.get("descriptionAr");
+                        @if( descar?.getError('required') && descar?.touched ){
+                        <small class="text-danger"> {{ "staffCategory.arabicDescriptionIsRequired" | translate }}
+                        </small>
+                        }
+
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            {{ "staffCategory.nameInArabic" | translate }}
+                        </label>
+                        <input type="text" class="form-control" formControlName="nameAr">
+
+
+                        @let namear = updateModalForm.get("nameAr");
+                        @if( namear?.getError('required') && namear?.touched ){
+                        <small class="text-danger"> {{ "staffCategory.arabicNameIsRequired" | translate }}
+                        </small>
+                        }
+                    </div>
+
+
+
+
+                    <div class="row g-2">
+
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
+                            <input type="number" class="form-control" formControlName="minPrice">
+
+                            @let minPrice = updateModalForm.get("minPrice");
+                            @if( minPrice?.getError('min') && minPrice?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.minPriceIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
+                            <input type="number" class="form-control" formControlName="maxPrice">
+
+
+                            @let maxPrice = updateModalForm.get("maxPrice");
+                            @if( maxPrice?.getError('min') && maxPrice?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.maxPriceIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
+                    {{ "staffCategory.close" | translate }}
+                </button>
+                <button class="btn btn-success w-100 w-md-auto" (click)="updateProblemtype()">
+                    {{ "staffCategory.saveChanges" | translate }}
+                    @if(loadFlag()){
+                    <span class="spinner-border spinner-border-sm ms-2"></span>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- ================= ADD MODAL ================= -->
+<div class="modal fade" id="addModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content rounded-4">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-primary">
+                    {{ "staffCategory.addProblem" | translate }}
+                </h5>
+
+            </div>
+
+            <div class="modal-body">
+
+                <form [formGroup]="addProblemForm">
+
+                    <div class="row g-3">
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.descInEnglish"
+                                |translate}}</label>
+                            <textarea class="form-control" rows="3" formControlName="descriptionEn"></textarea>
+
+
+
+                            @let adddescen = addProblemForm.get("descriptionEn");
+                            @if( adddescen?.getError('required') && adddescen?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.englishDescriptionIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
+
+
+
+
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.nameInEnglish"
+                                |translate}}</label>
+                            <input class="form-control" formControlName="nameEn">
+
+                            @let addnameen = addProblemForm.get("nameEn");
+                            @if( addnameen?.getError('required') && addnameen?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.englishNameIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
+
+
+
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.descInArabic"
+                                |translate}}</label>
+                            <textarea class="form-control" rows="3" formControlName="descriptionAr"></textarea>
+
+
+
+                            @let adddescar = addProblemForm.get("descriptionAr");
+                            @if( adddescar?.getError('required') && adddescar?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.arabicDescriptionIsRequired" | translate }}
+                            </small>
+                            }
+
 
                         </div>
 
-                    </form>
 
-                </div>
 
-                <div class="modal-footer">
 
-                    <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
-                        {{ "staffCategory.close" | translate }}
-                    </button>
-                    <button class="btn btn-success w-100 w-md-auto" (click)="updateProblemtype()">
-                        {{ "staffCategory.saveChanges" | translate }}
-                        @if(loadFlag()){
-                        <span class="spinner-border spinner-border-sm ms-2"></span>
-                        }
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- ================= ADD MODAL ================= -->
-    <div class="modal fade" id="addModal" tabindex="-1">
 
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.nameInArabic"
+                                |translate}}</label>
+                            <input class="form-control" formControlName="nameAr">
 
-            <div class="modal-content rounded-4">
 
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title fw-bold text-primary">
-                        {{ "staffCategory.addProblem" | translate }}
-                    </h5>
+                            @let addnamear = addProblemForm.get("nameAr");
+                            @if( addnamear?.getError('required') && addnamear?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.arabicNameIsRequired" | translate }}
+                            </small>
+                            }
 
-                </div>
 
-                <div class="modal-body">
-
-                    <form [formGroup]="addProblemForm">
-
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.nameInEnglish"
-                                    |translate}}</label>
-                                <input class="form-control" formControlName="nameEn">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.nameInArabic"
-                                    |translate}}</label>
-                                <input class="form-control" formControlName="nameAr">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.descInEnglish"
-                                    |translate}}</label>
-                                <textarea class="form-control" rows="3" formControlName="descriptionEn"></textarea>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.descInArabic"
-                                    |translate}}</label>
-                                <textarea class="form-control" rows="3" formControlName="descriptionAr"></textarea>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
-                                <input class="form-control" type="number" formControlName="minPrice">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
-                                <input class="form-control" type="number" formControlName="maxPrice">
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">
-                                    {{ "staffCategory.category" | translate }}
-                                </label>
-
-                                <input class="form-control bg-light" [value]="categoryDetails().name" readonly>
-                            </div>
 
                         </div>
 
-                    </form>
 
-                </div>
 
-                <div class="modal-footer">
 
-                    <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
-                        {{ "staffCategory.close" | translate }}
-                    </button>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.minPrice" |translate}}</label>
+                            <input class="form-control" type="number" formControlName="minPrice">
 
-                    <button class="btn btn-success w-100 w-md-auto" (click)="AddProblemType()">
+                            @let addminPrice = addProblemForm.get("minPrice");
+                            @if( addminPrice?.getError('min') && addminPrice?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.minPriceIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
 
-                        {{ "staffCategory.saveChanges" | translate }}
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{"staffCategory.maxPrice" |translate}}</label>
+                            <input class="form-control" type="number" formControlName="maxPrice">
 
-                        @if(loadFlag()){
-                        <span class="spinner-border spinner-border-sm ms-2"></span>
-                        }
 
-                    </button>
+                            @let addmaxPrice = addProblemForm.get("maxPrice");
+                            @if( addmaxPrice?.getError('min') && addmaxPrice?.touched ){
+                            <small class="text-danger"> {{ "staffCategory.maxPriceIsRequired" | translate }}
+                            </small>
+                            }
+                        </div>
 
-                </div>
+
+
+
+
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                {{ "staffCategory.category" | translate }}
+                            </label>
+
+                            <input class="form-control bg-light" [value]="categoryDetails().name" readonly>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button #closeBtn class="btn btn-secondary w-100 w-md-auto" data-bs-dismiss="modal">
+                    {{ "staffCategory.close" | translate }}
+                </button>
+
+                <button class="btn btn-success w-100 w-md-auto" (click)="AddProblemType()">
+
+                    {{ "staffCategory.saveChanges" | translate }}
+
+                    @if(loadFlag()){
+                    <span class="spinner-border spinner-border-sm ms-2"></span>
+                    }
+
+                </button>
 
             </div>
 
         </div>
+
     </div>
+</div>
 
 
-    <!-- ================= DELETE MODAL ================= -->
-    <div class="modal fade" id="deleteProblemModal">
-        <div class="modal-dialog">
-            <div class="modal-content modal-dark text-center">
-                <div class="modal-body p-4">
-                    <h5 class="text-black mb-3">{{"staffCategory.deleteCategory" |translate}}</h5>
-                    <p class="text-black opacity-75">
-                        {{"staffCategory.thisActionCannotBeUndone" |translate}}
-                    </p>
-                    <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
-                        {{"staffCategory.close" |translate}}
-                    </button>
-                    <button class="btn btn-danger me-3" (click)="confirmDelete()">
-                        {{"staffCategory.delete" |translate}}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
+
+
+
+
+
+
+
+<app-delete modalId="deleteProblemModal">
+    <h5 class="text-black mb-3">{{"staffCategory.deleteProblemType" |translate}}</h5>
+    <button class="btn btn-danger me-3" (click)="confirmDelete()">
+        {{"staffCategory.delete" |translate}}
+    </button>
+</app-delete>

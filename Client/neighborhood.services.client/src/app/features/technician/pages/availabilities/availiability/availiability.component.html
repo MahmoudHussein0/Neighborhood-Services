@@ -159,21 +159,12 @@
 
 
 
-<div class="modal fade" id="deleteAvailiabilityModal">
-    <div class="modal-dialog">
-        <div class="modal-content modal-dark text-center">
-            <div class="modal-body p-4">
-                <h5 class="text-black mb-3">{{"availiability.deleteAvailiability" |translate}}</h5>
-                <p class="text-black opacity-75">
-                    {{"availiability.thisActionCannotBeUndone" |translate}}
-                </p>
-                <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
-                    {{"availiability.close" |translate}}
-                </button>
-                <button class="btn btn-danger me-3" (click)="confirmDelete()">
-                    {{"availiability.delete" |translate}}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+<app-delete modalId="deleteAvailiabilityModal">
+    <h5 class="text-black mb-3">{{"availiability.deleteAvailiability" |translate}}</h5>
+
+    <button class="btn btn-danger me-3" (click)="confirmDelete()">
+        {{"availiability.delete" |translate}}
+    </button>
+</app-delete>

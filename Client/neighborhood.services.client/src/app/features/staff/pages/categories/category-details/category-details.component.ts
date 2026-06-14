@@ -1,19 +1,20 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, Signal, signal, viewChildren, WritableSignal } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, Signal, signal, viewChild, viewChildren, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
+import { skip, Subscription } from 'rxjs';
 import { CategoriesService } from '../../../../../core/services/categories.service';
 import { ProblemTypeService } from '../../../../../core/services/problem-type.service';
 import { CategoryDetails, ProblemTypes } from '../../../models/category-details';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LangService } from '../../../../../core/services/lang.service';
+import { DeleteComponent } from "../../../../../shared/components/delete/delete.component";
 
 
 @Component({
   selector: 'app-category-details',
-  imports: [CurrencyPipe, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DeleteComponent],
   templateUrl: './category-details.component.html',
   styleUrl: './category-details.component.css',
 })
@@ -23,40 +24,45 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   private readonly problemTypeService = inject(ProblemTypeService);
   private readonly toastrService = inject(ToastrService);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly langService = inject(LangService);
   private readonly fb = inject(FormBuilder);
 
   categoryDetails: WritableSignal<CategoryDetails> = signal<CategoryDetails>({} as CategoryDetails);
   closBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
+  deleteModal = viewChild(DeleteComponent);
   loadFlag: WritableSignal<boolean> = signal<boolean>(false);
+  isLoadingAPI: WritableSignal<boolean> = signal<boolean>(false);
   $UpdateSub: Subscription = new Subscription();
-  $SubUpdate: Subscription = new Subscription();
+  $addSub: Subscription = new Subscription();
 
   addProblemForm!: FormGroup;
 
   categoryId!: number;
-  ProblemTypeId!: number;
+  selectedProblem!: ProblemTypes;
 
   updateModalForm = this.fb.group({
+    nameEn: ['', Validators.required],
+    nameAr: ['', Validators.required],
     descriptionEn: ['', [Validators.required]],
-    minPrice: [0, [Validators.required]],
-    maxPrice: [0, [Validators.required]],
+    descriptionAr: ['', Validators.required],
+    minPrice: [0, [Validators.min(1)]],
+    maxPrice: [0, [Validators.min(1)]],
   })
 
 
   ngOnInit(): void {
     this.getCategoryId();
     this.getCategoryDetails();
-    console.log((this.categoryId));
-
     this.addProblemForm = this.fb.group({
       nameEn: ['', Validators.required],
       nameAr: ['', Validators.required],
       descriptionEn: ['', [Validators.required]],
       descriptionAr: ['', Validators.required],
-      minPrice: [0, [Validators.required]],
-      maxPrice: [0, [Validators.required]],
+      minPrice: [0, [Validators.min(1)]],
+      maxPrice: [0, [Validators.min(1)]],
       categoryId: [this.categoryId]
     })
+    this.changeLanguage();
   }
 
   getCategoryId(): void {
@@ -67,16 +73,27 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     })
   }
 
+
+  changeLanguage(): void {
+    this.langService.lang$
+      .pipe(skip(1))
+      .subscribe((lang) => {
+        this.getCategoryDetails();
+      });
+  }
+
+
+
   getCategoryDetails(): void {
-    const lang = localStorage.getItem("lang") || "en";
-    this.categoriesService.getCategoryDetails(this.categoryId, lang).subscribe({
+    this.isLoadingAPI.set(true);
+    this.categoriesService.getCategoryDetails(this.categoryId).subscribe({
       next: (res => {
         console.log((res));
-        if (res) {
-          this.categoryDetails.set(res);
-        }
+        this.categoryDetails.set(res);
+        this.isLoadingAPI.set(false);
       }),
       error: (error => {
+        this.isLoadingAPI.set(false);
       })
     })
   }
@@ -84,16 +101,20 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
 
   AddProblemType(): void {
-    console.log(this.addProblemForm.value);
-
+    console.log(this.addProblemForm);
     if (this.addProblemForm.valid) {
-      this.$SubUpdate.unsubscribe();
+      this.addProblemForm.patchValue({
+        categoryId: this.categoryId
+      });
+
+
+      this.$addSub.unsubscribe();
       this.loadFlag.set(true);
-      this.problemTypeService.add(this.addProblemForm.value).subscribe({
+      this.$addSub = this.problemTypeService.add(this.addProblemForm.value).subscribe({
         next: (res => {
           this.loadFlag.set(false);
           if (res) {
-            this.toastrService.success("Problem added successfully", "NS");
+            this.toastrService.success("Problem added successfully");
             this.addProblemForm.reset();
             this.closeModal();
             this.getCategoryDetails();
@@ -101,9 +122,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         }),
         error: (error => {
           console.log(error);
-
           this.loadFlag.set(false);
-          this.toastrService.error(error.error.detail);
         })
       })
     }
@@ -117,36 +136,60 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   updateModal(problemType: ProblemTypes): void {
     this.updateModalForm.patchValue({
-      descriptionEn: problemType.description,
-      minPrice: (problemType.minPrice),
-      maxPrice: (problemType.maxPrice),
+      nameAr: problemType.nameAr,
+      nameEn: problemType.nameEn,
+      descriptionAr: problemType.descriptionAr,
+      descriptionEn: problemType.descriptionEn,
+      minPrice: problemType.minPrice,
+      maxPrice: problemType.maxPrice,
     })
-    this.ProblemTypeId = problemType.id;
+    this.selectedProblem = problemType;
   }
+
+
+
 
 
   updateProblemtype(): void {
     if (this.updateModalForm.valid) {
-      this.loadFlag.set(true);
-      this.$UpdateSub.unsubscribe;
+      const value = this.updateModalForm.value;
+      this.$UpdateSub.unsubscribe();
 
-      this.$UpdateSub = this.problemTypeService.updateProblemType(this.updateModalForm.value, this.ProblemTypeId).subscribe({
+      const hasChanged =
+        this.selectedProblem.descriptionAr == value.descriptionAr &&
+        this.selectedProblem.descriptionEn == value.descriptionEn &&
+        this.selectedProblem.nameAr == value.nameAr &&
+        this.selectedProblem.nameEn == value.nameEn &&
+        this.selectedProblem.minPrice == value.minPrice &&
+        this.selectedProblem.maxPrice == value.maxPrice
+
+
+      if (hasChanged) {
+        this.closeModal();
+        return;
+      }
+
+
+
+
+
+      this.loadFlag.set(true);
+      this.$UpdateSub = this.problemTypeService.updateProblemType(value, this.selectedProblem.id).subscribe({
         next: (res => {
           console.log(res);
           this.toastrService.success("Problem Updated Successfull");
           this.closeModal();
           this.loadFlag.set(false);
           this.getCategoryDetails();
+
         }),
         error: (err => {
-
-          this.toastrService.error(err.error.detail)
           console.log(err);
-
           this.loadFlag.set(false);
-
         })
       })
+    } else {
+      this.updateModalForm.markAllAsTouched();
     }
   }
 
@@ -155,17 +198,18 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
 
   confirmDelete() {
-    this.problemTypeService.delete(this.ProblemTypeId).subscribe({
+    this.problemTypeService.delete(this.selectedProblem.id).subscribe({
       next: (res => {
         if (res) {
-          this.toastrService.success("Problem deleted successfull");
-          this.closeModal();
+          this.toastrService.show("Problem deleted successfull");
           this.getCategoryDetails();
+          this.deleteModal()?.close();
+
+
         }
 
       }),
       error: (err => {
-        this.toastrService.error("Can't Delete Problem");
       })
     })
   }
@@ -177,7 +221,9 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.$UpdateSub.unsubscribe
+    this.$UpdateSub.unsubscribe()
+    this.$addSub.unsubscribe()
+
   }
 
 

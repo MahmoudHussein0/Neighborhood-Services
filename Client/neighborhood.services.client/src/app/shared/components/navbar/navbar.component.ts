@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MyTranslateService } from '../../../core/services/my-translate.service';
+import { LangService } from '../../../core/services/lang.service';
 import { AuthService } from '../../../features/auth/services/auth.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class NavbarComponent {
 
   private readonly myTranslateService = inject(MyTranslateService);
   private readonly translateService = inject(TranslateService);
+  private readonly langService = inject(LangService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -42,6 +44,7 @@ export class NavbarComponent {
   ChangeLang(lang: string) {
     this.myTranslateService.ChangeLang(lang);
     this.currentLang = this.translateService.getCurrentLang();
+    this.langService.setLanguage(lang);
   }
 
   logout() {

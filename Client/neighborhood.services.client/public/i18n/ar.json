@@ -682,15 +682,23 @@
         "nameInArabic": "الاسم باللغة العربية",
         "descInEnglish": "الوصف باللغة الإنجليزية",
         "descInArabic": "الوصف باللغة العربية",
-        "egp": "ج.م"
+        "egp": "ج.م",
+        "loading": "...تحميل",
+        "noProblems": " لا يوجد مشاكل .",
+        "noCategories": " لا يوجد اي فئات.",
+        "categoryImage": "صوره الفئه",
+        "problemTypeName": "اسم المشكله",
+        "englishNameIsRequired": "الاسم بالغه الانجليزيه مطلوب ",
+        "arabicNameIsRequired": " الاسم بالغه العربيه مطلوب ",
+        "deleteProblemType": "حذف المشكله"
     },
     "hero": {
-        "badge": "نخدم مصر",
-        "titleLine1": "اعثر على فنيين خدمات منزلية موثوقين",
-        "titleHighlight1": "الخدمة",
-        "titleHighlight2": "الفنيين",
+        "badge": "نخدم جميع أنحاء مصر",
+        "titleLine1": "اعثر على",
+        "titleHighlight1": "فنيين موثوقين",
+        "titleHighlight2": "لخدمات المنزل",
         "titleLine2": "بالقرب منك",
-        "description": "تواصل مع سباكين وكهربائيين ونجارين وغيرهم موثوقين. مدفوعات آمنة، تقييمات حقيقية، وخدمة سريعة.",
+        "description": "تواصل مع سباكين وكهربائيين ونجارين وغيرهم من الفنيين الموثوقين. مدفوعات آمنة، تقييمات حقيقية، وخدمة سريعة.",
         "bookService": "احجز خدمة",
         "browseServices": "تصفح الخدمات"
     },
@@ -705,7 +713,9 @@
         "estimatedPrice": "السعر التقديري",
         "egp": "ج.م",
         "bookNow": "احجز الآن",
-        "cancle": "إلغاء"
+        "cancle": "إلغاء",
+        "noServices": "لا يوجد خدمات",
+        "loading": "...تحميل"
     },
     "howItWorks": {
         "title": "كيف يعمل الموقع",
@@ -753,7 +763,7 @@
         "saveChanges": "حفظ التغييرات",
         "add": "إضافة",
         "workingHours": "ساعات العمل",
-        "deleteAvailiability": "حذف الإتاحة",
+        "deleteAvailiability": " حذف الإتاحة؟",
         "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
         "delete": "حذف",
         "noAvailiability": "لا يوجد اتاحات"
@@ -770,7 +780,10 @@
         "save": "حفظ",
         "cancle": "إلغاء",
         "noException": "لا يوجد استثناءات",
-        "date": "التاريخ"
+        "date": "التاريخ",
+        "dateIsRequired": " التاريخ مطلوب ",
+        "deleteException": "حذف الاستثناء",
+        "delete": "حذف"
     },
     "pricing": {
         "technicianPricing": "تسعير الفني",
@@ -789,7 +802,10 @@
         "editPricing": "تحديث التسعير",
         "enterMinimumPrice": "أدخل الحد الأدنى للسعر",
         "enterMaximumPrice": "أدخل الحد الأقصى للسعر",
-        "noPricing": " لا يوجد تسعيره لمشاكل"
+        "noPricing": " لا يوجد تسعيره لمشاكل",
+        "deletePricing": "حذف التسعير",
+        "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+        "close": "إلغاء"
     },
     "problemType": {
         "startingFrom": "يبدأ من",
@@ -813,15 +829,17 @@
         "actions": "الإجراءات",
         "edit": "تعديل",
         "delete": "حذف",
-        "appliesToIsRequired ": "حقل ينطبق على مطلوب",
+        "appliesToIsRequired": "يجب تحديد الياسه علي فني او عميل",
         "hoursBeforeBooking": "عدد الساعات قبل الحجز",
-        "hoursBeforeBookingIsRequired ": "حقل عدد الساعات قبل الحجز مطلوب",
-        "penaltyIsRequired": "حقل الرسوم الجزائية مطلوب",
+        "hoursBeforeBookingIsRequired": "حقل عدد الساعات قبل الحجز يجب ان يكون اكبر من صفر ",
+        "penaltyIsRequired": "حقل الرسوم الجزائية يجب ان تكون اكبر من صفر ",
         "cancle": "إلغاء",
         "save": "حفظ",
         "deletePolicy": "حذف السياسة؟",
         "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
-        "hrs": "ساعات"
+        "hrs": "ساعات",
+        "loading": "...تحميل",
+        "noPoliciesFound": "لا يوجد سياسات ."
     },
     "sidebar": {
         "overview": "نظرة عامة",

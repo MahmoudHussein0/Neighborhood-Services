@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, inject, Signal, signal, viewChildren, WritableSignal } from '@angular/core';
+import { Component, ElementRef, inject, Signal, signal, viewChild, viewChildren, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Time12Pipe } from '../../../../../shared/pipes/time12-pipe';
@@ -8,10 +8,11 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Exception } from '../../../models/exception';
+import { DeleteComponent } from "../../../../../shared/components/delete/delete.component";
 
 @Component({
   selector: 'app-exception',
-  imports: [ReactiveFormsModule, TranslatePipe, Time12Pipe, DatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, Time12Pipe, DatePipe, DeleteComponent],
   templateUrl: './exception.component.html',
   styleUrl: './exception.component.css',
 })
@@ -28,8 +29,11 @@ export class ExceptionComponent {
   $SubException: Subscription = new Subscription();
   exceptions: WritableSignal<Exception[]> = signal<Exception[]>([]);
   existingException: Exception | null = null;
+  deleteModal = viewChild(DeleteComponent)
+
   closBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
   exceptiomMode: 'edit' | 'add' = 'add';
+  currentLang = localStorage.getItem("lang") || "en";
 
   exceptionForm = this.fb.group({
     date: ['', [Validators.required]],
@@ -40,7 +44,6 @@ export class ExceptionComponent {
   });
 
   ngOnInit(): void {
-
     this.getException();
   }
 
@@ -74,8 +77,6 @@ export class ExceptionComponent {
     this.exceptionForm.reset();
   }
 
-
-
   saveException(): void {
     console.log(this.existingException?.id);
     const value = this.exceptionForm.value;
@@ -88,14 +89,14 @@ export class ExceptionComponent {
           this.existingException?.endTime === value.endTime &&
           this.existingException?.reason === value.reason;
         if (hasChanged) {
-          this.toastrService.info('No changes detected', 'NS');
           this.closeModal();
           return;
         }
         this.$SubException = this.exceptionService.updateException(this.existingException?.id, this.exceptionForm.value).subscribe({
           next: (res => {
             console.log(res);
-            this.toastrService.success('Exception updates Successfully', 'NS');
+            this.toastrService.success('Exception updates Successfully');
+            this.getException();
             this.closeModal();
           }),
           error: (err => {
@@ -116,15 +117,12 @@ export class ExceptionComponent {
         this.$SubException = this.exceptionService.addException(payload).subscribe({
           next: (res => {
             console.log(res);
-            this.toastrService.success("Exception added successfully", "NS");
+            this.toastrService.success("Exception added successfully");
             this.closeModal();
             console.log(this.closBtn);
-
             this.getException();
-
           }), error: (err => {
             console.log(err);
-            this.toastrService.error(err.error.detail, "NS");
           })
         })
       }
@@ -135,14 +133,15 @@ export class ExceptionComponent {
 
 
 
-
-
   confirmDelete() {
+    console.log(this.exceptionId);
+
     this.exceptionService.deleteException(this.exceptionId).subscribe({
       next: (res => {
         console.log(res);
         this.toastrService.show("exception is deleted");
         this.getException();
+        this.deleteModal()?.close();
       })
     })
   }

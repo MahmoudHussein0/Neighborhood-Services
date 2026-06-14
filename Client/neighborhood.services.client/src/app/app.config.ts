@@ -1,4 +1,6 @@
 import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeAr from '@angular/common/locales/ar';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -10,6 +12,8 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { langInterceptor } from './core/interceptors/lang.interceptor';
+
+registerLocaleData(localeAr)
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +31,6 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json'
       })
     }),
-
 
 
 

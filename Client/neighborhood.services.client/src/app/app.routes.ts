@@ -90,7 +90,6 @@ export const routes: Routes = [
   },
 
 
-
   {
     path: 'technician',
     component: TechnicianLayoutComponent,
@@ -110,6 +109,25 @@ export const routes: Routes = [
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
        { path: 'reviews', component: TechReviewsComponent },
       { path: 'pricing', component: PricingComponent },
+    ]
+  },
+
+  {
+    path: 'staff',
+    component: StaffLayoutComponent,
+    canActivate: [authGuard, roleGuard],
+    canActivateChild: [authGuard, roleGuard],
+    data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
+    children: [
+      { path: '', component: StaffDashboardComponent },
+
+      // Existing
+      { path: 'bookings', component: StaffBookingsComponent },
+      { path: 'flagged-requests', component: FlaggedRequestsComponent },
+      { path: 'users', component: StaffUsersComponent },
+      { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
+      { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
+      { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
       { path: '**', redirectTo: '' }
     ]
   },
