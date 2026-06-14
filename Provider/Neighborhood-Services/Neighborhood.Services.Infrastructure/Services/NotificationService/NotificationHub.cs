@@ -38,7 +38,7 @@ public NotificationHub(ILogger<NotificationHub> logger
         Context.ConnectionId);
 
             //using the role in identity
-            var userRole = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userRole = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
            
             _logger.LogInformation($"\n\nuser role: {userRole}");
             Connections.TryAdd(Context.ConnectionId, userRole);
