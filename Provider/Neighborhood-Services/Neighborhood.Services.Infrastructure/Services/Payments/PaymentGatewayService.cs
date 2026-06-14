@@ -82,10 +82,11 @@ namespace Neighborhood.Services.Infrastructure.Services.Payments
 
             if (!orderResponse.IsSuccessStatusCode)
             {
+                var errorBody = await orderResponse.Content.ReadAsStringAsync(cancellationToken);
                 return new PaymentGatewayResponse
                 {
                     Success = false,
-                    ErrorMessage = "Paymob order creation failed."
+                    ErrorMessage = $"Paymob order creation failed ({(int)orderResponse.StatusCode}): {errorBody}"
                 };
             }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ type SortBy = 'rating' | 'available';
 
 @Component({
   selector: 'app-find-technician',
-  imports: [TranslatePipe, DecimalPipe],
+  imports: [TranslatePipe, DecimalPipe, RouterLink],
   templateUrl: './find-technician.component.html',
 })
 export class FindTechnicianComponent implements OnInit {

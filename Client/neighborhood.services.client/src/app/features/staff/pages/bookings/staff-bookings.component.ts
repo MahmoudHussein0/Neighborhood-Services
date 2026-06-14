@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe, CurrencyPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +14,7 @@ type StatusTab = 'All' | StaffBookingStatus;
 
 @Component({
   selector: 'app-staff-bookings',
-  imports: [DatePipe, CurrencyPipe],
+  imports: [DatePipe, CurrencyPipe, TranslatePipe],
   templateUrl: './staff-bookings.component.html',
 })
 export class StaffBookingsComponent implements OnInit {

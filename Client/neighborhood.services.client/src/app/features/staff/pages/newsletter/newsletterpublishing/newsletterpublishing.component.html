@@ -1,0 +1,64 @@
+<div class="newsletter-admin">
+
+  <div class="page-header">
+    <h1>Newsletter Publisher</h1>
+    <p>Create and preview newsletters before publishing.</p>
+  </div>
+
+  <div class="newsletter-layout">
+  <div class="editor-card">
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold">
+        Subject
+      </label>
+
+      <input
+        type="text"
+        class="subject-input"
+        [(ngModel)]="subject"
+        placeholder="Enter subject HERE..." required/>
+    </div>
+
+    
+    <div class="section-header">
+      <h3>Content</h3>
+    </div>
+
+    <textarea
+      [(ngModel)]="rawHtml"
+      class="newsletter-editor"
+      placeholder="Write your newsletter HTML here..." >
+    </textarea>
+
+    <div class="action-bar">
+      <button
+        class="btn btn-success publish-btn"
+        (click)="publishNewsletter()">
+
+        <i class="bi bi-send-fill me-2"></i>
+        Publish
+      </button>
+    </div>
+
+  </div>
+
+  <div class="preview-card">
+
+    <div class="section-header">
+      <h3>Live Preview</h3>
+
+      <h5 class="preview-subject mt-3">
+        {{ subject || 'Newsletter Subject Preview' }}
+      </h5>
+    </div>
+
+    <div
+      class="preview-container"
+      [innerHTML]="sanitizedHtml">
+    </div>
+
+  </div>
+  </div>
+
+</div>

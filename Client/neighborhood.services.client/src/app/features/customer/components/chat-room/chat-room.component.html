@@ -1,0 +1,82 @@
+
+<section>
+  <!-- <div class=" py-5 mx-0"  style="position: fixed; bottom: 0px; right:0px;width: min(900px, 70vw);;  z-index: 1000;"> -->
+<div
+  class="position-fixed shadow"
+  style="
+    bottom: 20px;
+    right: 20px;
+    width: min(250px, 30vw);
+    z-index: 1050;
+    "
+   >
+    <div class="row d-flex justify-content-center align-items-center ">
+      <div class="col-md-12 col-lg-12 col-xl-12">
+
+        <!-- Collapsed content -->
+        <div class="collapse mt-3" id="collapseExample" mdbCollapse #basicCollapse="mdbCollapse">
+          <div class="card" id="chat4">
+            <div class="card-body" 
+              style="position: relative; overflow-y: scroll;height: 300px"> 
+
+<div *ngFor="let mssg of AllMessagesForBooking(); ">
+
+  @if (mssg.senderId==myId){
+              <div class="d-flex flex-row justify-content-start " >
+               
+                <div>
+                  <!-- ms-3 -->
+                  <p class="small p-2 mb-1 rounded-3 bg-body-tertiary">{{mssg.content}}</p>
+
+                 
+                </div>
+                
+              </div>
+              }
+              @else{
+
+               <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                <div>
+                  <!-- me-3 -->
+                  <p class="small p-2  mb-1 text-white rounded-3 bg-info">{{mssg.content}}</p>
+                
+                  <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:06</p>
+                </div>
+                
+              </div>}
+
+  </div>
+             
+              
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+              <img src="https://www.shareicon.net/data/128x128/2017/06/22/887603_user_512x512.png"
+                alt="avatar 3" style="width: 40px; height: 100%;">
+              <input type="text" class="form-control form-control-lg" id="exampleFormControlInput3"
+                placeholder="Type message" [(ngModel)]="MessageToBeSent.content" (keydown.enter)="sendMessage(MessageToBeSent)" />
+              <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+              <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+              <a class="ms-3 link-info" href="#!"><i class="fas fa-paper-plane"></i></a>
+              <button class="btn btn-info" type="submit" (click)="sendMessage(MessageToBeSent)">      
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons trigger collapse -->
+        <a class="btn btn-info btn-lg btn-block"  
+          role="button" aria-expanded="false" aria-controls="collapseExample"
+           (click)="basicCollapse.toggle()"
+  [attr.aria-expanded]="!basicCollapse.collapsed">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>My Chat</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</section>

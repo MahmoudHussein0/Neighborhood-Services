@@ -1,4 +1,3 @@
-import { observable } from './../../../../node_modules/ngx-sweetalert2/node_modules/rxjs/src/symbol/observable';
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
@@ -36,8 +35,8 @@ export class CategoriesService {
   }
 
 
-  getCategoryDetails(id: number): Observable<any> {
-    return this.apiService.get(`/Categories/${id}`)
+  getCategoryDetails(id: number, lang: string): Observable<any> {
+    return this.apiService.get(`/Categories/${id}?lang=${lang}`)
   }
 
 

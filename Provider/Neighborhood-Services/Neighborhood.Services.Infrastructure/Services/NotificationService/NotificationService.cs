@@ -46,7 +46,7 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
                 message = mssg,
                 IsDeleted = false,
                 isRead = false,
-                UserId = _current.UserId??"1",
+                UserId = _current.UserId?? "45300128-25f9-4360-9229-fa3bf823f58e",
                 type = Domain.Notifications.NotificationTypes.general
             };
             await _notificationsRepository.AddAsync(notf);

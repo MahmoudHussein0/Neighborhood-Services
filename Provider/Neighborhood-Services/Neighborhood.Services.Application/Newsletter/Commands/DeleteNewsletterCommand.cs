@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Newsletter.Commands
 {
-    public class DeleteNotificationCommandDTO : IRequest<CreateNewsCommandDTO>
+    public class DeleteNewsletterCommandDTO : IRequest<CreateNewsCommandDTO>
     {
        public int id { set; get; }
 
     }//end of dto class
 
-    public class DeleteNewsletterCommandDHandler : IRequestHandler<CreateNewsCommandDTO, CreateNewsCommandDTO>
+    public class DeleteNewsletterCommandDHandler : IRequestHandler<DeleteNewsletterCommandDTO, CreateNewsCommandDTO>
     {
 
         private readonly INewsletterRepository _newsrepository;
@@ -27,7 +27,7 @@ namespace Neighborhood.Services.Application.Newsletter.Commands
 
         }//end of const.
 
-        public async Task<CreateNewsCommandDTO> Handle(CreateNewsCommandDTO request, CancellationToken cancellationToken)
+        public async Task<CreateNewsCommandDTO> Handle(DeleteNewsletterCommandDTO request, CancellationToken cancellationToken)
         {
             var deleted = await _newsrepository.GetByIdAsync(request.id);
             if (deleted == null) { return null; }
@@ -39,11 +39,7 @@ namespace Neighborhood.Services.Application.Newsletter.Commands
 
             return new CreateNewsCommandDTO
             {
-                id=deleted.Id,
-                email = deleted.email,
-                
-                subscribedAt = deleted.subscribedAt,
-                isDeleted=deleted.IsDeleted
+                email=deleted.email,
                 
             };
 

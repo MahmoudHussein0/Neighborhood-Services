@@ -5,10 +5,10 @@ namespace Neighborhood.Services.Application.Shared.Email
     public interface IEmailService
     {
         //General Method
-        public  Task SendEmailAsync(EmailMessageDto message);
+        public Task SendEmailAsync(EmailMessageDto message);
 
         //Email Verification
-        public Task <EmailSendingResult>SendEmailVerificationEmailAsync(
+        public Task<EmailSendingResult> SendEmailVerificationEmailAsync(
             string EmailReceiver,
         string ConfirmationURL,
         string title = "Confirm your email",
@@ -22,7 +22,7 @@ namespace Neighborhood.Services.Application.Shared.Email
        IEnumerable<EmailAttachmentDto>? emailAttachments = null!);
 
         //Booking Confirmed
-        public Task <EmailSendingResult>SendBookingVerificationEmainAsync(
+        public Task<EmailSendingResult> SendBookingVerificationEmainAsync(
            string EmailReceiver,
     int BookingId,
     DateTime Time,
@@ -31,5 +31,13 @@ namespace Neighborhood.Services.Application.Shared.Email
     string title = "Booking is Verified",
     IEnumerable<EmailAttachmentDto>? emailAttachments = null!);
 
+        //Newsletter
+        public Task<EmailSendingResult> SendNewsletterEmailAsync(string subject,
+               string htmlContent,
+         IEnumerable<EmailAttachmentDto>? emailAttachments = null!);
+
+
     }
+
 }
+

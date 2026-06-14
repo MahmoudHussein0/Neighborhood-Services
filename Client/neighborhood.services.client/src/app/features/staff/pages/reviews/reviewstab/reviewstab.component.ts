@@ -1,12 +1,14 @@
 import {Component, OnInit, inject, signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 import { ReviewsService } from '../../../services/Reviews.service';
 import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.model';
 
 @Component({
   selector: 'app-reviewstab',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './reviewstab.component.html',
   styleUrl: './reviewstab.component.css',
 })
@@ -15,12 +17,18 @@ import { ReviewDto, ReviewFilters, ReviewStatus } from '../../../models/Review.m
 
 export class ReviewsTabComponent implements OnInit {
   private svc = inject(ReviewsService);
+  private toastr = inject(ToastrService);
+  private translate = inject(TranslateService);
 
   reviews = signal<ReviewDto[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
   currentPage = signal(1);
   readonly perPage = 8;
+
+  // The review pending delete confirmation (drives the in-app modal; replaces native confirm()).
+  pendingDelete = signal<ReviewDto | null>(null);
+  deleting = signal(false);
 
   filters: ReviewFilters = { search: '', status: '', rating: '', revieweeId: '' };
 
@@ -81,16 +89,41 @@ export class ReviewsTabComponent implements OnInit {
         this.reviews.update(list =>
           list.map(r => r.id === updated.id ? updated : r)
         );
+        this.toastr.success(this.translate.instant('reviewsTab.statusUpdated', {
+          id: updated.id,
+          status: this.translate.instant('reviewsTab.status_map.' + status)
+        }));
       },
-      error: () => alert('Failed to update status.')
+      error: () => this.toastr.error(this.translate.instant('reviewsTab.statusFail'))
     });
   }
 
-  deleteReview(review: ReviewDto) {
-    if (!confirm(`Delete review #${review.id}?`)) return;
+  // ── Delete with in-app confirmation modal ──────────────────────────────────
+
+  askDelete(review: ReviewDto) {
+    this.pendingDelete.set(review);
+  }
+
+  cancelDelete() {
+    this.pendingDelete.set(null);
+  }
+
+  confirmDelete() {
+    const review = this.pendingDelete();
+    if (!review) return;
+
+    this.deleting.set(true);
     this.svc.delete(review.id).subscribe({
-      next: () => this.reviews.update(list => list.filter(r => r.id !== review.id)),
-      error: () => alert('Failed to delete review.')
+      next: () => {
+        this.reviews.update(list => list.filter(r => r.id !== review.id));
+        this.deleting.set(false);
+        this.pendingDelete.set(null);
+        this.toastr.success(this.translate.instant('reviewsTab.deleted', { id: review.id }));
+      },
+      error: () => {
+        this.deleting.set(false);
+        this.toastr.error(this.translate.instant('reviewsTab.deleteFail'));
+      }
     });
   }
 

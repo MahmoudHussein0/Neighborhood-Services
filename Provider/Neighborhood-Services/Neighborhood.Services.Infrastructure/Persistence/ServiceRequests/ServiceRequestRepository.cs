@@ -80,6 +80,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
                 .FirstOrDefaultAsync(sr => sr.Id == serviceRequestId && !sr.IsDeleted);
         }
 
+        //arwa
+        public async Task<string?> GetCustomerUserAppIdAsync(int serviceRequestId)
+        {
+            var cust= await _context.ServiceRequests
+                .Include(o=>o.Customer).FirstOrDefaultAsync(sr => sr.Id==serviceRequestId);
+            return cust?.Customer.ApplicationUserId??null;
+        }
+        //
+
+        
         public async Task<Dictionary<int, string>> GetTechnicianNamesAsync(IEnumerable<int> technicianIds)
         {
             var ids = technicianIds as ICollection<int> ?? technicianIds.ToList();

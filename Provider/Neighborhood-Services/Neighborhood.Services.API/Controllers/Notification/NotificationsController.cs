@@ -40,10 +40,10 @@ namespace Neighborhood.Services.API.Controllers.Notification
             return Ok(result);
         }
 
-        [HttpPost("SendingToAUserById")]
-        public async Task<ActionResult> CreateNotificationToUser(string userId,string mssg)
+        [HttpPost("SendingToAUserById/{id}")]
+        public async Task<ActionResult> CreateNotificationToUser(string id,string mssg)
         {
-            var result = await _service.SendNotificationToUser(userId, mssg);
+            var result = await _service.SendNotificationToUser(id, mssg);
             return Ok(result);
         }
 
@@ -79,8 +79,22 @@ namespace Neighborhood.Services.API.Controllers.Notification
         {
             command.NotificationId = id;
            
-            await _mediator.Send(command);
-            return NoContent();
+            var res=await _mediator.Send(command);
+            return Ok(res);
+        }
+
+        [HttpGet("GetNotificationsOfCurrentUser")]
+        public async Task<ActionResult> GetNotificationsOfCurrentUser()
+        {
+            var result= await _mediator.Send(new GetAllNotfsForCurrentUserQDto());
+            return Ok(result);
+        }
+
+        [HttpGet("GetNotificationsByUserId/{userId}")]
+        public async Task<ActionResult> GetNotificationsOfUserById(string userId)
+        {
+            var result = await _mediator.Send(new GetAllNotfsByUserIdQDto() { Id=userId});
+            return Ok(result);
         }
     }
 }

@@ -7,5 +7,9 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
     public class AcceptQuoteCommand : IRequest<bool>
     {
         public int BookingId { get; set; }
+
+        // Optional promo code applied at accept-time — discounts the quoted FinalPrice
+        // before escrow is held. Null/blank means no discount.
+        public string? PromoCode { get; set; }
     }
 }

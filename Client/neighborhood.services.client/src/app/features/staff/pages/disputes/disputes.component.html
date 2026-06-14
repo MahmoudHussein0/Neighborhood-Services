@@ -2,8 +2,8 @@
   <!-- Title and Header -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h2 class="text-primary fw-bold m-0">Staff Disputes</h2>
-      <p class="text-muted small mb-0">Monitor and resolve user disputes regarding bookings and service quality</p>
+      <h2 class="text-primary fw-bold m-0">{{ 'staffDisputes.title' | translate }}</h2>
+      <p class="text-muted small mb-0">{{ 'staffDisputes.subtitle' | translate }}</p>
     </div>
   </div>
 
@@ -14,10 +14,10 @@
         class="form-select shadow-sm"
         [(ngModel)]="filters.status"
         (change)="onStatusChange()">
-        <option value="">All Statuses</option>
-        <option value="Open">Open</option>
-        <option value="UnderReview">Under Review</option>
-        <option value="Resolved">Resolved</option>
+        <option value="">{{ 'staffDisputes.allStatuses' | translate }}</option>
+        <option value="Open">{{ 'staffDisputes.status_map.Open' | translate }}</option>
+        <option value="UnderReview">{{ 'staffDisputes.status_map.UnderReview' | translate }}</option>
+        <option value="Resolved">{{ 'staffDisputes.status_map.Resolved' | translate }}</option>
       </select>
     </div>
 
@@ -26,12 +26,12 @@
         class="form-select shadow-sm"
         [(ngModel)]="filters.type"
         (change)="onTypeChange()">
-        <option value="">All Types</option>
-        <option value="PaymentIssue">Payment Issue</option>
-        <option value="TechnicianBehavior">Technician Behavior</option>
-        <option value="PoorService">Poor Service</option>
-        <option value="Scam">Scam</option>
-        <option value="Other">Other</option>
+        <option value="">{{ 'staffDisputes.allTypes' | translate }}</option>
+        <option value="PaymentIssue">{{ 'staffDisputes.type_map.PaymentIssue' | translate }}</option>
+        <option value="TechnicianBehavior">{{ 'staffDisputes.type_map.TechnicianBehavior' | translate }}</option>
+        <option value="PoorService">{{ 'staffDisputes.type_map.PoorService' | translate }}</option>
+        <option value="Scam">{{ 'staffDisputes.type_map.Scam' | translate }}</option>
+        <option value="Other">{{ 'staffDisputes.type_map.Other' | translate }}</option>
       </select>
     </div>
 
@@ -44,7 +44,7 @@
           class="form-control border-start-0 ps-0"
           [(ngModel)]="filters.search"
           (input)="onSearchInput()"
-          placeholder="Search by reason or dispute type..." />
+          [placeholder]="'staffDisputes.searchPlaceholder' | translate" />
       </div>
     </div>
   </div>
@@ -52,7 +52,7 @@
   <!-- Loading State -->
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading disputes...</span>
+      <span class="visually-hidden">{{ 'staffDisputes.loading' | translate }}</span>
     </div>
   </div>
 
@@ -62,12 +62,12 @@
       <table class="table table-hover align-middle mb-0 text-start">
         <thead class="table-light text-secondary small fw-bold">
           <tr>
-            <th class="ps-4">ID</th>
-            <th>Booking ID</th>
-            <th>Dispute Type</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th class="text-end pe-4">Actions</th>
+            <th class="ps-4">{{ 'staffDisputes.id' | translate }}</th>
+            <th>{{ 'staffDisputes.bookingId' | translate }}</th>
+            <th>{{ 'staffDisputes.disputeType' | translate }}</th>
+            <th>{{ 'staffDisputes.status' | translate }}</th>
+            <th>{{ 'staffDisputes.createdAt' | translate }}</th>
+            <th class="text-end pe-4">{{ 'staffDisputes.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -75,10 +75,10 @@
             <td class="ps-4 fw-semibold">#{{ dispute.id }}</td>
             <td>
               <span class="badge bg-light text-dark border px-2.5 py-1.5">
-                Booking #{{ dispute.bookingId }}
+                #{{ dispute.bookingId }}
               </span>
             </td>
-            <td class="fw-medium">{{ dispute.disputeType }}</td>
+            <td class="fw-medium">{{ ('staffDisputes.type_map.' + dispute.disputeType) | translate }}</td>
             <td>
               <span class="badge rounded-pill px-3 py-1.5"
                 [ngClass]="{
@@ -86,7 +86,7 @@
                   'bg-info-subtle text-info': dispute.status === 'UnderReview',
                   'bg-success-subtle text-success': dispute.status === 'Resolved'
                 }">
-                {{ dispute.status }}
+                {{ ('staffDisputes.status_map.' + dispute.status) | translate }}
               </span>
             </td>
             <td class="text-secondary small">
@@ -97,19 +97,19 @@
                 <button
                   class="btn btn-sm btn-outline-primary"
                   (click)="openDispute(dispute.id)">
-                  View Details
+                  {{ 'staffDisputes.viewDetails' | translate }}
                 </button>
                 <button
                   *ngIf="dispute.status === 'Open'"
                   class="btn btn-sm btn-warning"
                   (click)="startReview(dispute.id)">
-                  Start Review
+                  {{ 'staffDisputes.startReview' | translate }}
                 </button>
                 <button
                   *ngIf="dispute.status === 'UnderReview'"
                   class="btn btn-sm btn-success"
                   (click)="openResolve(dispute.id)">
-                  Resolve
+                  {{ 'staffDisputes.resolve' | translate }}
                 </button>
               </div>
             </td>
@@ -124,29 +124,29 @@
     <div *ngFor="let dispute of filteredDisputes" class="card border-0 shadow-sm mb-3">
       <div class="card-body p-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="fw-bold text-primary">Dispute #{{ dispute.id }}</span>
+          <span class="fw-bold text-primary">#{{ dispute.id }}</span>
           <span class="badge rounded-pill px-2.5 py-1.5"
             [ngClass]="{
               'bg-warning-subtle text-warning': dispute.status === 'Open',
               'bg-info-subtle text-info': dispute.status === 'UnderReview',
               'bg-success-subtle text-success': dispute.status === 'Resolved'
             }">
-            {{ dispute.status }}
+            {{ ('staffDisputes.status_map.' + dispute.status) | translate }}
           </span>
         </div>
 
         <div class="mb-2">
-          <small class="text-muted d-block">Booking ID</small>
+          <small class="text-muted d-block">{{ 'staffDisputes.bookingId' | translate }}</small>
           <span class="fw-semibold">#{{ dispute.bookingId }}</span>
         </div>
 
         <div class="mb-2">
-          <small class="text-muted d-block">Dispute Type</small>
-          <span>{{ dispute.disputeType }}</span>
+          <small class="text-muted d-block">{{ 'staffDisputes.disputeType' | translate }}</small>
+          <span>{{ ('staffDisputes.type_map.' + dispute.disputeType) | translate }}</span>
         </div>
 
         <div class="mb-3">
-          <small class="text-muted d-block">Created At</small>
+          <small class="text-muted d-block">{{ 'staffDisputes.createdAt' | translate }}</small>
           <span class="small text-secondary">{{ dispute.createdAt | date:'medium' }}</span>
         </div>
 
@@ -154,19 +154,19 @@
           <button
             class="btn btn-sm btn-outline-primary"
             (click)="openDispute(dispute.id)">
-            View
+            {{ 'staffDisputes.view' | translate }}
           </button>
           <button
             *ngIf="dispute.status === 'Open'"
             class="btn btn-sm btn-warning"
             (click)="startReview(dispute.id)">
-            Start Review
+            {{ 'staffDisputes.startReview' | translate }}
           </button>
           <button
             *ngIf="dispute.status === 'UnderReview'"
             class="btn btn-sm btn-success"
             (click)="openResolve(dispute.id)">
-            Resolve
+            {{ 'staffDisputes.resolve' | translate }}
           </button>
         </div>
       </div>
@@ -176,8 +176,8 @@
   <!-- Empty State -->
   <div *ngIf="!loading && filteredDisputes.length === 0" class="text-center py-5 card bg-light border-0 shadow-sm">
     <i class="bi bi-exclamation-octagon text-muted display-4 mb-3"></i>
-    <h5 class="fw-bold text-secondary">No disputes found</h5>
-    <p class="text-muted small mb-0">No disputes match the selected filters.</p>
+    <h5 class="fw-bold text-secondary">{{ 'staffDisputes.emptyTitle' | translate }}</h5>
+    <p class="text-muted small mb-0">{{ 'staffDisputes.emptyMsg' | translate }}</p>
   </div>
 
   <!-- Details Modal -->
@@ -195,27 +195,27 @@
         <div class="card-header bg-success text-white py-3 d-flex justify-content-between align-items-center">
           <h6 class="fw-bold m-0 d-flex align-items-center gap-2">
             <i class="bi bi-check2-circle"></i>
-            Resolve Dispute #{{ resolveTargetId }}
+            {{ 'staffDisputes.resolveTitle' | translate }} #{{ resolveTargetId }}
           </h6>
           <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="cancelResolve()"></button>
         </div>
         <div class="card-body p-4">
-          <label class="form-label small text-muted">Resolution details</label>
+          <label class="form-label small text-muted">{{ 'staffDisputes.resolutionLabel' | translate }}</label>
           <textarea
             class="form-control"
             rows="4"
             [(ngModel)]="resolutionText"
-            placeholder="Describe how this dispute was resolved..."></textarea>
+            [placeholder]="'staffDisputes.resolutionPlaceholder' | translate"></textarea>
           <div *ngIf="resolveError" class="alert alert-danger d-flex align-items-center gap-2 mt-3 mb-0 py-2">
             <i class="bi bi-exclamation-triangle-fill"></i>
             <span class="small">{{ resolveError }}</span>
           </div>
         </div>
         <div class="card-footer bg-white border-top p-3 d-flex justify-content-end gap-2">
-          <button class="btn btn-light" [disabled]="resolveSubmitting" (click)="cancelResolve()">Cancel</button>
+          <button class="btn btn-light" [disabled]="resolveSubmitting" (click)="cancelResolve()">{{ 'staffDisputes.cancel' | translate }}</button>
           <button class="btn btn-success" [disabled]="resolveSubmitting" (click)="submitResolve()">
             <span *ngIf="resolveSubmitting" class="spinner-border spinner-border-sm me-1"></span>
-            Mark Resolved
+            {{ 'staffDisputes.markResolved' | translate }}
           </button>
         </div>
       </div>

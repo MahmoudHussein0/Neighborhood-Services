@@ -25,6 +25,14 @@ export class BookingDetailsModalComponent implements OnInit {
   protected readonly mapsUrl = googleMapsUrl;
 
   ngOnInit() {
+    this.loadDetails();
+
+    this.bookingService.getImages(this.bookingId).subscribe({
+      next: (images) => this.images.set(images ?? []),
+    });
+  }
+
+  private loadDetails() {
     this.bookingService.getById(this.bookingId).subscribe({
       next: (d) => {
         this.details.set(d);
@@ -32,13 +40,9 @@ export class BookingDetailsModalComponent implements OnInit {
       },
       error: () => this.loading.set(false),
     });
-
-    this.bookingService.getImages(this.bookingId).subscribe({
-      next: (images) => this.images.set(images ?? []),
-    });
   }
 
   close() {
-    this.activeModal.dismiss();
+    this.activeModal.close();
   }
 }

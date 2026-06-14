@@ -68,7 +68,7 @@ namespace Neighborhood.Services.API.Payments
                 Provider = request.Provider,
                 PaymentMethodId = request.PaymentMethodId,
                 WalletId = request.WalletId,
-                MerchantOrderId = transaction.Id.ToString()
+                MerchantOrderId = $"{transaction.Id}-{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}"
             }, cancellationToken);
 
             if (!result.Success)
@@ -96,11 +96,15 @@ namespace Neighborhood.Services.API.Payments
                     return Unauthorized("Invalid HMAC signature.");
             }
 
-            if (!int.TryParse(obj.order.merchant_order_id, out var transactionId))
-                return BadRequest("Invalid merchant order id.");
+            // MerchantOrderId format: "{transactionId}-{timestamp}" — extract just the ID part
+            var rawOrderId = obj.order.merchant_order_id;
+            var idPart = rawOrderId.Contains('-') ? rawOrderId.Split('-')[0] : rawOrderId;
+            if (!int.TryParse(idPart, out var localTransactionId))
+                return BadRequest(new { message = "Invalid merchant order id." });
 
-            var transaction = await _transactionRepository.GetByIdAsync(transactionId)
-                ?? throw new KeyNotFoundException($"Transaction with ID {transactionId} not found.");
+            var transaction = await _transactionRepository.GetByIdAsync(localTransactionId);
+            if (transaction == null)
+                return NotFound(new { message = "Transaction not found." });
 
             if (transaction.Status == TransactionStatus.Completed)
                 return Ok();

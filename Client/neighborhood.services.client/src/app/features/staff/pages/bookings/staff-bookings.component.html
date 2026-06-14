@@ -1,11 +1,11 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
   <div>
-    <h2 class="h4 fw-bold mb-0">Bookings</h2>
-    <p class="text-muted small mb-0">Every booking across the marketplace.</p>
+    <h2 class="h4 fw-bold mb-0">{{ 'staffBookings.title' | translate }}</h2>
+    <p class="text-muted small mb-0">{{ 'staffBookings.subtitle' | translate }}</p>
   </div>
   <div class="input-group" style="max-width: 300px;">
     <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control" placeholder="Search customer, technician, id…"
+    <input type="search" class="form-control" [placeholder]="'staffBookings.searchPlaceholder' | translate"
       [value]="searchTerm()" (input)="onSearchInput($any($event.target).value)" />
   </div>
 </div>
@@ -14,7 +14,7 @@
 <ul class="nav nav-pills gap-2 mb-3">
   @for (tab of tabs; track tab) {
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab() === tab" (click)="selectTab(tab)">{{ tab }}</button>
+      <button class="nav-link" [class.active]="activeTab() === tab" (click)="selectTab(tab)">{{ ('staffBookings.tabs.' + tab) | translate }}</button>
     </li>
   }
 </ul>
@@ -27,7 +27,7 @@
     <div class="card border-0 shadow-sm rounded-3">
       <div class="card-body text-center text-muted py-5">
         <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
-        No bookings here.
+        {{ 'staffBookings.empty' | translate }}
       </div>
     </div>
   } @else {
@@ -37,13 +37,13 @@
           <thead class="table-light">
             <tr>
               <th>#</th>
-              <th>Customer</th>
-              <th>Technician</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th class="text-end">Price</th>
-              <th>Scheduled</th>
-              <th class="text-end">Actions</th>
+              <th>{{ 'staffBookings.customer' | translate }}</th>
+              <th>{{ 'staffBookings.technician' | translate }}</th>
+              <th>{{ 'staffBookings.type' | translate }}</th>
+              <th>{{ 'staffBookings.status' | translate }}</th>
+              <th class="text-end">{{ 'staffBookings.price' | translate }}</th>
+              <th>{{ 'staffBookings.scheduled' | translate }}</th>
+              <th class="text-end">{{ 'staffBookings.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -52,14 +52,14 @@
                 <td class="text-muted">{{ b.id }}</td>
                 <td>{{ b.customerName }}</td>
                 <td>{{ b.technicianName }}</td>
-                <td><span class="badge text-bg-light border">{{ b.bookingType }}</span></td>
-                <td><span class="badge rounded-pill" [class]="badgeClass(b.status)">{{ b.status }}</span></td>
+                <td><span class="badge text-bg-light border">{{ ('bookings.bookingType.' + b.bookingType) | translate }}</span></td>
+                <td><span class="badge rounded-pill" [class]="badgeClass(b.status)">{{ ('staffBookings.tabs.' + b.status) | translate }}</span></td>
                 <td class="text-end">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</td>
                 <td class="small text-muted">{{ b.scheduledAt | date: 'medium' }}</td>
                 <td class="text-end">
                   @if (canCancel(b.status)) {
                     <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="cancel(b)">
-                      <i class="bi bi-x-lg me-1"></i>Cancel
+                      <i class="bi bi-x-lg me-1"></i>{{ 'staffBookings.cancel' | translate }}
                     </button>
                   } @else {
                     <span class="text-muted small">—</span>
@@ -74,10 +74,10 @@
 
     @if (res.totalPages > 1) {
       <div class="d-flex align-items-center justify-content-between mt-3">
-        <span class="text-muted small">Page {{ res.page }} of {{ res.totalPages }} ({{ res.totalCount }} total)</span>
+        <span class="text-muted small">{{ 'common.pageInfo' | translate:{ page: res.page, total: res.totalPages, count: res.totalCount } }}</span>
         <div class="btn-group">
-          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">Previous</button>
-          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">Next</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasPrevious" (click)="goToPage(res.page - 1)">{{ 'common.previous' | translate }}</button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!res.hasNext" (click)="goToPage(res.page + 1)">{{ 'common.next' | translate }}</button>
         </div>
       </div>
     }

@@ -5,6 +5,7 @@ using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Notifications.Services;
+using Neighborhood.Services.Application.PromoCodes.Commands.ApplyPromoCode;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.Bookings;
@@ -66,6 +67,18 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
                 booking.TechnicianId, start, end, booking.Id);
             if (hasOverlap)
                 throw new ConflictException("Technician already has a confirmed booking that overlaps this time.");
+
+            // Optional promo code: discounts booking.FinalPrice (and records usage) atomically,
+            // so the escrow below is held at the discounted amount. Same EF-tracked booking instance.
+            if (!string.IsNullOrWhiteSpace(request.PromoCode))
+            {
+                await _mediator.Send(new ApplyPromoCodeCommand
+                {
+                    Code = request.PromoCode,
+                    UserId = userId,
+                    BookingId = booking.Id
+                }, cancellationToken);
+            }
 
             booking.Status = BookingStatus.Confirmed;
             booking.UpdatedAt = DateTime.UtcNow;

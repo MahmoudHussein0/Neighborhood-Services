@@ -5,5 +5,6 @@ namespace Neighborhood.Services.Application.Newsletter
 {
     public interface INewsletterRepository : IGenericRepository<Neighborhood.Services.Domain.Newsletter.Newsletter, int>
     {
+        public  Task<List<string>> GetEmails();
     }
 }

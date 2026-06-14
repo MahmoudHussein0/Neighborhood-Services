@@ -8,7 +8,11 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.Newsletter.Queries
 {
-    public class GetAllNewsQHandler : IRequestHandler<IRequest<List<CreateNewsCommandDTO>>, List<CreateNewsCommandDTO>>
+    public class GetAllNewsQDto : IRequest<List<CreateNewsCommandDTO>>
+    {
+
+    }
+    public class GetAllNewsQHandler : IRequestHandler<GetAllNewsQDto, List<CreateNewsCommandDTO>>
     {
         private readonly INewsletterRepository _newsrepository;
 
@@ -16,16 +20,13 @@ namespace Neighborhood.Services.Application.Newsletter.Queries
         {
             _newsrepository = newsrepository;
         }
-        public async Task<List<CreateNewsCommandDTO>> Handle(IRequest<List<CreateNewsCommandDTO>> request, CancellationToken cancellationToken)
+        public async Task<List<CreateNewsCommandDTO>> Handle(GetAllNewsQDto request, CancellationToken cancellationToken)
         {
             var items = await _newsrepository.GetAllAsync();
             if (items.Count == 0) { return null; }
             return items.Select(item => new CreateNewsCommandDTO
             {
-                id=item.Id,
-                email=item.email,
-                subscribedAt=item.subscribedAt,
-                isDeleted=item.IsDeleted
+                email=item.email
 
             })
                 .ToList();

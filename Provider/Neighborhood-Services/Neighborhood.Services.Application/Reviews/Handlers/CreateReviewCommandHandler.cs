@@ -90,8 +90,18 @@ namespace Neighborhood.Services.Application.Reviews.Handlers
             await _repository.AddAsync(review);
             await _unitOfWork.SaveChangesAsync();
 
-           await  _qaAgent.AnalyzeReviewAsync(request.Comment, review.Id);
-
+            // QA moderation is best-effort: the review is already persisted, so a failing/slow
+            // AI call (bad key, rate limit, malformed JSON, duplicate analysis) must NOT fail the
+            // submission. Fail open — the AI call logs its own failures via AgentLog, and staff can
+            // still moderate manually. Re-analysis can be triggered later if needed.
+            try
+            {
+                await _qaAgent.AnalyzeReviewAsync(request.Comment, review.Id);
+            }
+            catch
+            {
+                // Swallow — analysis is non-critical to creating the review.
+            }
 
             return ReviewMapper.MapToDto(review);
         }

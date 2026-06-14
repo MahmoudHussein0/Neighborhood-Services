@@ -2,19 +2,29 @@
 using Neighborhood.Services.Domain.Technicians;
 using System;
 using System.Collections.Generic;
+using Neighborhood.Services.Application.Technicians.DTOs;
 using System.Text;
 
 namespace Neighborhood.Services.Application.Favorites.DTOs
 {
     public class FavoriteDto
     {
-        public int FavoriteId { get; set; }
+        public int favoriteId { get; set; }
 
-        public string UserId { set; get; }
-        public int TechnicianId { get; set; }
+        public string userId { set; get; }
 
-        public string TechnicianName { set; get; }
+       
+        public int technicianId { get; set; }
+
+        public int customerId { set; get; }
+
+        public ComprehensiveTechDTO technician { set; get; }
+
+        public string technicianName { set; get; }
+        public string imageURL { set; get; } = "https://www.flaticon.com/free-icon/technician_1085421";
+
         public DateTime addedAt { get; set; } = DateTime.Now;
+
 
     }
 }

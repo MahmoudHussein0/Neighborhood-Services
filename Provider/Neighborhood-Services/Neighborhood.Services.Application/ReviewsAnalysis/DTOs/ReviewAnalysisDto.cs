@@ -1,16 +1,19 @@
-﻿using MediatR;
 using Neighborhood.Services.Domain.Reviews;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Neighborhood.Services.Application.ReviewsAnalysis.Commands
+namespace Neighborhood.Services.Application.ReviewsAnalysis.DTOs
 {
-    public class AddReviewAnalysisCommand : IRequest<int>
+    public class ReviewAnalysisDto
     {
+        public int Id { get; set; }
+
         public int ReviewId { get; set; }
+
         public ReviewSentiment Sentiment { get; set; }
+
         public bool IsFlagged { get; set; }
+
         public decimal QualityScore { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }
