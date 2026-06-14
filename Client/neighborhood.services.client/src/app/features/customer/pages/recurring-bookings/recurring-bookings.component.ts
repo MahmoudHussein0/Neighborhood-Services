@@ -15,6 +15,7 @@ import { EditRecurringBookingModalComponent } from '../../components/edit-recurr
 import { RecurringBookingDetailsModalComponent } from '../../components/recurring-booking-details-modal/recurring-booking-details-modal.component';
 import { nextOccurrence } from '../../utils/recurrence.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 interface Tab {
   value: 'All' | RecurringBookingStatus;
@@ -34,6 +35,7 @@ export class RecurringBookingsComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
   private readonly confirm = inject(ConfirmService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: Tab[] = [
     { value: 'All', label: 'All' },
@@ -61,6 +63,11 @@ export class RecurringBookingsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. technician set the price).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {

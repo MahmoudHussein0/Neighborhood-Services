@@ -232,6 +232,7 @@
         "quotedCallout": "حدد الفني السعر: {{price}}",
         "acceptQuote": "قبول",
         "rejectQuote": "رفض",
+        "promoPlaceholder": "كود الخصم (اختياري)",
         "acceptQuotePrompt": "قبول العرض بقيمة {{price}} جنيه؟ سيتم حجز المبلغ في الضمان حتى تأكيد المهمة.",
         "rejectQuotePrompt": "رفض هذا العرض؟ سيُطلب من الفني إرسال سعر جديد.",
         "quoteAccepted": "تم قبول العرض — تم تأكيد الحجز.",
@@ -338,6 +339,8 @@
             "price": "السعر",
             "duration": "المدة التقديرية",
             "min": "دقيقة",
+            "promoLabel": "كود الخصم",
+            "promoPlaceholder": "أدخل الكود",
             "accept": "قبول العرض"
         }
     },

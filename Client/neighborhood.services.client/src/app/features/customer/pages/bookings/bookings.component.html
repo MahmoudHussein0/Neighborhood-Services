@@ -116,7 +116,12 @@
                     · {{ b.durationMinutes }} {{ 'bookings.min' | translate }}
                   }
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
+                  <input type="text" class="form-control form-control-sm" style="max-width: 11rem;"
+                         [ngModel]="quotePromo()[b.id] || ''"
+                         (ngModelChange)="setQuotePromo(b.id, $event)"
+                         [disabled]="busyId() === b.id"
+                         [placeholder]="'bookings.promoPlaceholder' | translate" />
                   <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="rejectQuote(b)">
                     {{ 'bookings.rejectQuote' | translate }}
                   </button>

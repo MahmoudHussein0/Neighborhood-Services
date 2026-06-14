@@ -34,6 +34,11 @@ export class CreateServiceRequestModalComponent implements OnInit {
   lng = signal<number | null>(null);
   locating = signal(false);
 
+  // Earliest selectable datetime (local "now") for the min attribute — "yyyy-MM-ddTHH:mm".
+  readonly minDateTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+
   form = this.fb.group({
     categoryId: this.fb.control<number | null>(null, Validators.required),
     problemTypeId: this.fb.control<number | null>(null, Validators.required),

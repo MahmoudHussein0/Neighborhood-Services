@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -8,6 +9,7 @@ import { OfferService } from '../../services/offer.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { Offer, OfferStatus } from '../../models/offer.model';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 interface Tab {
   value: 'All' | OfferStatus;
@@ -23,6 +25,7 @@ export class TechnicianOffersComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
   private readonly confirm = inject(ConfirmService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: Tab[] = [
     { value: 'All' },
@@ -39,6 +42,13 @@ export class TechnicianOffersComponent implements OnInit {
   activeTab = signal<'All' | OfferStatus>('All');
   page = signal(1);
   busyId = signal<number | null>(null);
+
+  constructor() {
+    // Refresh the list when a realtime notification arrives (e.g. offer accepted/rejected).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
+  }
 
   ngOnInit() {
     this.load();

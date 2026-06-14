@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { NotificationMessage } from './../../core/models/notification-message';
 import { environment } from '../../environments/environment';
@@ -13,7 +13,11 @@ export class NotificationServiceService {
   private hubConnection!: signalR.HubConnection;
 
   private notificationsSubject = new BehaviorSubject<NotificationMessage[]>([]);
-  notifications$ = this.notificationsSubject.asObservable();  
+  notifications$ = this.notificationsSubject.asObservable();
+
+  // Fires once per realtime push so pages can refresh their list on a new notification.
+  private notificationReceivedSubject = new Subject<NotificationMessage>();
+  notificationReceived$ = this.notificationReceivedSubject.asObservable();
 
   baseUrl = environment.apiUrl;
   constructor(private httpClient: HttpClient, private toastr: ToastrService) { }
@@ -39,7 +43,8 @@ export class NotificationServiceService {
       const updated = [data, ...this.notificationsSubject.value];
        this.toastr.success(data.message, 'New Notification');
       console.log("Updated list: ", updated);
-      this.notificationsSubject.next(updated);      
+      this.notificationsSubject.next(updated);
+      this.notificationReceivedSubject.next(data);
     }); //end of receive function
   }// end of start connection
 

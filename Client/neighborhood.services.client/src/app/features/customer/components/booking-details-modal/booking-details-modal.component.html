@@ -50,35 +50,6 @@
       <dd class="col-sm-8">{{ d.createdAt | date: 'medium' }}</dd>
     </dl>
 
-    <!-- Promo code — apply a discount while the booking is still active -->
-    @if (canApplyPromo(d.status)) {
-      <div class="border-top pt-3 mt-3">
-        <label class="form-label small fw-semibold mb-1">{{ 'bookings.detailsModal.promoLabel' | translate }}</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-ticket-perforated"></i></span>
-          <input
-            type="text"
-            class="form-control text-uppercase"
-            [placeholder]="'bookings.detailsModal.promoPlaceholder' | translate"
-            [ngModel]="promoCode()"
-            (ngModelChange)="promoCode.set($event)"
-            (keyup.enter)="applyPromo()"
-            [disabled]="applyingPromo()" />
-          <button
-            class="btn btn-primary"
-            type="button"
-            (click)="applyPromo()"
-            [disabled]="applyingPromo() || !promoCode().trim()">
-            @if (applyingPromo()) {
-              <span class="spinner-border spinner-border-sm" role="status"></span>
-            } @else {
-              {{ 'bookings.detailsModal.promoApply' | translate }}
-            }
-          </button>
-        </div>
-      </div>
-    }
-
     @if (images().length) {
       <hr />
       <h6 class="mb-2">{{ 'bookings.detailsModal.photos' | translate }}</h6>
