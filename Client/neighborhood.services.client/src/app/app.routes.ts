@@ -47,6 +47,7 @@ import { PoliciesComponent } from './features/staff/pages/policies/policies.comp
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
+import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 
 export const routes: Routes = [
   {
@@ -157,6 +158,7 @@ export const routes: Routes = [
           import('./features/staff/pages/reviews/reviews.component')
             .then(m => m.ReviewsComponent)
       },
+      {path:'newsletters',component:NewsletterpublishingComponent},
       { path: '**', redirectTo: '' }
     ],
   },

@@ -821,7 +821,8 @@
         "categories": "Categories",
         "policies": "Policies",
         "promoCodes": "Promo Codes",
-        "staffManagement": "Staff Management"
+        "staffManagement": "Staff Management",
+        "newsletter": "Newsletter"
     },
     "staffBookings": {
         "title": "Bookings",
@@ -1028,5 +1029,36 @@
         "date": "Date",
         "empty": "No flagged reviews found.",
         "loadFail": "Failed to load review analysis."
+    },
+    "favs":{
+        "favorite":"Favorites",
+        "empty":"No Items Yet!",
+        "emptyMessage":"Technicians that have been added to Favorite appear here",
+        "browseCTA":"Browse Technicians"
+    },
+     "generalActins":{
+        "add":"Add",
+        "delete":"Delete",
+        "update":"Update",
+        "select":"Select"
+    },
+     "newsletter":{
+        "pagetitle":"Newsletter Publisher",
+        "pagedescription":"Create and preview newsletters before publishing.",
+        "subj":"Subject",
+        "publish":"Publish",
+        "update":"Update",
+        "select":"Select",
+        "pre":"Live Preview",
+        "subPre":"Newsletter Subject Preview",
+        "content":"Content"
+        
+    },
+     "newslettersubscribe":{
+        "subscribe":"Subscribe",
+        "description":"Subscribe to get news about our latest offers and promocodes!"
+
+
+
     }
 }

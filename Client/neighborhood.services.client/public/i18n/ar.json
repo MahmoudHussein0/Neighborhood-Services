@@ -808,7 +808,7 @@
         "myJobs": "مهامي",
         "browseRequests": "تصفح الطلبات",
         "offers": "العروض",
-        "recurringJobs": "المهام المتكررة",
+        "recurringJobs": "المهام الدورية",
         "availability": "مواعيد العمل",
         "pricing": "التسعير",
         "earnings": "الأرباح",
@@ -821,7 +821,8 @@
         "categories": "الفئات",
         "policies": "السياسات",
         "promoCodes": "أكواد الخصم",
-        "staffManagement": "إدارة الموظفين"
+        "staffManagement": "إدارة الموظفين",
+        "newsletter":"الموجز"
     },
     "staffBookings": {
         "title": "الحجوزات",
@@ -1028,5 +1029,33 @@
         "date": "التاريخ",
         "empty": "لا توجد تقييمات مُبلّغ عنها.",
         "loadFail": "تعذّر تحميل تحليل التقييمات."
+    },
+    
+    "favs":{
+        "favorite":"المفضلة",
+        "empty":"لا عناصر في المفضلة بعد!",
+        "emptyMessage":"الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
+        "browseCTA":"تصفح الخدمات"
+    },
+     "generalActins":{
+        "add":"إضافة",
+        "delete":"حذف",
+        "update":"تعديل",
+        "select":"تحديد"
+    },
+     "newsletter":{
+        "pagetitle":"إرسال بريد موجز الأخبار",
+        "pagedescription":"كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
+        "subj":"الموضوع",
+        "publish":"إرسال",
+        "pre":"معاينة",
+        "subPre":"موضوع البريد هنا ...",
+        "content":"المحتوى"
+  
+    },
+     "newslettersubscribe":{
+        "subscribe":"اشترك",
+        "description":"اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
+
     }
 }

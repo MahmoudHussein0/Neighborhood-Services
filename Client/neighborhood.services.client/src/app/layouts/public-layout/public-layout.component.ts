@@ -29,6 +29,7 @@ import {NewsletterSubscribeComponent} from '../../shared/components/newsletter-s
 
       <router-outlet />
     </main>
+    <app-newsletter-subscribe/>
     <app-footer />
   `,
   styles: [`
