@@ -26,6 +26,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .Where(s => !s.IsDeleted)
                 .ToListAsync();
         }
@@ -37,6 +38,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .Where(s => s.IsActive && !s.IsDeleted)
                 .ToListAsync();
         }
@@ -48,6 +50,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         }
 
@@ -58,6 +61,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .FirstOrDefaultAsync(s => s.UserId == userId && !s.IsDeleted);
         }
 
@@ -68,6 +72,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                 .Include(s => s.Permissions)
                 .Where(s => s.Role == role && !s.IsDeleted)
                 .ToListAsync();
         }

@@ -440,7 +440,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             }
             // ❌ شيلنا الـ SaveChangesAsync اللي كانت هنا تماماً
         }
-
+        
         private static async Task<Technician> CreateTechnicianAsync(
             ApplicationDbContext context, UserManager<ApplicationUser> userManager,
             string email, string fullName, int age, string nationalId, double lat, double lng,

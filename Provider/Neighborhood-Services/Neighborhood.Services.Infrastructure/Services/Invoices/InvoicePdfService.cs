@@ -54,15 +54,15 @@ namespace Neighborhood.Services.Infrastructure.Services.Invoices
 
                 column.Item().Row(row =>
                 {
-                    row.RelativeItem().Component(new AddressComponent("Billed To", $"Customer ID: {invoice.CustomerId}"));
-                    row.RelativeItem().Component(new AddressComponent("Service Provider", $"Technician ID: {invoice.TechnicianId}"));
+                    row.RelativeItem().Component(new AddressComponent("Billed To", invoice.CustomerName ?? $"Customer #{invoice.CustomerId}"));
+                    row.RelativeItem().Component(new AddressComponent("Service Provider", invoice.TechnicianName ?? $"Technician #{invoice.TechnicianId}"));
                     row.RelativeItem().Component(new InvoiceDetailsComponent(invoice));
                 });
 
-                column.Item().Element(x => ComposeTable(x, invoice));
+                column.Item().PaddingTop(15).Element(x => ComposeTable(x, invoice));
 
                 var totalPrice = invoice.TotalAmount;
-                column.Item().AlignRight().PaddingTop(10).Text($"Total Paid: EGP {totalPrice:N2}").FontSize(16).SemiBold().FontColor(Colors.Blue.Darken2);
+                column.Item().AlignRight().PaddingTop(15).Text($"Total Paid: EGP {totalPrice:N2}").FontSize(18).SemiBold().FontColor(Colors.Blue.Darken3);
             });
         }
 
@@ -143,9 +143,9 @@ namespace Neighborhood.Services.Infrastructure.Services.Invoices
         {
             container.Column(column =>
             {
-                column.Spacing(2);
-                column.Item().Text(Title).SemiBold().FontColor(Colors.Grey.Darken2);
-                column.Item().Text(Details).FontSize(10);
+                column.Spacing(4);
+                column.Item().Text(Title).SemiBold().FontColor(Colors.Grey.Darken3);
+                column.Item().Text(Details).FontSize(11).FontColor(Colors.Black);
             });
         }
     }
@@ -163,10 +163,10 @@ namespace Neighborhood.Services.Infrastructure.Services.Invoices
         {
             container.Column(column =>
             {
-                column.Spacing(2);
-                column.Item().Text($"Invoice #{Invoice.Id}").SemiBold().FontColor(Colors.Grey.Darken2);
-                column.Item().Text($"Status: {Invoice.Status}").FontSize(10);
-                column.Item().Text($"Issued: {Invoice.IssuedAt:dd MMM yyyy}").FontSize(10);
+                column.Spacing(4);
+                column.Item().Text($"Invoice #{Invoice.Id}").SemiBold().FontColor(Colors.Grey.Darken3);
+                column.Item().Text($"Status: {Invoice.Status}").FontSize(11).FontColor(Colors.Black);
+                column.Item().Text($"Issued: {Invoice.IssuedAt:dd MMM yyyy}").FontSize(11).FontColor(Colors.Black);
             });
         }
     }

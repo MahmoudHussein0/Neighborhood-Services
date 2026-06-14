@@ -11,7 +11,7 @@ namespace Neighborhood.Services.API.Controllers.Staffs
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class StaffController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,7 +23,8 @@ namespace Neighborhood.Services.API.Controllers.Staffs
 
         // GET api/staff
         [HttpGet]
-      
+        [HasPermission(PermissionType.ManageUsers)]
+
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken) 
         {
             var result = await _mediator.Send(new GetAllStaffsQuery(), cancellationToken);
@@ -75,9 +76,8 @@ namespace Neighborhood.Services.API.Controllers.Staffs
         }
         // POST api/staff
         [HttpPost]
+        [HasPermission(PermissionType.ManageUsers)]
 
-        [HttpPost]
-     
         public async Task<IActionResult> Create(
             CreateStaffCommand command,
             CancellationToken cancellationToken)
@@ -96,7 +96,8 @@ namespace Neighborhood.Services.API.Controllers.Staffs
 
         // PUT api/staff/5
         [HttpPut("{id}")]
-    
+        [HasPermission(PermissionType.ManageUsers)]
+      
         public async Task<IActionResult> Update(
             int id,
             UpdateStaffCommand command,
@@ -115,6 +116,7 @@ namespace Neighborhood.Services.API.Controllers.Staffs
         // DELETE api/staff/5
         [HttpDelete("{id}")]
         [HasPermission(PermissionType.ManageUsers)]
+     
         public async Task<IActionResult> Delete(
             int id,
             CancellationToken cancellationToken)

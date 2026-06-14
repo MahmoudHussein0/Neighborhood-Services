@@ -2,8 +2,8 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StaffManagementService } from '../../services/staff-management.service';
-import { StaffDto, StaffRole, PermissionType, UserLookupDto } from '../../models/staff-management.model';
-import { finalize } from 'rxjs/operators';
+import { StaffDto, StaffRole, PermissionType, CreateUserCommand } from '../../models/staff-management.model';
+import { finalize, switchMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 
@@ -18,13 +18,13 @@ export class StaffManagementComponent implements OnInit {
   private staffService = inject(StaffManagementService);
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
+  private cdr = inject(ChangeDetectorRef);
+
   staffList: StaffDto[] = [];
-  usersList: UserLookupDto[] = [];
   isLoading = false;
-  isLoadingUsers = false;
   isSubmitting = false;
   errorMessage = '';
-  private cdr = inject(ChangeDetectorRef);
+
   staffForm!: FormGroup;
   showModal = false;
 
@@ -40,17 +40,63 @@ export class StaffManagementComponent implements OnInit {
     { id: PermissionType.FullAccess, name: 'Full Access' }
   ];
 
+  selectedStaff: StaffDto | null = null;
+  isEditMode = false;
+
+  searchTerm = '';
+  selectedRoleFilter = '';
+
+  // ====== Permissions الخاصة باليوزر الحالي ======
+  private currentUserPermissions: PermissionType[] = [];
+
   ngOnInit(): void {
     this.loadAllStaff();
-
     this.initForm();
+    this.loadCurrentUserPermissions();
+  }
+
+  // بيانات اليوزر الحالي متخزنة كـ JSON object تحت مفتاح 'ns_auth_user'
+  private getCurrentUserIdFromToken(): string | null {
+    const raw = localStorage.getItem('ns_auth_user');
+    if (!raw) return null;
+
+    try {
+      const user = JSON.parse(raw);
+      return user?.userId || null;
+    } catch {
+      return null;
+    }
+  }
+
+  // بنجيب الـ Staff record بتاع اليوزر الحالي عشان نعرف الصلاحيات بتاعته
+  private loadCurrentUserPermissions(): void {
+    const userId = this.getCurrentUserIdFromToken();
+    if (!userId) {
+      console.warn('Could not resolve current user id from token.');
+      return;
+    }
+
+    this.staffService.getByUserId(userId).subscribe({
+      next: (staff: StaffDto) => {
+        this.currentUserPermissions = this.mapPermissionsToIds(staff.permissions);
+      },
+      error: (err: any) => {
+        console.error('Failed to load current user permissions', err);
+      }
+    });
   }
 
   initForm(): void {
     this.staffForm = this.fb.group({
-      userId: ['', [Validators.required]],
+      // Staff fields
       role: [StaffRole.TechnicalSupport, [Validators.required]],
-      selectedPermissions: [[]]
+      selectedPermissions: [[]],
+
+      // New user creation fields (مطلوبة فقط عند الإضافة)
+      fullName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      age: ['', [Validators.required, Validators.min(18)]]
     });
   }
 
@@ -67,77 +113,106 @@ export class StaffManagementComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
-
           const data = response?.data || response?.result || response;
-
           this.staffList = Array.isArray(data) ? data : [];
-          this.loadAvailableUsers();
           this.cdr.detectChanges();
         },
         error: (err) => {
           this.errorMessage = 'Failed to load staff members data.';
           console.error(err);
-
-        }
-      });
-
-  }
-  loadAvailableUsers(): void {
-
-    this.isLoadingUsers = true;
-
-    this.staffService
-      .getUsersByRole('Staff')
-      .pipe(
-        finalize(() => {
-          this.isLoadingUsers = false;
-        })
-      )
-      .subscribe({
-        next: (users) => {
-
-          const assignedUserIds =
-            this.staffList.map(
-              s => s.applicationUserId
-            );
-
-          this.usersList = users.filter(
-            user => !assignedUserIds.includes(user.id)
-          );
-
-        },
-        error: (err) => {
-          console.error(err);
         }
       });
   }
+
+  // ====== فحص الصلاحيات ======
+  canManageStaff(): boolean {
+    return this.currentUserPermissions.includes(PermissionType.FullAccess) ||
+           this.currentUserPermissions.includes(PermissionType.ManageUsers);
+  }
+
+  private guardAccess(): boolean {
+    if (!this.canManageStaff()) {
+      this.toastr.error('you are not allowed', 'Error');
+      return false;
+    }
+    return true;
+  }
+
   toggleModal(isOpen: boolean): void {
+    if (isOpen && !this.guardAccess()) {
+      return;
+    }
 
     this.showModal = isOpen;
 
-    if (!isOpen) {
+    this.isEditMode = false;
+    this.selectedStaff = null;
 
-      this.isEditMode = false;
+    this.staffForm.reset({
+      role: StaffRole.TechnicalSupport,
+      selectedPermissions: []
+    });
 
-      this.selectedStaff = null;
-
-      this.staffForm.reset({
-        role: StaffRole.TechnicalSupport,
-        selectedPermissions: []
-      });
+    // فتح المودال لإضافة موظف جديد => نفعّل الـ validators بتاعة بيانات اليوزر الجديد
+    if (isOpen) {
+      this.setNewUserValidators(true);
     }
+  }
+
+  // تفعيل/تعطيل الـ validators الخاصة بحقول إنشاء اليوزر الجديد
+  // (تكون مطلوبة عند الإضافة فقط، وتُلغى عند التعديل)
+  private setNewUserValidators(enable: boolean): void {
+    const requiredFields = ['fullName', 'email', 'password', 'age'];
+
+    requiredFields.forEach(field => {
+      const control = this.staffForm.get(field);
+      if (!control) return;
+
+      if (enable) {
+        if (field === 'email') {
+          control.setValidators([Validators.required, Validators.email]);
+        } else if (field === 'password') {
+          control.setValidators([Validators.required, Validators.minLength(6)]);
+        } else if (field === 'age') {
+          control.setValidators([Validators.required, Validators.min(18)]);
+        } else {
+          control.setValidators([Validators.required]);
+        }
+      } else {
+        control.clearValidators();
+      }
+
+      control.updateValueAndValidity();
+    });
   }
 
   onPermissionChange(permissionId: number, event: any): void {
     const current: number[] = this.staffForm.get('selectedPermissions')?.value || [];
-    if (event.target.checked) {
+    const isChecked = event.target.checked;
+
+    if (permissionId === PermissionType.FullAccess) {
+      // لو حدد Full Access، بقية الصلاحيات تصبح غير ضرورية
+      this.staffForm.get('selectedPermissions')?.setValue(
+        isChecked ? [PermissionType.FullAccess] : []
+      );
+      return;
+    }
+
+    if (isChecked) {
       this.staffForm.get('selectedPermissions')?.setValue([...current, permissionId]);
     } else {
       this.staffForm.get('selectedPermissions')?.setValue(current.filter(id => id !== permissionId));
     }
   }
 
+  // بنستخدمها في الـ template لتعطيل باقي الصلاحيات لما يكون Full Access متحدد
+  isFullAccessSelected(): boolean {
+    const current: number[] = this.staffForm.get('selectedPermissions')?.value || [];
+    return current.includes(PermissionType.FullAccess);
+  }
+
   onSubmit(): void {
+    if (!this.guardAccess()) return;
 
     if (this.staffForm.invalid) return;
 
@@ -150,40 +225,66 @@ export class StaffManagementComponent implements OnInit {
 
     const formValue = this.staffForm.value;
 
-    const command = {
-      userId: formValue.userId,
-      role: Number(formValue.role),
-      permissions: formValue.selectedPermissions
+    // 1) إنشاء اليوزر الجديد بدور Staff
+    //    (الباك إند بيعمل Staff record تلقائياً: TechnicalSupport / inactive / بدون صلاحيات)
+    const createUserCommand: CreateUserCommand = {
+      fullName: formValue.fullName,
+      email: formValue.email,
+      photo: '',
+      password: formValue.password,
+      age: Number(formValue.age),
+      applicationUserRole: 'Staff',
+      latitude: 0,
+      longitude: 0,
+      nationalId: '',
+      experience: '',
+      maxTravelDistance: 0
     };
 
-    this.staffService.create(command).subscribe({
-      next: () => {
+    this.staffService.createUser(createUserCommand)
+      .pipe(
+        // 2) نجيب الـ Staff record اللي اتعمل تلقائياً عشان نعرف الـ id بتاعه
+        switchMap((newUser: any) => {
+          const userId = newUser?.id || newUser?.data?.id || newUser?.result?.id;
+          return this.staffService.getByUserId(userId);
+        }),
+        // 3) نحدّث الـ Role والصلاحيات ونفعّل الحساب بالقيم اللي اختارها الأدمن
+        switchMap((staffRecord: StaffDto) => {
+          const command = {
+            id: staffRecord.id,
+            role: Number(formValue.role),
+            isActive: true,
+            permissions: formValue.selectedPermissions
+          };
+          return this.staffService.update(command);
+        }),
+        finalize(() => {
+          this.isSubmitting = false;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.toastr.success(
+            'Staff member created and assigned successfully!',
+            'Success'
+          );
 
-        this.isSubmitting = false;
-
-        this.toastr.success(
-          'Staff member assigned successfully!',
-          'Success'
-        );
-
-        this.loadAllStaff();
-
-        this.toggleModal(false);
-      },
-      error: (err) => {
-
-        this.isSubmitting = false;
-
-        this.toastr.error(
-          'Failed to add staff member.',
-          'Error'
-        );
-
-        console.error(err);
-      }
-    });
+          this.loadAllStaff();
+          this.toggleModal(false);
+        },
+        error: (err) => {
+          this.toastr.error(
+            'Failed to create the user or assign the staff role.',
+            'Error'
+          );
+          console.error(err);
+        }
+      });
   }
+
   onDeleteStaff(id: number): void {
+    if (!this.guardAccess()) return;
+
     if (confirm('Are you sure you want to permanently delete this staff member?')) {
       this.staffService.delete(id).subscribe({
         next: () => {
@@ -202,6 +303,7 @@ export class StaffManagementComponent implements OnInit {
     if (r === 'TechnicalSupport' || r === '2') return 'Technical Support';
     return r;
   }
+
   formatPermission(permission: string | number): string {
     if (!permission) return '';
     let permStr = String(permission);
@@ -228,6 +330,7 @@ export class StaffManagementComponent implements OnInit {
       return null;
     }).filter(v => v !== null) as number[];
   }
+
   get activeStaffCount(): number {
     return this.staffList.filter(s => s.isActive).length;
   }
@@ -235,19 +338,12 @@ export class StaffManagementComponent implements OnInit {
   get adminCount(): number {
     return this.staffList.filter(s => this.isAdminRole(s.staffRole)).length;
   }
-  selectedStaff: StaffDto | null = null;
-  isEditMode = false;
 
-  searchTerm = '';
-  selectedRoleFilter = '';
   get filteredStaffList(): StaffDto[] {
-
     let result = [...this.staffList];
 
     if (this.searchTerm.trim()) {
-
       const search = this.searchTerm.toLowerCase();
-
       result = result.filter(staff =>
         staff.fullName.toLowerCase().includes(search) ||
         staff.email.toLowerCase().includes(search)
@@ -255,20 +351,20 @@ export class StaffManagementComponent implements OnInit {
     }
 
     if (this.selectedRoleFilter) {
-
-      result = result.filter(
-        s => s.staffRole === this.selectedRoleFilter
-      );
+      result = result.filter(s => s.staffRole === this.selectedRoleFilter);
     }
 
     return result;
   }
+
   openEditModal(staff: StaffDto): void {
+    if (!this.guardAccess()) return;
 
     this.isEditMode = true;
-
     this.selectedStaff = staff;
 
+    // مفيش إنشاء يوزر هنا، خالص نلغي الـ validators الخاصة بيه
+    this.setNewUserValidators(false);
 
     this.staffForm.patchValue({
       role: this.isAdminRole(staff.staffRole) ? StaffRole.Admin : StaffRole.TechnicalSupport
@@ -282,8 +378,8 @@ export class StaffManagementComponent implements OnInit {
 
     this.showModal = true;
   }
-  updateStaff(): void {
 
+  updateStaff(): void {
     const formValue = this.staffForm.value;
 
     const command = {
@@ -295,34 +391,25 @@ export class StaffManagementComponent implements OnInit {
 
     this.staffService.update(command)
       .subscribe({
-
         next: () => {
-
-          this.toastr.success(
-            'Staff updated successfully'
-          );
-
+          this.toastr.success('Staff updated successfully');
           this.loadAllStaff();
-
           this.toggleModal(false);
-
         },
         error: () => {
-
-          this.toastr.error(
-            'Failed to update staff',
-            'Error'
-          );
+          this.toastr.error('Failed to update staff', 'Error');
         }
-
       });
   }
+
   private isAdminRole(role: any): boolean {
     const r = String(role).trim();
     return r === 'Admin' || r === '1';
   }
 
   toggleStatus(staff: StaffDto): void {
+    if (!this.guardAccess()) return;
+
     const command = {
       id: staff.id,
       role: this.isAdminRole(staff.staffRole) ? 1 : 2,
@@ -338,7 +425,6 @@ export class StaffManagementComponent implements OnInit {
           'Success'
         );
       },
-      // ✅ أضف الـ error
       error: () => {
         this.toastr.error('Failed to update staff status', 'Error');
       }
