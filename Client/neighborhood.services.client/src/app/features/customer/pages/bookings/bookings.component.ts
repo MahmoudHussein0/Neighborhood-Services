@@ -17,6 +17,7 @@ import { LeaveReviewModalComponent } from '../../components/leave-review-modal/l
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
+import { environment } from '../../../../environments/environment';
 
 type StatusTab = 'All' | BookingStatus;
 
@@ -270,6 +271,14 @@ export class BookingsComponent implements OnInit {
       },
       () => {} // dismissed — do nothing
     );
+  }
+
+  viewInvoice(bookingId: number): void {
+    window.open(`${environment.apiUrl}/api/invoices/booking/${bookingId}/pdf/view`, '_blank');
+  }
+
+  downloadInvoice(bookingId: number): void {
+    window.open(`${environment.apiUrl}/api/invoices/booking/${bookingId}/pdf`, '_blank');
   }
 
   hasActions(b: MyBookingSummary): boolean {

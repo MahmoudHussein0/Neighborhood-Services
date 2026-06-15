@@ -65,7 +65,6 @@ export class CreateBookingModalComponent {
     scheduledAt: ['', Validators.required],
     description: ['', Validators.required],
     address: ['', Validators.required],
-    promoCode: [''], // UI only for now — wiring TBD
   });
 
   // Pre-selected technician — set by the opener via componentInstance (from the Find Technician card).
@@ -207,7 +206,6 @@ export class CreateBookingModalComponent {
       longitude: this.lng()!,
       scheduledAt: `${v.scheduledAt}:00`,
       region: null,
-      promoCodeId: null, // TODO: resolve v.promoCode → id once wiring is decided
       beforeImageUrl: this.beforeImageUrl(),
     };
 

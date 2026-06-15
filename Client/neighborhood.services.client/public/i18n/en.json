@@ -140,7 +140,30 @@
         "geoUnsupported": "Geolocation is not supported by your browser.",
         "openInMaps": "Open in Maps",
         "confirm": "Confirm",
-        "confirmTitle": "Please confirm"
+        "confirmTitle": "Please confirm",
+        "edit": "Edit",
+        "delete": "Delete"
+    },
+    "gallery": {
+        "title": "Gallery",
+        "subtitle": "Show work samples on your public profile.",
+        "photo": "Photo",
+        "caption": "Caption",
+        "changePhoto": "Change photo",
+        "addPhoto": "Add photo",
+        "updatePhoto": "Update photo",
+        "fileHint": "JPG, PNG, WebP, or GIF up to 5 MB",
+        "chooseError": "Choose a portfolio photo.",
+        "saving": "Saving photo...",
+        "loading": "Loading portfolio photos...",
+        "empty": "No portfolio photos yet.",
+        "workSample": "Work sample",
+        "deleteTitle": "Delete portfolio photo?",
+        "deleteSubtitle": "This action cannot be undone.",
+        "deleteMessage": "Delete this photo from your portfolio?",
+        "deleteMessageWithCaption": "Delete \"{{caption}}\" from your portfolio?",
+        "deleteConfirm": "Delete photo",
+        "deleting": "Deleting..."
     },
     "publicProfile": {
         "role": {
@@ -176,6 +199,8 @@
         "filterAll": "All",
         "empty": "No bookings here yet.",
         "details": "Details",
+        "viewInvoice": "View Invoice",
+        "downloadInvoice": "Download Invoice",
         "actions": "Actions",
         "confirmCompleted": "Confirm completed",
         "cancelBooking": "Cancel booking",
@@ -1040,6 +1065,7 @@
         "pricing": "Pricing",
         "earnings": "Earnings",
         "reviews": "Reviews",
+        "gallery": "Gallery",
         "users": "Users",
         "bookings": "Bookings",
         "disputes": "Disputes",

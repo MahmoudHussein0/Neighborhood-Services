@@ -60,6 +60,10 @@
       <i class="bi bi-chat-dots"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.chat' | translate }}</span> }
     </a>
+    <a routerLink="/technician/gallery" routerLinkActive="active" class="sidebar-link">
+      <i class="bi bi-images"></i>
+      @if (!collapsed()) { <span>{{ 'sidebar.gallery' | translate }}</span> }
+    </a>
     <a routerLink="/technician/profile" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-person"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.profile' | translate }}</span> }

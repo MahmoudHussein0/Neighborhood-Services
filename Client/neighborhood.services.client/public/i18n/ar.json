@@ -140,7 +140,30 @@
         "geoUnsupported": "المتصفح لا يدعم تحديد الموقع.",
         "openInMaps": "فتح في الخرائط",
         "confirm": "تأكيد",
-        "confirmTitle": "يرجى التأكيد"
+        "confirmTitle": "يرجى التأكيد",
+        "edit": "تعديل",
+        "delete": "حذف"
+    },
+    "gallery": {
+        "title": "معرض الأعمال",
+        "subtitle": "اعرض نماذج من أعمالك في ملفك العام.",
+        "photo": "الصورة",
+        "caption": "الوصف",
+        "changePhoto": "تغيير الصورة",
+        "addPhoto": "إضافة صورة",
+        "updatePhoto": "تحديث الصورة",
+        "fileHint": "JPG, PNG, WebP أو GIF بحد أقصى 5 ميجابايت",
+        "chooseError": "اختر صورة لمعرض الأعمال.",
+        "saving": "جارٍ حفظ الصورة...",
+        "loading": "جارٍ تحميل صور المعرض...",
+        "empty": "لا توجد صور في المعرض حتى الآن.",
+        "workSample": "نموذج عمل",
+        "deleteTitle": "حذف صورة من المعرض؟",
+        "deleteSubtitle": "لا يمكن التراجع عن هذا الإجراء.",
+        "deleteMessage": "هل تريد حذف هذه الصورة من معرض الأعمال؟",
+        "deleteMessageWithCaption": "هل تريد حذف \"{{caption}}\" من معرض الأعمال؟",
+        "deleteConfirm": "حذف الصورة",
+        "deleting": "جارٍ الحذف..."
     },
     "publicProfile": {
         "role": {
@@ -176,6 +199,8 @@
         "filterAll": "الكل",
         "empty": "لا توجد حجوزات هنا بعد.",
         "details": "التفاصيل",
+        "viewInvoice": "عرض الفاتورة",
+        "downloadInvoice": "تحميل الفاتورة",
         "actions": "إجراءات",
         "confirmCompleted": "تأكيد الاكتمال",
         "cancelBooking": "إلغاء الحجز",
@@ -861,6 +886,7 @@
         "pricing": "التسعير",
         "earnings": "الأرباح",
         "reviews": "التقييمات",
+        "gallery": "معرض الأعمال",
         "users": "المستخدمون",
         "bookings": "الحجوزات",
         "disputes": "النزاعات",
