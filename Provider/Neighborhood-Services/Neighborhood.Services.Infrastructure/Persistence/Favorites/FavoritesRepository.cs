@@ -43,27 +43,47 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Favorites
             return await _context.Favorites.Where(e => e.IsDeleted == false).ToListAsync();
            
         }
+        //await _favrepo.DeleteAsync(deleted.Id);
 
-     //   public async Task<IReadOnlyList<FavoriteDto>> GetAllDetailsAsync()
+        public override async Task<IReadOnlyList<Favorite>> DeleteAsync(int delId)
+        {
+            var del = await _context.Favorites
+         .FirstOrDefaultAsync(e => e.Id == delId);
 
-     //   {
-     //       var result = await _context.Favorites
-     //.Include(f => f.Technician).Include(k=>k.User)
-     //.Join(
-     //    _context.Users,
-     //    f => f.UserId,
-     //    u => u.Id,
-     //    (f, u) => new FavoriteDto
-     //    {
-     //        favoriteId = f.Id,
-     //        userId=u.Id,
-     //        technicianId = f.TechnicianId,
-     //        technicianName=u.FullName,
-     //        addedAt=f.addedAt
-             
-     //    }).ToListAsync();
+            if (del == null)
+                return new List<Favorite>(); 
+
+            _context.Favorites.Remove(del);
+         
+
+           
+            return await _context.Favorites.ToListAsync();
+
+        }
+            
+
+        
+
+        //   public async Task<IReadOnlyList<FavoriteDto>> GetAllDetailsAsync()
+
+        //   {
+        //       var result = await _context.Favorites
+        //.Include(f => f.Technician).Include(k=>k.User)
+        //.Join(
+        //    _context.Users,
+        //    f => f.UserId,
+        //    u => u.Id,
+        //    (f, u) => new FavoriteDto
+        //    {
+        //        favoriteId = f.Id,
+        //        userId=u.Id,
+        //        technicianId = f.TechnicianId,
+        //        technicianName=u.FullName,
+        //        addedAt=f.addedAt
+
+        //    }).ToListAsync();
 
 
-     //       return result;        }
+        //       return result;        }
     }
 }

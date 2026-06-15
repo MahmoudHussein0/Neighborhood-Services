@@ -13,5 +13,10 @@ namespace Neighborhood.Services.Application.Notifications.Services
         public Task<PushNotificationDto> SendNotificationToUser(string userId, string message);
 
         public Task<PushNotificationDto> SendRoleBasedNotificationAsync(string message, ApplicationUserRole role, string? recipientUserId = null);
+        public Task<PushNotificationDto> SendNotificationToTechnician(string mssg);
+
+        public  Task<PushNotificationDto> SendNotificationToCustomer(string mssg);
+
+
     }
 }

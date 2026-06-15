@@ -7,6 +7,8 @@ import { ChatService } from '../../services/chat.service';
 import { computed, NgModule,  inject, Signal, NgZone } from '@angular/core';
 import { MessageDto } from '../../../../core/models/message-dto';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+
 
 
 
@@ -16,13 +18,15 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-customer-chats',
-  imports: [NgClass,CommonModule,FormsModule],
+  imports: [NgClass,CommonModule,FormsModule,DatePipe],
   templateUrl: './customer-chats.component.html',
   styleUrl: './customer-chats.component.css',
 })
 export class CustomerChatsComponent {
 
   ConvSignals = signal<ConversationDto[]>([]);
+  chosenBookingId = signal<number>(0);
+
   isLoading = signal(false);
   public ConvDtos: ConversationDto[] = [];
    public myId: string = "";
@@ -39,6 +43,8 @@ private ngZone = inject(NgZone);
   public ReceivedMessages = computed(() => this.chatService.messages());
   // public AllMessagesForBooking: MessageSelectedDto[] = [];
   public AllMessagesForBooking = signal<any[]>([]);
+    public CurrentConversationMessages = signal<any[]>([]);
+
 
 
   public allmssgs = computed(() => this.AllMessagesForBooking);
@@ -58,14 +64,16 @@ private ngZone = inject(NgZone);
     private chatService: ChatService, private messagesService: MessagesService) {
       this.isLoading = signal(false);
     this.AllMessagesForBooking = this.chatService.AllMessagesForBooking;
+    this.CurrentConversationMessages=this.AllMessagesForBooking;
     }
 
   ngOnInit(): void {
+    console.log("initiating chats..");
     this.loadConversations();
-        this.chatService.initializeChat(1)
+       // this.chatService.initializeChat(this.bookingId)
         this.getMyId();
     console.log("from init", this.chatService.AllMessagesForBooking());
-    this.loadConversationMessages(1);
+    //this.loadConversationMessages(this.bookingId);
 
   }
 
@@ -78,6 +86,14 @@ private ngZone = inject(NgZone);
         this.ConvSignals.set(data);
         this.ConvDtos = [...data];
         console.log('Conversations loaded:', data);
+        if(data.at(0)!=null){this.bookingId=data.at(0)?.bookingId!}
+        console.log('BookingId:', this.bookingId);
+         this.chatService.initializeChat(this.bookingId)
+        this.getMyId();
+    console.log("from init", this.chatService.AllMessagesForBooking());
+    //this.loadConversationMessages(this.bookingId);
+
+
         this.isLoading.set(false);
         
       },
@@ -88,22 +104,62 @@ private ngZone = inject(NgZone);
     });
   }
 
-  loadConversationMessages(bookingId:number){
+  // loadConversationMessages(bookingId:number){
+
+  // }
+  reload(id:number) :void{
+
+this.bookingId=id;
+console.log(this.bookingId);
+this.chosenBookingId.set(this.bookingId);
+ this.isLoading.set(true);
+ this.messagesService.getMessagesForBooking(id).subscribe({
+                next: (messages) => {
+                  console.log(messages);
+                    this.ngZone.run(() => {
+                        this.AllMessagesForBooking.set(
+                            messages.sort((a, b) =>
+                                new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
+                            )
+                        );
+                    });
+                },
+                error: (err) => console.error(err)
+            });
+
+    this.conversationService.getMyConversations().subscribe({
+      next: data => {
+       
+        this.ConvSignals.set(data);
+        this.ConvDtos = [...data];
+        console.log('Conversations loaded:', data);
+        
+        console.log('BookingId:', this.chosenBookingId());
+      
+         this.isLoading.set(false);
+    console.log("from init", this.chatService.AllMessagesForBooking());
+    //this.loadConversationMessages(this.chosenBookingId());
+
+
+        this.isLoading.set(false);
+        
+      },
+      error: err => {
+        console.error(err);
+        this.isLoading.set(false);
+      }
+    });
+
+
+this.isLoading.set(!this.isLoading())
 
   }
 
 getMyId(): void {
-    this.messagesService.GetCurrentUserId().subscribe(
-      {
-        next: (userId) => {
-          this.myId = userId;
-          console.log('Current user ID:', this.myId);
-        },
-        error: (error) => {
-          console.error('Error fetching current user ID:', error);
-        }
-      }
-    );
+     this.messagesService.getCurrentUserId1().subscribe({
+      next: (raw) => {console.log('Raw response:', raw); this.myId=raw; console.log(this.myId);},
+      error: (err) => console.error('Error:', err)
+    });
   }
 
   public sendMessage(message: MessageDto): void {

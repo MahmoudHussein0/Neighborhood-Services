@@ -5,6 +5,7 @@ using Neighborhood.Services.Application.Favorites.DTOs;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.TechnicianPhotos.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Domain.favorites;
 using Neighborhood.Services.Domain.TechnicianPhotos;
 using Neighborhood.Services.Domain.Technicians;
@@ -22,43 +23,45 @@ namespace Neighborhood.Services.Application.Favorites.Commands
         private readonly IFavoritesRepository _favrepo;
         private readonly ICurrentUserService _currentUser;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ITechnicianPhotoRepository _technicianPhotoRepo;
         private readonly ICustomerRepository _customerRepo;
         private readonly ITechnicianRepository _technicianRepo;
+        private readonly IUserRepository _userRepository;
 
 
         public AddToFavoriteCommandHandler(IFavoritesRepository FavRepo, 
             ICurrentUserService currentUser, 
             IUnitOfWork UnitofWork,
-             ITechnicianPhotoRepository TechnicianPhoto,
              ICustomerRepository customerRepo,
-             ITechnicianRepository technicianRepo)
+             ITechnicianRepository technicianRepo,
+             IUserRepository userRepo)
         {
             _favrepo= FavRepo;
             _currentUser=currentUser;
             _unitOfWork = UnitofWork;
-            _technicianPhotoRepo = TechnicianPhoto;
             _customerRepo = customerRepo;
             _technicianRepo = technicianRepo;
+            _userRepository = userRepo;
 
 
         }
 
         public async Task<FavoriteDto> Handle(AddToFavoriteCommandDto request, CancellationToken cancellationToken)
         {
-            var photos = await _technicianPhotoRepo.GetByTechnicianIdAsync(request.technicianId);
+            var x = await _technicianRepo.GetByIdAsync(request.technicianId);
+                if (x == null) { throw new NotFoundException("No Technician with the given Id"); }
 
             
             if (_currentUser == null || _currentUser.UserId==null) { return null!;}
-            List<TechnicianPhoto> addedPhotos = new List<TechnicianPhoto>()
-           {await _technicianPhotoRepo.GetByIdAsync(request.technicianId) ??
-           throw new NotFoundException("No Technician with the given Id")};
+
+            var photo =await _userRepository.GetTechnicianPhotoAsync(request.technicianId);
+
+
+
 
             var exists = await _favrepo.CheckIfExists(_currentUser.UserId, request.technicianId);
             if (exists)
             { throw new Exception("Item is already in favorites"); }
 
-            TechnicianPhoto? chosenPhoto = addedPhotos.FirstOrDefault(e => e.PhotoUrl != null) ?? null ;
 
             var customer = await _customerRepo.GetByUserIdAsync(_currentUser.UserId)?? throw new NotFoundException("Invalid Customer Id");
             
@@ -79,7 +82,7 @@ namespace Neighborhood.Services.Application.Favorites.Commands
                 technician= techDto,
                 addedAt = created.addedAt,
 
-                imageURL = chosenPhoto != null ? chosenPhoto.PhotoUrl : "https://cdn-icons-png.flaticon.com/512/1085/1085421.png"
+                imageURL = photo??"https://cdn-icons-png.flaticon.com/512/1085/1085421.png"
             };
         }
     }

@@ -51,6 +51,10 @@
       <i class="bi bi-file-earmark-text"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.policies' | translate }}</span> }
     </a>
+     <a routerLink="/staff/newsletters" routerLinkActive="active" class="sidebar-link">
+      <i class="bi bi-envelope-at-fill"></i>
+      @if (!collapsed()) { <span>{{ 'sidebar.newsletter' | translate }}</span> }
+    </a>
     <a routerLink="/staff/promo-codes" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-tag"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.promoCodes' | translate }}</span> }

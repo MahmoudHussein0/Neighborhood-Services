@@ -29,6 +29,9 @@
             @if (p.role === 'Technician' && p.verificationStatus === 'Verified') {
               <span class="badge rounded-pill text-bg-success"><i class="bi bi-patch-check-fill me-1"></i>{{ 'publicProfile.verified' | translate }}</span>
             }
+            @if (p.role === 'Technician' && technicianId(); as techId) {
+              <app-favorite-button [technicianId]="techId" />
+            }
           </div>
           <div class="text-muted small mt-1 d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
             <span><i class="bi bi-calendar3 me-1"></i>{{ 'publicProfile.memberSince' | translate }} {{ p.memberSince | date: 'MMM y' }}</span>
