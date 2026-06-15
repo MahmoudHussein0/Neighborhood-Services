@@ -44,6 +44,7 @@ import { AvailiabilityAndExceptionComponent } from './features/technician/pages/
 import { PricingComponent } from './features/technician/pages/pricing/pricing.component';
 import { ProblemTypeComponent } from './features/public/pages/services/problem-type/problem-type.component';
 import { PoliciesComponent } from './features/staff/pages/policies/policies.component';
+import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
@@ -92,7 +93,6 @@ export const routes: Routes = [
   },
 
 
-
   {
     path: 'technician',
     component: TechnicianLayoutComponent,
@@ -110,8 +110,29 @@ export const routes: Routes = [
       { path: 'wallet', component: TechnicianWalletComponent },
       { path: 'earnings', component: TechnicianEarningsComponent },
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
-      { path: 'pricing', component: PricingComponent },
-      { path: 'chat', component:CustomerChatsComponent, data: { title: 'Chat' } },
+       { path: 'reviews', component: TechReviewsComponent },
+        { path: 'pricing', component: PricingComponent },
+        { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
+
+    ]
+  },
+
+  {
+    path: 'staff',
+    component: StaffLayoutComponent,
+    canActivate: [authGuard, roleGuard],
+    canActivateChild: [authGuard, roleGuard],
+    data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
+    children: [
+      { path: '', component: StaffDashboardComponent },
+
+      // Existing
+      { path: 'bookings', component: StaffBookingsComponent },
+      { path: 'flagged-requests', component: FlaggedRequestsComponent },
+      { path: 'users', component: StaffUsersComponent },
+      { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
+      { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
+      { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
 
       { path: '**', redirectTo: '' }
     ]

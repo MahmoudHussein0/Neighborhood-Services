@@ -9,10 +9,11 @@ import { ServiceRequestService } from '../../services/service-request.service';
 import { OfferService } from '../../services/offer.service';
 import { ServiceRequestWithOffers, OfferSummary } from '../../models/service-request.model';
 import { AcceptOfferModalComponent } from '../../components/accept-offer-modal/accept-offer-modal.component';
+import { FavoriteButtonComponent } from '../../components/favorite-button/favorite-button.component';
 
 @Component({
   selector: 'app-service-request-details',
-  imports: [DatePipe, CurrencyPipe, RouterLink, TranslatePipe],
+  imports: [DatePipe, CurrencyPipe, RouterLink, TranslatePipe, FavoriteButtonComponent],
   templateUrl: './service-request-details.component.html',
   styleUrl: './service-request-details.component.css',
 })
@@ -56,10 +57,9 @@ export class ServiceRequestDetailsComponent implements OnInit {
     ref.componentInstance.duration = offer.estimatedDuration;
 
     ref.result.then(
-      (confirmed: boolean) => {
-        if (!confirmed) return;
+      (promoCode: string | null) => {
         this.accepting.set(true);
-        this.offerService.accept(offer.id).subscribe({
+        this.offerService.accept(offer.id, promoCode).subscribe({
           next: () => {
             this.accepting.set(false);
             this.toastr.success(this.translate.instant('serviceRequests.details.accepted'));

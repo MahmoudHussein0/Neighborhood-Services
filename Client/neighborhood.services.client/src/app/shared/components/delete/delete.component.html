@@ -1,0 +1,18 @@
+<!-- Delete Modal  -->
+<div class="modal fade" [id]="modalId()">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dark text-center">
+            <div class="modal-body p-4">
+
+                <ng-content select=" h5 "></ng-content>
+                <p class="text-black opacity-75">
+                    {{"policy.thisActionCannotBeUndone" |translate}}
+                </p>
+                <button #closeBtn class="btn btn-secondary me-5" data-bs-dismiss="modal">
+                    {{"policy.cancle" |translate}}
+                </button>
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,6 +11,7 @@ import { PagedResult } from '../../../../core/models/paged-result.model';
 import { RecurringBooking, RecurringBookingStatus } from '../../../customer/models/recurring-booking.model';
 import { SetPriceModalComponent } from '../../components/set-price-modal/set-price-modal.component';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 interface Tab {
   value: 'All' | RecurringBookingStatus;
@@ -27,6 +28,7 @@ export class TechnicianRecurringJobsComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
   private readonly confirm = inject(ConfirmService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: Tab[] = [
     { value: 'All' },
@@ -54,6 +56,11 @@ export class TechnicianRecurringJobsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. customer approved the price).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {

@@ -45,11 +45,18 @@ export class CustomerWalletService {
     return this.api.post<void>('/wallets/me/withdraw', { amount });
   }
 
-  finalizeTransaction(merchantOrderId: number, success: boolean, token?: string, maskedPan?: string): Observable<{message: string, status: string}> {
+  finalizeTransaction(merchantOrderId: string, success: boolean, token?: string, maskedPan?: string): Observable<{message: string, status: string}> {
     let url = `/wallets/me/transactions/finalize?merchant_order_id=${merchantOrderId}&success=${success}`;
     if (token && maskedPan) {
       url += `&token=${token}&masked_pan=${maskedPan}`;
     }
     return this.api.get<{message: string, status: string}>(url);
+  }
+
+  verifyPayment(localTransactionId: number, paymobOrderId: string): Observable<{message: string, status: string, success: boolean}> {
+    return this.api.post<{message: string, status: string, success: boolean}>('/wallets/me/transactions/verify-payment', {
+      localTransactionId,
+      paymobOrderId
+    });
   }
 }

@@ -36,7 +36,7 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
         public async Task<EscrowResponseDto> Handle(ReleaseEscrowCommand request, CancellationToken cancellationToken)
         {
             var escrow = (await _escrowRepository.GetByConditionAsync(
-                e => e.Id == request.EscrowId, includeProperties: "Booking.Technician")).FirstOrDefault()
+                e => e.Id == request.EscrowId, includeProperties: "Booking.Technician,Booking.PromoCode")).FirstOrDefault()
                 ?? throw new KeyNotFoundException($"Escrow with ID {request.EscrowId} not found.");
 
             if (escrow.Status != EscrowStatus.Held)
@@ -71,6 +71,11 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
                 
                 await _transactionRepository.AddAsync(transaction);
 
+                // Calculate promo discount for the invoice line items
+                var baseAmount = escrow.Booking.EstimatedPrice > 0 ? escrow.Booking.EstimatedPrice : escrow.Amount;
+                var discountAmount = Math.Round(baseAmount - escrow.Amount, 2);
+                if (discountAmount < 0) discountAmount = 0;
+
                 var invoice = new Invoice
                 {
                     BookingId = escrow.BookingId,
@@ -79,6 +84,9 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
                     Amount = escrow.Amount,
                     Tax = 0,
                     TotalAmount = escrow.Amount,
+                    BaseAmount = baseAmount,
+                    DiscountAmount = discountAmount,
+                    PromoCodeApplied = escrow.Booking.PromoCode?.Code,
                     Transaction = transaction,
                     Status = InvoiceStatus.Paid,
                     IssuedAt = releasedAt,

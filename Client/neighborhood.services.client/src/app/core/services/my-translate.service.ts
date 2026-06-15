@@ -58,8 +58,7 @@ export class MyTranslateService {
     if (savedLang)
       this.translateService.use(savedLang);
     this.ChangeDirection();
-
-
+    window.location.reload();
   }
 
 

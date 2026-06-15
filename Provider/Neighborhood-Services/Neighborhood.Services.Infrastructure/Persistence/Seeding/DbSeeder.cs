@@ -18,6 +18,10 @@ using Neighborhood.Services.Domain.Technicians;
 using Neighborhood.Services.Domain.TechniciansPricing;
 using Neighborhood.Services.Domain.TechniciansAvailability;
 using Neighborhood.Services.Domain.Wallets;
+using Neighborhood.Services.Domain.PromoCodes;
+using Neighborhood.Services.Domain.Transactions;
+using Neighborhood.Services.Domain.Escrows;
+using Neighborhood.Services.Domain.Invoices;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using NetTopologySuite.Geometries;
 using System;
@@ -54,7 +58,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             // 🎯 إضافة الـ Staff والـ Admin الافتراضي في الترتيب الصحيح
             await SeedStaffAccountsAsync(context, userManager);
 
+            await SeedPromoCodesAsync(context);
             await SeedBookingDomainAsync(context, customers, technicians, problemTypes);
+
+            await SeedTransactionsAndEscrowsAsync(context);
 
             await SeedSupportTicketsAsync(context, customers);
 
@@ -539,7 +546,52 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding
             return user;
         }
     
-    // ---------- 6. Support Tickets Seeding ----------
+        // ---------- 6. PromoCode Seeding ----------
+        private static async Task SeedPromoCodesAsync(ApplicationDbContext context)
+        {
+            if (await context.PromoCodes.AnyAsync())
+                return;
+
+            var now = DateTime.UtcNow;
+            var promoCodes = new List<PromoCode>
+            {
+                new PromoCode
+                {
+                    Code = "WELCOME10",
+                    DiscountPercentage = 10m,
+                    MaxUses = 100,
+                    UsedCount = 0,
+                    ExpiresAt = now.AddMonths(6),
+                    IsActive = true,
+                    CreatedAt = now
+                },
+                new PromoCode
+                {
+                    Code = "SUMMER25",
+                    DiscountPercentage = 25m,
+                    MaxUses = 50,
+                    UsedCount = 0,
+                    ExpiresAt = now.AddMonths(3),
+                    IsActive = true,
+                    CreatedAt = now
+                },
+                new PromoCode
+                {
+                    Code = "WINTER50",
+                    DiscountPercentage = 50m,
+                    MaxUses = 20,
+                    UsedCount = 0,
+                    ExpiresAt = now.AddMonths(1),
+                    IsActive = true,
+                    CreatedAt = now
+                }
+            };
+
+            await context.PromoCodes.AddRangeAsync(promoCodes);
+            await context.SaveChangesAsync();
+        }
+
+    // ---------- 7. Support Tickets Seeding ----------
 private static async Task SeedSupportTicketsAsync(
     ApplicationDbContext context, List<Customer> customers)
         {
@@ -588,5 +640,139 @@ private static async Task SeedSupportTicketsAsync(
 
             await context.SupportTickets.AddRangeAsync(tickets);
             await context.SaveChangesAsync();
-        } }
+        }
+
+        // ---------- 8. Transactions, Escrows & Invoices Seeding ----------
+        private static async Task SeedTransactionsAndEscrowsAsync(ApplicationDbContext context)
+        {
+            if (await context.Transactions.AnyAsync())
+                return;
+
+            var now = DateTime.UtcNow;
+
+            // Grab the wallets we need
+            var wallets = await context.Wallets.ToListAsync();
+            var customers = await context.Customers.ToListAsync();
+            var technicians = await context.Technicians.ToListAsync();
+            var bookings = await context.Bookings.OrderBy(b => b.Id).ToListAsync();
+
+            if (wallets.Count == 0 || customers.Count == 0 || technicians.Count == 0)
+                return;
+
+            var c1 = customers[0];
+            var c2 = customers.Count > 1 ? customers[1] : customers[0];
+            var t1 = technicians[0];
+            var t2 = technicians.Count > 1 ? technicians[1] : technicians[0];
+
+            var c1Wallet = wallets.FirstOrDefault(w => w.UserId == c1.ApplicationUserId);
+            var c2Wallet = wallets.FirstOrDefault(w => w.UserId == c2.ApplicationUserId);
+            var t1Wallet = wallets.FirstOrDefault(w => w.UserId == t1.ApplicationUserId);
+            var t2Wallet = wallets.FirstOrDefault(w => w.UserId == t2.ApplicationUserId);
+
+            if (c1Wallet == null || t1Wallet == null) return;
+
+            // ── Customer 1: Top-Up history (so transaction list has rows) ──────────
+            var tx1 = new Transaction { ToWalletId = c1Wallet.Id, Amount = 1000m, Fee = 0, Currency = "EGP", Type = TransactionType.TopUp, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-10) };
+            var tx2 = new Transaction { ToWalletId = c1Wallet.Id, Amount = 2000m, Fee = 0, Currency = "EGP", Type = TransactionType.TopUp, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-7) };
+            var tx3 = new Transaction { ToWalletId = c1Wallet.Id, Amount = 500m,  Fee = 0, Currency = "EGP", Type = TransactionType.TopUp, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-3) };
+
+            // ── Customer 2: Top-Up history ─────────────────────────────────────────
+            Transaction? tx4 = null;
+            if (c2Wallet != null)
+                tx4 = new Transaction { ToWalletId = c2Wallet.Id, Amount = 3000m, Fee = 0, Currency = "EGP", Type = TransactionType.TopUp, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-5) };
+
+            // ── Technician 1: Earnings (transfer from escrow) ──────────────────────
+            var tx5 = new Transaction { ToWalletId = t1Wallet.Id, Amount = 200m, Fee = 0, Currency = "EGP", Type = TransactionType.Transfer, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-2) };
+
+            // ── Technician 1: Withdrawal request (Pending) ────────────────────────
+            var tx6 = new Transaction { FromWalletId = t1Wallet.Id, Amount = 300m, Fee = 0, Currency = "EGP", Type = TransactionType.Withdrawal, Status = TransactionStatus.Pending, CreatedAt = now.AddDays(-1) };
+
+            // ── Technician 2: Earnings ─────────────────────────────────────────────
+            Transaction? tx7 = null;
+            if (t2Wallet != null)
+                tx7 = new Transaction { ToWalletId = t2Wallet.Id, Amount = 350m, Fee = 0, Currency = "EGP", Type = TransactionType.Transfer, Status = TransactionStatus.Completed, CreatedAt = now.AddDays(-3) };
+
+            // Persist all transactions
+            var txList = new List<Transaction> { tx1, tx2, tx3, tx5, tx6 };
+            if (tx4 != null) txList.Add(tx4);
+            if (tx7 != null) txList.Add(tx7);
+
+            await context.Transactions.AddRangeAsync(txList);
+            await context.SaveChangesAsync();
+
+            // ── Escrow: Pending booking (Booking 1) → Held escrow ─────────────────
+            var pendingBooking = bookings.FirstOrDefault(b => b.Status == BookingStatus.Pending);
+            if (pendingBooking != null && !await context.Escrows.AnyAsync(e => e.BookingId == pendingBooking.Id))
+            {
+                var bookingPaymentTx = new Transaction
+                {
+                    FromWalletId = c1Wallet.Id,
+                    Amount = 200m, Fee = 0, Currency = "EGP",
+                    Type = TransactionType.BookingPayment,
+                    Status = TransactionStatus.Completed,
+                    CreatedAt = now.AddDays(-1)
+                };
+                await context.Transactions.AddAsync(bookingPaymentTx);
+                await context.SaveChangesAsync();
+
+                await context.Escrows.AddAsync(new Escrow
+                {
+                    BookingId = pendingBooking.Id,
+                    WalletId = c1Wallet.Id,
+                    Amount = 200m,
+                    Status = EscrowStatus.Held,
+                    HeldAt = now.AddDays(-1)
+                });
+                await context.SaveChangesAsync();
+            }
+
+            // ── Escrow: Completed booking (Booking 2) → Released escrow + Invoice ─
+            var completedBooking = bookings.FirstOrDefault(b => b.Status == BookingStatus.Completed);
+            if (completedBooking != null && !await context.Escrows.AnyAsync(e => e.BookingId == completedBooking.Id))
+            {
+                var releaseTx = new Transaction
+                {
+                    FromWalletId = c2Wallet?.Id,
+                    ToWalletId = t2Wallet?.Id,
+                    Amount = 350m, Fee = 0, Currency = "EGP",
+                    Type = TransactionType.Transfer,
+                    Status = TransactionStatus.Completed,
+                    CreatedAt = now.AddDays(-3)
+                };
+                await context.Transactions.AddAsync(releaseTx);
+                await context.SaveChangesAsync();
+
+                var escrow = new Escrow
+                {
+                    BookingId = completedBooking.Id,
+                    WalletId = c2Wallet?.Id ?? c1Wallet.Id,
+                    Amount = 350m,
+                    Status = EscrowStatus.Released,
+                    HeldAt = now.AddDays(-4),
+                    ReleasedAt = now.AddDays(-3)
+                };
+                await context.Escrows.AddAsync(escrow);
+                await context.SaveChangesAsync();
+
+                // ── Invoice for the completed booking ──────────────────────────────
+                if (!await context.Invoices.AnyAsync(i => i.BookingId == completedBooking.Id))
+                {
+                    await context.Invoices.AddAsync(new Invoice
+                    {
+                        BookingId = completedBooking.Id,
+                        TransactionId = releaseTx.Id,
+                        CustomerId = completedBooking.CustomerId,
+                        TechnicianId = completedBooking.TechnicianId,
+                        Amount = 350m,
+                        Tax = 0,
+                        TotalAmount = 350m,
+                        Status = InvoiceStatus.Paid,
+                        IssuedAt = now.AddDays(-3),
+                        PaidAt = now.AddDays(-3)
+                    });
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
     }
+}

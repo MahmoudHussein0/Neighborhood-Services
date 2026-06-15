@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Signal, signal, viewChildren, WritableSignal } from '@angular/core';
+import { Component, contentChild, ElementRef, inject, Signal, signal, viewChild, viewChildren, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -6,10 +6,11 @@ import { Subscription } from 'rxjs';
 import { Time12Pipe } from '../../../../../shared/pipes/time12-pipe';
 import { Availiability } from '../../../models/availiability';
 import { AvailabilityService } from '../../../services/availability.service';
+import { DeleteComponent } from "../../../../../shared/components/delete/delete.component";
 
 @Component({
   selector: 'app-availiability',
-  imports: [TranslatePipe, Time12Pipe, ReactiveFormsModule],
+  imports: [TranslatePipe, Time12Pipe, ReactiveFormsModule, DeleteComponent],
   templateUrl: './availiability.component.html',
   styleUrl: './availiability.component.css',
 })
@@ -21,11 +22,16 @@ export class AvailiabilityComponent {
 
 
   availiabilityId!: number;
+  deleteSuccess = signal(false);
   loadFlag: WritableSignal<boolean> = signal<boolean>(false);
   $Sub: Subscription = new Subscription();
   availabilities: WritableSignal<Availiability[]> = signal<Availiability[]>([]);
   existingAvailiability: Availiability | null = null;
-  closBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
+  closBtn: Signal<ElementRef<any> | undefined> = viewChild<ElementRef>('closeBtn');
+
+  deleteModal = viewChild(DeleteComponent);
+
+
   mode: 'add' | 'edit' = 'add';
 
   form = this.fb.group({
@@ -78,31 +84,28 @@ export class AvailiabilityComponent {
           value.startTime === this.existingAvailiability?.startTime &&
           value.endTime === this.existingAvailiability?.endTime;
         if (hasChanged) {
-          this.toastrService.info('No changes detected', 'NS');
           this.closeModal();
           return;
         }
         this.$Sub = this.availabilityService.updateAvailability(this.existingAvailiability?.id, this.form.value).subscribe({
           next: (res => {
-            this.toastrService.success('Availiability updated successfully', 'NS');
+            this.toastrService.success('Availiability updated successfully');
             this.closeModal();
             this.getAvailability();
           }),
           error: (err => {
             console.log(err);
-            this.toastrService.error(err.error.detail, 'NS');
           })
         })
       }
       else {
         this.$Sub = this.availabilityService.addAvailability(this.form.value).subscribe({
           next: (res => {
-            this.toastrService.success("Availiability added Successfully", 'NS');
+            this.toastrService.success("Availiability added Successfully");
             this.getAvailability();
             this.closeModal();
           }),
           error: (err => {
-            this.toastrService.error(err.error.detail, 'NS');
           })
         })
       }
@@ -119,7 +122,7 @@ export class AvailiabilityComponent {
         console.log(res);
         this.toastrService.show("Your Availiability is deleted ")
         this.getAvailability();
-        this.closeModal();
+        this.deleteModal()?.close();
       }),
       error: (err => {
         console.log(err);
@@ -129,7 +132,7 @@ export class AvailiabilityComponent {
 
 
   closeModal(): void {
-    this.closBtn().forEach(btn => btn.nativeElement.click());
+    this.closBtn()?.nativeElement.click();
   }
 
 

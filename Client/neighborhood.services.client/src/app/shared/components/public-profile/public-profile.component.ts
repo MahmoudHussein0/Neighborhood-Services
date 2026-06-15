@@ -6,10 +6,11 @@ import { PublicProfileService } from '../../services/public-profile.service';
 import { PublicProfile } from '../../../core/models/public-profile.model';
 import { environment } from '../../../environments/environment';
 import { googleMapsUrl } from '../../../core/utils/maps.util';
+import { FavoriteButtonComponent } from '../../../features/customer/components/favorite-button/favorite-button.component';
 
 @Component({
   selector: 'app-public-profile',
-  imports: [DatePipe, DecimalPipe, TranslatePipe],
+  imports: [DatePipe, DecimalPipe, TranslatePipe, FavoriteButtonComponent],
   templateUrl: './public-profile.component.html',
   styleUrl: './public-profile.component.css',
 })
@@ -23,6 +24,8 @@ export class PublicProfileComponent implements OnInit {
   profile = signal<PublicProfile | null>(null);
   avatarError = signal(false);
   reviewPhotoErrors = signal<Set<number>>(new Set());
+  // The route :id is the technician's id; only set when a customer is viewing a technician.
+  technicianId = signal<number | null>(null);
 
   protected readonly mapsUrl = googleMapsUrl;
 
@@ -37,6 +40,9 @@ export class PublicProfileComponent implements OnInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const role = this.route.snapshot.data['role'] as 'technician' | 'customer';
+
+    // A technician profile is only ever viewed from the customer layout → safe to favorite.
+    if (role === 'technician') this.technicianId.set(id);
 
     const request$ =
       role === 'technician' ? this.service.getTechnician(id) : this.service.getCustomer(id);

@@ -1,5 +1,8 @@
-﻿using Neighborhood.Services.Application.Customers.Interfaces;
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
@@ -10,26 +13,32 @@ using System.Text;
 
 namespace Neighborhood.Services.Application.RecurringBookings.Commands.CancelRecurring
 {
-    public class CancelRecurringBookingCommandHandler
+    public class CancelRecurringBookingCommandHandler : IRequestHandler<CancelRecurringBookingCommand, bool>
     {
         private readonly IRecurringBookingRepository _recurringBookingRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly ITechnicianRepository _technicianRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<CancelRecurringBookingCommandHandler> _logger;
 
         public CancelRecurringBookingCommandHandler(
             IRecurringBookingRepository recurringBookingRepository,
             ICustomerRepository customerRepository,
             ITechnicianRepository technicianRepository,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            INotificationService notificationService,
+            ILogger<CancelRecurringBookingCommandHandler> logger)
         {
             _recurringBookingRepository = recurringBookingRepository;
             _customerRepository = customerRepository;
             _technicianRepository = technicianRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(CancelRecurringBookingCommand request, CancellationToken cancellationToken)
@@ -62,6 +71,31 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CancelRec
 
             await _recurringBookingRepository.UpdateAsync(recurringBooking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the other party that the recurring booking was cancelled — best effort.
+            try
+            {
+                string? otherUserId;
+                if (isCancelledByCustomer)
+                {
+                    var otherTechnician = await _technicianRepository.GetByIdAsync(recurringBooking.TechnicianId);
+                    otherUserId = otherTechnician?.ApplicationUserId;
+                }
+                else
+                {
+                    var otherCustomer = await _customerRepository.GetByIdAsync(recurringBooking.CustomerId);
+                    otherUserId = otherCustomer?.ApplicationUserId;
+                }
+
+                if (!string.IsNullOrEmpty(otherUserId))
+                    await _notificationService.SendNotificationToUser(
+                        otherUserId,
+                        $"Recurring booking #{recurringBooking.Id} was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Cancel-recurring-booking notification failed for recurring booking {Id}.", recurringBooking.Id);
+            }
 
             return true;
         }

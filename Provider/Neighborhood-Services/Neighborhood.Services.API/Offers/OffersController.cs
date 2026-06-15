@@ -36,11 +36,13 @@ namespace Neighborhood.Services.API.Offers
         }
 
         // POST /api/offers/{id}/accept  (customer accepts an offer → creates confirmed booking)
-        // Returns the new booking id
+        // Optional body { promoCode } discounts the offer price before escrow. Returns the new booking id.
         [HttpPost("{id:int}/accept")]
-        public async Task<IActionResult> Accept(int id)
+        public async Task<IActionResult> Accept(int id, [FromBody] AcceptOfferCommand? command = null)
         {
-            var bookingId = await _mediator.Send(new AcceptOfferCommand { OfferId = id });
+            command ??= new AcceptOfferCommand();
+            command.OfferId = id;
+            var bookingId = await _mediator.Send(command);
             return Ok(new { bookingId });
         }
 

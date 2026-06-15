@@ -112,9 +112,12 @@
                     </div>
                   </div>
                 </a>
-                <span class="badge rounded-pill" [class.text-bg-success]="tech.isAvailable" [class.text-bg-secondary]="!tech.isAvailable">
-                  {{ (tech.isAvailable ? 'findTech.available' : 'findTech.offline') | translate }}
-                </span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge rounded-pill" [class.text-bg-success]="tech.isAvailable" [class.text-bg-secondary]="!tech.isAvailable">
+                    {{ (tech.isAvailable ? 'findTech.available' : 'findTech.offline') | translate }}
+                  </span>
+                  <app-favorite-button [technicianId]="tech.id" />
+                </div>
               </div>
 
               <!-- Specialties -->

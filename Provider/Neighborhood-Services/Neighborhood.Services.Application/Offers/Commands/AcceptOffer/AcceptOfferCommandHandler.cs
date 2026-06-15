@@ -7,6 +7,8 @@ using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.Interfaces;
+using Neighborhood.Services.Application.PromoCodes.Commands.ApplyPromoCode;
+using Neighborhood.Services.Application.PromoCodes.Interface;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
@@ -28,6 +30,8 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITechnicianRepository _technicianRepository;
         private readonly INotificationService _notificationService;
+        private readonly IPromoCodeRepository _promoCodeRepository;
+        private readonly IPromoCodeUsageRepository _promoCodeUsageRepository;
         private readonly ILogger<AcceptOfferCommandHandler> _logger;
 
         public AcceptOfferCommandHandler(
@@ -40,6 +44,8 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             IUnitOfWork unitOfWork,
             ITechnicianRepository technicianRepository,
             INotificationService notificationService,
+            IPromoCodeRepository promoCodeRepository,
+            IPromoCodeUsageRepository promoCodeUsageRepository,
             ILogger<AcceptOfferCommandHandler> logger)
         {
             _offerRepository = offerRepository;
@@ -51,6 +57,8 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             _unitOfWork = unitOfWork;
             _technicianRepository = technicianRepository;
             _notificationService = notificationService;
+            _promoCodeRepository = promoCodeRepository;
+            _promoCodeUsageRepository = promoCodeUsageRepository;
             _logger = logger;
         }
 
@@ -86,11 +94,33 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             if (hasOverlap)
                 throw new ConflictException("The technician is no longer available at the proposed time.");
 
+            // Price the (optional) promo up front so the balance check below reflects what the
+            // customer will actually pay, and so an invalid/expired/used/maxed code fails fast
+            // BEFORE the booking is created. The authoritative discount + usage recording still
+            // happens in ApplyPromoCode after the booking is saved (single place that mutates).
+            var effectivePrice = offer.Price;
+            if (!string.IsNullOrWhiteSpace(request.PromoCode))
+            {
+                var code = request.PromoCode.Trim();
+
+                if (!await _promoCodeRepository.IsValidAsync(code))
+                    throw new BadRequestException($"Promo code '{code}' is invalid or expired.");
+
+                var promo = await _promoCodeRepository.GetByCodeAsync(code)
+                    ?? throw new BadRequestException($"Promo code '{code}' not found.");
+
+                if (await _promoCodeUsageRepository.HasUserUsedPromoAsync(userId, promo.Id))
+                    throw new BadRequestException("You have already used this promo code.");
+
+                var discount = Math.Round(offer.Price * promo.DiscountPercentage / 100, 2);
+                effectivePrice = Math.Max(0, offer.Price - discount);
+            }
+
             // Fail fast on insufficient funds before creating the booking, so the
             // escrow step (run after the booking is saved) is very unlikely to fail.
             var customerWallet = await _walletRepository.GetByUserIdAsync(serviceRequest.Customer.ApplicationUserId)
                 ?? throw new NotFoundException("Wallet", serviceRequest.Customer.ApplicationUserId);
-            if (customerWallet.Balance < offer.Price)
+            if (customerWallet.Balance < effectivePrice)
                 throw new BadRequestException("Insufficient wallet balance to confirm this booking.");
 
             var booking = new Booking
@@ -106,7 +136,9 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
                 ScheduledAt = offer.ScheduledAt,
                 DurationMinutes = offer.EstimatedDuration,
                 EstimatedPrice = offer.Price,
-                FinalPrice = 0,
+                // FinalPrice is the canonical "what the customer pays" — seeded from the offer
+                // and discounted below if a promo code is supplied. Escrow is held at FinalPrice.
+                FinalPrice = offer.Price,
                 Status = BookingStatus.Confirmed,
                 Location = serviceRequest.Location,
                 CreatedAt = DateTime.UtcNow,
@@ -160,12 +192,24 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
                 throw new ConflictException("The technician is no longer available at the proposed time.");
             }
 
+            // Optional promo code: now that the booking is persisted (has an Id), discount its
+            // FinalPrice and record usage atomically before the escrow is held below.
+            if (!string.IsNullOrWhiteSpace(request.PromoCode))
+            {
+                await _mediator.Send(new ApplyPromoCodeCommand
+                {
+                    Code = request.PromoCode,
+                    UserId = userId,
+                    BookingId = booking.Id
+                }, cancellationToken);
+            }
+
             // Hold the customer's payment in escrow (manages its own transaction).
             await _mediator.Send(new CreateEscrowCommand
             {
                 BookingId = booking.Id,
                 WalletId = customerWallet.Id,
-                Amount = booking.EstimatedPrice
+                Amount = booking.FinalPrice
             }, cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
 

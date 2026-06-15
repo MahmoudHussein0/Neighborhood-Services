@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgbModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,12 +16,13 @@ import { RaiseDisputeModalComponent } from '../../components/raise-dispute-modal
 import { LeaveReviewModalComponent } from '../../components/leave-review-modal/leave-review-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
+import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
 type StatusTab = 'All' | BookingStatus;
 
 @Component({
   selector: 'app-bookings',
-  imports: [DatePipe, CurrencyPipe, NgbDropdownModule, TranslatePipe],
+  imports: [DatePipe, CurrencyPipe, FormsModule, NgbDropdownModule, TranslatePipe],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.css',
 })
@@ -30,6 +32,7 @@ export class BookingsComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
   private readonly confirmDialog = inject(ConfirmService);
+  private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: StatusTab[] = ['All', 'Pending', 'Quoted', 'Confirmed', 'Completed', 'Cancelled', 'Disputed'];
   readonly pageSize = 10;
@@ -40,6 +43,9 @@ export class BookingsComponent implements OnInit {
   searchTerm = signal('');
   page = signal(1);
   busyId = signal<number | null>(null);
+
+  // Optional promo code entered inline on a Quoted booking, keyed by booking id.
+  quotePromo = signal<Record<number, string>>({});
 
   protected readonly mapsUrl = googleMapsUrl;
 
@@ -53,6 +59,11 @@ export class BookingsComponent implements OnInit {
         this.page.set(1);
         this.load();
       });
+
+    // Refresh the list when a realtime notification arrives (e.g. quote received, booking completed).
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.load());
   }
 
   ngOnInit() {
@@ -125,7 +136,12 @@ export class BookingsComponent implements OnInit {
       });
   }
 
+  setQuotePromo(id: number, value: string) {
+    this.quotePromo.update((m) => ({ ...m, [id]: value }));
+  }
+
   acceptQuote(b: MyBookingSummary) {
+    const promo = (this.quotePromo()[b.id] ?? '').trim();
     this.confirmDialog
       .confirm({
         messageKey: 'bookings.acceptQuotePrompt',
@@ -136,7 +152,7 @@ export class BookingsComponent implements OnInit {
       .then((ok) => {
         if (!ok) return;
         this.busyId.set(b.id);
-        this.bookingService.acceptQuote(b.id).subscribe({
+        this.bookingService.acceptQuote(b.id, promo || null).subscribe({
           next: () => {
             this.busyId.set(null);
             this.toastr.success(this.translate.instant('bookings.quoteAccepted'));

@@ -1,0 +1,106 @@
+<div class="tech-reviews" dir="rtl">
+
+  <!-- Header + average rating gauge -->
+  <header class="header">
+    <div class="header-text">
+      <h2 class="title">تقييماتك المعتمدة</h2>
+      <p class="subtitle">
+        دي التقييمات اللي عملها العملاء بعد انتهاء الخدمة، وتمت مراجعتها واعتمادها من فريق الإدارة.
+      </p>
+    </div>
+
+    <div class="gauge">
+      <svg
+        viewBox="0 0 200 115"
+        class="gauge-svg"
+        role="img"
+        [attr.aria-label]="'Average rating ' + averageRatingLabel() + ' out of 5'"
+      >
+        <path [attr.d]="gaugeBackgroundPath" class="gauge-track"></path>
+        <path [attr.d]="gaugeProgressPath()" class="gauge-progress"></path>
+
+        <line
+          *ngFor="let tick of gaugeTicks"
+          [attr.x1]="tick.x1"
+          [attr.y1]="tick.y1"
+          [attr.x2]="tick.x2"
+          [attr.y2]="tick.y2"
+          class="gauge-tick"
+        ></line>
+
+        <line
+          [attr.x1]="100"
+          [attr.y1]="100"
+          [attr.x2]="gaugeNeedleEnd().x"
+          [attr.y2]="gaugeNeedleEnd().y"
+          class="gauge-needle"
+        ></line>
+
+        <circle cx="100" cy="100" r="5" class="gauge-pivot"></circle>
+      </svg>
+
+      <div class="gauge-readout">
+        <span class="gauge-value">{{ averageRatingLabel() }}</span>
+        <span class="gauge-caption">من 5 - بناءً على {{ reviews().length }} تقييم</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- States: loading / no-user / error / empty -->
+  <div class="state loading" *ngIf="status() === 'loading'">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>جاري تحميل تقييماتك...</span>
+  </div>
+
+  <div class="state info" *ngIf="status() === 'no-user'">
+    <p class="state-title">معرف المستخدم غير متاح</p>
+    <p class="state-text">
+      مش قادرين نحدد حساب التيكنيشن الحالي. تأكد إنك مسجل دخول وحاول تاني.
+    </p>
+  </div>
+
+  <div class="state info" *ngIf="status() === 'error'">
+    <p class="state-title">حدث خطأ في تحميل التقييمات</p>
+    <p class="state-text">تعذر الاتصال بالسيرفر، تأكد من اتصالك بالإنترنت وحاول تاني.</p>
+  </div>
+
+  <div class="state info" *ngIf="status() === 'empty'">
+    <p class="state-title">لسه معندك تقييمات معتمدة</p>
+    <p class="state-text">
+      بعد ما يعمل العميل تقييم على إحدى الخدمات اللي قدمتها، وتتم مراجعته من الإدارة، هيظهر هنا.
+    </p>
+  </div>
+
+  <!-- Reviews grid -->
+  <div class="reviews-grid" *ngIf="status() === 'success'">
+    <article class="review-card" *ngFor="let review of reviews(); trackBy: trackById">
+      <header class="review-head">
+        <div class="reviewer">
+          <div class="avatar">
+            <span *ngIf="!review.reviewerLoading">{{ initial(review.reviewerName) }}</span>
+            <span class="spinner small" *ngIf="review.reviewerLoading" aria-hidden="true"></span>
+          </div>
+          <div class="reviewer-meta">
+            <p class="reviewer-name">
+              {{ review.reviewerLoading ? 'جاري تحميل الاسم...' : (review.reviewerName || 'عميل') }}
+            </p>
+            <p class="review-date">{{ formatDate(review.createdAt) }}</p>
+          </div>
+        </div>
+
+        <div class="stars" aria-hidden="true">
+          <span class="star" *ngFor="let filled of stars(review.rating)" [class.filled]="filled">★</span>
+        </div>
+      </header>
+
+      <div class="booking-line">
+        <span class="booking-label">الخدمة:</span>
+        <span>
+          {{ review.bookingLoading ? 'جاري تحميل تفاصيل البوكينج...' : (review.bookingDescription || 'بدون تفاصيل') }}
+        </span>
+      </div>
+
+      <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+    </article>
+  </div>
+</div>

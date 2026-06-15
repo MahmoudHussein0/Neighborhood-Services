@@ -1,5 +1,4 @@
-export
-    interface ProblemType {
+export interface ProblemType {
     name: string;
     description: string;
     minPrice: number;

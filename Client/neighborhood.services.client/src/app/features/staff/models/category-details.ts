@@ -8,7 +8,11 @@ export interface CategoryDetails {
 export interface ProblemTypes {
     id: number;
     name: string;
+    nameAr: string,
+    nameEn: string,
     description: string;
+    descriptionEn: string;
+    descriptionAr: string;
     minPrice: number;
     maxPrice: number;
     imageUrl: string;

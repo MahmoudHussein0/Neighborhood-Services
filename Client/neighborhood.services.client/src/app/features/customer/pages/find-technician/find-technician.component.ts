@@ -10,12 +10,13 @@ import { TechnicianCard, TechnicianCardCategory } from '../../../../core/models/
 import { CreateRecurringBookingModalComponent } from '../../components/create-recurring-booking-modal/create-recurring-booking-modal.component';
 import { CreateBookingModalComponent } from '../../components/create-booking-modal/create-booking-modal.component';
 import { SmartMatchModalComponent, SmartMatchChoice } from '../../components/smart-match-modal/smart-match-modal.component';
+import { FavoriteButtonComponent } from '../../components/favorite-button/favorite-button.component';
 
 type SortBy = 'rating' | 'available';
 
 @Component({
   selector: 'app-find-technician',
-  imports: [TranslatePipe, DecimalPipe, RouterLink],
+  imports: [TranslatePipe, DecimalPipe, RouterLink, FavoriteButtonComponent],
   templateUrl: './find-technician.component.html',
 })
 export class FindTechnicianComponent implements OnInit {

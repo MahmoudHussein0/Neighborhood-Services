@@ -21,8 +21,6 @@ namespace Neighborhood.Services.Application.Categories.Commands
         public async Task<int> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
         {
 
-            //var result = await _categoryRepo.IsNameExistsAsync(request.NameEn, request.NameAr);
-
             var category = (await _categoryRepo.GetByConditionAsync(c => c.NameEn.Trim().ToLower() == request.NameEn.Trim().ToLower() || c.NameAr.Trim() == request.NameAr.Trim())).FirstOrDefault();
 
             if (category is not null &&  !category.IsDeleted)
@@ -35,6 +33,7 @@ namespace Neighborhood.Services.Application.Categories.Commands
                 category.NameAr = request.NameAr;
                 category.NameEn = request.NameEn;
                 category.Icon = request.Icon;
+                category.Image = request?.Image;
                 category.IsDeleted = false;
                 await _categoryRepo.UpdateAsync(category);
 
@@ -47,6 +46,7 @@ namespace Neighborhood.Services.Application.Categories.Commands
                 Icon = request.Icon!,
                 NameEn = request.NameEn,
                 NameAr = request.NameAr,
+                Image = request?.Image
             };
 
             await _categoryRepo.AddAsync(category);

@@ -23,8 +23,7 @@
 
                     <div>
                         <h6 class="fw-semibold mb-1">
-                            {{ exception.date | date:'EEEE, MMM d, y' }}
-                        </h6>
+                            {{ exception.date | date:'EEEE, MMM d, y':'': currentLang }} </h6>
 
                         <p class="text-muted mb-2 small">
                             {{ exception.reason }}
@@ -50,7 +49,7 @@
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
-                            <button (click)="  exceptionId =  exception.id  "
+                            <button (click)="  exceptionId = exception.id  "
                                 class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="modal"
                                 data-bs-target="#deleteExceptionModal">
                                 <i class="bi bi-trash"></i>
@@ -66,8 +65,6 @@
             <p class=" p-5 bg-danger-subtle text-black border fw-bold rounded-1  text-center"> {{
                 "exception.noException" |
                 translate}} </p>
-
-
             }
 
         </div>
@@ -87,7 +84,6 @@
             <div class="modal-body">
 
                 <form [formGroup]="exceptionForm">
-
                     <div class="mb-3">
                         <label class="form-label">{{"exception.date" |translate}}</label>
                         <input type="date" class="form-control" formControlName="date">
@@ -96,7 +92,7 @@
                         @if(date?.getError('required') && date?.touched )
                         {
                         <small class="text-danger">
-                            {{ "availiability.dateIsRequired" | translate }}
+                            {{ "exception.dateIsRequired" | translate }}
                         </small>
                         }
                     </div>
@@ -141,21 +137,18 @@
 
 
 
-<div class="modal fade" id="deleteExceptionModal">
-    <div class="modal-dialog">
-        <div class="modal-content modal-dark text-center">
-            <div class="modal-body p-4">
-                <h5 class="text-black mb-3">{{"staffCategory.deleteCategory" |translate}}</h5>
-                <p class="text-black opacity-75">
-                    {{"staffCategory.thisActionCannotBeUndone" |translate}}
-                </p>
-                <button #closeBtn class="btn btn-secondary me-2" data-bs-dismiss="modal">
-                    {{"staffCategory.close" |translate}}
-                </button>
-                <button class="btn btn-danger me-3" (click)="confirmDelete()">
-                    {{"staffCategory.delete" |translate}}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
+
+
+
+
+
+
+<app-delete modalId="deleteExceptionModal">
+    <h5 class="text-black mb-3">{{"exception.deleteException" |translate}}</h5>
+    <button class="btn btn-danger me-3" (click)="confirmDelete()">
+        {{"exception.delete" |translate}}
+    </button>
+</app-delete>

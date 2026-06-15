@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
@@ -14,17 +16,23 @@ namespace Neighborhood.Services.Application.Offers.Commands.RejectOffer
         private readonly IServiceRequestRepository _serviceRequestRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<RejectOfferCommandHandler> _logger;
 
         public RejectOfferCommandHandler(
             IOfferRepository offerRepository,
             IServiceRequestRepository serviceRequestRepository,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            INotificationService notificationService,
+            ILogger<RejectOfferCommandHandler> logger)
         {
             _offerRepository = offerRepository;
             _serviceRequestRepository = serviceRequestRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(RejectOfferCommand request, CancellationToken cancellationToken)
@@ -50,6 +58,19 @@ namespace Neighborhood.Services.Application.Offers.Commands.RejectOffer
             offer.Status = OfferStatus.Rejected;
             await _offerRepository.UpdateAsync(offer);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Notify the technician their offer was rejected — best effort.
+            try
+            {
+                if (!string.IsNullOrEmpty(offer.Technician?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        offer.Technician.ApplicationUserId,
+                        $"Your offer on service request #{serviceRequest.Id} was rejected.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Reject-offer notification failed for offer {Id}.", offer.Id);
+            }
 
             return true;
         }

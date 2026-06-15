@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Invoices.DTOs;
 using Neighborhood.Services.Application.Invoices.Interfaces;
 namespace Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByBookingId
@@ -27,6 +27,9 @@ namespace Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByBooking
                 Amount = invoice.Amount,
                 Tax = invoice.Tax,
                 TotalAmount = invoice.TotalAmount,
+                BaseAmount = invoice.BaseAmount,
+                DiscountAmount = invoice.DiscountAmount,
+                PromoCodeApplied = invoice.PromoCodeApplied,
                 Status = invoice.Status,
                 IssuedAt = invoice.IssuedAt,
                 PaidAt = invoice.PaidAt,

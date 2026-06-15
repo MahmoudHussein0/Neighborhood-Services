@@ -14,6 +14,12 @@ namespace Neighborhood.Services.Domain.Invoices
         public decimal Amount { get; set; }
         public decimal Tax { get; set; }
         public decimal TotalAmount { get; set; }
+        /// <summary>Original price before any promo code was applied.</summary>
+        public decimal BaseAmount { get; set; }
+        /// <summary>Amount saved via promo code (0 if no promo code was used).</summary>
+        public decimal DiscountAmount { get; set; }
+        /// <summary>The promo code string that was applied, e.g. "WELCOME10". Null if none.</summary>
+        public string? PromoCodeApplied { get; set; }
         public Booking Booking { get; set; } = null!;
         public Transaction? Transaction { get; set; }
         public Customer Customer { get; set; } = null!;

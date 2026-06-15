@@ -11,6 +11,9 @@ namespace Neighborhood.Services.Application.Invoices.DTOs
         public decimal Amount { get; set; }
         public decimal Tax { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal BaseAmount { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public string? PromoCodeApplied { get; set; }
         public InvoiceStatus Status { get; set; }
         public DateTime IssuedAt { get; set; }
         public DateTime? PaidAt { get; set; }

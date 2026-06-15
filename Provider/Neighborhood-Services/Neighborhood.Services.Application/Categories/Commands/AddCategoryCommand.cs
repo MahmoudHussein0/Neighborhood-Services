@@ -13,5 +13,6 @@ namespace Neighborhood.Services.Application.Categories.Commands
         public string NameEn  { get; set; }
         public string NameAr  { get; set; }
         public string Icon  { get; set; }
+        public string? Image  { get; set; }
     }
 }

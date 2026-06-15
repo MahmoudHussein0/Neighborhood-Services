@@ -35,8 +35,8 @@ export class CategoriesService {
   }
 
 
-  getCategoryDetails(id: number, lang: string): Observable<any> {
-    return this.apiService.get(`/Categories/${id}?lang=${lang}`)
+  getCategoryDetails(id: number): Observable<any> {
+    return this.apiService.get(`/Categories/${id}`)
   }
 
 
