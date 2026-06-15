@@ -3,6 +3,7 @@ import { Observable, map } from 'rxjs';
 import { FavoritesService } from './favorites.service';
 import { FavoriteItem } from '../models/favorite-item';
 
+
 /**
  * Holds the signed-in customer's favorite technicians as a shared signal, so every
  * favorite button on a page reflects (and updates) the same state without each card
@@ -24,10 +25,15 @@ export class FavoritesStore {
       error: () => (this.loaded = false), // allow a later card to retry
     });
   }
-
-  isFavorite(technicianId: number): boolean {
+  
+   isFavorite(technicianId: number): boolean {
+   
     return this.items().some((f) => f.technicianId === technicianId);
+   
   }
+  
+    
+  
 
   /** Adds or removes the technician; emits the resulting state (true = now favorited). */
   toggle(technicianId: number): Observable<boolean> {

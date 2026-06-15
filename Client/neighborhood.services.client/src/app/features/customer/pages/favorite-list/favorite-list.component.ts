@@ -2,10 +2,14 @@ import { Component ,signal,OnInit} from '@angular/core';
 import { FavoritesService } from '../../services/favorites.service';
 import { FavoriteItem } from '../../models/favorite-item';
 import { NgClass,CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-favorite-list',
-  imports: [CommonModule, NgClass ],
+  imports: [CommonModule, NgClass,TranslatePipe,RouterLink, RouterLinkActive ],
   templateUrl: './favorite-list.component.html',
   styleUrl: './favorite-list.component.css',
 })

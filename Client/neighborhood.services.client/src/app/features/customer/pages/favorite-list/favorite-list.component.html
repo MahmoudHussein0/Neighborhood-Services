@@ -7,14 +7,14 @@
 
   <h2 class="mb-4 text-center">
     <i class="bi bi-heart-fill me-2"></i>
-    المفضلة
+    {{'favs.favorite' | translate}}
   </h2>
 
   <div *ngIf="favs.length === 0" class="text-center text-muted mt-5">
-    <h5>لا عناصر مفضلة حتى الآن</h5>
-    <p>الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا.</p>
+    <h5>{{'favs.empty' | translate}}</h5>
+    <p>{{'favs.emptyMessage' | translate}}</p>
     <div>
-      <button class="btn btn-success" >! تصفح الخدمات</button>
+      <button class="btn btn-success" routerLink="/customer/find-technician" routerLinkActive="active">{{'favs.browseCTA' | translate}}</button>
     </div>
   </div>
 
