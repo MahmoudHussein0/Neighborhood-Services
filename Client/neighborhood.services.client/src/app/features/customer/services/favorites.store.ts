@@ -16,6 +16,10 @@ export class FavoritesStore {
   private readonly items = signal<FavoriteItem[]>([]);
   private loaded = false;
 
+  ngOnInit() {
+    this.ensureLoaded();
+  }
+
   /** Lazily fetch the customer's favorites once. Safe to call from every card. */
   ensureLoaded(): void {
     if (this.loaded) return;
