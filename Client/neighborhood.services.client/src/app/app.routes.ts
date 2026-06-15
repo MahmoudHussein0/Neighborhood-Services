@@ -127,29 +127,6 @@ export const routes: Routes = [
     data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
     children: [
       { path: '', component: StaffDashboardComponent },
-
-      // Existing
-      { path: 'bookings', component: StaffBookingsComponent },
-      { path: 'flagged-requests', component: FlaggedRequestsComponent },
-      { path: 'users', component: StaffUsersComponent },
-      { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
-      { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
-      { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
-
-      { path: '**', redirectTo: '' }
-    ]
-  },
-
-
-
-  {
-    path: 'staff',
-    component: StaffLayoutComponent,
-    canActivate: [authGuard, roleGuard],
-    canActivateChild: [authGuard, roleGuard],
-    data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
-    children: [
-      { path: '', component: StaffDashboardComponent },
       { path: 'bookings', component: StaffBookingsComponent },
       { path: 'flagged-requests', component: FlaggedRequestsComponent },
       { path: 'users', component: StaffUsersComponent },

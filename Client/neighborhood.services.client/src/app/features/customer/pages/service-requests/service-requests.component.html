@@ -10,7 +10,7 @@
         [value]="searchTerm()"
         (input)="onSearchInput($any($event.target).value)" />
     </div>
-    <button class="btn btn-primary" (click)="postRequest()">
+    <button class="btn btn-post" (click)="postRequest()">
       <i class="bi bi-plus-lg me-1"></i> {{ 'serviceRequests.post' | translate }}
     </button>
   </div>

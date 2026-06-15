@@ -180,7 +180,9 @@
         "reviewsTitle": "Reviews",
         "noReviews": "No reviews yet.",
         "anonymous": "Anonymous",
-        "loadError": "Could not load this profile."
+        "loadError": "Could not load this profile.",
+        "galleryTitle": "Gallery",
+        "galleryEmpty": "Gallery is empty."
     },
     "reindex": {
         "confirmTitle": "Reindex knowledge base?",

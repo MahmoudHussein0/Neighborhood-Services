@@ -180,7 +180,9 @@
         "reviewsTitle": "المراجعات",
         "noReviews": "لا توجد مراجعات بعد.",
         "anonymous": "مجهول",
-        "loadError": "تعذّر تحميل هذا الملف الشخصي."
+        "loadError": "تعذّر تحميل هذا الملف الشخصي.",
+        "galleryTitle": "معرض الأعمال",
+        "galleryEmpty": "المعرض فارغ."
     },
     "reindex": {
         "confirmTitle": "إعادة فهرسة قاعدة المعرفة؟",
