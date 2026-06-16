@@ -8,6 +8,8 @@ import { computed, NgModule,  inject, Signal, NgZone } from '@angular/core';
 import { MessageDto } from '../../../../core/models/message-dto';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 
 
@@ -61,7 +63,7 @@ private ngZone = inject(NgZone);
 
 
   constructor(private conversationService: ConversationService,
-    private chatService: ChatService, private messagesService: MessagesService) {
+    private chatService: ChatService, private messagesService: MessagesService,private cdr: ChangeDetectorRef) {
       this.isLoading = signal(false);
     this.AllMessagesForBooking = this.chatService.AllMessagesForBooking;
     this.CurrentConversationMessages=this.AllMessagesForBooking;
@@ -195,12 +197,13 @@ getMyId(): void {
         next: () => {
           this.ngZone.run(() => {  
             console.log("message sent!");
-            
-            this.ngZone.run(() => {
+             this.MessageToBeSent.content = '';
+        this.cdr.detectChanges();
+            // this.ngZone.run(() => {
+           
               
-              
-                    //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
-                });
+            //         //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
+            //     });
             //this.AllMessagesForBooking().push(this.MessageToBeSent);
              this.isLoading.set(false);
              
