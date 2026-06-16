@@ -1,5 +1,6 @@
 ﻿using Neighborhood.Services.Application.Notifications.Push_inApp.DTOs;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,9 @@ namespace Neighborhood.Services.Application.Notifications.Services
         public Task<PushNotificationDto> SendNotificationToTechnician(string mssg);
 
         public  Task<PushNotificationDto> SendNotificationToCustomer(string mssg);
+
+        public Task<PushNotificationDto> SendDirectiveNotificationToUser(string userId, string mssg, NotificationTypes type);
+
 
 
     }

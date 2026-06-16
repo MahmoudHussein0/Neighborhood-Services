@@ -12,6 +12,7 @@ namespace Neighborhood.Services.Application.Notifications.Push_inApp.DTOs
         public string UserId { get; set; } // who will see this
                                            // 
         public int refId { set; get; }
+        public string type { set; get; }
         public DateTime CreatedDate { get; set; }
     }
 }

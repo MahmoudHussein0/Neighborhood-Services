@@ -7,6 +7,7 @@ using Neighborhood.Services.Application.Notifications.Push_inApp.DTOs;
 using Neighborhood.Services.Application.Notifications.Push_inApp.Queries;
 using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Notifications;
 using Neighborhood.Services.Infrastructure.Services.NotificationService;
 using System.Drawing;
 using System.Net.NetworkInformation;
@@ -44,6 +45,13 @@ namespace Neighborhood.Services.API.Controllers.Notification
         public async Task<ActionResult> CreateNotificationToUser(string id,string mssg)
         {
             var result = await _service.SendNotificationToUser(id, mssg);
+            return Ok(result);
+        }
+
+        [HttpPost("SendingDirectiveToAUserById/{id}")]
+        public async Task<ActionResult> CreateDirectiveNotificationToUser(string id, string mssg, NotificationTypes type)
+        {
+            var result = await _service.SendDirectiveNotificationToUser(id, mssg, type);
             return Ok(result);
         }
 

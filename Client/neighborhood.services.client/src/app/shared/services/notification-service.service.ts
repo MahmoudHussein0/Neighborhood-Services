@@ -40,16 +40,17 @@ export class NotificationServiceService {
 
     this.hubConnection.on('ReceiveNotification', (data: any) => {  
       console.log("Receving ..")
-      console.log(data);
+      console.log(data.mssg);
       const updated = [data, ...this.notificationsSubject.value];
-       this.toastr.success('New Notification');
+      this.toastr.success(data.mssg);
+      this.toastr.success(data.mssgtype)
       console.log("Updated list: ", updated);
       this.notificationsSubject.next(updated);
       this.notificationReceivedSubject.next(data);
     }); //end of receive function
   }// end of start connection
 
-  GetAllNotifications() {
+  GetAllNotifications() { //for current user
     return this.httpClient.get<NotificationMessage[]>(`${this.baseUrl}/api/Notifications/GetNotificationsOfCurrentUser`);
   }
 

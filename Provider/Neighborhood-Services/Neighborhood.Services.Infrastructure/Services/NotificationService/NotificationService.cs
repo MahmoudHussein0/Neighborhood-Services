@@ -290,7 +290,38 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
                 
             }
 
-        
+        public async Task<PushNotificationDto> SendDirectiveNotificationToUser(string userId, string mssg,NotificationTypes type)
+        {
+            //for real time notifying
+            await _hubContext.Clients.Group($"business-{userId}").SendAsync("ReceiveNotification", new { mssg, mssgtype = type.ToString() });
+
+
+            //for data base retrival
+            var notf = new Notification()
+            {
+                channel = NotificationChannels.push,
+                createdAt = DateTime.UtcNow,
+                message = mssg,
+                IsDeleted = false,
+                isRead = false,
+                UserId = userId,
+                type = type
+            };
+            await _notificationsRepository.AddAsync(notf);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new PushNotificationDto()
+            {
+                Id = notf.Id,
+                UserId = notf.UserId,
+                Message = notf.message,
+                CreatedDate = notf.createdAt,
+                IsRead = notf.isRead,
+            };
+
+
+        }
+
 
         //Customer,
         //Technician,

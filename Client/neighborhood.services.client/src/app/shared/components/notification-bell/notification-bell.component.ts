@@ -8,12 +8,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationMessage } from './../../../core/models/notification-message';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
 
 
 
 @Component({
   selector: 'app-notification-bell',
-  imports: [CommonModule, NgbDropdownModule],
+  imports: [CommonModule, NgbDropdownModule,RouterLink, RouterLinkActive],
   templateUrl: './notification-bell.component.html',
   styleUrl: './notification-bell.component.css',
 
