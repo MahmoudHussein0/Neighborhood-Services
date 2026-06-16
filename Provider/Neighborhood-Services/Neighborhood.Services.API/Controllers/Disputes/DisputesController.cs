@@ -24,7 +24,7 @@ namespace Neighborhood.Services.API.Controllers.Disputes
 
         // GET api/disputes
         [HttpGet]
-  
+        [HasPermission(PermissionType.ManageDisputes)]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllDisputesQuery(), cancellationToken);

@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.SupportTickets.Commands;
 using Neighborhood.Services.Application.SupportTickets.Queries;
+using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Domain.SupportTickets;
 
 namespace Neighborhood.Services.API.Controllers.SupportTickets
@@ -21,6 +23,7 @@ namespace Neighborhood.Services.API.Controllers.SupportTickets
 
         // GET api/supporttickets
         [HttpGet]
+        [HasPermission(PermissionType.ManageTickets)]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllSupportTicketsQuery(), cancellationToken);
@@ -35,6 +38,7 @@ namespace Neighborhood.Services.API.Controllers.SupportTickets
             return Ok(result);
         }
         [HttpGet("{id}/details")]
+        [HasPermission(PermissionType.ManageTickets)]
         public async Task<IActionResult> GetDetails(
     int id,
     CancellationToken cancellationToken)

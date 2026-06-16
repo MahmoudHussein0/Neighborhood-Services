@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.PromoCodes.Commands.ApplyPromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.CreatePromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.DeletePromoCode;
@@ -8,6 +9,7 @@ using Neighborhood.Services.Application.PromoCodes.Queries.GetAllPromoCodes;
 using Neighborhood.Services.Application.PromoCodes.Queries.GetPromoCodeByCode;
 using Neighborhood.Services.Application.PromoCodes.Queries.ValidatePromoCode;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.PromoCodes
 {
@@ -32,8 +34,9 @@ namespace Neighborhood.Services.API.PromoCodes
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        
         [HttpGet]
+        [HasPermission(PermissionType.ManagePromos)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _mediator.Send(new GetAllPromoCodesQuery());
@@ -46,8 +49,8 @@ namespace Neighborhood.Services.API.PromoCodes
             var result = await _mediator.Send(new ValidatePromoCodeQuery { Code = code });
             return Ok(result);
         }
+        [HasPermission(PermissionType.ManagePromos)]
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePromoCodeCommand command)
         {
@@ -66,10 +69,10 @@ namespace Neighborhood.Services.API.PromoCodes
             var result = await _mediator.Send(command);
             return Ok(result);
         }
-
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("{promoCodeId:int}")]
-        public async Task<IActionResult> Delete(int promoCodeId)
+        [HasPermission(PermissionType.ManagePromos)]
+        [HttpDelete("{id}")]
+      
+           public async Task<IActionResult> Delete(int promoCodeId)
         {
             var result = await _mediator.Send(new DeletePromoCodeCommand { PromoCodeId = promoCodeId });
             return Ok(result);

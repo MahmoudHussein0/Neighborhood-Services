@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.BookingImages.Commands;
 using Neighborhood.Services.Application.BookingImages.Queries.GetBookingImagesByTypeQuery;
 using Neighborhood.Services.Application.BookingImages.Queries.GetBookingImagesQuery;
@@ -12,20 +13,21 @@ using Neighborhood.Services.Application.Bookings.Commands.CreateBookingCommands;
 using Neighborhood.Services.Application.Bookings.Commands.QuoteBookingCommands;
 using Neighborhood.Services.Application.Bookings.Commands.RaiseDisputeCommands;
 using Neighborhood.Services.Application.Bookings.Commands.RejectQuoteCommands;
+using Neighborhood.Services.Application.Bookings.Commands.StaffCancelBookingCommands;
+using Neighborhood.Services.Application.Bookings.Queries.EstimateBookingPriceQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetAllBookingsQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingByIdQuery;
-using Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery;
-using Neighborhood.Services.Application.Bookings.Queries.EstimateBookingPriceQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByCustomerQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByRecurringQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByStatusQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByTechnicianQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsForStaffQuery;
+using Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetTechnicianPricingRangeQuery;
-using Neighborhood.Services.Application.Bookings.Commands.StaffCancelBookingCommands;
 using Neighborhood.Services.Application.Matching.Queries;
 using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Bookings
 {
@@ -44,7 +46,7 @@ namespace Neighborhood.Services.API.Bookings
         // ---------- Staff oversight ----------
 
         // GET /api/bookings/staff?status=&search=&page=1&pageSize=10
-        [Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageBookings)]
         [HttpGet("staff")]
         public async Task<IActionResult> GetForStaff(
             [FromQuery] BookingStatus? status,
@@ -63,7 +65,7 @@ namespace Neighborhood.Services.API.Bookings
         }
 
         // POST /api/bookings/{id}/staff-cancel  (admin cancel — no refund/reassign, separate from customer/tech cancel)
-        [Authorize(Roles = "Staff")]
+       
         [HttpPost("{id:int}/staff-cancel")]
         public async Task<IActionResult> StaffCancel(int id, [FromBody] StaffCancelBookingCommand command)
         {
@@ -158,6 +160,7 @@ namespace Neighborhood.Services.API.Bookings
 
         // GET /api/bookings  (admin: all bookings)
         [HttpGet]
+        [HasPermission(PermissionType.ManageBookings)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _mediator.Send(new GetAllBookingsQuery());
