@@ -6,7 +6,7 @@ import { Time12Pipe } from '../../../../../shared/pipes/time12-pipe';
 import { ExceptionService } from '../../../services/exception.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Exception } from '../../../models/exception';
 import { DeleteComponent } from "../../../../../shared/components/delete/delete.component";
 
@@ -33,7 +33,9 @@ export class ExceptionComponent {
 
   closBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
   exceptiomMode: 'edit' | 'add' = 'add';
-  currentLang = localStorage.getItem("lang") || "en";
+
+  destroy$ = new Subject<void>();
+
 
   exceptionForm = this.fb.group({
     date: ['', [Validators.required]],
@@ -49,7 +51,7 @@ export class ExceptionComponent {
 
 
   getException(): void {
-    this.exceptionService.getException().subscribe({
+    this.exceptionService.getException().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res => {
         console.log(res);
         this.exceptions.set(res);
@@ -80,9 +82,9 @@ export class ExceptionComponent {
   saveException(): void {
     console.log(this.existingException?.id);
     const value = this.exceptionForm.value;
-    if (this.exceptionForm.valid) {
-      this.$SubException.unsubscribe();
-      if (this.exceptiomMode === 'edit') {
+
+    if (this.exceptiomMode === 'edit') {
+      if (this.exceptionForm.valid) {
         const hasChanged = this.existingException?.date === value.date &&
           this.existingException?.isAvailable === value.isAvailable &&
           this.existingException?.startTime === value.startTime &&
@@ -92,20 +94,12 @@ export class ExceptionComponent {
           this.closeModal();
           return;
         }
-        this.$SubException = this.exceptionService.updateException(this.existingException?.id, this.exceptionForm.value).subscribe({
-          next: (res => {
-            console.log(res);
-            this.toastrService.success('Exception updates Successfully');
-            this.getException();
-            this.closeModal();
-          }),
-          error: (err => {
-            console.log(err);
 
-          })
-        })
-
+        this.updateException(value);
       }
+
+
+
       else {
         const payload = {
           date: value.date,
@@ -114,17 +108,8 @@ export class ExceptionComponent {
           endTime: value.endTime || null,
           reason: value.reason || null,
         }
-        this.$SubException = this.exceptionService.addException(payload).subscribe({
-          next: (res => {
-            console.log(res);
-            this.toastrService.success("Exception added successfully");
-            this.closeModal();
-            console.log(this.closBtn);
-            this.getException();
-          }), error: (err => {
-            console.log(err);
-          })
-        })
+
+        this.addException(payload);
       }
     } else {
       this.exceptionForm.markAllAsTouched();
@@ -132,6 +117,42 @@ export class ExceptionComponent {
   }
 
 
+  updateException(value: object): void {
+    this.loadFlag.set(true);
+
+    this.exceptionService.updateException(this.existingException?.id, value).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res => {
+        console.log(res);
+        this.toastrService.success('Exception updates Successfully');
+        this.getException();
+        this.closeModal();
+        this.loadFlag.set(false);
+
+      }),
+      error: (err => {
+        console.log(err);
+
+      })
+    })
+
+  }
+
+
+  addException(payload: object): void {
+    this.loadFlag.set(true);
+    this.exceptionService.addException(payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res => {
+        console.log(res);
+        this.toastrService.success("Exception added successfully");
+        this.closeModal();
+        console.log(this.closBtn);
+        this.getException();
+        this.loadFlag.set(false);
+      }), error: (err => {
+        console.log(err);
+      })
+    })
+  }
 
   confirmDelete() {
     console.log(this.exceptionId);
@@ -156,6 +177,10 @@ export class ExceptionComponent {
 
   ngOnDestroy(): void {
     this.$SubException.unsubscribe();
+
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 

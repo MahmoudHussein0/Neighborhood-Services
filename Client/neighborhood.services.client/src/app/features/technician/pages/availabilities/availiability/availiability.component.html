@@ -145,7 +145,8 @@
                     data-bs-dismiss="modal">
                     {{ "availiability.close" | translate }}
                 </button>
-                <button (click)="save(     )" type="button" class="btn btn-success px-4 rounded-3 shadow-sm">
+                <button (click)="save( )" [disabled]="loadFlag()" type="button"
+                    class="btn btn-success px-4 rounded-3 shadow-sm">
                     {{ "availiability.saveChanges" | translate }}
                     @if(loadFlag())
                     {

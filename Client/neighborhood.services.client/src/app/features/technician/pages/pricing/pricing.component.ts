@@ -8,7 +8,7 @@ import { ProblemTypeService } from '../../../../core/services/problem-type.servi
 import { ProblemTypes } from '../../../staff/models/category-details';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../../core/services/lang.service';
 
@@ -30,13 +30,14 @@ export class PricingComponent implements OnInit, OnDestroy {
   pricingId!: number;
   isEditMode: boolean = false;
   existingprice: Pricing | null = null;
-  $Sub: Subscription = new Subscription();
   lang: string | null = localStorage.getItem("lang");
+  loadFlag: WritableSignal<boolean> = signal<boolean>(false);
 
   deleteModal = viewChild(DeleteComponent);
   closeBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
   pricing: WritableSignal<Pricing[]> = signal<Pricing[]>([]);
   problemTypes: WritableSignal<ProblemTypes[]> = signal<ProblemTypes[]>([]);
+  destroy$ = new Subject<void>();
 
   pricingForm = this.fb.group({
     problemTypeId: [0, [Validators.required]],
@@ -45,26 +46,17 @@ export class PricingComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-
-
-
-    this.langService.lang$
+    this.langService.lang$.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.getPricing();
         this.getProblemTypes();
-
       });
-
-
-
-
-
   }
 
 
-  getPricing(): void {
 
-    this.pricingService.getPricing().subscribe({
+  getPricing(): void {
+    this.pricingService.getPricing().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res => {
         console.log(res);
         this.pricing.set(res);
@@ -75,11 +67,10 @@ export class PricingComponent implements OnInit, OnDestroy {
 
 
   getProblemTypes(): void {
-    this.problemTypeService.getProblemTypes().subscribe({
+    this.problemTypeService.getProblemTypes().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res => {
         console.log(res);
         this.problemTypes.set(res);
-
       })
     })
   }
@@ -99,11 +90,12 @@ export class PricingComponent implements OnInit, OnDestroy {
   addModal(): void {
     this.isEditMode = false;
     this.pricingForm.reset();
+    this.existingprice = null;
   }
+
 
   savePricing(): void {
     const value = this.pricingForm.value;
-
     if (this.pricingForm.valid) {
       if (this.isEditMode) {
         //edit
@@ -112,55 +104,50 @@ export class PricingComponent implements OnInit, OnDestroy {
           this.existingprice?.techMinPrice == value.techMinPrice &&
           this.existingprice?.techMaxPrice == value.techMaxPrice;
         if (hasChanged) {
-
-          if (this.lang == "en") {
-
-            this.toastrService.info('No changes detected', 'NS');
-          } else {
-
-            this.toastrService.info('لم يتم رصد أي تغييرات', 'NS');
-          }
           this.closeModal();
           return;
         }
-        this.$Sub.unsubscribe();
-        this.$Sub = this.pricingService.updatePricing(this.existingprice?.id, value).subscribe({
-          next: (res => {
-            console.log(res);
-            this.toastrService.success("Pricing updated successfully");
-            this.closeModal();
-            this.getPricing();
-
-          }),
-          error: (err => {
-          })
-        })
+        this.updatePricing(value);
       }
-
-      else {
-        //add
-        this.$Sub = this.pricingService.addPricing(this.pricingForm.value).subscribe({
-          next: (res => {
-            console.log(res);
-            this.toastrService.success("Pricing added successfully");
-            this.closeModal();
-            this.getPricing();
-
-          }),
-          error: (err => {
-            console.log(err);
-            this.toastrService.error(err.error.detail);
-
-          })
-        })
-      }
-
-
-
+      else this.addPricing(value);
     }
-
   }
 
+
+  addPricing(value: object): void {
+    this.loadFlag.set(true);
+    this.pricingService.addPricing(value).subscribe({
+      next: (res => {
+        console.log(res);
+        this.toastrService.success("Pricing added successfully");
+        this.closeModal();
+        this.getPricing();
+        this.loadFlag.set(false);
+
+      }),
+      error: (err => {
+        console.log(err);
+        this.toastrService.error(err.error.detail);
+        this.loadFlag.set(false);
+
+      })
+    })
+  }
+
+
+  updatePricing(value: object): void {
+    this.pricingService.updatePricing(this.existingprice?.id, value).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res => {
+        console.log(res);
+        this.toastrService.success("Pricing updated successfully");
+        this.closeModal();
+        this.getPricing();
+
+      }),
+      error: (err => {
+      })
+    })
+  }
 
   confirmDelete(): void {
     this.pricingService.deletePricing(this.pricingId).subscribe({
@@ -186,6 +173,8 @@ export class PricingComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-    this.$Sub.unsubscribe();
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

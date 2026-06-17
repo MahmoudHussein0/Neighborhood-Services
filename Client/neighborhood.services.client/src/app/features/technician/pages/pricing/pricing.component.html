@@ -111,7 +111,7 @@
 
 
 
-
+<!-- Modal -->
 <div class="modal fade" id="pricingModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
@@ -206,8 +206,8 @@
                     {{"pricing.cancle" |translate}}
                 </button>
 
-                <button type="button" class="btn btn-primary rounded-pill px-4" [disabled]="pricingForm.invalid"
-                    (click)="savePricing()">
+                <button type="button" [disabled]="loadFlag()" class="btn btn-primary rounded-pill px-4"
+                    [disabled]="pricingForm.invalid" (click)="savePricing()">
                     <i class="fa-solid" [class.fa-plus]="!isEditMode" [class.fa-floppy-disk]="isEditMode">
                     </i>
 

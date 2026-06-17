@@ -5,6 +5,7 @@ import { Category } from '../../../../../core/models/category';
 import { skip, Subscription } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../../../core/services/lang.service';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'ourservices',
   imports: [CarouselModule, TranslatePipe],
@@ -15,31 +16,27 @@ export class OurservicesComponent implements OnInit {
 
   private readonly categoriesService = inject(CategoriesService);
   private readonly LangService = inject(LangService);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
 
   categories: WritableSignal<Category[]> = signal<Category[]>([]);
+
   $Sub: Subscription = new Subscription();
-  isLoading = signal<boolean>(false);
 
   ngOnInit(): void {
     this.LangService.lang$
       .subscribe(() => {
-        this.getAllCategories();
+
+        this.activatedRoute.data.subscribe({
+          next: (data => {
+            this.categories.set(data["categories"])
+          })
+        })
       });
   }
 
 
 
-  getAllCategories(): void {
-    this.isLoading.set(true);
-
-    this.$Sub = this.categoriesService.getAllCategories().subscribe({
-      next: (res => {
-        this.categories.set(res);
-        this.isLoading.set(false);
-      })
-    })
-  }
 
 
 
