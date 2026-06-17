@@ -15,5 +15,7 @@ namespace Neighborhood.Services.Application.Users.Interfaces
         Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword);
         Task<List<ApplicationUser>> GetUsersByRoleAsync(ApplicationUserRole role);
         Task<List<ApplicationUser>> GetNearbyUsersAsync(Point location, double distanceInMeters);
+        Task<string?> GetTechnicianPhotoAsync(int techId);
+
     }
 }

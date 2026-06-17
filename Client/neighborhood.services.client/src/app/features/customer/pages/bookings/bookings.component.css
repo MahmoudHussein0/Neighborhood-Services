@@ -118,6 +118,84 @@
   transform: translateY(-1px);
 }
 
+/* ── Progress timeline ───────────────────────────────────────────────────── */
+.ns-progress {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.ns-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.ns-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.ns-step.done .ns-step-dot  { background: #22c55e; }
+.ns-step.active .ns-step-dot {
+  background: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.18);
+}
+
+.ns-step-label {
+  font-size: 10px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.ns-step.done .ns-step-label   { color: #64748b; }
+.ns-step.active .ns-step-label { color: #1d4ed8; font-weight: 600; }
+
+.ns-step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin-top: 3px;
+  transition: background 0.2s;
+}
+
+.ns-step-line.done { background: #22c55e; }
+
+/* ── Quote callout ───────────────────────────────────────────────────────── */
+.ns-quote-callout {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.ns-quote-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #1d4ed8;
+}
+
+.ns-promo-input {
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.65rem;
+  width: 140px;
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+  background: #fff;
+  color: #1e293b;
+  outline: none;
+}
+
+.ns-promo-input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.12);
+}
+
 /* Dropdown menu polish */
 .ns-card .dropdown-menu {
   border: 1px solid #eef1f6;

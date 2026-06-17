@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class FavoritesService {
 // private apiUrl: string = environment.apiUrl.concat('/');
-private Endpoint = '/api/Favorites';
+private Endpoint = '/Favorites';
 constructor(private apiService: ApiService) { }
 favItems?: FavoriteItem[];
 

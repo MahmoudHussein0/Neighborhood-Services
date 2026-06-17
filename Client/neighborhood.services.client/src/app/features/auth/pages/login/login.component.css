@@ -1,10 +1,64 @@
 .auth-page {
-  background-color: #f9fafb;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 45%, #4f46e5 80%, #7c3aed 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-page::before,
+.auth-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(72px);
+  opacity: 0.4;
+}
+
+.auth-page::before {
+  width: 520px;
+  height: 520px;
+  background: #7c3aed;
+  top: -160px;
+  right: -160px;
+}
+
+.auth-page::after {
+  width: 420px;
+  height: 420px;
+  background: #06b6d4;
+  bottom: -120px;
+  left: -120px;
 }
 
 .auth-panel {
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   padding: 2rem;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+  position: relative;
+  z-index: 1;
+}
+
+.auth-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.auth-home-btn:hover {
+  color: #1d4ed8;
 }
 
 .auth-kicker {
@@ -29,6 +83,20 @@
   content: "";
   flex: 1;
   height: 1px;
+}
+
+.btn-google {
+  background: #fff;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  font-weight: 500;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.btn-google:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  color: #3c4043;
 }
 
 @media (max-width: 575.98px) {

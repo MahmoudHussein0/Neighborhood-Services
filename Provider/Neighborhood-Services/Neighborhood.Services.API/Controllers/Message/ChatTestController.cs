@@ -28,11 +28,26 @@ namespace Neighborhood.Services.API.Controllers.Message
             return Ok(result);
         }
 
+        //[HttpGet("CurrentUserId")]
+        //public async Task<ActionResult> GetCurrentUserId()
+        //{
+        //    var result = _userService.UserId;
+        //    var x = new { result };
+
+
+        //    return Ok(x);
+        //}
+
         [HttpGet("CurrentUserId")]
-        public async Task<ActionResult> GetCurrentUserId()
+        public async Task<IActionResult> GetCurrentUserId()
         {
             var result = _userService.UserId;
-            return Ok(result);
+
+            return Ok(new
+            {
+                userId = result
+                
+            });
         }
     }
 }

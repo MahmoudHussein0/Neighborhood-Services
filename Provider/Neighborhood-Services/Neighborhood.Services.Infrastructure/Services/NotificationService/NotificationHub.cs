@@ -1,22 +1,32 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Neighborhood.Services.Application.Notifications.Push_inApp.DTOs;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Notifications;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Neighborhood.Services.Application.Notifications;
+using Neighborhood.Services.Application.Shared;
 
 namespace Neighborhood.Services.Infrastructure.Services.NotificationService
 {
     public class NotificationHub : Hub
     {
         private readonly ILogger<NotificationHub> _logger;
-public NotificationHub(ILogger<NotificationHub> logger)
+        //private readonly INotificationsRepository _notificationsRepository;
+        //private readonly IUnitOfWork _unitOfWork;
+        //private readonly ICurrentUserService _current;
+public NotificationHub(ILogger<NotificationHub> logger
+  )
         {
             _logger = logger;
             _logger.LogInformation("NotificationHub created");
-
+            //_notificationsRepository = notificationsRepository;
+            //_unitOfWork = Unit;
+            //_current=Current;
         }
         // public string my_txt { set; get; }
         public ConcurrentDictionary<string, string> Connections { get; set; }
@@ -28,7 +38,7 @@ public NotificationHub(ILogger<NotificationHub> logger)
         Context.ConnectionId);
 
             //using the role in identity
-            var userRole = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userRole = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
            
             _logger.LogInformation($"\n\nuser role: {userRole}");
             Connections.TryAdd(Context.ConnectionId, userRole);
@@ -52,7 +62,7 @@ public NotificationHub(ILogger<NotificationHub> logger)
            // var ur = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => Enum.IsDefined(typeof(ApplicationUserRole), c))?.Value;
            // _logger.LogInformation($"\n\nuser role2: {ur}");
 
-            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value;
+            var businessUserId = Context.GetHttpContext()?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             _logger.LogInformation($"\n\nbusiness: {businessUserId}");
 
 
@@ -74,6 +84,9 @@ public NotificationHub(ILogger<NotificationHub> logger)
             await base.OnDisconnectedAsync(exception);
             //يعمل لليوزر ريموف من الجروب؟
         }
+
+        
+        
     }
 }
 

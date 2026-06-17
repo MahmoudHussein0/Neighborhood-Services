@@ -55,30 +55,14 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
                     "Only Super Admin can create staff members.");
             }
 
-            List<PermissionType> permissions;
+            // ✅ كلا الـ Role بياخدوا الـ permissions اللي اختارها الأدمن
+            var permissions = request.Permissions.Distinct().ToList();
 
-            if (request.Role == StaffRole.Admin)
-            {
-                permissions = request.Permissions
-                    .Distinct()
-                    .ToList();
+            if (!permissions.Any())
+                throw new Exception("Staff must have at least one permission.");
 
-                if (!permissions.Any())
-                {
-                    throw new Exception(
-                        "Admin must have at least one permission.");
-                }
-            }
-            else if (request.Role == StaffRole.TechnicalSupport)
-            {
-                permissions =
-                [
-                    PermissionType.ManageTickets,
-                PermissionType.ManageDisputes,
-                PermissionType.FlagReviews
-                ];
-            }
-            else
+            if (request.Role != StaffRole.Admin &&
+                request.Role != StaffRole.TechnicalSupport)
             {
                 throw new Exception("Invalid staff role.");
             }
@@ -101,10 +85,9 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
             await _repository.AddAsync(staff);
             await _unitOfWork.SaveChangesAsync();
 
-            return StaffMapper.MapToDto(staff);
+            // ✅ جيب fresh copy من الداتابيز عشان الـ DTO يكون محدث
+            var createdStaff = await _repository.GetByIdAsync(staff.Id);
+            return StaffMapper.MapToDto(createdStaff!);
         }
     }
-
-    // كده السيناريو بيكون ان ال Super Admin بس هو اللي يقدر يضيف Staff جديد سواء كان Admin او Technical Support
-    // ال Admin لازم يحدد صلاحياته بس ال Technical Support بياخد صلاحيات ثابتة
 }

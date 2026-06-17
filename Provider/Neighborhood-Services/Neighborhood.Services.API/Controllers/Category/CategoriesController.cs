@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.API.Helper;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Cache;
 using Neighborhood.Services.Application.Categories.Commands;
 using Neighborhood.Services.Application.Categories.DTOs;
 using Neighborhood.Services.Application.Categories.Queries;
+using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Infrastructure.Cache;
 
 namespace Neighborhood.Services.API.Controllers.Category
@@ -24,6 +26,8 @@ namespace Neighborhood.Services.API.Controllers.Category
         }
 
 
+        // Public read: powers the home-page service carousel and the public Services page,
+        // so it must stay anonymous. Admin write ops below keep their permission guard.
         [Cache(600)]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAll([FromQuery] string? searchTerm, [FromQuery] string lang = "en")
@@ -35,7 +39,7 @@ namespace Neighborhood.Services.API.Controllers.Category
          => Ok(await _mediator.Send(new GetCategoryByIdQuery(id, lang)));
 
 
-
+        [HasPermission(PermissionType.ManageCategories)]
         [HttpPost]
         public async Task<ActionResult<int>> Add(AddCategoryCommand command)
         {

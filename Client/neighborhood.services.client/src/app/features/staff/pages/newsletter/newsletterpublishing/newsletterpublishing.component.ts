@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import {NewsletterService} from '../../../../../shared/services/newsletter.service'
+import { TranslatePipe } from '@ngx-translate/core';
+
 
 
 @Component({
   selector: 'app-newsletterpublishing',
-  imports: [FormsModule],
+  imports: [FormsModule,TranslatePipe],
   templateUrl: './newsletterpublishing.component.html',
   styleUrl: './newsletterpublishing.component.css',
 })

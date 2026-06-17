@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Technicians;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Shared;
 using NetTopologySuite.Geometries;
@@ -71,5 +72,15 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Users
                 .Where(user => !user.IsDeleted && user.Location != null && user.Location.Distance(location) <= distanceInMeters)
                 .ToListAsync();
         }
+
+        //arwa
+        public async Task<string?> GetTechnicianPhotoAsync(int techId)
+        {
+            
+            var res = await _context.Users.Include(e => e.Technician).Where(e => e.Technician.Id == techId).FirstOrDefaultAsync();
+            return res?.Photo??null!;
+        }
+
     }
-}
+    }
+

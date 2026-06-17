@@ -140,7 +140,30 @@
         "geoUnsupported": "المتصفح لا يدعم تحديد الموقع.",
         "openInMaps": "فتح في الخرائط",
         "confirm": "تأكيد",
-        "confirmTitle": "يرجى التأكيد"
+        "confirmTitle": "يرجى التأكيد",
+        "edit": "تعديل",
+        "delete": "حذف"
+    },
+    "gallery": {
+        "title": "معرض الأعمال",
+        "subtitle": "اعرض نماذج من أعمالك في ملفك العام.",
+        "photo": "الصورة",
+        "caption": "الوصف",
+        "changePhoto": "تغيير الصورة",
+        "addPhoto": "إضافة صورة",
+        "updatePhoto": "تحديث الصورة",
+        "fileHint": "JPG, PNG, WebP أو GIF بحد أقصى 5 ميجابايت",
+        "chooseError": "اختر صورة لمعرض الأعمال.",
+        "saving": "جارٍ حفظ الصورة...",
+        "loading": "جارٍ تحميل صور المعرض...",
+        "empty": "لا توجد صور في المعرض حتى الآن.",
+        "workSample": "نموذج عمل",
+        "deleteTitle": "حذف صورة من المعرض؟",
+        "deleteSubtitle": "لا يمكن التراجع عن هذا الإجراء.",
+        "deleteMessage": "هل تريد حذف هذه الصورة من معرض الأعمال؟",
+        "deleteMessageWithCaption": "هل تريد حذف \"{{caption}}\" من معرض الأعمال؟",
+        "deleteConfirm": "حذف الصورة",
+        "deleting": "جارٍ الحذف..."
     },
     "publicProfile": {
         "role": {
@@ -157,7 +180,9 @@
         "reviewsTitle": "المراجعات",
         "noReviews": "لا توجد مراجعات بعد.",
         "anonymous": "مجهول",
-        "loadError": "تعذّر تحميل هذا الملف الشخصي."
+        "loadError": "تعذّر تحميل هذا الملف الشخصي.",
+        "galleryTitle": "معرض الأعمال",
+        "galleryEmpty": "المعرض فارغ."
     },
     "reindex": {
         "confirmTitle": "إعادة فهرسة قاعدة المعرفة؟",
@@ -176,6 +201,8 @@
         "filterAll": "الكل",
         "empty": "لا توجد حجوزات هنا بعد.",
         "details": "التفاصيل",
+        "viewInvoice": "عرض الفاتورة",
+        "downloadInvoice": "تحميل الفاتورة",
         "actions": "إجراءات",
         "confirmCompleted": "تأكيد الاكتمال",
         "cancelBooking": "إلغاء الحجز",
@@ -228,6 +255,11 @@
             "Disputed": "متنازع عليه"
         },
         "min": "دقيقة",
+        "stepBooked": "محجوز",
+        "stepQuoted": "عرض سعر",
+        "stepConfirmed": "مؤكد",
+        "stepDone": "مكتمل",
+        "stepReviewed": "تم التقييم",
         "awaitingTechnician": "بانتظار عرض السعر من الفني.",
         "quotedCallout": "حدد الفني السعر: {{price}}",
         "acceptQuote": "قبول",
@@ -345,7 +377,7 @@
         }
     },
     "recurring": {
-        "title": "الحجوزات المتكررة",
+        "title": "الحجوزات الدورية",
         "search": "ابحث بالعنوان أو الرقم",
         "new": "جديد",
         "empty": "لا توجد ترتيبات متكررة هنا بعد.",
@@ -614,7 +646,7 @@
             "errScheduledAt": "اختر التاريخ والوقت."
         },
         "recurring": {
-            "title": "المهام المتكررة",
+            "title": "المهام الدورية",
             "search": "ابحث بالعنوان أو الرقم",
             "empty": "لا توجد مهام متكررة هنا بعد.",
             "min": "دقيقة",
@@ -848,20 +880,21 @@
         "myBookings": "حجوزاتي",
         "serviceRequests": "طلبات الخدمة",
         "findTechnician": "ابحث عن فني",
-        "recurringBookings": "الحجوزات المتكررة",
+        "recurringBookings": "الحجوزات الدورية",
         "favorites": "المفضلة",
         "wallet": "المحفظة",
-        "chat": "المحادثة",
+        "chat": "المحادثات",
         "notifications": "الإشعارات",
         "profile": "الملف الشخصي",
         "myJobs": "مهامي",
         "browseRequests": "تصفح الطلبات",
         "offers": "العروض",
-        "recurringJobs": "المهام المتكررة",
+        "recurringJobs": "المهام الدورية",
         "availability": "مواعيد العمل",
         "pricing": "التسعير",
         "earnings": "الأرباح",
         "reviews": "التقييمات",
+        "gallery": "معرض الأعمال",
         "users": "المستخدمون",
         "bookings": "الحجوزات",
         "disputes": "النزاعات",
@@ -870,7 +903,8 @@
         "categories": "الفئات",
         "policies": "السياسات",
         "promoCodes": "أكواد الخصم",
-        "staffManagement": "إدارة الموظفين"
+        "staffManagement": "إدارة الموظفين",
+        "newsletter":"الموجز"
     },
     "staffBookings": {
         "title": "الحجوزات",
@@ -1077,5 +1111,40 @@
         "date": "التاريخ",
         "empty": "لا توجد تقييمات مُبلّغ عنها.",
         "loadFail": "تعذّر تحميل تحليل التقييمات."
+    },
+    
+    "favs":{
+        "favorite":"المفضلة",
+        "empty":"لا عناصر في المفضلة بعد!",
+        "emptyMessage":"الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
+        "browseCTA":" تصفح الخدمات"
+    },
+     "generalActins":{
+        "add":"إضافة",
+        "delete":"حذف",
+        "update":"تعديل",
+        "select":"تحديد"
+    },
+     "newsletter":{
+        "pagetitle":"إرسال بريد موجز الأخبار",
+        "pagedescription":"كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
+        "subj":"الموضوع",
+        "publish":"إرسال",
+        "pre":"معاينة",
+        "subPre":"موضوع البريد هنا ...",
+        "content":"المحتوى"
+  
+    },
+     "newslettersubscribe":{
+        "subscribe":"اشترك",
+        "description":"اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
+
+    },
+     "favorites": {
+        "add": "أضف إلى المفضلة",
+        "remove": "إزالة من المفضلة",
+        "added": "تمت الإضافة إلى المفضلة",
+        "removed": "تمت الإزالة من المفضلة",
+        "error": "تعذّر تحديث المفضلة"
     }
 }

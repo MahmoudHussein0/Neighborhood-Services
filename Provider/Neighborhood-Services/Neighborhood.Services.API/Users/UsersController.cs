@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Users.Commands;
 using Neighborhood.Services.Application.Users.Commands.CreateUserCommands;
 using Neighborhood.Services.Application.Users.Queries;
 using Neighborhood.Services.Application.Users.Queries.GetUserByIdQuery;
 using Neighborhood.Services.Domain.ApplicationUsers;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Users
 {
@@ -18,7 +20,6 @@ namespace Neighborhood.Services.API.Users
         private readonly IMediator _mediator = mediator;
         private readonly IWebHostEnvironment _environment = environment;
 
-        //[Authorize(Roles = "Staff")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -117,7 +118,7 @@ namespace Neighborhood.Services.API.Users
         }
 
         [Authorize]
-        //[Authorize]
+        
 
         [HttpPut("{id}/profile")]
         public async Task<IActionResult> UpdateProfile(string id, UpdateUserProfileCommand command)
@@ -148,7 +149,7 @@ namespace Neighborhood.Services.API.Users
             return NoContent();
         }
 
-        //[Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageUsers)]
         [HttpPatch("{id}/activate")]
         public async Task<IActionResult> Activate(string id)
         {
@@ -156,7 +157,7 @@ namespace Neighborhood.Services.API.Users
             return NoContent();
         }
 
-        //[Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageUsers)]
         [HttpPatch("{id}/deactivate")]
         public async Task<IActionResult> Deactivate(string id)
         {
@@ -164,7 +165,7 @@ namespace Neighborhood.Services.API.Users
             return NoContent();
         }
 
-        //[Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageUsers)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

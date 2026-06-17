@@ -55,10 +55,11 @@ export class NotificationBellComponent {
     this.notificationService.GetAllNotifications().subscribe({
       next: (data: NotificationMessage[]) => {
         if(data!=null){
+        data=data.filter(e=>e.isRead==false);
         data.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());}
         console.log(this.unreadCount$.value)
         this.notificationService.setNotifications(data);
-        this.toastr.success('Notifications loaded successfully.');
+        // this.toastr.success('Notifications loaded successfully.');
       },
       error: (error: HttpErrorResponse) => {
         this.toastr.error(error.error.detail || 'An error occurred while processing your request.');

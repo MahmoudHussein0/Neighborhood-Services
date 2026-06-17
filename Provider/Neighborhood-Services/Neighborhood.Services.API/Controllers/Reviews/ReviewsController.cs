@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Reviews.Commands;
 using Neighborhood.Services.Application.Reviews.Queries;
 using Neighborhood.Services.Domain.Reviews;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Controllers.Reviews
 {
@@ -21,6 +23,7 @@ namespace Neighborhood.Services.API.Controllers.Reviews
 
         // GET api/reviews
         [HttpGet]
+        [HasPermission(PermissionType.MangeReviews)]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllReviewsQuery(), cancellationToken);

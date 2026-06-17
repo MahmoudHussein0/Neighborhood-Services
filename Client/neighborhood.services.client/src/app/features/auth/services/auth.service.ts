@@ -110,6 +110,29 @@ export class AuthService {
     return allowedRoles.some((role) => this.normalizeRole(role) === normalizedRole);
   }
 
+  /**
+   * Where a public "Book Now" CTA should send the user:
+   * guests → login, customers → Find Technician, and other roles back to a
+   * sensible spot in their own area (tech dashboard, staff categories).
+   */
+  getBookNowUrl(): string {
+    if (!this.isAuthenticated()) {
+      return '/auth/login';
+    }
+
+    const role = this.normalizeRole(this.currentUserSignal()?.role ?? '');
+
+    if (role === 'customer') {
+      return '/customer/find-technician';
+    }
+
+    if (role === 'technician') {
+      return '/technician';
+    }
+
+    return '/staff/categories';
+  }
+
   getRedirectUrlForRole(role: string): string {
     const normalizedRole = role.trim().toLowerCase();
 

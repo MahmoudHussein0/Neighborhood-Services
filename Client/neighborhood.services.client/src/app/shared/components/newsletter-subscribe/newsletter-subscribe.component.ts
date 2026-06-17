@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import {NewsletterService} from'../../services/newsletter.service'
 import { FormsModule } from '@angular/forms';
 import { ElementRef, ViewChild } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+
 
 
 @Component({
   selector: 'app-newsletter-subscribe',
-  imports: [FormsModule],
+  imports: [FormsModule,TranslatePipe],
   templateUrl: './newsletter-subscribe.component.html',
   styleUrl: './newsletter-subscribe.component.css',
 })

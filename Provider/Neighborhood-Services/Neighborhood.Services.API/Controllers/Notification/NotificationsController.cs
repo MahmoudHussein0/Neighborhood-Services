@@ -47,6 +47,27 @@ namespace Neighborhood.Services.API.Controllers.Notification
             return Ok(result);
         }
 
+        [HttpPost("SendingToTechnicians")]
+        public async Task<ActionResult> CreateNotificationToTechnicians(string mssg)
+        {
+            var result = await _service.SendNotificationToTechnician(mssg);
+            return Ok(result);
+        }
+
+        [HttpPost("SendingToCustomers")]
+        public async Task<ActionResult> CreateNotificationToCustomers(string mssg)
+        {
+            var result = await _service.SendNotificationToCustomer(mssg);
+            return Ok(result);
+        }
+
+        [HttpPost("SendingToAdmins")]
+        public async Task<ActionResult> CreateNotificationToAdmins(string mssg)
+        {
+            var result = await _service.SendNotificationToAdmin(mssg);
+            return Ok(result);
+        }
+
         [HttpPost("SendingBasedOnRole")]
         public async Task<ActionResult> CreateNotificationToGroup(string message, string? userRole=null, string? userId = null)
         {

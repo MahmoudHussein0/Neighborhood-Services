@@ -2,10 +2,14 @@ import { Component ,signal,OnInit} from '@angular/core';
 import { FavoritesService } from '../../services/favorites.service';
 import { FavoriteItem } from '../../models/favorite-item';
 import { NgClass,CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-favorite-list',
-  imports: [CommonModule, NgClass ],
+  imports: [CommonModule, NgClass,TranslatePipe,RouterLink, RouterLinkActive ],
   templateUrl: './favorite-list.component.html',
   styleUrl: './favorite-list.component.css',
 })
@@ -23,7 +27,7 @@ export class FavoriteListComponent {
   loadFavorites(): void {
     this.isLoading.set(true);
 
-    this.favoritesService.getAll().subscribe({
+    this.favoritesService.getForCurrentUser().subscribe({
       next: data => {
         console.log(data);
         this.favorites.set(data);

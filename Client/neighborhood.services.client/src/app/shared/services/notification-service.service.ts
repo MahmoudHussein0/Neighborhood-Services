@@ -40,6 +40,7 @@ export class NotificationServiceService {
 
     this.hubConnection.on('ReceiveNotification', (data: any) => {  
       console.log("Receving ..")
+      console.log(data);
       const updated = [data, ...this.notificationsSubject.value];
        this.toastr.success(data.message, 'New Notification');
       console.log("Updated list: ", updated);

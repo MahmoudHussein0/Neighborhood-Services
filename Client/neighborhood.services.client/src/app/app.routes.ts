@@ -4,6 +4,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { CustomerLayoutComponent } from './layouts/customer-layout/customer-layout.component';
 import { TechnicianLayoutComponent } from './layouts/technician-layout/technician-layout.component';
 import { StaffLayoutComponent } from './layouts/staff-layout/staff-layout.component';
@@ -32,6 +33,7 @@ import { StaffDashboardComponent } from './features/staff/pages/dashboard/staff-
 import { FlaggedRequestsComponent } from './features/staff/pages/flagged-requests/flagged-requests.component';
 import { StaffBookingsComponent } from './features/staff/pages/bookings/staff-bookings.component';
 import { TechnicianProfileComponent } from './features/technician/pages/profile/technician-profile.component';
+import { TechnicianGalleryComponent } from './features/technician/pages/gallery/technician-gallery.component';
 import { TechnicianWalletComponent } from './features/technician/pages/wallet/technician-wallet.component';
 import { TechnicianEarningsComponent } from './features/technician/pages/earnings/technician-earnings.component';
 
@@ -47,6 +49,9 @@ import { PoliciesComponent } from './features/staff/pages/policies/policies.comp
 import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 import { categoriesResolver } from './core/resolvers/categories-resolver';
+import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
+import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
+import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 
 export const routes: Routes = [
   {
@@ -58,9 +63,16 @@ export const routes: Routes = [
       { path: 'problemType/:id', component: ProblemTypeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'auth/login', component: LoginComponent, canActivate: [guestGuard] },
-      { path: 'auth/register', component: RegisterComponent, canActivate: [guestGuard] },
-      { path: 'auth/external-callback', component: ExternalCallbackComponent },
+    ],
+  },
+
+  {
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+      { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+      { path: 'external-callback', component: ExternalCallbackComponent },
     ],
   },
 
@@ -80,9 +92,9 @@ export const routes: Routes = [
       { path: 'find-technician', component: FindTechnicianComponent },
       { path: 'technician/:id', component: PublicProfileComponent, data: { role: 'technician' } },
       { path: 'recurring-bookings', component: RecurringBookingsComponent },
-      { path: 'favorites', component: CustomerPlaceholderComponent, data: { title: 'Favorites' } },
+      { path: 'favorites', component: FavoriteListComponent, data: { title: 'Favorites' } },
       { path: 'wallet', component: CustomerWalletComponent },
-      { path: 'chat', component: CustomerPlaceholderComponent, data: { title: 'Chat' } },
+      { path: 'chat', component:CustomerChatsComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
       { path: 'profile', component: CustomerProfileComponent },
@@ -105,6 +117,7 @@ export const routes: Routes = [
       { path: 'recurring-jobs', component: TechnicianRecurringJobsComponent },
       { path: 'customer/:id', component: PublicProfileComponent, data: { role: 'customer' } },
       { path: 'profile', component: TechnicianProfileComponent },
+      { path: 'gallery', component: TechnicianGalleryComponent },
       { path: 'wallet', component: TechnicianWalletComponent },
       { path: 'earnings', component: TechnicianEarningsComponent },
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
@@ -132,8 +145,12 @@ export const routes: Routes = [
   //     { path: '**', redirectTo: '' }
   //   ]
   // },
+       { path: 'reviews', component: TechReviewsComponent },
+        { path: 'pricing', component: PricingComponent },
+        { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
 
-
+    ]
+  },
 
   {
     path: 'staff',
@@ -174,6 +191,7 @@ export const routes: Routes = [
           import('./features/staff/pages/reviews/reviews.component')
             .then(m => m.ReviewsComponent)
       },
+      {path:'newsletters',component:NewsletterpublishingComponent},
       { path: '**', redirectTo: '' }
     ],
   },

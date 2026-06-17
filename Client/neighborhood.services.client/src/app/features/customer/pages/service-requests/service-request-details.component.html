@@ -48,9 +48,12 @@
                   </div>
                 </div>
               </a>
-              <span class="badge rounded-pill" [class]="offerBadgeClass(offer.status)">
-                {{ ('serviceRequests.offerStatus.' + offer.status) | translate }}
-              </span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge rounded-pill" [class]="offerBadgeClass(offer.status)">
+                  {{ ('serviceRequests.offerStatus.' + offer.status) | translate }}
+                </span>
+                <app-favorite-button [technicianId]="offer.technicianId" />
+              </div>
             </div>
 
             @if (offer.message) {
