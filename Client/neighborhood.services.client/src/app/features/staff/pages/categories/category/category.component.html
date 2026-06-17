@@ -13,7 +13,7 @@
             </div>
 
             <button class="btn btn-primary px-4 py-2 rounded-3 shadow-sm" data-bs-toggle="modal"
-                data-bs-target="#addModal">
+                data-bs-target="#categoryModal" (click)="addModal()  ">
 
                 <i class="fa-solid fa-plus me-2"></i>
                 {{ "staffCategory.addCategory" | translate }}
@@ -47,27 +47,29 @@
     </div>
 </section>
 
-<!-- Update Modal -->
-<div class="modal fade" id="updateModal" tabindex="-1" aria-hidden="true">
+
+<!--  Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content custom-modal">
-
             <div class="modal-header d-flex border-0 pb-0">
                 <h4 class="modal-title fw-bold text-primary">
-                    {{ "staffCategory.updateCategory" | translate }}
+                    {{ mode === "Edit" ? ('staffCategory.updateCategory' | translate ) : ('staffCategory.addCategory'
+                    |translate) }}
                 </h4>
             </div>
 
             <div class="modal-body">
-                <form [formGroup]="updateCategoryForm">
+                <form [formGroup]="form" enctype="multipart/form-data">
 
+
+                    <!-- English Name  -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold">
                             {{ "staffCategory.categoryEnglishName" | translate }}
                         </label>
                         <input formControlName="nameEn" type="text" class="form-control custom-input">
-
-                        @let updateNameEn = updateCategoryForm.get("nameEn");
+                        @let updateNameEn = form.get("nameEn");
                         @if(updateNameEn?.getError('required') && updateNameEn?.touched)
                         {
                         <small class="text-danger">
@@ -79,14 +81,14 @@
 
 
 
-
+                    <!-- Arabic Name  -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold">
                             {{ "staffCategory.categoryArabicName" | translate }}
                         </label>
 
                         <input formControlName="nameAr" type="text" class="form-control custom-input">
-                        @let updateNameAr = updateCategoryForm.get("nameAr");
+                        @let updateNameAr = form.get("nameAr");
                         @if(updateNameAr?.getError('required') && updateNameAr?.touched)
                         {
                         <small class="text-danger">
@@ -99,6 +101,7 @@
 
 
 
+                    <!-- Icon  -->
                     <div class="mb-3">
                         <label class="form-label fw-semibold">
                             {{ "staffCategory.categoryIcon" | translate }}
@@ -106,7 +109,7 @@
                         <div class="mb-3">
                             <!-- ICON PREVIEW -->
                             <div class="icon-preview mb-2">
-                                <i class="bi fs-1" [class]="updateCategoryForm.get('icon')?.value">
+                                <i class="bi fs-1" [class]="form.get('icon')?.value">
                                 </i>
                             </div>
 
@@ -115,7 +118,7 @@
                                 placeholder="e.g. bi bi-tools">
 
                         </div>
-                        @if(updateCategoryForm.get("icon")?.getError('required'))
+                        @if(form.get("icon")?.getError('required') && form.get('icon')?.touched)
                         {
                         <small class="text-danger">
                             {{ "staffCategory.iconIsRequired" | translate }}
@@ -126,50 +129,36 @@
 
 
 
+                    <!-- Image  -->
                     <div class="mb-3">
+
+                        @if( ImagePreview || selectedCategory ) {
+                        <img [src]=" ImagePreview ||  selectedCategory?.image " [alt]="  selectedCategory?.name"
+                            class="w-100">
+                        }
                         <label class="form-label fw-semibold">
                             {{ "staffCategory.categoryImage" | translate }}
                         </label>
                         <div class="mb-3">
-                            <input formControlName="image" type="text" class="form-control custom-input">
+                            <input type="file" class="form-control custom-input" (change)="uploadImage($event)  ">
                         </div>
                     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                 </form>
-
             </div>
-
             <div class="modal-footer border-0 pt-0">
-
                 <button #closeBtn type="button" class="btn rtl-close btn-outline-secondary px-4 rounded-3"
                     data-bs-dismiss="modal">
-
                     {{ "staffCategory.close" | translate }}
-
                 </button>
-
-                <button (click)="updateCategory()" type="button" class="btn btn-success px-4 rounded-3 shadow-sm">
-
+                <button (click)="save()" [disabled]="loadFlag()" type="button"
+                    class="btn btn-success px-4 rounded-3 shadow-sm">
                     {{ "staffCategory.saveChanges" | translate }}
-
                     @if(loadFlag())
                     {
                     <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                     }
-
                 </button>
 
             </div>
@@ -188,119 +177,6 @@
 
 
 
-
-
-
-
-
-<!-- Add Modal -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content custom-modal">
-
-            <div class="modal-header d-flex border-0 pb-0">
-
-                <h4 class="modal-title fw-bold text-primary">
-                    {{ "staffCategory.addCategory" | translate }}
-                </h4>
-
-
-            </div>
-
-            <div class="modal-body">
-
-                <form [formGroup]="addCategoryForm">
-
-                    <div class="mb-4">
-
-                        <label class="form-label fw-semibold">
-                            {{ "staffCategory.categoryEnglishName" | translate }}
-                        </label>
-                        <input formControlName="nameEn" type="text" class="form-control custom-input">
-                        @let nameEn = addCategoryForm.get("nameEn");
-
-                        @if(nameEn?.getError('required') && nameEn?.touched)
-                        {
-                        <small class="text-danger">
-                            {{ "staffCategory.nameIsRequired" | translate }}
-                        </small>
-                        }
-
-                    </div>
-
-                    <div class="mb-4">
-
-                        <label class="form-label fw-semibold">
-                            {{ "staffCategory.categoryArabicName" | translate }}
-                        </label>
-
-                        <input formControlName="nameAr" type="text" class="form-control custom-input">
-
-                        @let nameAr = addCategoryForm.get("nameAr");
-
-                        @if(nameAr?.getError('required') && nameAr?.touched)
-                        {
-                        <small class="text-danger">
-                            {{ "staffCategory.nameIsRequired" | translate }}
-                        </small>
-                        }
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                            {{ "staffCategory.categoryIcon" | translate }}
-                        </label>
-
-                        <!-- ICON PREVIEW -->
-                        <div class="icon-preview mb-2">
-                            <i class="bi fs-1 bi bi-tools">
-                            </i>
-                        </div>
-
-                        <!-- INPUT -->
-                        <input formControlName="icon" type="text" class="form-control custom-input"
-                            placeholder="e.g. bi bi-tools">
-
-                        @let icon = addCategoryForm.get("icon");
-
-                        @if(icon?.getError('required') && icon?.touched)
-                        {
-                        <small class="text-danger">
-                            {{ "staffCategory.iconIsRequired" | translate }}
-                        </small>
-                        }
-
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            {{ "staffCategory.categoryImage" | translate }}
-                        </label>
-                        <div class="mb-3">
-                            <input formControlName="image" type="text" class="form-control custom-input">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button #closeBtn type="button" class="btn rtl-close btn-outline-secondary px-4 rounded-3"
-                    data-bs-dismiss="modal">
-                    {{ "staffCategory.close" | translate }}
-                </button>
-                <button (click)="AddCategory()" type="button" class="btn btn-success px-4 rounded-3 shadow-sm">
-                    {{ "staffCategory.saveChanges" | translate }}
-                    @if(loadFlag())
-                    {
-                    <i class="fa-solid fa-spinner fa-spin ms-2"></i>
-                    }
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 

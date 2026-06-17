@@ -19,7 +19,7 @@ export class CategoriesService {
   }
 
 
-  updateCategory(body: object, categoryId: number): Observable<any> {
+  updateCategory(body: object, categoryId: number | null): Observable<any> {
     return this.apiService.put(`/Categories/${categoryId}`, body);
   }
 

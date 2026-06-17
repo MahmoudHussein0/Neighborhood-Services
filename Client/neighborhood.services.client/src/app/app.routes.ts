@@ -48,6 +48,7 @@ import { ProblemTypeComponent } from './features/public/pages/services/problem-t
 import { PoliciesComponent } from './features/staff/pages/policies/policies.component';
 import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
+import { categoriesResolver } from './core/resolvers/categories-resolver';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
 import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
@@ -57,8 +58,8 @@ export const routes: Routes = [
     path: '',
     component: PublicLayoutComponent,
     children: [
-      { path: '', component: HomeComponent },
-      { path: 'services', component: ServicesComponent },
+      { path: '', component: HomeComponent, resolve: { "categories": categoriesResolver } },
+      { path: 'services', component: ServicesComponent, resolve: { "categories": categoriesResolver } },
       { path: 'problemType/:id', component: ProblemTypeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
@@ -120,6 +121,30 @@ export const routes: Routes = [
       { path: 'wallet', component: TechnicianWalletComponent },
       { path: 'earnings', component: TechnicianEarningsComponent },
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
+      { path: 'reviews', component: TechReviewsComponent },
+      { path: 'pricing', component: PricingComponent },
+    ]
+  },
+
+  // {
+  //   path: 'staff',
+  //   component: StaffLayoutComponent,
+  //   canActivate: [authGuard, roleGuard],
+  //   canActivateChild: [authGuard, roleGuard],
+  //   data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
+  //   children: [
+  //     { path: '', component: StaffDashboardComponent },
+
+  //     // Existing
+  //     { path: 'bookings', component: StaffBookingsComponent },
+  //     { path: 'flagged-requests', component: FlaggedRequestsComponent },
+  //     { path: 'users', component: StaffUsersComponent },
+  //     { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
+  //     { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
+  //     { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
+  //     { path: '**', redirectTo: '' }
+  //   ]
+  // },
        { path: 'reviews', component: TechReviewsComponent },
         { path: 'pricing', component: PricingComponent },
         { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },

@@ -722,7 +722,8 @@
         "problemTypeName": "اسم المشكله",
         "englishNameIsRequired": "الاسم بالغه الانجليزيه مطلوب ",
         "arabicNameIsRequired": " الاسم بالغه العربيه مطلوب ",
-        "deleteProblemType": "حذف المشكله"
+        "deleteProblemType": "حذف المشكله",
+        "problemImage": "   صوره للمشكله"
     },
     "hero": {
         "badge": "نخدم جميع أنحاء مصر",
