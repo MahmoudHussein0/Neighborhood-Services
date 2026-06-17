@@ -57,13 +57,16 @@
                 <td class="text-end">{{ (b.finalPrice > 0 ? b.finalPrice : b.estimatedPrice) | currency: 'EGP ' }}</td>
                 <td class="small text-muted">{{ b.scheduledAt | date: 'medium' }}</td>
                 <td class="text-end">
-                  @if (canCancel(b.status)) {
-                    <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="cancel(b)">
-                      <i class="bi bi-x-lg me-1"></i>{{ 'staffBookings.cancel' | translate }}
+                  <div class="d-inline-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" (click)="openDetails(b)">
+                      <i class="bi bi-eye me-1"></i>{{ 'staffBookings.details' | translate }}
                     </button>
-                  } @else {
-                    <span class="text-muted small">—</span>
-                  }
+                    @if (canCancel(b.status)) {
+                      <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="cancel(b)">
+                        <i class="bi bi-x-lg me-1"></i>{{ 'staffBookings.cancel' | translate }}
+                      </button>
+                    }
+                  </div>
                 </td>
               </tr>
             }

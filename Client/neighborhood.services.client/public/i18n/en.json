@@ -1097,6 +1097,12 @@
         "scheduled": "Scheduled",
         "actions": "Actions",
         "cancel": "Cancel",
+        "details": "Details",
+        "detailsTitle": "Booking",
+        "address": "Address",
+        "createdAt": "Created",
+        "estimatedPrice": "Estimated price",
+        "finalPrice": "Final price",
         "tabs": {
             "All": "All",
             "Pending": "Pending",

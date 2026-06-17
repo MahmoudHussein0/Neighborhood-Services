@@ -11,4 +11,6 @@ import { StaffSidebarComponent } from '../../features/staff/components/staff-sid
     </app-dashboard-shell>
   `,
 })
+// Permissions are loaded by permissionGuard (canActivateChild) before any staff route
+// activates, so the sidebar's *appHasPermission checks have data to read on first paint.
 export class StaffLayoutComponent {}

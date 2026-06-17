@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { CustomerLayoutComponent } from './layouts/customer-layout/customer-layout.component';
@@ -131,41 +132,47 @@ export const routes: Routes = [
     path: 'staff',
     component: StaffLayoutComponent,
     canActivate: [authGuard, roleGuard],
-    canActivateChild: [authGuard, roleGuard],
+    canActivateChild: [authGuard, roleGuard, permissionGuard],
     data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
     children: [
+      // Overview has no permission requirement — every staffer can see it.
       { path: '', component: StaffDashboardComponent },
-      { path: 'bookings', component: StaffBookingsComponent },
-      { path: 'flagged-requests', component: FlaggedRequestsComponent },
-      { path: 'users', component: StaffUsersComponent },
-      { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
-      { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
-      { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
-      { path: 'promo-codes', component: StaffPromoCodesComponent },
+      { path: 'bookings', component: StaffBookingsComponent, data: { permission: 'ManageBookings' } },
+      { path: 'flagged-requests', component: FlaggedRequestsComponent, data: { permission: 'ManageFlagedReq' } },
+      { path: 'users', component: StaffUsersComponent, data: { permission: 'ManageUsers' } },
+      { path: 'categories', component: CategoryComponent, title: 'Staff Categories', data: { permission: 'ManageCategories' } },
+      { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ', data: { permission: 'ManageCategories' } },
+      { path: 'policies', component: PoliciesComponent, title: 'Staff Policies', data: { permission: 'ManagePolicies' } },
+      { path: 'promo-codes', component: StaffPromoCodesComponent, data: { permission: 'ManagePromos' } },
       {
         path: 'staff-management',
+        data: { permission: 'FullAccess' },
         loadComponent: () =>
           import('./features/staff/pages/staff-management/staff-management.component')
             .then(m => m.StaffManagementComponent)
       },
       {
         path: 'support-tickets',
+        data: { permission: 'ManageTickets' },
         loadComponent: () =>
           import('./features/staff/pages/support-tickets/support-tickets.component')
             .then(m => m.SupportTicketsComponent)
       },
       {
         path: 'disputes',
+        data: { permission: 'ManageDisputes' },
         loadComponent: () =>
           import('./features/staff/pages/disputes/disputes.component')
             .then(m => m.DisputesComponent)
       },
       {
         path: 'reviews',
+        data: { permission: 'MangeReviews' },
         loadComponent: () =>
           import('./features/staff/pages/reviews/reviews.component')
             .then(m => m.ReviewsComponent)
       },
+      // Newsletters has no matching PermissionType — left open to all staff.
       {path:'newsletters',component:NewsletterpublishingComponent},
       { path: '**', redirectTo: '' }
     ],
