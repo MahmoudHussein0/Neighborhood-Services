@@ -1,40 +1,34 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../../environments/environment';
+import { switchMap } from 'rxjs';
+import { RegisterRequest } from '../../models/auth.models';
 import { AuthService } from '../../services/auth.service';
 import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register-customer',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  templateUrl: './register-customer.component.html',
+  styleUrl: './register-customer.component.css',
 })
-export class LoginComponent {
+export class RegisterCustomerComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly translate = inject(TranslateService);
 
   readonly isSubmitting = signal(false);
   readonly apiError = signal<string | null>(null);
-  readonly googleLoginUrl = `${environment.apiUrl}/api/Auth/google-login`;
 
   readonly form = this.formBuilder.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    age: [0, [Validators.required, Validators.min(13), Validators.max(120)]],
+    address: ['', [Validators.required, Validators.minLength(3)]],
   });
-
-  constructor() {
-    const externalError = this.route.snapshot.queryParamMap.get('externalError');
-
-    if (externalError) {
-      this.apiError.set(externalError);
-    }
-  }
 
   submit(): void {
     this.apiError.set(null);
@@ -45,21 +39,43 @@ export class LoginComponent {
     }
 
     this.isSubmitting.set(true);
-    const { email, password } = this.form.getRawValue();
+    const formValue = this.form.getRawValue();
 
-    this.authService.login(email, password).subscribe({
-      next: (user) => {
-        this.isSubmitting.set(false);
-        this.router.navigateByUrl(this.authService.getRedirectUrlForRole(user.role));
-      },
-      error: (error) => {
-        this.isSubmitting.set(false);
-        this.apiError.set(this.getErrorMessage(error));
-      },
-    });
+    this.authService
+      .geocodeAddress(formValue.address)
+      .pipe(
+        switchMap((location) => {
+          const request: RegisterRequest = {
+            fullName: formValue.fullName,
+            email: formValue.email,
+            password: formValue.password,
+            age: formValue.age,
+            applicationUserRole: 'Customer',
+            latitude: location.latitude,
+            longitude: location.longitude,
+          };
+
+          return this.authService.register(request);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.router.navigate(['/auth/login'], {
+            queryParams: { registered: 'true' },
+          });
+        },
+        error: (error) => {
+          this.isSubmitting.set(false);
+          this.apiError.set(this.getErrorMessage(error));
+        },
+      });
   }
 
-  hasError(controlName: 'email' | 'password', errorName: string): boolean {
+  hasError(
+    controlName: 'fullName' | 'email' | 'password' | 'age' | 'address',
+    errorName: string,
+  ): boolean {
     const control = this.form.controls[controlName];
     return control.touched && control.hasError(errorName);
   }
@@ -91,7 +107,7 @@ export class LoginComponent {
       }
     }
 
-    return this.translate.instant('login.submitError');
+    return this.translate.instant('register.submitError');
   }
 
   private isHttpError(error: unknown): error is {
