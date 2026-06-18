@@ -80,11 +80,17 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
                 request.ScheduledAt.TimeOfDay > dayAvailability.EndTime.ToTimeSpan())
                 throw new ValidationException("Scheduled time is outside technician working hours");
 
-            // validating if he is already booked on that time
-            var activeBooking = await _bookingRepository
-                .GetActiveBookingForTechnicianAsync(request.TechnicianId, request.ScheduledAt);
-            if (activeBooking != null)
-                throw new ConflictException("Technician is not available at this time");
+            // Reject up-front if the requested start lands inside one of the tech's existing
+            // confirmed bookings. The new booking has no duration yet (the tech sets it when
+            // quoting), so we can only check the start instant here — we probe a 1-minute window
+            // so a start exactly on/inside an existing job is caught. The precise duration-aware
+            // overlap check still runs at quote time as the final guard.
+            var startsDuringAnotherJob = await _bookingRepository.HasOverlappingConfirmedBookingAsync(
+                request.TechnicianId,
+                request.ScheduledAt,
+                request.ScheduledAt.AddMinutes(1));
+            if (startsDuringAnotherJob)
+                throw new ConflictException("Sorry, the technician is busy at this time. Please pick another slot.");
             if (request.PromoCodeId.HasValue)
             {
                  promoCode = await _promoCodeRepository.GetByIdAsync(request.PromoCodeId.Value);

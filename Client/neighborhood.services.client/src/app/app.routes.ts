@@ -15,6 +15,8 @@ import { AboutComponent } from './features/public/pages/about/about.component';
 import { ContactComponent } from './features/public/pages/contact/contact.component';
 import { LoginComponent } from './features/auth/pages/login/login.component';
 import { RegisterComponent } from './features/auth/pages/register/register.component';
+import { RegisterCustomerComponent } from './features/auth/pages/register-customer/register-customer.component';
+import { RegisterTechnicianComponent } from './features/auth/pages/register-technician/register-technician.component';
 import { ExternalCallbackComponent } from './features/auth/pages/external-callback/external-callback.component';
 import { CustomerDashboardComponent } from './features/customer/pages/dashboard/customer-dashboard.component';
 import { BookingsComponent } from './features/customer/pages/bookings/bookings.component';
@@ -73,6 +75,8 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
       { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+      { path: 'register/customer', component: RegisterCustomerComponent, canActivate: [guestGuard] },
+      { path: 'register/technician', component: RegisterTechnicianComponent, canActivate: [guestGuard] },
       { path: 'external-callback', component: ExternalCallbackComponent },
     ],
   },

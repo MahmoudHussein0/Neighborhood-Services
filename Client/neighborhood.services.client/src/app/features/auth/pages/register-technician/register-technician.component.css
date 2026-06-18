@@ -1,0 +1,37 @@
+/* Base auth theme lives in global styles.css. This file only carries the
+   category picker chips. */
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  margin: 0;
+}
+
+.category-chip:hover {
+  border-color: #818cf8;
+  color: #0f172a;
+}
+
+.category-chip.selected {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.28);
+}
