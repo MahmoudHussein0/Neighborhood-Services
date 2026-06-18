@@ -15,9 +15,11 @@
   overflow: hidden;
   padding: 2rem 0;
   background:
-    radial-gradient(70% 65% at 18% 10%, rgba(129, 140, 248, 0.22) 0%, transparent 60%),
-    radial-gradient(55% 55% at 88% 88%, rgba(167, 139, 250, 0.16) 0%, transparent 60%),
-    linear-gradient(135deg, #eceefb 0%, #f1f1fb 50%, #f4f2fb 100%);
+    radial-gradient(55% 50% at 12% 16%, rgba(45, 212, 191, 0.20) 0%, transparent 55%),
+    radial-gradient(50% 45% at 88% 20%, rgba(129, 140, 248, 0.20) 0%, transparent 55%),
+    radial-gradient(55% 55% at 82% 86%, rgba(167, 139, 250, 0.18) 0%, transparent 60%),
+    radial-gradient(48% 48% at 16% 92%, rgba(52, 211, 153, 0.16) 0%, transparent 58%),
+    linear-gradient(135deg, #eef2ff 0%, #ecfeff 50%, #f0fdfa 100%);
 }
 
 /* soft floating colour blooms behind the glass */
@@ -28,9 +30,9 @@
   border-radius: 50%;
   pointer-events: none;
   filter: blur(90px);
-  opacity: 0.16;
+  opacity: 0.32;
 }
-.auth-page::before { width: 440px; height: 440px; background: #a5b4fc; top: -150px; inset-inline-end: -120px; }
+.auth-page::before { width: 440px; height: 440px; background: #5eead4; top: -150px; inset-inline-end: -120px; }
 .auth-page::after  { width: 400px; height: 400px; background: #c4b5fd; bottom: -130px; inset-inline-start: -110px; }
 
 /* the frosted card — semi-transparent so the aurora shows through */
