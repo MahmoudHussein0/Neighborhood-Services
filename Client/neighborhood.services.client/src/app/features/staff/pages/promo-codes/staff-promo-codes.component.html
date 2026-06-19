@@ -98,7 +98,7 @@
           </div>
           <div class="col-6">
             <label class="form-label text-muted">{{ 'promoCodes.expiryLabel' | translate }}</label>
-            <input type="date" class="form-control" [ngModel]="newExpiresAt()" (ngModelChange)="newExpiresAt.set($event)">
+            <input type="date" class="form-control" [min]="today" [ngModel]="newExpiresAt()" (ngModelChange)="newExpiresAt.set($event)">
           </div>
         </div>
         <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="createPromoCode()" data-bs-dismiss="modal">
