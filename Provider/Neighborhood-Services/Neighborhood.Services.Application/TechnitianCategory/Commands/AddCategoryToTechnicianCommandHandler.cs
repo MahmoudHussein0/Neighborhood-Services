@@ -15,46 +15,68 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 
         private readonly ITechnicianCategoryRepository _technicianCategoryRepo;
         private readonly ICategoryRepository _categoryRepo;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ITechnicianRepository _technicianRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddCategoryToTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo , ICategoryRepository categoryRepo ,  ITechnicianRepository technicianRepo, IUnitOfWork unitOfWork)
+        public AddCategoryToTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo, ICategoryRepository categoryRepo, ICurrentUserService currentUserService, ITechnicianRepository technicianRepo, IUnitOfWork unitOfWork)
         {
-           _technicianCategoryRepo = technicianCategoryRepo;
-           _categoryRepo = categoryRepo;
+            _technicianCategoryRepo = technicianCategoryRepo;
+            _categoryRepo = categoryRepo;
+            _currentUserService = currentUserService;
             _technicianRepo = technicianRepo;
             _unitOfWork = unitOfWork;
         }
         public async Task<int> Handle(AddCategoryToTechnicianCommand request, CancellationToken cancellationToken)
         {
-            var technician = await _technicianRepo.GetByIdAsync(request.TechnicianId);
-            var category = await _categoryRepo.GetByIdAsync(request.CategoryId);
+            string? userId = _currentUserService.UserId;
 
+            if (userId is null)
+                throw new UnauthorizedException("User is unauthorized");
+
+            var technician = await _technicianRepo.GetByUserIdAsync(userId);
 
             if (technician is null)
-                throw new NotFoundException("Technician", request.TechnicianId);
+                throw new ForbiddenException("User is not a technician");
 
+            var category = await _categoryRepo.GetByIdAsync(request.CategoryId);
 
             if (category is null)
-                throw new NotFoundException("Problem", request.CategoryId);
+                throw new NotFoundException("Category not found", request.CategoryId);
 
-            if (await _technicianCategoryRepo.IsExists(request.TechnicianId, request.CategoryId))
+
+            var technicianCategory = (await _technicianCategoryRepo
+                .GetByConditionAsync(tc =>
+                    tc.TechnicianId == technician.Id &&
+                    tc.CategoryId == request.CategoryId))
+                .FirstOrDefault();
+
+            if (technicianCategory is not null && !technicianCategory.IsDeleted)
             {
-                throw new ValidationException("Technician already has this category.");}
+                throw new ValidationException("Technician already has this category.");
+            }
 
-
-            var techCategory = new TechnicianCategory()
+            if (technicianCategory is not null && technicianCategory.IsDeleted)
             {
-                CategoryId = request.CategoryId,
-                TechnicianId = request.TechnicianId,
-            };
+                technicianCategory.IsDeleted = false;
+                await _technicianCategoryRepo.UpdateAsync(technicianCategory);
+            }
+            else
+            {
+                technicianCategory = new TechnicianCategory
+                {
+                    CategoryId = request.CategoryId,
+                    TechnicianId = technician.Id,
+                    IsDeleted = false
+                };
 
+                await _technicianCategoryRepo.AddAsync(technicianCategory);
+            }
 
-            await   _technicianCategoryRepo.AddAsync(techCategory);
             await _unitOfWork.SaveChangesAsync();
 
-            return techCategory.Id;
-
+            return technicianCategory.Id;
         }
+       
     }
 }

@@ -7,15 +7,14 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 {
     public class DeleteCategortFromTechnicianCommand : IRequest<bool>
     {
-       
 
-        public int TechnicianId { get; set; }
-        public int CategoryId { get; set; }
 
-        public DeleteCategortFromTechnicianCommand(int technicianId, int categoryId)
+        public int Id { get; set; }
+
+        public DeleteCategortFromTechnicianCommand(int id)
         {
-            TechnicianId = technicianId;
-            CategoryId = categoryId;
+           Id = id;
         }
     }
+
 }

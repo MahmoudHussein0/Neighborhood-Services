@@ -47,6 +47,7 @@ import { PoliciesComponent } from './features/staff/pages/policies/policies.comp
 import { TechReviewsComponent } from './features/technician/pages/reviews/tech-review';
 import { PublicProfileComponent } from './shared/components/public-profile/public-profile.component';
 import { categoriesResolver } from './core/resolvers/categories-resolver';
+import { TechnicianCategoriesComponent } from './features/technician/pages/Technician-categories/Technician-categories.component';
 
 export const routes: Routes = [
   {
@@ -110,28 +111,10 @@ export const routes: Routes = [
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
       { path: 'reviews', component: TechReviewsComponent },
       { path: 'pricing', component: PricingComponent },
+      { path: 'yourCategories', component: TechnicianCategoriesComponent, title: "Your categories" },
     ]
   },
 
-  // {
-  //   path: 'staff',
-  //   component: StaffLayoutComponent,
-  //   canActivate: [authGuard, roleGuard],
-  //   canActivateChild: [authGuard, roleGuard],
-  //   data: { roles: ['Staff', 'Admin', 'TechnicalSupport'] },
-  //   children: [
-  //     { path: '', component: StaffDashboardComponent },
-
-  //     // Existing
-  //     { path: 'bookings', component: StaffBookingsComponent },
-  //     { path: 'flagged-requests', component: FlaggedRequestsComponent },
-  //     { path: 'users', component: StaffUsersComponent },
-  //     { path: 'categories', component: CategoryComponent, title: 'Staff Categories' },
-  //     { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
-  //     { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
-  //     { path: '**', redirectTo: '' }
-  //   ]
-  // },
 
 
 

@@ -55,6 +55,10 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
                 problemType.DescriptionAr = request.DescriptionAr;
 
 
+            if (!string.IsNullOrWhiteSpace(request.ImageUrl))
+                problemType.ImageUrl = request.ImageUrl;
+
+
             problemType.MinPrice = request.MinPrice;
             problemType.MaxPrice = request.MaxPrice;
 
@@ -66,7 +70,7 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             var problemTypeDto = new UpdateProblemTypeDto()
             {
                 Description = !string.IsNullOrWhiteSpace(request.DescriptionEn) ? request.DescriptionEn : request.DescriptionAr,
-                
+                ImageUrl = request.ImageUrl,
                 MinPrice = request.MinPrice,
                 MaxPrice = request.MaxPrice
             };

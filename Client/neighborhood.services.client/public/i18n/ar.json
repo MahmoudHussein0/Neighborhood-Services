@@ -806,7 +806,21 @@
         "noPricing": " لا يوجد تسعيره لمشاكل",
         "deletePricing": "حذف التسعير",
         "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
-        "close": "إلغاء"
+        "close": "إلغاء",
+        "ProblemIsRequired": "اختيار المشكله مطلوب ."
+    },
+    "technicianCategories": {
+        "category": "التصنيف",
+        "manageYourCategoriesEasily": "قم بإدارة تصنيفاتك بسهولة",
+        "assignToCategory": "إضافة إلى تصنيف",
+        "noCategories": "لم تقم بالتسجيل في أي تصنيفات .",
+        "categories": "التصنيفات",
+        "selectCategory": "اختر تصنيفًا",
+        "close": "إلغاء",
+        "saveChanges": "حفظ",
+        "categoryIsRequired": "التصنيف مطلوب",
+        "delete": "حذف",
+        "deleteCategory": "هل تريد حذف التصنيف؟"
     },
     "problemType": {
         "startingFrom": "يبدأ من",
@@ -870,7 +884,8 @@
         "categories": "الفئات",
         "policies": "السياسات",
         "promoCodes": "أكواد الخصم",
-        "staffManagement": "إدارة الموظفين"
+        "staffManagement": "إدارة الموظفين",
+        "yourCategories": "الفئات التي تنضم اليها"
     },
     "staffBookings": {
         "title": "الحجوزات",

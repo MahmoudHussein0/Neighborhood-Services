@@ -60,7 +60,6 @@
     <Folder Include="RecurringBookings\DTOs\" />
     <Folder Include="RecurringBookings\Queries\" />
     <Folder Include="ServiceRequests\Queries\" />
-    <Folder Include="TechnitianCategory\DTOs\" />
     <Folder Include="Users\Services\" />
   </ItemGroup>
 

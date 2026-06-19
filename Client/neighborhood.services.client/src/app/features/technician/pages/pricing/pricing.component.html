@@ -21,6 +21,16 @@
 
     <div class="card-body">
         <div class="row g-4">
+
+            @if (isLoadingApi()) {
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            }
+            @else {
+
             @for(pricing of pricing(); track pricing.id)
             {
             <div class="col-12 col-lg-6">
@@ -102,6 +112,8 @@
                 "pricing.noPricing" |
                 translate}} </p>
             }
+            }
+
         </div>
     </div>
 </section>
@@ -146,8 +158,8 @@
 
                             @if(!isEditMode) {
                             <select class="form-select custom-input" formControlName="problemTypeId">
-                                <option value="">
-                                    {{"pricing.selectProblemType" |translate}}
+                                <option [ngValue]=-1>
+                                    ---- {{"pricing.selectProblemType" |translate}} ----
                                 </option>
 
                                 @for(problem of problemTypes(); track problem.id) {
@@ -156,6 +168,16 @@
                                 </option>
                                 }
                             </select>
+
+                            @if(pricingForm.get("problemTypeId")?.getError('min') &&
+                            pricingForm.get("problemTypeId")?.touched
+                            )
+                            {
+                            <small class="text-danger">
+                                {{ "pricing.ProblemIsRequired" | translate }}
+                            </small>
+                            }
+
                             }
                         </div>
 

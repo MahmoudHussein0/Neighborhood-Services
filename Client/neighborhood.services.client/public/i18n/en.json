@@ -792,7 +792,21 @@
         "editPricing": "Update Pricing",
         "enterMinimumPrice": "Enter minimum price",
         "enterMaximumPrice": "Enter maximum price",
-        "noPricing": "No Pricing"
+        "noPricing": "No Pricing",
+        "ProblemIsRequired": "Problem Is Required"
+    },
+    "technicianCategories": {
+        "category": "Category",
+        "manageYourCategoriesEasily": "Manage your categories easily",
+        "assignToCategory": " Assign To Category",
+        "noCategories": "You havn't listed any service categories.",
+        "categories": "Categories",
+        "selectCategory": "Select Category",
+        "close": "Cancle",
+        "saveChanges": "Save",
+        "categoryIsRequired": "Category is required",
+        "delete": "Delete",
+        "deleteCategory": "Delete Category?"
     },
     "problemType": {
         "startingFrom": "Starting from",
@@ -855,7 +869,8 @@
         "categories": "Categories",
         "policies": "Policies",
         "promoCodes": "Promo Codes",
-        "staffManagement": "Staff Management"
+        "staffManagement": "Staff Management",
+        "yourCategories": "Your Categories"
     },
     "staffBookings": {
         "title": "Bookings",
