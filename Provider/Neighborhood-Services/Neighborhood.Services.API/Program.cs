@@ -212,7 +212,7 @@ namespace Neighborhood.Services.API
 
 
             //Amira
-            app.MapHub<SupportChatHub>("/hubs/support-chat");
+            app.MapHub<SupportChatHub>("/hubs/SupportChatHub");
             // End of Amira 
 
 
