@@ -53,6 +53,7 @@ namespace Neighborhood.Services.Infrastructure.Services.CustomerService
                 {
                     await Groups.RemoveFromGroupAsync(connId, group);
                     Console.WriteLine($"Connection {connId} left group {group}");
+                    await SendGroupMessage(group, "Server Failed! Try to reconnect again", "system");
                 }
             }
 
@@ -81,14 +82,17 @@ namespace Neighborhood.Services.Infrastructure.Services.CustomerService
             ticket.senderName = "guest";
           //  var result = await _mediator.Send(ticket);
             await JoinGroup(userEmail);
+           
             await _service.SendNotificationToAdmin("There is a new Live Ticket");
             await Clients.Group(ApplicationUserRole.Staff.ToString()).SendAsync("ReceiveTicket",ticket);
         }
         //هيسند التيكت، هينضم للهاب، هيبعت ل
 
-        public async Task SendGroupMessage(string emaill, string mssg)
+        public async Task SendGroupMessage(string emaill, string mssg, string sender) //sender:Admin or guest?
         {
-            await Clients.Group(emaill).SendAsync("TicketChat", new { email = emaill, message = mssg });
+            await Clients.Group(emaill).SendAsync("TicketChat", new { email = emaill, message = mssg, sndr=sender });
+          //  await Clients.Group(ApplicationUserRole.Staff.ToString()).SendAsync("TicketChat", new { email = emaill, message = mssg });
+
         }
 
     }

@@ -51,6 +51,7 @@ import {FavoriteListComponent} from '../app/features/customer/pages/favorite-lis
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
 import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 import {CustomerSupportComponent} from '../app/features/public/pages/customersupport/customer-support/customer-support.component'
+import {CustomerSupportStaffComponent} from '../app/features/staff/pages/customer-support-staff/customer-support-staff.component'
 
 export const routes: Routes = [
   {
@@ -136,6 +137,7 @@ export const routes: Routes = [
       { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ' },
       { path: 'policies', component: PoliciesComponent, title: 'Staff Policies' },
       { path: 'promo-codes', component: StaffPromoCodesComponent },
+      {path:'CustomerSupport',component:CustomerSupportStaffComponent},
       {
         path: 'staff-management',
         loadComponent: () =>

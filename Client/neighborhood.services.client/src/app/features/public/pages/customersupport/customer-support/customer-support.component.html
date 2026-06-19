@@ -12,7 +12,7 @@
  
   <div class="chat-wrapper">
 <div class="chat-header">
-  <h5>{{ ticket.Subject }}</h5>
+  <h5>{{ ticket.subject }}</h5>
   <small>
     {{ ticket.senderName }} ({{ ticket.senderEmail }})
   </small>
@@ -32,16 +32,38 @@
       </div>
       <i class="ti ti-dots-vertical" style="font-size:18px;color:#9ca3af;cursor:pointer" aria-hidden="true"></i>
     </div>
-
-    <!-- Messages -->
-    <div class="messages-area" id="messages">
+<div class="messages-area" id="messages">
       <div class="msg-row">
         <div class="mini-avatar">SA</div>
         <div>
-          <div class="msg-time">Support · 2:31 PM</div>
-          <div class="bubble agent">Hi there! Welcome to support. How can I help you today? 👋</div>
+          <div class="msg-time">Support</div>
+          <div class="bubble agent">Hi there! Someone will be in contact with you soon...</div>
         </div>
       </div>
+    <!-- Messages -->
+     @for (message of mssgSignals(); track message){
+
+      @if(message.sndr!='g'){
+       
+      <div class="msg-row">
+        <div class="mini-avatar">SA</div>
+        <div>
+          <div class="msg-time">Support</div>
+          <div class="bubble agent">{{message.message}}</div>
+        </div>
+      </div>
+    
+      }
+      @else{
+        <div class="msg-row user" style="flex-direction: row-reverse;">
+        <div class="mini-avatar user-av">You</div>
+        <div>
+          <div class="msg-time">You</div>
+          <div class="bubble user">{{message.message}}</div>
+        </div></div>
+      }
+     }
+    
 
       <!-- <div id="quick-replies-container">
         <div class="quick-replies">
@@ -72,10 +94,10 @@
         id="chatInput"
         placeholder="Type a message…"
         rows="1"
-        onkeydown="handleKey(event)"
-        oninput="autoResize(this)"
+        [(ngModel)]="messageToSend"
+      
       ></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send message">
+      <button class="send-btn" id="sendBtn" (click)="sendMessage()" aria-label="Send message">
         <i class="ti ti-send" style="font-size:16px" aria-hidden="true"></i>
       </button>
     </div>
