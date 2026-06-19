@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Neighborhood.Services.API.Hubs;
 using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
 using Neighborhood.Services.Application.AI.Interfaces;
@@ -34,8 +35,12 @@ namespace Neighborhood.Services.API
                     options.JsonSerializerOptions.Converters.Add(
                         new System.Text.Json.Serialization.JsonStringEnumConverter()));
             builder.Services.AddSignalR();
+
+
             //builder.Services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddCors(options =>
@@ -205,6 +210,13 @@ namespace Neighborhood.Services.API
             //app.MapHub<NotificationHub>("/notf");
 
             //END OF ARWA
+
+
+            //Amira
+            app.MapHub<SupportChatHub>("/hubs/support-chat");
+            // End of Amira 
+
+
             // Seed dev/test data on startup (migrates + seeds if empty)
             // CLI: pure knowledge reindex. Assumes the DB is already migrated (boot the app
             // normally at least once first). Does NOT seed dev data, does NOT start the server.

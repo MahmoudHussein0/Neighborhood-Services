@@ -29,16 +29,18 @@ export class StaffManagementComponent implements OnInit {
   showModal = false;
 
   roles = Object.keys(StaffRole).filter(k => isNaN(Number(k)));
-  permissionsList = [
-    { id: PermissionType.ManageDisputes, name: 'Manage Disputes' },
-    { id: PermissionType.ManageTickets, name: 'Manage Tickets' },
-    { id: PermissionType.ViewTransactions, name: 'View Transactions' },
-    { id: PermissionType.ApproveTechnicians, name: 'Approve Technicians' },
-    { id: PermissionType.FlagReviews, name: 'Flag Reviews' },
-    { id: PermissionType.ManageUsers, name: 'Manage Users' },
-    { id: PermissionType.ManageBookings, name: 'Manage Bookings' },
-    { id: PermissionType.FullAccess, name: 'Full Access' }
-  ];
+ permissionsList = [
+  { id: 1, name: 'Manage Disputes' },      // ManageDisputes = 1
+  { id: 2, name: 'Manage Tickets' },        // ManageTickets = 2
+  { id: 3, name: 'Manage Flagged Requests' }, // ManageFlagedReq = 3
+  { id: 4, name: 'Manage Promos' },         // ManagePromos = 4
+  { id: 5, name: 'Manage Categories' },     // ManageCategories = 5
+  { id: 6, name: 'Manage Reviews' },        // MangeReviews = 6
+  { id: 7, name: 'Manage Users' },          // ManageUsers = 7
+  { id: 8, name: 'Manage Bookings' },       // ManageBookings = 8
+  { id: 9, name: 'Manage Policies' } ,
+  { id: 10, name: 'Full Access' }           // FullAccess = 10
+];
 
   selectedStaff: StaffDto | null = null;
   isEditMode = false;
@@ -186,24 +188,25 @@ export class StaffManagementComponent implements OnInit {
     });
   }
 
-  onPermissionChange(permissionId: number, event: any): void {
-    const current: number[] = this.staffForm.get('selectedPermissions')?.value || [];
-    const isChecked = event.target.checked;
+ onPermissionChange(permissionId: number, event: any): void {
+  const current: number[] = this.staffForm.get('selectedPermissions')?.value || [];
+  const isChecked = event.target.checked;
 
-    if (permissionId === PermissionType.FullAccess) {
-      // لو حدد Full Access، بقية الصلاحيات تصبح غير ضرورية
-      this.staffForm.get('selectedPermissions')?.setValue(
-        isChecked ? [PermissionType.FullAccess] : []
-      );
-      return;
-    }
-
-    if (isChecked) {
-      this.staffForm.get('selectedPermissions')?.setValue([...current, permissionId]);
-    } else {
-      this.staffForm.get('selectedPermissions')?.setValue(current.filter(id => id !== permissionId));
-    }
+  if (permissionId === 10) { // FullAccess = 10
+    this.staffForm.get('selectedPermissions')?.setValue(
+      isChecked ? [10] : []
+    );
+    return;
   }
+
+  if (isChecked) {
+    this.staffForm.get('selectedPermissions')?.setValue([...current, permissionId]);
+  } else {
+    this.staffForm.get('selectedPermissions')?.setValue(
+      current.filter(id => id !== permissionId)
+    );
+  }
+}
 
   // بنستخدمها في الـ template لتعطيل باقي الصلاحيات لما يكون Full Access متحدد
   isFullAccessSelected(): boolean {

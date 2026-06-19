@@ -14,11 +14,13 @@ namespace Neighborhood.Services.Application.Categories.Commands
     {
         private readonly ICategoryRepository _categoryRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBackgroundJobScheduler _jobs;
 
-        public UpdateCategoryCommandHandler(ICategoryRepository categoryRepo , IUnitOfWork unitOfWork)
+        public UpdateCategoryCommandHandler(ICategoryRepository categoryRepo , IUnitOfWork unitOfWork, IBackgroundJobScheduler jobs)
         {
             _categoryRepo = categoryRepo;
             _unitOfWork = unitOfWork;
+            _jobs = jobs;
         }
     
 
@@ -52,6 +54,10 @@ namespace Neighborhood.Services.Application.Categories.Commands
 
             await _categoryRepo.UpdateAsync(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Re-embed this category's vector off the request thread. Fail-open: a queue
+            // hiccup must never undo a committed update.
+            try { _jobs.EnqueueCategoryIndex(category.Id); } catch { /* RAG sync is best-effort; /reindex is the backstop */ }
 
             return new CategoryDto
             {

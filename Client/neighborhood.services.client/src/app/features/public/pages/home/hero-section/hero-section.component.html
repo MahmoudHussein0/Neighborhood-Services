@@ -24,9 +24,11 @@
 
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
 
-            <a class="btn bg-orange text-white fw-semibold p-3 rounded-3 shadow-sm">
-                {{ "hero.bookService" | translate }}
-            </a>
+            @if (showBookNow()) {
+                <a (click)="bookNow()" role="button" class="btn bg-orange text-white fw-semibold p-3 rounded-3 shadow-sm" style="cursor: pointer;">
+                    {{ "hero.bookService" | translate }}
+                </a>
+            }
 
             <a routerLink="/services" class="btn btn-browse fw-semibold p-3 rounded-3">
                 {{ "hero.browseServices" | translate }}

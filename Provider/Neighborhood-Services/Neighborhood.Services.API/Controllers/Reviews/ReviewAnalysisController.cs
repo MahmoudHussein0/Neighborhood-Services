@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.ReviewsAnalysis.Commands;
 using Neighborhood.Services.Application.ReviewsAnalysis.DTOs;
 using Neighborhood.Services.Application.ReviewsAnalysis.Queries;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Controllers.Reviews
 {
@@ -19,6 +21,7 @@ namespace Neighborhood.Services.API.Controllers.Reviews
     }
 
     [HttpGet]
+    [HasPermission(PermissionType.MangeReviews)]
     public async Task<ActionResult<IReadOnlyList<ReviewAnalysisDto>>> GetAll()
     {
         var result = await _mediator.Send(
@@ -28,7 +31,8 @@ namespace Neighborhood.Services.API.Controllers.Reviews
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReviewAnalysisDto>> GetById(int id)
+    [HasPermission(PermissionType.MangeReviews)]
+        public async Task<ActionResult<ReviewAnalysisDto>> GetById(int id)
     {
         var result = await _mediator.Send(
             new GetReviewAnalysisByIdQuery
@@ -40,7 +44,8 @@ namespace Neighborhood.Services.API.Controllers.Reviews
     }
 
     [HttpGet("review/{reviewId}")]
-    public async Task<ActionResult<ReviewAnalysisDto>> GetByReviewId(int reviewId)
+    [HasPermission(PermissionType.MangeReviews)]
+        public async Task<ActionResult<ReviewAnalysisDto>> GetByReviewId(int reviewId)
     {
         var result = await _mediator.Send(
             new GetReviewAnalysisByReviewIdQuery

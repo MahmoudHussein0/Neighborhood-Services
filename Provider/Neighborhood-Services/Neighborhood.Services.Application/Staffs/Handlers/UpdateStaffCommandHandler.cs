@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Shared.Mappers;
 using Neighborhood.Services.Application.Staffs.Commands;
@@ -33,56 +32,37 @@ namespace Neighborhood.Services.Application.Staffs.Handlers
                 _currentUser.UserId);
 
             if (currentStaff is null)
-            {
-                throw new UnauthorizedAccessException(
-                    "Current staff not found.");
-            }
-
-           
+                throw new UnauthorizedAccessException("Current staff not found.");
 
             var staff = await _repository.GetByIdAsync(request.Id);
 
             if (staff is null)
-            {
-                throw new Exception(
-                    $"Staff with id {request.Id} not found.");
-            }
+                throw new Exception($"Staff with id {request.Id} not found.");
 
             staff.Role = request.Role;
             staff.IsActive = request.IsActive;
 
-            IEnumerable<PermissionType> permissions;
+            // ✅ نفس المنطق للـ Admin والـ TechnicalSupport
+            var permissions = request.Permissions.Distinct();
 
-            if (request.Role == StaffRole.Admin)
-            {
-                permissions = request.Permissions
-                    .Distinct();
+            if (!permissions.Any())
+                throw new Exception("Staff must have at least one permission.");
 
-                if (!permissions.Any())
-                {
-                    throw new Exception(
-                        "Admin must have at least one permission.");
-                }
-            }
-            else
-            {
-                permissions =
-                [
-                    PermissionType.ManageTickets,
-                PermissionType.ManageDisputes,
-                PermissionType.FlagReviews
-                ];
-            }
-
+            // ✅ امسح القديم واحفظ الأول
             await _repository.ReplacePermissionsAsync(
                 staff.Id,
                 permissions,
                 cancellationToken);
 
+            await _unitOfWork.SaveChangesAsync();
+
+            // ✅ بعدين عدّل الـ staff واحفظ تاني
             await _repository.UpdateAsync(staff);
             await _unitOfWork.SaveChangesAsync();
 
-            return StaffMapper.MapToDto(staff);
+            // ✅ جيب fresh copy من الداتابيز عشان الـ DTO يكون محدث
+            var updatedStaff = await _repository.GetByIdAsync(request.Id);
+            return StaffMapper.MapToDto(updatedStaff!);
         }
     }
 }

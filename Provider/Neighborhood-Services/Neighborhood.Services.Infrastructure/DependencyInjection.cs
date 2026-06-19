@@ -208,6 +208,7 @@ namespace Neighborhood.Services.Infrastructure
                 services.AddScoped<RecurringBookingGeneratorService>();
                 services.AddScoped<ServiceRequestExpiryService>();
                 services.AddScoped<ServiceRequestModerationJob>();
+                services.AddScoped<KnowledgeIndexJob>();
                 services.AddScoped<IBackgroundJobScheduler, BackgroundJobScheduler>();
                 services.AddScoped<IKnowledgeIndexer, KnowledgeSeeder>();
                 //Kernl

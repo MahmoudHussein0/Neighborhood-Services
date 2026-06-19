@@ -15,12 +15,14 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
         private readonly IProblemTypeRepository _problemTypeRepo;
         private readonly ICategoryRepository _categoryRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBackgroundJobScheduler _jobs;
 
-        public AddProblemTypeCommandHandler( IProblemTypeRepository problemTypeRepo , ICategoryRepository categoryRepo , IUnitOfWork unitOfWork)
+        public AddProblemTypeCommandHandler( IProblemTypeRepository problemTypeRepo , ICategoryRepository categoryRepo , IUnitOfWork unitOfWork, IBackgroundJobScheduler jobs)
         {
            _problemTypeRepo = problemTypeRepo;
            _categoryRepo = categoryRepo;
            _unitOfWork = unitOfWork;
+           _jobs = jobs;
         }
 
         public async  Task<int> Handle(AddProblemTypeCommand request, CancellationToken cancellationToken)
@@ -54,7 +56,12 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             };
 
             await _problemTypeRepo.AddAsync(problemType);
-            await  _unitOfWork.SaveChangesAsync(); 
+            await  _unitOfWork.SaveChangesAsync();
+
+            // Embed this problem type into the RAG index off the request thread. Fail-open: a
+            // queue hiccup must never undo a committed problem type.
+            try { _jobs.EnqueueProblemTypeIndex(problemType.Id); } catch { /* RAG sync is best-effort; /reindex is the backstop */ }
+
             return problemType.Id;
         }
     }

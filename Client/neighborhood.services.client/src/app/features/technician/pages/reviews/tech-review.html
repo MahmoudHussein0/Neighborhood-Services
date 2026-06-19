@@ -1,11 +1,11 @@
-<div class="tech-reviews" dir="rtl">
+<div class="tech-reviews" dir="ltr">
 
   <!-- Header + average rating gauge -->
   <header class="header">
     <div class="header-text">
-      <h2 class="title">تقييماتك المعتمدة</h2>
+      <h2 class="title">Verified Reviews</h2>
       <p class="subtitle">
-        دي التقييمات اللي عملها العملاء بعد انتهاء الخدمة، وتمت مراجعتها واعتمادها من فريق الإدارة.
+        These are reviews submitted by customers after service completion and approved by the administration team.
       </p>
     </div>
 
@@ -41,7 +41,9 @@
 
       <div class="gauge-readout">
         <span class="gauge-value">{{ averageRatingLabel() }}</span>
-        <span class="gauge-caption">من 5 - بناءً على {{ reviews().length }} تقييم</span>
+        <span class="gauge-caption">
+          Out of 5 • Based on {{ reviews().length }} reviews
+        </span>
       </div>
     </div>
   </header>
@@ -49,25 +51,27 @@
   <!-- States: loading / no-user / error / empty -->
   <div class="state loading" *ngIf="status() === 'loading'">
     <span class="spinner" aria-hidden="true"></span>
-    <span>جاري تحميل تقييماتك...</span>
+    <span>Loading your reviews...</span>
   </div>
 
   <div class="state info" *ngIf="status() === 'no-user'">
-    <p class="state-title">معرف المستخدم غير متاح</p>
+    <p class="state-title">User ID Not Available</p>
     <p class="state-text">
-      مش قادرين نحدد حساب التيكنيشن الحالي. تأكد إنك مسجل دخول وحاول تاني.
+      We couldn't identify the current technician account. Please make sure you're logged in and try again.
     </p>
   </div>
 
   <div class="state info" *ngIf="status() === 'error'">
-    <p class="state-title">حدث خطأ في تحميل التقييمات</p>
-    <p class="state-text">تعذر الاتصال بالسيرفر، تأكد من اتصالك بالإنترنت وحاول تاني.</p>
+    <p class="state-title">Failed to Load Reviews</p>
+    <p class="state-text">
+      Unable to connect to the server. Please check your internet connection and try again.
+    </p>
   </div>
 
   <div class="state info" *ngIf="status() === 'empty'">
-    <p class="state-title">لسه معندك تقييمات معتمدة</p>
+    <p class="state-title">No Approved Reviews Yet</p>
     <p class="state-text">
-      بعد ما يعمل العميل تقييم على إحدى الخدمات اللي قدمتها، وتتم مراجعته من الإدارة، هيظهر هنا.
+      Once a customer submits a review for one of your completed services and it is approved by the administration team, it will appear here.
     </p>
   </div>
 
@@ -82,7 +86,7 @@
           </div>
           <div class="reviewer-meta">
             <p class="reviewer-name">
-              {{ review.reviewerLoading ? 'جاري تحميل الاسم...' : (review.reviewerName || 'عميل') }}
+              {{ review.reviewerLoading ? 'Loading name...' : (review.reviewerName || 'Customer') }}
             </p>
             <p class="review-date">{{ formatDate(review.createdAt) }}</p>
           </div>
@@ -94,13 +98,19 @@
       </header>
 
       <div class="booking-line">
-        <span class="booking-label">الخدمة:</span>
+        <span class="booking-label">Service:</span>
         <span>
-          {{ review.bookingLoading ? 'جاري تحميل تفاصيل البوكينج...' : (review.bookingDescription || 'بدون تفاصيل') }}
+          {{
+            review.bookingLoading
+              ? 'Loading booking details...'
+              : (review.bookingDescription || 'No details available')
+          }}
         </span>
       </div>
 
-      <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+      <p class="review-comment" *ngIf="review.comment">
+        {{ review.comment }}
+      </p>
     </article>
   </div>
 </div>

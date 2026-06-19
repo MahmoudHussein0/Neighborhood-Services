@@ -16,5 +16,17 @@ namespace Neighborhood.Services.Infrastructure.Services
             BackgroundJob.Enqueue<ServiceRequestModerationJob>(
                 job => job.Run(serviceRequestId));
         }
+
+        public void EnqueueCategoryIndex(int categoryId)
+            => BackgroundJob.Enqueue<KnowledgeIndexJob>(job => job.IndexCategory(categoryId));
+
+        public void EnqueueCategoryRemoval(int categoryId)
+            => BackgroundJob.Enqueue<KnowledgeIndexJob>(job => job.RemoveCategory(categoryId));
+
+        public void EnqueueProblemTypeIndex(int problemTypeId)
+            => BackgroundJob.Enqueue<KnowledgeIndexJob>(job => job.IndexProblemType(problemTypeId));
+
+        public void EnqueueProblemTypeRemoval(int problemTypeId)
+            => BackgroundJob.Enqueue<KnowledgeIndexJob>(job => job.RemoveProblemType(problemTypeId));
     }
 }

@@ -9,14 +9,6 @@
         <div>
             <owl-carousel-o [options]="customOptions">
 
-                @if( isLoading() ){
-                <div class="d-flex justify-content-center align-items-center py-5">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                }@else {
-
                 @for (category of categories(); track category.id) {
                 <ng-template carouselSlide [id]="category.id.toString()">
 
@@ -42,16 +34,10 @@
                 </ng-template>
                 }@empty{
 
-
-
                 <p class=" p-5 bg-info-subtle fw-bold text-black border rounded-1  text-center"> {{
                     "services.noServices" |
                     translate}} </p>
                 }
-                }
-
-
-
             </owl-carousel-o>
         </div>
     </div>

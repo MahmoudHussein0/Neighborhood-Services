@@ -22,9 +22,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
         public async Task<IReadOnlyList<SupportMessage>> GetByTicketIdAsync(int ticketId, CancellationToken cancellationToken = default)
         {
             return await _context.SupportMessages
-                .Where(m => m.TicketId == ticketId)
-                .OrderBy(m => m.CreatedAt)
-                .AsNoTracking()
+     .Include(m => m.Attachments)
+     .Where(m => m.TicketId == ticketId)
+     .OrderBy(m => m.CreatedAt)
+                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
 
@@ -32,6 +33,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
         public async Task<IReadOnlyList<SupportMessage>> GetUnreadByTicketIdAsync(int ticketId, CancellationToken cancellationToken = default)
         {
             return await _context.SupportMessages
+                .Include(m => m.Attachments)
                 .Where(m => m.TicketId == ticketId && m.ReadAt == null)
                 .OrderBy(m => m.CreatedAt)
                 .AsNoTracking()
@@ -52,5 +54,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
             return Task.CompletedTask;
 
         }
+
+     
     }
 }

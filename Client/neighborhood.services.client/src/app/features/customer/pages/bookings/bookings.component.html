@@ -65,6 +65,37 @@
               </div>
             </div>
 
+            <!-- Progress timeline (hidden for Cancelled / Disputed) -->
+            @let step = bookingStep(b);
+            @if (step >= 0) {
+              <div class="ns-progress mt-3">
+                <div class="ns-step" [class.done]="step > 0" [class.active]="step === 0">
+                  <div class="ns-step-dot"></div>
+                  <span class="ns-step-label">{{ 'bookings.stepBooked' | translate }}</span>
+                </div>
+                <div class="ns-step-line" [class.done]="step >= 1"></div>
+                <div class="ns-step" [class.done]="step > 1" [class.active]="step === 1">
+                  <div class="ns-step-dot"></div>
+                  <span class="ns-step-label">{{ 'bookings.stepQuoted' | translate }}</span>
+                </div>
+                <div class="ns-step-line" [class.done]="step >= 2"></div>
+                <div class="ns-step" [class.done]="step > 2" [class.active]="step === 2">
+                  <div class="ns-step-dot"></div>
+                  <span class="ns-step-label">{{ 'bookings.stepConfirmed' | translate }}</span>
+                </div>
+                <div class="ns-step-line" [class.done]="step >= 3"></div>
+                <div class="ns-step" [class.done]="step > 3" [class.active]="step === 3">
+                  <div class="ns-step-dot"></div>
+                  <span class="ns-step-label">{{ 'bookings.stepDone' | translate }}</span>
+                </div>
+                <div class="ns-step-line" [class.done]="step >= 4"></div>
+                <div class="ns-step" [class.done]="step > 4" [class.active]="step === 4">
+                  <div class="ns-step-dot"></div>
+                  <span class="ns-step-label">{{ 'bookings.stepReviewed' | translate }}</span>
+                </div>
+              </div>
+            }
+
             <!-- Footer: price · actions -->
             <div class="ns-card-footer d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 pt-3">
               <div class="d-flex align-items-baseline gap-2">
@@ -117,26 +148,24 @@
 
             <!-- Quoted: the tech has set a price, show callout + accept/reject -->
             @if (b.status === 'Quoted') {
-              <div class="alert alert-info py-2 px-3 mt-3 mb-0 d-flex align-items-center justify-content-between flex-wrap gap-2 small">
-                <div>
-                  <i class="bi bi-tag me-1"></i>
-                  {{ 'bookings.quotedCallout' | translate: { price: (b.finalPrice | currency: 'EGP ') } }}
-                  @if (b.durationMinutes) {
-                    · {{ b.durationMinutes }} {{ 'bookings.min' | translate }}
-                  }
-                </div>
-                <div class="d-flex gap-2 align-items-center">
-                  <input type="text" class="form-control form-control-sm" style="max-width: 11rem;"
-                         [ngModel]="quotePromo()[b.id] || ''"
-                         (ngModelChange)="setQuotePromo(b.id, $event)"
-                         [disabled]="busyId() === b.id"
-                         [placeholder]="'bookings.promoPlaceholder' | translate" />
-                  <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="rejectQuote(b)">
-                    {{ 'bookings.rejectQuote' | translate }}
-                  </button>
-                  <button class="btn btn-sm btn-success" [disabled]="busyId() === b.id" (click)="acceptQuote(b)">
-                    {{ 'bookings.acceptQuote' | translate }}
-                  </button>
+              <div class="ns-quote-callout mt-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                  <div>
+                    <div class="ns-quote-label"><i class="bi bi-tag-fill me-1"></i>{{ 'bookings.quotedCallout' | translate: { price: (b.finalPrice | currency: 'EGP ') } }}@if (b.durationMinutes) { · {{ b.durationMinutes }} {{ 'bookings.min' | translate }}}</div>
+                  </div>
+                  <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <input type="text" class="ns-promo-input"
+                           [ngModel]="quotePromo()[b.id] || ''"
+                           (ngModelChange)="setQuotePromo(b.id, $event)"
+                           [disabled]="busyId() === b.id"
+                           [placeholder]="'bookings.promoPlaceholder' | translate" />
+                    <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="rejectQuote(b)">
+                      {{ 'bookings.rejectQuote' | translate }}
+                    </button>
+                    <button class="btn btn-sm btn-success" [disabled]="busyId() === b.id" (click)="acceptQuote(b)">
+                      {{ 'bookings.acceptQuote' | translate }}
+                    </button>
+                  </div>
                 </div>
               </div>
             }

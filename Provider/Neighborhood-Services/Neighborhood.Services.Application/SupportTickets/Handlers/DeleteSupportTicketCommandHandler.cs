@@ -2,9 +2,6 @@
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.SupportTickets.Commands;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.SupportTickets.Handlers
 {

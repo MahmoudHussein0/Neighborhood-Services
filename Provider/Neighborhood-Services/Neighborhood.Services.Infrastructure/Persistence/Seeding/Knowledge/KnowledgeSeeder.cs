@@ -233,15 +233,55 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Seeding.Knowledge
             await _memory.RemoveAsync(ProblemTypesCollection, ProblemTypeClassifyDocId(problemTypeId));
         }
 
+        // Re-embed the category, then re-embed each of its problem types — their text carries
+        // the category name, so a rename leaves them stale until refreshed. (On create there
+        // are no children yet, so this is just the category doc.)
+        public async Task IndexCategoryWithChildrenAsync(int categoryId)
+        {
+            await IndexCategoryAsync(categoryId);
+
+            var problemTypeIds = await _context.ProblemTypes.AsNoTracking()
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            foreach (var id in problemTypeIds)
+                await IndexProblemTypeAsync(id);
+        }
+
+        // Remove the category, then remove its problem types' vectors — a deleted category's
+        // problem types shouldn't keep surfacing in RAG.
+        public async Task RemoveCategoryWithChildrenAsync(int categoryId)
+        {
+            await RemoveCategoryAsync(categoryId);
+
+            var problemTypeIds = await _context.ProblemTypes.AsNoTracking()
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            foreach (var id in problemTypeIds)
+                await RemoveProblemTypeAsync(id);
+        }
+
         // Embeds + stores ONE doc immediately, stamping the same content hash the bulk reindex
         // uses — so a later reindex sees it as unchanged and skips it.
         private async Task UpsertDocAsync(
             string collection, string id, string text, IReadOnlyDictionary<string, string>? fields = null)
         {
+            var hash = ComputeHash(text);
+
+            // Skip the embedding call if the stored doc already has this exact text. One cheap
+            // payload read (no quota) to avoid one paid OpenAI embedding — so a no-op save (or a
+            // cascade over children whose text didn't actually change) costs nothing.
+            var existingHash = await _memory.GetFieldAsync(collection, id, HashField);
+            if (existingHash == hash)
+                return;
+
             var payload = fields is null
                 ? new Dictionary<string, string>()
                 : new Dictionary<string, string>(fields);
-            payload[HashField] = ComputeHash(text);
+            payload[HashField] = hash;
 
             await _memory.UpsertAsync(collection, id, text, payload);
         }

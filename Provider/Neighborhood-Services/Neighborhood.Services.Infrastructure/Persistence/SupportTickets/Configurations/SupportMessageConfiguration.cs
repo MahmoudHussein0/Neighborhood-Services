@@ -17,13 +17,12 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
 
             builder.Property(m => m.TicketId)
                 .IsRequired();
-
             builder.Property(m => m.SenderId)
-                 .IsRequired()
-                 .HasMaxLength(450);
+                .IsRequired(false)
+                .HasMaxLength(450);
 
             builder.Property(m => m.Message)
-                .IsRequired()
+                .IsRequired(false)
                 .HasMaxLength(2000);
 
             builder.Property(m => m.Channel)
@@ -38,7 +37,14 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Config
             builder.Property(m => m.CreatedAt)
                 .IsRequired();
 
+            builder.Property(m => m.SenderType)
+    .IsRequired()
+    .HasConversion<string>();
 
+            builder.HasMany(m => m.Attachments)
+    .WithOne(a => a.Message)
+    .HasForeignKey(a => a.MessageId)
+    .OnDelete(DeleteBehavior.Cascade);
 
             // Soft delete filter
             builder.HasQueryFilter(m => !m.IsDeleted);

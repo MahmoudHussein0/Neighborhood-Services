@@ -255,6 +255,11 @@
             "Disputed": "متنازع عليه"
         },
         "min": "دقيقة",
+        "stepBooked": "محجوز",
+        "stepQuoted": "عرض سعر",
+        "stepConfirmed": "مؤكد",
+        "stepDone": "مكتمل",
+        "stepReviewed": "تم التقييم",
         "awaitingTechnician": "بانتظار عرض السعر من الفني.",
         "quotedCallout": "حدد الفني السعر: {{price}}",
         "acceptQuote": "قبول",
@@ -717,7 +722,8 @@
         "problemTypeName": "اسم المشكله",
         "englishNameIsRequired": "الاسم بالغه الانجليزيه مطلوب ",
         "arabicNameIsRequired": " الاسم بالغه العربيه مطلوب ",
-        "deleteProblemType": "حذف المشكله"
+        "deleteProblemType": "حذف المشكله",
+        "problemImage": "   صوره للمشكله"
     },
     "hero": {
         "badge": "نخدم جميع أنحاء مصر",
@@ -914,6 +920,12 @@
         "scheduled": "الموعد",
         "actions": "إجراءات",
         "cancel": "إلغاء",
+        "details": "التفاصيل",
+        "detailsTitle": "حجز",
+        "address": "العنوان",
+        "createdAt": "تاريخ الإنشاء",
+        "estimatedPrice": "السعر التقديري",
+        "finalPrice": "السعر النهائي",
         "tabs": {
             "All": "الكل",
             "Pending": "قيد الانتظار",

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, map, of, tap, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   AuthResponse,
@@ -24,7 +24,57 @@ export class AuthService {
 
   readonly currentUser = this.currentUserSignal.asReadonly();
 
+  // Live staff permissions. NOT persisted to localStorage — they go stale when an admin
+  // edits them — so they're fetched fresh from GET /me each time a staffer enters the
+  // dashboard. Empty for guests and non-staff roles.
+  private readonly permissionsSignal = signal<string[]>([]);
+  readonly permissions = this.permissionsSignal.asReadonly();
+
+  // True once GET /me has resolved (success OR failure). Lets callers distinguish
+  // "no permissions" from "not fetched yet" — empty array is ambiguous on its own.
+  private readonly permissionsLoadedSignal = signal(false);
+  readonly permissionsLoaded = this.permissionsLoadedSignal.asReadonly();
+
   constructor(private readonly http: HttpClient) {}
+
+  /** Hits GET /me and populates the permission signals. */
+  private fetchPermissions(): Observable<string[]> {
+    return this.http
+      .get<{ permissions: string[] }>(`${this.baseUrl}/api/Auth/me`, { withCredentials: true })
+      .pipe(
+        map((res) => res.permissions ?? []),
+        catchError(() => of([] as string[])),
+        tap((perms) => {
+          this.permissionsSignal.set(perms);
+          this.permissionsLoadedSignal.set(true);
+        }),
+      );
+  }
+
+  /** Forces a fresh permission load (fire-and-forget). */
+  loadPermissions(): void {
+    this.fetchPermissions().subscribe();
+  }
+
+  /**
+   * Resolves the current permissions, fetching once if not yet loaded. The route guard
+   * awaits this so a deep-link / refresh decides access only after permissions arrive.
+   */
+  ensurePermissions(): Observable<string[]> {
+    return this.permissionsLoadedSignal()
+      ? of(this.permissionsSignal())
+      : this.fetchPermissions();
+  }
+
+  /**
+   * UI-only check: does the current user hold this permission? `FullAccess` is the admin
+   * master key and passes every check. Returns false while permissions are still loading
+   * (fail-closed) so gated items stay hidden until confirmed.
+   */
+  hasPermission(permission: string): boolean {
+    const perms = this.permissionsSignal();
+    return perms.includes('FullAccess') || perms.includes(permission);
+  }
 
   login(email: string, password: string) {
     const request: LoginRequest = { email, password };
@@ -110,6 +160,29 @@ export class AuthService {
     return allowedRoles.some((role) => this.normalizeRole(role) === normalizedRole);
   }
 
+  /**
+   * Where a public "Book Now" CTA should send the user:
+   * guests → login, customers → Find Technician, and other roles back to a
+   * sensible spot in their own area (tech dashboard, staff categories).
+   */
+  getBookNowUrl(): string {
+    if (!this.isAuthenticated()) {
+      return '/auth/login';
+    }
+
+    const role = this.normalizeRole(this.currentUserSignal()?.role ?? '');
+
+    if (role === 'customer') {
+      return '/customer/find-technician';
+    }
+
+    if (role === 'technician') {
+      return '/technician';
+    }
+
+    return '/staff/categories';
+  }
+
   getRedirectUrlForRole(role: string): string {
     const normalizedRole = role.trim().toLowerCase();
 
@@ -141,6 +214,8 @@ export class AuthService {
 
   private clearCurrentUser(): void {
     this.currentUserSignal.set(null);
+    this.permissionsSignal.set([]);
+    this.permissionsLoadedSignal.set(false);
     localStorage.removeItem(AUTH_USER_KEY);
   }
 

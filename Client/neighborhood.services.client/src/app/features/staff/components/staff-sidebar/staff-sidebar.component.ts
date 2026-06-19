@@ -5,10 +5,11 @@ import { LayoutService } from '../../../../core/services/layout.service';
 import {CustomerSupportService} from '../../../public/services/customer-support.service'
 import {TicketDto} from '../../../public/models/ticket-dto';
 
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-staff-sidebar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, HasPermissionDirective],
   templateUrl: './staff-sidebar.component.html',
   styleUrl: './staff-sidebar.component.css',
 })

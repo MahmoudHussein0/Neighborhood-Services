@@ -284,4 +284,19 @@ export class BookingsComponent implements OnInit {
   hasActions(b: MyBookingSummary): boolean {
     return this.canCancel(b.status) || this.canConfirm(b) || this.canRespondToQuote(b.status) || this.canDispute(b.status) || this.canReview(b);
   }
+
+  // Returns the index (0–5) of the active progress step so the timeline can highlight it.
+  // -1 means Cancelled/Disputed — no timeline shown.
+  bookingStep(b: MyBookingSummary): number {
+    switch (b.status) {
+      case 'Pending':   return 0;
+      case 'Quoted':    return 1;
+      case 'Confirmed': return 2;
+      case 'Completed':
+        if (!b.clientConfirmed) return 3;
+        if (!b.hasReview)       return 4;
+        return 5;
+      default: return -1;
+    }
+  }
 }

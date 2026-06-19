@@ -16,11 +16,13 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
     {
         private readonly IProblemTypeRepository _problemTypeRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBackgroundJobScheduler _jobs;
 
-        public UpdateProblemTypeCommandHandler(IProblemTypeRepository problemTypeRepo, IUnitOfWork unitOfWork)
+        public UpdateProblemTypeCommandHandler(IProblemTypeRepository problemTypeRepo, IUnitOfWork unitOfWork, IBackgroundJobScheduler jobs)
         {
             _problemTypeRepo = problemTypeRepo;
             _unitOfWork = unitOfWork;
+            _jobs = jobs;
         }
 
         public async Task<UpdateProblemTypeDto> Handle(UpdateProblemTypeCommand request, CancellationToken cancellationToken)
@@ -62,6 +64,9 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
             await _problemTypeRepo.UpdateAsync(problemType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            // Re-embed this problem type's vectors off the request thread. Fail-open: a queue
+            // hiccup must never undo a committed update.
+            try { _jobs.EnqueueProblemTypeIndex(problemType.Id); } catch { /* RAG sync is best-effort; /reindex is the backstop */ }
 
             var problemTypeDto = new UpdateProblemTypeDto()
             {
