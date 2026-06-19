@@ -8,12 +8,13 @@ namespace Neighborhood.Services.Domain.Staffs
     {
         ManageDisputes = 1,
         ManageTickets = 2,
-        ViewTransactions = 3,
+        ManageFlagedReq = 3,
         ManagePromos = 4,
-        ApproveTechnicians = 5,
-        FlagReviews = 6,
+        ManageCategories = 5,
+        MangeReviews = 6,
         ManageUsers = 7,
         ManageBookings=8,
-        FullAccess = 9
+        ManagePolicies=9,
+        FullAccess = 10
     }
 }

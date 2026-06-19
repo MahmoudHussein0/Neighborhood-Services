@@ -140,7 +140,30 @@
         "geoUnsupported": "Geolocation is not supported by your browser.",
         "openInMaps": "Open in Maps",
         "confirm": "Confirm",
-        "confirmTitle": "Please confirm"
+        "confirmTitle": "Please confirm",
+        "edit": "Edit",
+        "delete": "Delete"
+    },
+    "gallery": {
+        "title": "Gallery",
+        "subtitle": "Show work samples on your public profile.",
+        "photo": "Photo",
+        "caption": "Caption",
+        "changePhoto": "Change photo",
+        "addPhoto": "Add photo",
+        "updatePhoto": "Update photo",
+        "fileHint": "JPG, PNG, WebP, or GIF up to 5 MB",
+        "chooseError": "Choose a portfolio photo.",
+        "saving": "Saving photo...",
+        "loading": "Loading portfolio photos...",
+        "empty": "No portfolio photos yet.",
+        "workSample": "Work sample",
+        "deleteTitle": "Delete portfolio photo?",
+        "deleteSubtitle": "This action cannot be undone.",
+        "deleteMessage": "Delete this photo from your portfolio?",
+        "deleteMessageWithCaption": "Delete \"{{caption}}\" from your portfolio?",
+        "deleteConfirm": "Delete photo",
+        "deleting": "Deleting..."
     },
     "publicProfile": {
         "role": {
@@ -157,7 +180,9 @@
         "reviewsTitle": "Reviews",
         "noReviews": "No reviews yet.",
         "anonymous": "Anonymous",
-        "loadError": "Could not load this profile."
+        "loadError": "Could not load this profile.",
+        "galleryTitle": "Gallery",
+        "galleryEmpty": "Gallery is empty."
     },
     "reindex": {
         "confirmTitle": "Reindex knowledge base?",
@@ -176,6 +201,8 @@
         "filterAll": "All",
         "empty": "No bookings here yet.",
         "details": "Details",
+        "viewInvoice": "View Invoice",
+        "downloadInvoice": "Download Invoice",
         "actions": "Actions",
         "confirmCompleted": "Confirm completed",
         "cancelBooking": "Cancel booking",
@@ -228,6 +255,11 @@
             "Disputed": "Disputed"
         },
         "min": "min",
+        "stepBooked": "Booked",
+        "stepQuoted": "Quoted",
+        "stepConfirmed": "Confirmed",
+        "stepDone": "Done",
+        "stepReviewed": "Reviewed",
         "awaitingTechnician": "Awaiting the technician's price quote.",
         "quotedCallout": "Technician quoted {{price}}",
         "acceptQuote": "Accept",
@@ -861,6 +893,7 @@
         "pricing": "Pricing",
         "earnings": "Earnings",
         "reviews": "Reviews",
+        "gallery": "Gallery",
         "users": "Users",
         "bookings": "Bookings",
         "disputes": "Disputes",
@@ -870,7 +903,8 @@
         "policies": "Policies",
         "promoCodes": "Promo Codes",
         "staffManagement": "Staff Management",
-        "yourCategories": "Your Categories"
+        "yourCategories": "Your Categories",
+        "newsletter": "Newsletter"
     },
     "staffBookings": {
         "title": "Bookings",
@@ -1077,5 +1111,39 @@
         "date": "Date",
         "empty": "No flagged reviews found.",
         "loadFail": "Failed to load review analysis."
+    },
+    "favs": {
+        "favorite": "Favorites",
+        "empty": "No Items Yet!",
+        "emptyMessage": "Technicians that have been added to Favorite appear here",
+        "browseCTA": "Browse Technicians"
+    },
+    "generalActins": {
+        "add": "Add",
+        "delete": "Delete",
+        "update": "Update",
+        "select": "Select"
+    },
+    "newsletter": {
+        "pagetitle": "Newsletter Publisher",
+        "pagedescription": "Create and preview newsletters before publishing.",
+        "subj": "Subject",
+        "publish": "Publish",
+        "update": "Update",
+        "select": "Select",
+        "pre": "Live Preview",
+        "subPre": "Newsletter Subject Preview",
+        "content": "Content"
+    },
+    "newslettersubscribe": {
+        "subscribe": "Subscribe",
+        "description": "Subscribe to get news about our latest offers and promocodes!"
+    },
+    "favorites": {
+        "add": "Add to favorites",
+        "remove": "Remove from favorites",
+        "added": "Added to favorites",
+        "removed": "Removed from favorites",
+        "error": "Could not update favorites"
     }
 }

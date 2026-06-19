@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class ConversationService {
 
-  private Endpoint = '/api/Conversation';
+  private Endpoint = '/Conversation';
   constructor(private apiService: ApiService) { }
   convs?: ConversationDto[];
 

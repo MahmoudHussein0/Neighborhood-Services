@@ -3,9 +3,11 @@ import { CategoriesService } from '../../../../core/services/categories.service'
 import { Category } from '../../../../core/models/category';
 import { ProblemTypes } from '../../../staff/models/category-details';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../../core/services/lang.service';
 import { skip, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-services',
@@ -19,6 +21,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   private readonly categoriesService = inject(CategoriesService);
   private readonly LangService = inject(LangService);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   categories: WritableSignal<Category[]> = signal<Category[]>([]);
   selectedProblem: WritableSignal<ProblemTypes> = signal<ProblemTypes>({} as ProblemTypes);
@@ -42,6 +46,11 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.$SubCategories.unsubscribe();
+  }
+
+  /** Routes the "Book Now" CTA by role: guest→login, customer→Find Tech, tech/staff→their area. */
+  bookNow(): void {
+    this.router.navigateByUrl(this.auth.getBookNowUrl());
   }
 
 

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.ServiceRequests.Commands.CreateService;
 using Neighborhood.Services.Application.ServiceRequests.Commands.ReviewFlaggedServiceRequest;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetFlaggedServiceRequestsQuery;
@@ -10,6 +11,7 @@ using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceReques
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestsByCustomerQuery;
 using Neighborhood.Services.Application.ServiceRequests.Queries.GetServiceRequestWithOffersQuery;
 using Neighborhood.Services.Domain.ServiceRequests;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.ServiceRequests
 {
@@ -84,7 +86,7 @@ namespace Neighborhood.Services.API.ServiceRequests
 
         // GET /api/servicerequests/flagged?page=1&pageSize=10
         // Staff-only: requests the moderation agent flagged as inappropriate.
-        [Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageFlagedReq)]
         [HttpGet("flagged")]
         public async Task<IActionResult> GetFlagged(
             [FromQuery] int page = 1,
@@ -99,7 +101,7 @@ namespace Neighborhood.Services.API.ServiceRequests
         }
 
         // POST /api/servicerequests/{id}/approve  (Flagged -> Open, goes live)
-        [Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageFlagedReq)]
         [HttpPost("{id:int}/approve")]
         public async Task<IActionResult> Approve(int id)
         {
@@ -108,7 +110,7 @@ namespace Neighborhood.Services.API.ServiceRequests
         }
 
         // POST /api/servicerequests/{id}/reject  (Flagged -> Closed)
-        [Authorize(Roles = "Staff")]
+        [HasPermission(PermissionType.ManageFlagedReq)]
         [HttpPost("{id:int}/reject")]
         public async Task<IActionResult> Reject(int id)
         {

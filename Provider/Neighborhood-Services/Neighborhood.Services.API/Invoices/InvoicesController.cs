@@ -68,5 +68,13 @@ namespace Neighborhood.Services.API.Invoices
             var pdfBytes = _invoicePdfService.GenerateInvoicePdf(invoice);
             return File(pdfBytes, "application/pdf", $"invoice-{invoice.Id}.pdf");
         }
+
+        [HttpGet("booking/{bookingId:int}/pdf/view")]
+        public async Task<IActionResult> ViewPdfByBooking(int bookingId)
+        {
+            var invoice = await _mediator.Send(new GetInvoiceByBookingIdQuery { BookingId = bookingId });
+            var pdfBytes = _invoicePdfService.GenerateInvoicePdf(invoice);
+            return File(pdfBytes, "application/pdf");
+        }
     }
 }

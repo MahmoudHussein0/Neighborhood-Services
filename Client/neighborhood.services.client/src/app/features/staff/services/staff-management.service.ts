@@ -8,7 +8,7 @@ import {
   StaffDto,
   CreateStaffCommand,
   UpdateStaffCommand,
-  UserLookupDto
+  CreateUserCommand
 } from '../models/staff-management.model';
 
 @Injectable({
@@ -19,18 +19,26 @@ export class StaffManagementService {
   private http = inject(HttpClient);
 
   private readonly apiUrl = `${environment.apiUrl}/api/Staff`;
+  private readonly usersApiUrl = `${environment.apiUrl}/api/Users`;
 
   getAll(): Observable<StaffDto[]> {
     return this.http.get<StaffDto[]>(this.apiUrl);
   }
 
-getUsersByRole(role: string) {
-  return this.http.get<UserLookupDto[]>(
-    `${environment.apiUrl}/api/Users/role/${role}`
-  );
-}
+  // إنشاء يوزر جديد بدور Staff عبر /api/Users
+  // (الباك إند بيعمل Staff record تلقائياً بحالة TechnicalSupport / inactive / بدون صلاحيات)
+  createUser(request: CreateUserCommand): Observable<any> {
+    return this.http.post<any>(this.usersApiUrl, request);
+  }
+
   getById(id: number): Observable<StaffDto> {
     return this.http.get<StaffDto>(`${this.apiUrl}/${id}`);
+  }
+
+  // جلب Staff record عن طريق applicationUserId
+  // (نستخدمها بعد إنشاء اليوزر عشان نعرف id بتاع الـ Staff record اللي اتعمل تلقائي)
+  getByUserId(userId: string): Observable<StaffDto> {
+    return this.http.get<StaffDto>(`${this.apiUrl}/user/${userId}`);
   }
 
   create(request: CreateStaffCommand): Observable<StaffDto> {

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProblemTypeService } from '../../../../../core/services/problem-type.service';
+import { AuthService } from '../../../../auth/services/auth.service';
 import { ProblemType } from '../../../models/problem-type';
 import { HowitworksComponent } from "../../home/howitworks/howitworks.component";
 import { TranslatePipe } from '@ngx-translate/core';
@@ -18,6 +19,8 @@ export class ProblemTypeComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly problemTypeService = inject(ProblemTypeService);
   private readonly langService = inject(LangService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   problemDetails: WritableSignal<ProblemType> = signal<ProblemType>({} as ProblemType);
 
@@ -51,6 +54,11 @@ export class ProblemTypeComponent implements OnInit {
 
       })
     })
+  }
+
+  /** Routes the "Book Now" CTA by role: guest→login, customer→Find Tech, tech/staff→their area. */
+  bookNow(): void {
+    this.router.navigateByUrl(this.auth.getBookNowUrl());
   }
 
 

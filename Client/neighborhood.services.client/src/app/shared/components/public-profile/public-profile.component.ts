@@ -6,10 +6,13 @@ import { PublicProfileService } from '../../services/public-profile.service';
 import { PublicProfile } from '../../../core/models/public-profile.model';
 import { environment } from '../../../environments/environment';
 import { googleMapsUrl } from '../../../core/utils/maps.util';
+import { FavoriteButtonComponent } from '../../../features/customer/components/favorite-button/favorite-button.component';
+import { TechnicianProfileService } from '../../../features/technician/services/technician-profile.service';
+import { TechnicianPhoto } from '../../../features/technician/models/technician-profile.model';
 
 @Component({
   selector: 'app-public-profile',
-  imports: [DatePipe, DecimalPipe, TranslatePipe],
+  imports: [DatePipe, DecimalPipe, TranslatePipe, FavoriteButtonComponent],
   templateUrl: './public-profile.component.html',
   styleUrl: './public-profile.component.css',
 })
@@ -18,11 +21,17 @@ export class PublicProfileComponent implements OnInit {
   private readonly service = inject(PublicProfileService);
   private readonly translate = inject(TranslateService);
   private readonly location = inject(Location);
+  private readonly technicianProfileService = inject(TechnicianProfileService);
 
   loading = signal(true);
   profile = signal<PublicProfile | null>(null);
   avatarError = signal(false);
   reviewPhotoErrors = signal<Set<number>>(new Set());
+  // The route :id is the technician's id; only set when a customer is viewing a technician.
+  technicianId = signal<number | null>(null);
+  galleryPhotos = signal<TechnicianPhoto[]>([]);
+  galleryLoading = signal(false);
+  activeTab = signal<'reviews' | 'gallery'>('reviews');
 
   protected readonly mapsUrl = googleMapsUrl;
 
@@ -38,6 +47,12 @@ export class PublicProfileComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const role = this.route.snapshot.data['role'] as 'technician' | 'customer';
 
+    // A technician profile is only ever viewed from the customer layout → safe to favorite.
+    if (role === 'technician') {
+      this.technicianId.set(id);
+      this.loadGallery(id);
+    }
+
     const request$ =
       role === 'technician' ? this.service.getTechnician(id) : this.service.getCustomer(id);
 
@@ -52,6 +67,17 @@ export class PublicProfileComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+
+  private loadGallery(technicianId: number): void {
+    this.galleryLoading.set(true);
+    this.technicianProfileService.getPhotosByTechnicianId(technicianId).subscribe({
+      next: (photos) => {
+        this.galleryPhotos.set(photos);
+        this.galleryLoading.set(false);
+      },
+      error: () => this.galleryLoading.set(false),
+    });
   }
 
   categoryName(c: { nameEn: string; nameAr: string }): string {

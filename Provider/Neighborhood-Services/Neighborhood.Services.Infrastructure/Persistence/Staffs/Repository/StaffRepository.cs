@@ -26,6 +26,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .Where(s => !s.IsDeleted)
                 .ToListAsync();
         }
@@ -37,6 +38,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .Where(s => s.IsActive && !s.IsDeleted)
                 .ToListAsync();
         }
@@ -48,6 +50,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         }
 
@@ -58,6 +61,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                .Include(s => s.Permissions)
                 .FirstOrDefaultAsync(s => s.UserId == userId && !s.IsDeleted);
         }
 
@@ -68,6 +72,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
         {
             return await _context.Staffs
                 .Include(s => s.User)
+                 .Include(s => s.Permissions)
                 .Where(s => s.Role == role && !s.IsDeleted)
                 .ToListAsync();
         }
@@ -90,29 +95,25 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Staffs.Repository
 
 
         public async Task ReplacePermissionsAsync(
-     int staffId,
-     IEnumerable<PermissionType> permissions,
-     CancellationToken cancellationToken = default)
+    int staffId,
+    IEnumerable<PermissionType> permissions,
+    CancellationToken cancellationToken = default)
         {
+            // ✅ امسح القديم فعلياً من الداتابيز
             var existingPermissions = await _context.StaffPermissions
-                .Where(x => x.StaffId == staffId && !x.IsDeleted)
+                .Where(x => x.StaffId == staffId)  // ← شيل الـ !x.IsDeleted
                 .ToListAsync(cancellationToken);
 
-            foreach (var permission in existingPermissions)
-            {
-                permission.IsDeleted = true;
-            }
+            _context.StaffPermissions.RemoveRange(existingPermissions);
 
-            foreach (var permission in permissions.Distinct())
+            // ✅ أضف الجديد
+            var newPermissions = permissions.Distinct().Select(p => new StaffPermission
             {
-                await _context.StaffPermissions.AddAsync(
-                    new StaffPermission
-                    {
-                        StaffId = staffId,
-                        Permission = permission
-                    },
-                    cancellationToken);
-            }
+                StaffId = staffId,
+                Permission = p
+            });
+
+            await _context.StaffPermissions.AddRangeAsync(newPermissions, cancellationToken);
         }
 
     }

@@ -17,6 +17,7 @@ import { LeaveReviewModalComponent } from '../../components/leave-review-modal/l
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
+import { environment } from '../../../../environments/environment';
 
 type StatusTab = 'All' | BookingStatus;
 
@@ -272,7 +273,30 @@ export class BookingsComponent implements OnInit {
     );
   }
 
+  viewInvoice(bookingId: number): void {
+    window.open(`${environment.apiUrl}/api/invoices/booking/${bookingId}/pdf/view`, '_blank');
+  }
+
+  downloadInvoice(bookingId: number): void {
+    window.open(`${environment.apiUrl}/api/invoices/booking/${bookingId}/pdf`, '_blank');
+  }
+
   hasActions(b: MyBookingSummary): boolean {
     return this.canCancel(b.status) || this.canConfirm(b) || this.canRespondToQuote(b.status) || this.canDispute(b.status) || this.canReview(b);
+  }
+
+  // Returns the index (0–5) of the active progress step so the timeline can highlight it.
+  // -1 means Cancelled/Disputed — no timeline shown.
+  bookingStep(b: MyBookingSummary): number {
+    switch (b.status) {
+      case 'Pending':   return 0;
+      case 'Quoted':    return 1;
+      case 'Confirmed': return 2;
+      case 'Completed':
+        if (!b.clientConfirmed) return 3;
+        if (!b.hasReview)       return 4;
+        return 5;
+      default: return -1;
+    }
   }
 }

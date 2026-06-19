@@ -25,10 +25,11 @@ import {NewsletterSubscribeComponent} from '../../shared/components/newsletter-s
   
     <main class="flex-grow-1">
  
-<app-notification-bell/>
+
 
       <router-outlet />
     </main>
+    <app-newsletter-subscribe/>
     <app-footer />
   `,
   styles: [`

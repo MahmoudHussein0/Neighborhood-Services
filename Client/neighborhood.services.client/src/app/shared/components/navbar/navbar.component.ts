@@ -12,7 +12,7 @@ import { AuthService } from '../../../features/auth/services/auth.service';
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
-
+// {{ "navbar.home" | translate }}
   private readonly myTranslateService = inject(MyTranslateService);
   private readonly translateService = inject(TranslateService);
   private readonly langService = inject(LangService);
