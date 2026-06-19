@@ -27,15 +27,16 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 
             var technicianCategory = await _technicianCategoryRepo.GetByIdAsync(request.Id);
 
+            if (technicianCategory is null)
+                throw new NotFoundException("TechnicianCategory", request.Id);
 
-            // delete all problemTypes related to this Category 
+
+            // delete all problemTypes related to this Category
             var category = (await _categoryRepository.GetByConditionAsync(c => c.Id == technicianCategory.CategoryId, "ProblemTypes")).FirstOrDefault();
-            var problemTypeIds = category.ProblemTypes.Select(p => p.Id);
+            var problemTypeIds = category?.ProblemTypes.Select(p => p.Id) ?? Enumerable.Empty<int>();
 
 
-
-
-            // get problemTypes from TechnicianPricingRepo 
+            // get problemTypes from TechnicianPricingRepo
             foreach (var id in problemTypeIds)
             {
                 var problemType = (await _technicianPricingRepository.GetByConditionAsync(tp => tp.ProblemTypeId == id)).FirstOrDefault();
@@ -43,14 +44,6 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Commands
                     await _technicianPricingRepository.DeleteAsync(problemType.Id);
             }
 
-
-
-
-
-
-
-            if (technicianCategory is null)
-                throw new NotFoundException("Pricing", request.Id);
             await _technicianCategoryRepo.DeleteAsync(request.Id);
 
             return await _unitOfWork.SaveChangesAsync() > 0;
