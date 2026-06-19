@@ -156,7 +156,7 @@
                   <div class="d-flex gap-2 align-items-center flex-wrap">
                     <input type="text" class="ns-promo-input"
                            [ngModel]="quotePromo()[b.id] || ''"
-                           (ngModelChange)="setQuotePromo(b.id, $event)"
+                           (ngModelChange)="onQuotePromoChange(b, $event)"
                            [disabled]="busyId() === b.id"
                            [placeholder]="'bookings.promoPlaceholder' | translate" />
                     <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="rejectQuote(b)">
@@ -167,6 +167,15 @@
                     </button>
                   </div>
                 </div>
+                @if (quoteDiscountedPrice()[b.id] != null) {
+                  <div class="small mt-2">
+                    <span class="text-decoration-line-through text-muted me-2">{{ b.finalPrice | currency: 'EGP ' }}</span>
+                    <span class="text-success fw-bold">{{ quoteDiscountedPrice()[b.id] | currency: 'EGP ' }}</span>
+                  </div>
+                }
+                @if (quotePromoUnavailable()[b.id]) {
+                  <div class="text-danger small mt-2">{{ 'common.promoUnavailable' | translate }}</div>
+                }
               </div>
             }
 

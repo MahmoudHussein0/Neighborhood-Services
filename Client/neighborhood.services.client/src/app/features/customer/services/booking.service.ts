@@ -23,6 +23,15 @@ export interface GetMyBookingsParams {
   pageSize?: number;
 }
 
+/** Result of previewing a promo code for the current user before accepting (does not consume it). */
+export interface PromoCodePreview {
+  /** True only when the code is valid AND not already used by this user. */
+  isApplicable: boolean;
+  discountPercentage: number;
+  /** null when applicable; otherwise 'invalid_or_expired' | 'already_used'. */
+  reason: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -98,6 +107,11 @@ export class BookingService {
   /** POST /api/bookings/{id}/accept-quote — customer accepts the tech's quote (optional promo code; holds escrow). */
   acceptQuote(id: number, promoCode?: string | null): Observable<void> {
     return this.api.post<void>(`/bookings/${id}/accept-quote`, { promoCode: promoCode ?? null });
+  }
+
+  /** GET /api/promocodes/preview/{code} — check a promo for the current user (valid + not already used) and get its discount, without consuming it. */
+  getPromoPreview(code: string): Observable<PromoCodePreview> {
+    return this.api.get<PromoCodePreview>(`/promocodes/preview/${encodeURIComponent(code)}`);
   }
 
   /** POST /api/bookings/{id}/reject-quote — customer rejects; booking goes back to Pending. */

@@ -198,6 +198,7 @@
         "create": "Create",
         "creating": "Creating…",
         "optional": "(optional)",
+        "promoUnavailable": "This promo code can't be used (invalid, expired, or already used).",
         "location": "Location",
         "useMyLocation": "Use my location",
         "locating": "Locating…",
