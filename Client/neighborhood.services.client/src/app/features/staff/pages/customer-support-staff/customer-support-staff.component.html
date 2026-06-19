@@ -1,0 +1,35 @@
+<!-- <div *ngfor ="let p of ticks" >
+    <div class="chat-header">
+  <h5>{{ p.Subject }}</h5>
+  <small>
+    {{ p.senderName }} ({{ p.senderEmail }})
+  </small>
+</div>
+
+<div class="alert alert-info">
+  {{ p.description }}
+</div> -->
+
+@for (p of ticks; track p.localId) {
+  <div class="my-3">
+    <div class="chat-header">
+      <h5>{{ p.subject }}</h5>
+      <small>{{ p.senderName }} ({{ p.senderEmail }})</small>
+    </div>
+
+    <div class="alert alert-info">{{ p.description }}</div>
+
+    <!-- Toggle button -->
+    <button class="btn btn-primary btn-sm" (click)="toggleChat(p.senderEmail)">
+      {{ openChatEmail === p.senderEmail ? 'Close Chat' : 'Open Chat' }}
+    </button>
+
+    <!-- Inline chat panel — expands below the ticket -->
+    @if (openChatEmail === p.senderEmail) {
+      <app-chat-modal [senderEmail]="p.senderEmail" />
+    }
+  </div>
+}
+
+
+

@@ -121,7 +121,11 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                     {
                         foreach (var categoryId in request.CategoryIds.Distinct())
                         {
-                            if (!await _technicianCategoryRepository.IsExists(technician.Id, categoryId))
+                            var exists = (await _technicianCategoryRepository
+                                .GetByConditionAsync(tc => tc.TechnicianId == technician.Id && tc.CategoryId == categoryId))
+                                .Any();
+
+                            if (!exists)
                             {
                                 await _technicianCategoryRepository.AddAsync(new TechnicianCategory
                                 {

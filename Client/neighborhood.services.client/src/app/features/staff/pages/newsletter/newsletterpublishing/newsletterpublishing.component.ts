@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import {NewsletterService} from '../../../../../shared/services/newsletter.service'
 import { TranslatePipe } from '@ngx-translate/core';
+import { Toast, ToastrService } from 'ngx-toastr';
+
 
 
 
@@ -18,7 +20,7 @@ export class NewsletterpublishingComponent {
 
     tamplateHtml:string=""
 
-  constructor(private sanitizer: DomSanitizer, private myService:NewsletterService) {
+  constructor(private sanitizer: DomSanitizer, private myService:NewsletterService, private tostr:ToastrService) {
   }
   subject = '';
 
@@ -34,8 +36,11 @@ export class NewsletterpublishingComponent {
       "subj":this.subject,
       "content":this.rawHtml
     }
-  this.myService.publish(obj)
-    .subscribe(next=>console.log("published"));
+  this.myService.publish(obj).subscribe({
+    next: ()=>this.tostr.success("Email Sent Successfully"),
+    error: err =>this.tostr.error(err)
+  });
   }
 }
+
 

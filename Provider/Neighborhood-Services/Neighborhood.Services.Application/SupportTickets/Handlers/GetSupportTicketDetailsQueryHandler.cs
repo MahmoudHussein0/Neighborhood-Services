@@ -3,9 +3,6 @@ using Neighborhood.Services.Application.Shared.Mappers;
 using Neighborhood.Services.Application.SupportTickets.DTOs;
 using Neighborhood.Services.Application.SupportTickets.Interfaces;
 using Neighborhood.Services.Application.SupportTickets.Queries;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Neighborhood.Services.Application.SupportTickets.Handlers
 {
@@ -41,6 +38,9 @@ namespace Neighborhood.Services.Application.SupportTickets.Handlers
                 BookingId = ticket.BookingId,
                 Subject = ticket.Subject,
                 Description = ticket.Description,
+                SenderName = ticket.SenderName,
+                SenderEmail = ticket.SenderEmail,
+                Priority = ticket.Priority.ToString(),  
                 Status = ticket.Status.ToString(),
                 CreatedAt = ticket.CreatedAt,
                 UpdatedAt = ticket.UpdatedAt,

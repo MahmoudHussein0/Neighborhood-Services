@@ -9,5 +9,6 @@ namespace Neighborhood.Services.Application.ProblemTypes.DTOs
         public string Description { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
+        public string ImageUrl  { get; set; }
     }
 }

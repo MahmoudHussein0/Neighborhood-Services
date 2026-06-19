@@ -46,10 +46,6 @@
     <Folder Include="BookingImages\Queries\" />
     <Folder Include="CancellationPolicies\DTOs\" />
     <Folder Include="CancellationPolicies\Queries\" />
-    <Folder Include="NewFolder1\" />
-    <Folder Include="NewFolder\" />
-    <Folder Include="NewFolder\" />
-    <Folder Include="NewFolder\" />
     <Folder Include="Messages\Queries\" />
     <Folder Include="Newsletter\DTOs\" />
     <Folder Include="Newsletter\NewFolder\" />
@@ -60,7 +56,6 @@
     <Folder Include="RecurringBookings\DTOs\" />
     <Folder Include="RecurringBookings\Queries\" />
     <Folder Include="ServiceRequests\Queries\" />
-    <Folder Include="TechnitianCategory\DTOs\" />
     <Folder Include="Users\Services\" />
   </ItemGroup>
 

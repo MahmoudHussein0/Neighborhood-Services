@@ -1,0 +1,72 @@
+<div class="container mt-4">
+
+  <!-- Ticket Form -->
+   @if (!showChat) {
+  <div  class="card my-3">
+    <div class="card-header">
+      <h4>Contact Customer Service</h4>
+    </div>
+
+    <div class="card-body">
+      <form (ngSubmit)="goToLiveChat()">
+
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="ticket.senderName"
+            name="senderName"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            [(ngModel)]="ticket.senderEmail"
+            name="senderEmail"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Subject</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="ticket.subject"
+            name="subject"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="ticket.description"
+            name="description"
+            required>
+          </textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Go to Live Chat
+        </button>
+
+      </form>
+    </div>
+  </div>
+}
+@else{
+
+  <!-- Chat -->
+  
+  <app-customer-support
+   [ticket]="ticket" >
+  </app-customer-support>
+  
+}
+
+</div>

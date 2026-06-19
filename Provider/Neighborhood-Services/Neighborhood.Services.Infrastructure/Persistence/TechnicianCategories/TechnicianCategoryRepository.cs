@@ -14,8 +14,6 @@ namespace Neighborhood.Services.Infrastructure.Persistence.TechnicianCategories
         public TechnicianCategoryRepository( ApplicationDbContext context):base(context)
         {}
 
-        public async Task<bool> IsExists(int technicianId, int categoryId)
-          => await _context.TechnicianCategories.AnyAsync(TC => TC.TechnicianId == technicianId && TC.CategoryId == categoryId);
-
+       
     }
 }

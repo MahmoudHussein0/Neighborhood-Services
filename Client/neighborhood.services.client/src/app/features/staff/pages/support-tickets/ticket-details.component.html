@@ -1,140 +1,40 @@
-<!-- Loading -->
-<div *ngIf="loading" class="td-spinner-wrap">
-  <div class="td-spinner">
-    <span></span><span></span><span></span>
+<!-- أضيفيه تحت الـ td-body div -->
+<div class="td-chat-section">
+  
+  <!-- Connection status -->
+  <div class="td-chat-status" [ngClass]="connectionState">
+    <span *ngIf="connectionState === 'connected'">🟢 Connected</span>
+    <span *ngIf="connectionState === 'reconnecting'">🟡 Reconnecting…</span>
+    <span *ngIf="connectionState === 'disconnected'">🔴 Disconnected</span>
   </div>
-  <p class="td-spinner-label">Loading ticket…</p>
-</div>
 
-<!-- Card -->
-<div class="td-card" *ngIf="!loading && ticket">
-
-  <!-- ── Header ── -->
-  <div class="td-header">
-    <div class="td-header-left">
-      <p class="td-ticket-id">#{{ ticket.id }}</p>
-      <h3 class="td-title">{{ ticket.subject }}</h3>
-      <div class="td-badges">
-        <span class="st-badge" [ngClass]="getStatusClass(ticket.status)">
-          {{ getStatusLabel(ticket.status) }}
-        </span>
-        <span class="st-badge" [ngClass]="getPriorityClass(ticket.priority)">
-          {{ ticket.priority }}
-        </span>
-      </div>
+  <!-- Messages -->
+  <div class="td-messages" #messagesContainer>
+    <div *ngFor="let msg of messages" 
+         class="td-message"
+         [class.td-message--mine]="msg.senderId === senderId">
+      <p class="td-message-text">{{ msg.message }}</p>
+      <span class="td-message-time">
+        {{ msg.createdAt | date:'HH:mm' }}
+      </span>
     </div>
-
-    <div class="td-header-right">
-      <p class="td-meta-date">
-        <span class="td-meta-label">Opened</span>
-        {{ ticket.createdAt | date:'dd MMM yyyy, HH:mm' }}
-      </p>
-      <p class="td-meta-date" *ngIf="ticket.updatedAt !== ticket.createdAt">
-        <span class="td-meta-label">Updated</span>
-        {{ ticket.updatedAt | date:'dd MMM yyyy, HH:mm' }}
-      </p>
+    <div *ngIf="messages.length === 0" class="td-no-messages">
+      No messages yet. Start the conversation!
     </div>
   </div>
 
-  <!-- ── Body ── -->
-  <div class="td-body">
-
-    <!-- Left column -->
-    <div class="td-col-main">
-
-      <!-- Customer -->
-      <div class="td-section">
-        <p class="td-section-label">Customer</p>
-        <div class="td-customer-card">
-          <div class="td-avatar">{{ getInitials(ticket.senderName) }}</div>
-          <div class="td-customer-info">
-            <p class="td-customer-name">{{ ticket.senderName }}</p>
-            <a class="td-customer-email" [href]="'mailto:' + ticket.senderEmail">
-              {{ ticket.senderEmail }}
-            </a>
-          </div>
-          <div class="td-customer-actions">
-            <a class="td-btn td-btn-mail"
-               [href]="'mailto:' + ticket.senderEmail"
-               target="_blank"
-               title="Send email">
-              <i class="ti ti-mail" aria-hidden="true"></i>
-            </a>
-            <button class="td-btn td-btn-copy"
-                    (click)="copyEmail(ticket.senderEmail)"
-                    title="Copy email">
-              <i class="ti ti-copy" ></i>🔗
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Issue -->
-      <div class="td-section">
-        <p class="td-section-label">Issue</p>
-        <div class="td-issue-box">
-          <p class="td-issue-desc">{{ ticket.description }}</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Right column -->
-    <div class="td-col-side">
-
-      <!-- Status control -->
-      <div class="td-section">
-        <p class="td-section-label">Status</p>
-        <div class="td-side-card">
-          <div class="td-status-row">
-            <span class="st-badge" [ngClass]="getStatusClass(ticket.status)">
-              {{ getStatusLabel(ticket.status) }}
-            </span>
-            <button
-              *ngIf="ticket.status === 'Open'"
-              class="td-action-btn"
-              (click)="updateStatus(2)">
-              Start progress →
-            </button>
-            <button
-              *ngIf="ticket.status === 'InProgress'"
-              class="td-action-btn td-action-btn--resolve"
-              (click)="updateStatus(4)">
-              Mark resolved →
-            </button>
-            <span *ngIf="ticket.status === 'Resolved'" class="td-resolved-tag">
-              <i class="ti ti-circle-check" aria-hidden="true"></i> Resolved
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Priority control -->
-      <div class="td-section">
-        <p class="td-section-label">Priority</p>
-        <div class="td-side-card">
-          <select
-            class="td-priority-select"
-            [ngModel]="ticket.priority"
-            (change)="changePriority($any($event.target).value)">
-            <option value="High">🔴 High</option>
-            <option value="Medium">🟡 Medium</option>
-            <option value="Low">🟢 Low</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Danger zone -->
-      <div class="td-section">
-        <p class="td-section-label">Danger zone</p>
-        <div class="td-side-card td-side-card--danger">
-          <button class="td-delete-btn" (click)="deleteTicket()">
-            <i class="ti ti-trash" aria-hidden="true"></i>
-            Delete ticket
-          </button>
-        </div>
-      </div>
-
-    </div>
+  <!-- Input -->
+  <div class="td-chat-input">
+    <input
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+      placeholder="Type a message…"
+      [disabled]="connectionState !== 'connected'" />
+    <button 
+      (click)="sendMessage()"
+      [disabled]="connectionState !== 'connected' || !newMessage.trim()">
+      <i class="ti ti-send"></i>
+    </button>
   </div>
+
 </div>

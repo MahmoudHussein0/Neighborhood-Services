@@ -26,7 +26,7 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
         private readonly ICurrentUserService _current;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public NotificationService(IHubContext<NotificationHub> hubContext, 
+        public NotificationService(IHubContext<NotificationHub> hubContext,
             ILogger<NotificationService> logger,
             INotificationsRepository NotificationsRepository,
             IUnitOfWork unitOfWork,
@@ -35,12 +35,12 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
         {
             _hubContext = hubContext; ;
             _logger = logger;
-            _notificationsRepository= NotificationsRepository;
+            _notificationsRepository = NotificationsRepository;
             _unitOfWork = unitOfWork;
             _current = current;
             _httpContextAccessor = http;
-            
-           
+
+
         }
         public async Task<PushNotificationDto> SendNotificationAsync(string mssg)
         {
@@ -62,10 +62,10 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
             return new PushNotificationDto()
             {
                 Id = notf.Id,
-                UserId=notf.UserId,
-                Message=notf.message,
-                CreatedDate=notf.createdAt,
-                IsRead=notf.isRead,
+                UserId = notf.UserId,
+                Message = notf.message,
+                CreatedDate = notf.createdAt,
+                IsRead = notf.isRead,
             };
 
 
@@ -73,161 +73,176 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
 
         public async Task<PushNotificationDto> SendNotificationToAdmin(string mssg)
         {
-            
+
+            //for real time 
             await _hubContext.Clients.Group("Staff").SendAsync("ReceiveNotification", new { mssg });
-           _logger.LogInformation($"sending to Admins: {mssg}");
-            var notf = new Notification()
-            {
-                channel = NotificationChannels.push,
-                createdAt = DateTime.UtcNow,
-                message = mssg,
-                IsDeleted = false,
-                isRead = false,
-                UserId = _current.UserId ?? "1",
-                type = Domain.Notifications.NotificationTypes.general,
-                refrenceId = 1
-            };
-            //([IsDeleted], [UserId], [channel], [createdAt], [isRead], [message], [refrenceId], [type]
-            await _notificationsRepository.AddAsync(notf);
-            await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation($"sending to Admins: {mssg}");
+
+         
+                //for retreiving after being online again
+                var notf = new Notification()
+                {
+                    channel = NotificationChannels.push,
+                    createdAt = DateTime.UtcNow,
+                    message = mssg,
+                    IsDeleted = false,
+                    isRead = false,
+                    UserId = "7d466805-6429-4940-9434-4990d80263b7",
+                    refrenceId = 2, //2 for admins
+                    type = Domain.Notifications.NotificationTypes.general
+                };
+                await _notificationsRepository.AddAsync(notf);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new PushNotificationDto()
+                {
+                    Id = notf.Id,
+                    UserId = notf.UserId,
+                    Message = notf.message,
+                    CreatedDate = notf.createdAt,
+                    IsRead = notf.isRead,
+                };
+            }
+          
             
-            return new PushNotificationDto()
-            {
-                Id = notf.Id,
-                UserId = notf.UserId,
-                Message = notf.message,
-                CreatedDate = notf.createdAt,
-                IsRead = notf.isRead,
-            };
+        
 
 
 
-        }
 
-        public async Task<PushNotificationDto> SendNotificationToAdminIdentity(string mssg)
-        {
-            await _hubContext.Clients.Group("Staff").SendAsync("ReceiveNotification", new { mssg });
-            if (_httpContextAccessor.HttpContext?.User?
-           .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Staff.ToString())
-            {
-                var notf = new Notification()
-                {
-                    channel = NotificationChannels.push,
-                    createdAt = DateTime.UtcNow,
-                    message = mssg,
-                    IsDeleted = false,
-                    isRead = false,
-                    UserId = _current.UserId,
-                    type = Domain.Notifications.NotificationTypes.general
-                };
-                await _notificationsRepository.AddAsync(notf);
-                await _unitOfWork.SaveChangesAsync();
 
-                return new PushNotificationDto()
-                {
-                    Id = notf.Id,
-                    UserId = notf.UserId,
-                    Message = notf.message,
-                    CreatedDate = notf.createdAt,
-                    IsRead = notf.isRead,
-                };
-            }
-            else
-            {
-                return new PushNotificationDto()
-                {
-                    Id = 1,
-                    UserId = "none",
-                    Message = "notf.message",
-                    CreatedDate = DateTime.UtcNow,
-                    IsRead = false,
-                };
-            }
-        }
 
-        public async Task<PushNotificationDto> SendNotificationToCustomer(string mssg)
-        {
-            await _hubContext.Clients.Group(ApplicationUserRole.Customer.ToString()).SendAsync("ReceiveNotification", new { mssg });
 
-            if (_httpContextAccessor.HttpContext?.User?
-            .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Customer.ToString())
-            {
-                var notf = new Notification()
-                {
-                    channel = NotificationChannels.push,
-                    createdAt = DateTime.UtcNow,
-                    message = mssg,
-                    IsDeleted = false,
-                    isRead = false,
-                    UserId = _current.UserId,
-                    type = Domain.Notifications.NotificationTypes.general
-                };
-                await _notificationsRepository.AddAsync(notf);
-                await _unitOfWork.SaveChangesAsync();
+        //all===>refrence id=1
+        //admins==>refrence id =2
+        //technicians ==>refrence id =3 
+        //customers===userid==refrence id 4
+        //certain user=== refrence id 5 ,
 
-                return new PushNotificationDto()
-                {
-                    Id = notf.Id,
-                    UserId = notf.UserId,
-                    Message = notf.message,
-                    CreatedDate = notf.createdAt,
-                    IsRead = notf.isRead,
-                };
-            }
-            else
-            {
-                return new PushNotificationDto()
-                {
-                    Id = 1,
-                    UserId = "none",
-                    Message = "notf.message",
-                    CreatedDate = DateTime.UtcNow,
-                    IsRead = false,
-                };
-            }
+        //public async Task<PushNotificationDto> SendNotificationToAdminIdentity(string mssg)
+        //{
+        //    await _hubContext.Clients.Group("Staff").SendAsync("ReceiveNotification", new { mssg });
+        //    if (_httpContextAccessor.HttpContext?.User?
+        //   .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Staff.ToString())
+        //    {
+        //        var notf = new Notification()
+        //        {
+        //            channel = NotificationChannels.push,
+        //            createdAt = DateTime.UtcNow,
+        //            message = mssg,
+        //            IsDeleted = false,
+        //            isRead = false,
+        //            UserId = _current.UserId,
+        //            type = Domain.Notifications.NotificationTypes.general
+        //        };
+        //        await _notificationsRepository.AddAsync(notf);
+        //        await _unitOfWork.SaveChangesAsync();
 
-        }
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = notf.Id,
+        //            UserId = notf.UserId,
+        //            Message = notf.message,
+        //            CreatedDate = notf.createdAt,
+        //            IsRead = notf.isRead,
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = 1,
+        //            UserId = "none",
+        //            Message = "notf.message",
+        //            CreatedDate = DateTime.UtcNow,
+        //            IsRead = false,
+        //        };
+        //    }
+        //}
 
-        public async Task<PushNotificationDto> SendNotificationToTechnician(string mssg)
-        {
-            await _hubContext.Clients.Group(ApplicationUserRole.Technician.ToString()).SendAsync("ReceiveNotification", new { mssg });
-            if (_httpContextAccessor.HttpContext?.User?
-            .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Technician.ToString())
-            {
-                var notf = new Notification()
-                {
-                    channel = NotificationChannels.push,
-                    createdAt = DateTime.UtcNow,
-                    message = mssg,
-                    IsDeleted = false,
-                    isRead = false,
-                    UserId = _current.UserId,
-                    type = Domain.Notifications.NotificationTypes.general
-                };
-                await _notificationsRepository.AddAsync(notf);
-                await _unitOfWork.SaveChangesAsync();
+        //public async Task<PushNotificationDto> SendNotificationToCustomer(string mssg)
+        //{
+        //    await _hubContext.Clients.Group(ApplicationUserRole.Customer.ToString()).SendAsync("ReceiveNotification", new { mssg });
 
-                return new PushNotificationDto()
-                {
-                    Id = notf.Id,
-                    UserId = notf.UserId,
-                    Message = notf.message,
-                    CreatedDate = notf.createdAt,
-                    IsRead = notf.isRead,
-                };
-            }
-            else
-            {
-                return new PushNotificationDto()
-                {
-                    Id = 1,
-                    UserId = "none",
-                    Message = "notf.message",
-                    CreatedDate = DateTime.UtcNow,
-                    IsRead = false,
-                };
-            }
-        }
+        //    if (_httpContextAccessor.HttpContext?.User?
+        //    .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Customer.ToString())
+        //    {
+        //        var notf = new Notification()
+        //        {
+        //            channel = NotificationChannels.push,
+        //            createdAt = DateTime.UtcNow,
+        //            message = mssg,
+        //            IsDeleted = false,
+        //            isRead = false,
+        //            UserId = _current.UserId,
+        //            type = Domain.Notifications.NotificationTypes.general
+        //        };
+        //        await _notificationsRepository.AddAsync(notf);
+        //        await _unitOfWork.SaveChangesAsync();
+
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = notf.Id,
+        //            UserId = notf.UserId,
+        //            Message = notf.message,
+        //            CreatedDate = notf.createdAt,
+        //            IsRead = notf.isRead,
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = 1,
+        //            UserId = "none",
+        //            Message = "notf.message",
+        //            CreatedDate = DateTime.UtcNow,
+        //            IsRead = false,
+        //        };
+        //    }
+
+        //}
+
+        //public async Task<PushNotificationDto> SendNotificationToTechnician(string mssg)
+        //{
+        //    await _hubContext.Clients.Group(ApplicationUserRole.Technician.ToString()).SendAsync("ReceiveNotification", new { mssg });
+        //    if (_httpContextAccessor.HttpContext?.User?
+        //    .FindFirstValue(ClaimTypes.Role) == ApplicationUserRole.Technician.ToString())
+        //    {
+        //        var notf = new Notification()
+        //        {
+        //            channel = NotificationChannels.push,
+        //            createdAt = DateTime.UtcNow,
+        //            message = mssg,
+        //            IsDeleted = false,
+        //            isRead = false,
+        //            UserId = _current.UserId,
+        //            type = Domain.Notifications.NotificationTypes.general
+        //        };
+        //        await _notificationsRepository.AddAsync(notf);
+        //        await _unitOfWork.SaveChangesAsync();
+
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = notf.Id,
+        //            UserId = notf.UserId,
+        //            Message = notf.message,
+        //            CreatedDate = notf.createdAt,
+        //            IsRead = notf.isRead,
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new PushNotificationDto()
+        //        {
+        //            Id = 1,
+        //            UserId = "none",
+        //            Message = "notf.message",
+        //            CreatedDate = DateTime.UtcNow,
+        //            IsRead = false,
+        //        };
+        //    }
+        //}
 
         //Customer,
         //Technician,
@@ -235,79 +250,11 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
 
         public async Task<PushNotificationDto> SendNotificationToUser(string userId, string mssg)
         {
+            //for real time notifying
             await _hubContext.Clients.Group($"business-{userId}").SendAsync("ReceiveNotification", new { mssg });
-            if (_httpContextAccessor.HttpContext?.User?
-            .FindFirstValue(ClaimTypes.NameIdentifier) == _current.UserId)
-            {
-                var notf = new Notification()
-                {
-                    channel = NotificationChannels.push,
-                    createdAt = DateTime.UtcNow,
-                    message = mssg,
-                    IsDeleted = false,
-                    isRead = false,
-                    UserId = _current.UserId,
-                    type = Domain.Notifications.NotificationTypes.general
-                };
-                await _notificationsRepository.AddAsync(notf);
-                await _unitOfWork.SaveChangesAsync();
 
-                return new PushNotificationDto()
-                {
-                    Id = notf.Id,
-                    UserId = notf.UserId,
-                    Message = notf.message,
-                    CreatedDate = notf.createdAt,
-                    IsRead = notf.isRead,
-                };
-            }
-            else
-            {
-                return new PushNotificationDto()
-                {
-                    Id = 1,
-                    UserId = "none",
-                    Message = "notf.message",
-                    CreatedDate = DateTime.UtcNow,
-                    IsRead = false,
-                };
-            }
 
-        }
-
-        //Customer,
-        //Technician,
-        //Staff
-
-        public async Task<PushNotificationDto> SendRoleBasedNotificationAsync(string mssg,ApplicationUserRole userRole ,string? recipientUserId = null)
-        {
-
-            if (recipientUserId != null) {
-                await SendNotificationToUser(recipientUserId, mssg);  
-            }
-
-            else if (Enum.IsDefined(userRole))
-            {
-                switch (userRole)
-                {
-                    case (ApplicationUserRole.Staff):
-                        await SendNotificationToAdmin(mssg);
-                        break;
-
-                    case (ApplicationUserRole.Customer):
-                        // if (!string.IsNullOrEmpty(recipientUserId))
-                        await SendNotificationToCustomer(mssg);
-                        break;
-                    case (ApplicationUserRole.Technician):
-                        // if (!string.IsNullOrEmpty(recipientUserId))
-                        await SendNotificationToTechnician(mssg);
-                        break;
-
-                    default:
-
-                        break;
-                }
-            }
+            //for data base retrival
             var notf = new Notification()
             {
                 channel = NotificationChannels.push,
@@ -315,11 +262,11 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
                 message = mssg,
                 IsDeleted = false,
                 isRead = false,
-                UserId = _current.UserId??"1",
+                UserId = userId,
                 type = Domain.Notifications.NotificationTypes.general
             };
-          //  await _notificationsRepository.AddAsync(notf);
-          //  await _unitOfWork.SaveChangesAsync();
+            await _notificationsRepository.AddAsync(notf);
+            await _unitOfWork.SaveChangesAsync();
 
             return new PushNotificationDto()
             {
@@ -329,6 +276,99 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
                 CreatedDate = notf.createdAt,
                 IsRead = notf.isRead,
             };
+
+
+        }
+
+        public async Task<PushNotificationDto> SendDirectiveNotificationToUser(string userId, string mssg, NotificationTypes type)
+        {
+            //for real time notifying
+            await _hubContext.Clients.Group($"business-{userId}").SendAsync("ReceiveNotification", new { mssg, mssgtype = type.ToString() });
+
+
+            //for data base retrival
+            var notf = new Notification()
+            {
+                channel = NotificationChannels.push,
+                createdAt = DateTime.UtcNow,
+                message = mssg,
+                IsDeleted = false,
+                isRead = false,
+                UserId = userId,
+                type = type
+            };
+            await _notificationsRepository.AddAsync(notf);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new PushNotificationDto()
+            {
+                Id = notf.Id,
+                UserId = notf.UserId,
+                Message = notf.message,
+                CreatedDate = notf.createdAt,
+                IsRead = notf.isRead,
+            };
+
+
         }
     }
 }
+
+
+        //Customer,
+        //Technician,
+        //Staff
+
+//        public async Task<PushNotificationDto> SendRoleBasedNotificationAsync(string mssg,ApplicationUserRole userRole ,string? recipientUserId = null)
+//        {
+
+//            if (recipientUserId != null) {
+//                await SendNotificationToUser(recipientUserId, mssg);  
+//            }
+
+//            else if (Enum.IsDefined(userRole))
+//            {
+//                switch (userRole)
+//                {
+//                    case (ApplicationUserRole.Staff):
+//                        await SendNotificationToAdmin(mssg);
+//                        break;
+
+//                    case (ApplicationUserRole.Customer):
+//                        // if (!string.IsNullOrEmpty(recipientUserId))
+//                        await SendNotificationToCustomer(mssg);
+//                        break;
+//                    case (ApplicationUserRole.Technician):
+//                        // if (!string.IsNullOrEmpty(recipientUserId))
+//                        await SendNotificationToTechnician(mssg);
+//                        break;
+
+//                    default:
+
+//                        break;
+//                }
+//            }
+//            var notf = new Notification()
+//            {
+//                channel = NotificationChannels.push,
+//                createdAt = DateTime.UtcNow,
+//                message = mssg,
+//                IsDeleted = false,
+//                isRead = false,
+//                UserId = _current.UserId??"1",
+//                type = Domain.Notifications.NotificationTypes.general
+//            };
+//          //  await _notificationsRepository.AddAsync(notf);
+//          //  await _unitOfWork.SaveChangesAsync();
+
+//            return new PushNotificationDto()
+//            {
+//                Id = notf.Id,
+//                UserId = notf.UserId,
+//                Message = notf.message,
+//                CreatedDate = notf.createdAt,
+//                IsRead = notf.isRead,
+//            };
+//        }
+//    }
+//}

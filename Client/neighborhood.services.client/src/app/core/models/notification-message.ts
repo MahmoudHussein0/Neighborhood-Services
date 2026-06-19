@@ -3,5 +3,6 @@ export class NotificationMessage {
     public userId!: string;
     public message!: string;
     public isRead!: boolean;
+     public type!: string;
     public createdDate!: Date;
 }

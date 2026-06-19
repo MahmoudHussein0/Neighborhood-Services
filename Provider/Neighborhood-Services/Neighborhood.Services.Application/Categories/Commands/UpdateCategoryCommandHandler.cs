@@ -34,6 +34,7 @@ namespace Neighborhood.Services.Application.Categories.Commands
             var newNameEn = request.NameEn;
             var newNameAr = request.NameAr;
 
+
             var isExists = await _categoryRepo.IsNameExistsAsync(
                 newNameEn,
                 newNameAr,
@@ -51,6 +52,11 @@ namespace Neighborhood.Services.Application.Categories.Commands
 
             if (!string.IsNullOrWhiteSpace(request.Icon))
                 category.Icon = request.Icon;
+
+            if (!string.IsNullOrWhiteSpace(request.Image))
+                category.Image = request.Image;
+
+
 
             await _categoryRepo.UpdateAsync(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,0 +1,109 @@
+
+  <!-- <button>Room 1</button>
+  <button>Room 2</button>
+  <button>Room 3</button>
+  <button>Room 4</button> -->
+  
+  
+  
+  <title>Customer Support Chat</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+ 
+  <div class="chat-wrapper">
+<div class="chat-header">
+  <h5>{{ ticket.subject }}</h5>
+  <small>
+    {{ ticket.senderName }} ({{ ticket.senderEmail }})
+  </small>
+</div>
+
+<div class="alert alert-info">
+  {{ ticket.description }}
+</div>
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="agent-avatar">SA</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500;color:#111827">Support Agent</div>
+        <div style="font-size:12px;color:#6b7280">
+          <span class="status-dot"></span>Online · Typically replies in minutes
+        </div>
+      </div>
+      <i class="ti ti-dots-vertical" style="font-size:18px;color:#9ca3af;cursor:pointer" aria-hidden="true"></i>
+    </div>
+<div class="messages-area" id="messages">
+      <div class="msg-row">
+        <div class="mini-avatar">SA</div>
+        <div>
+          <div class="msg-time">Support</div>
+          <div class="bubble agent">Hi there! Someone will be in contact with you soon...</div>
+        </div>
+      </div>
+    <!-- Messages -->
+     @for (message of mssgSignals(); track message){
+
+      @if(message.sndr!='g'){
+       
+      <div class="msg-row">
+        <div class="mini-avatar">SA</div>
+        <div>
+          <div class="msg-time">Support</div>
+          <div class="bubble agent">{{message.message}}</div>
+        </div>
+      </div>
+    
+      }
+      @else{
+        <div class="msg-row user" style="flex-direction: row-reverse;">
+        <div class="mini-avatar user-av">You</div>
+        <div>
+          <div class="msg-time">You</div>
+          <div class="bubble user">{{message.message}}</div>
+        </div></div>
+      }
+     }
+    
+
+      <!-- <div id="quick-replies-container">
+        <div class="quick-replies">
+          <button class="qr-btn" onclick="sendQuick('Track my order')">Track my order</button>
+          <button class="qr-btn" onclick="sendQuick('Request a refund')">Request a refund</button>
+          <button class="qr-btn" onclick="sendQuick('Technical issue')">Technical issue</button>
+          <button class="qr-btn" onclick="sendQuick('Account help')">Account help</button>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- Star Rating (shown after a few messages) -->
+    <div class="satisfied-bar" id="rating-bar" style="display:none">
+      <span>How was your experience?</span>
+      <div class="star-row" id="stars">
+        <span class="star ti ti-star" data-v="1"></span>
+        <span class="star ti ti-star" data-v="2"></span>
+        <span class="star ti ti-star" data-v="3"></span>
+        <span class="star ti ti-star" data-v="4"></span>
+        <span class="star ti ti-star" data-v="5"></span>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <textarea
+        class="chat-input"
+        id="chatInput"
+        placeholder="Type a message…"
+        rows="1"
+        [(ngModel)]="messageToSend"
+      
+      ></textarea>
+      <button class="send-btn" id="sendBtn" (click)="sendMessage()" aria-label="Send message">
+        <i class="ti ti-send" style="font-size:16px" aria-hidden="true"></i>
+      </button>
+    </div>
+
+  </div>
+
+  
+
+

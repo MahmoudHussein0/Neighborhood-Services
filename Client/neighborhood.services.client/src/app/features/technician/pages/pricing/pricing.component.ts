@@ -8,10 +8,17 @@ import { ProblemTypeService } from '../../../../core/services/problem-type.servi
 import { ProblemTypes } from '../../../staff/models/category-details';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil, map } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../../core/services/lang.service';
+import { ProblemTypesOfCategoryForTechnicianService } from '../../services/problem-types-of-category-for-technician.service';
 
+
+interface pricingFormObject {
+  problemTypeId: number,
+  techMinPrice: number,
+  techMaxPrice: number
+}
 @Component({
   selector: 'app-pricing',
   imports: [ReactiveFormsModule, TranslatePipe, DeleteComponent],
@@ -22,7 +29,7 @@ export class PricingComponent implements OnInit, OnDestroy {
 
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly pricingService = inject(PricingService);
-  private readonly problemTypeService = inject(ProblemTypeService);
+  private readonly problemTypesOfCategoryForTechnicianService = inject(ProblemTypesOfCategoryForTechnicianService);
   private readonly toastrService = inject(ToastrService);
   private readonly langService = inject(LangService);
   private readonly fb = inject(FormBuilder);
@@ -32,6 +39,7 @@ export class PricingComponent implements OnInit, OnDestroy {
   existingprice: Pricing | null = null;
   lang: string | null = localStorage.getItem("lang");
   loadFlag: WritableSignal<boolean> = signal<boolean>(false);
+  isLoadingApi: WritableSignal<boolean> = signal<boolean>(false);
 
   deleteModal = viewChild(DeleteComponent);
   closeBtn: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('closeBtn');
@@ -40,10 +48,11 @@ export class PricingComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
 
   pricingForm = this.fb.group({
-    problemTypeId: [0, [Validators.required]],
+    problemTypeId: [-1, [Validators.required, Validators.min(1)]],
     techMinPrice: [0, [Validators.required]],
     techMaxPrice: [0, [Validators.required]]
   });
+
 
   ngOnInit(): void {
     this.langService.lang$.pipe(takeUntil(this.destroy$))
@@ -56,23 +65,27 @@ export class PricingComponent implements OnInit, OnDestroy {
 
 
   getPricing(): void {
+    this.isLoadingApi.set(true);
     this.pricingService.getPricing().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res => {
         console.log(res);
         this.pricing.set(res);
+        this.isLoadingApi.set(false);
       })
 
     })
   }
 
 
+
+
   getProblemTypes(): void {
-    this.problemTypeService.getProblemTypes().pipe(takeUntil(this.destroy$)).subscribe({
+    this.problemTypesOfCategoryForTechnicianService.getProblemTypesOfCategory().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res => {
-        console.log(res);
-        this.problemTypes.set(res);
+        this.problemTypes.set(res.flatMap(c => c.problemTypes))
       })
     })
+
   }
 
 
@@ -95,7 +108,7 @@ export class PricingComponent implements OnInit, OnDestroy {
 
 
   savePricing(): void {
-    const value = this.pricingForm.value;
+    const value = this.pricingForm.value as pricingFormObject;
     if (this.pricingForm.valid) {
       if (this.isEditMode) {
         //edit
@@ -114,8 +127,12 @@ export class PricingComponent implements OnInit, OnDestroy {
   }
 
 
-  addPricing(value: object): void {
+  addPricing(value: pricingFormObject): void {
     this.loadFlag.set(true);
+    console.log(value.problemTypeId);
+
+    this.problemTypes.update(problemTypes => problemTypes.filter(p => p.id != value.problemTypeId))
+
     this.pricingService.addPricing(value).subscribe({
       next: (res => {
         console.log(res);

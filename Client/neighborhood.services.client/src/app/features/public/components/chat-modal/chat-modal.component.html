@@ -1,0 +1,58 @@
+
+<div> modal works</div>
+
+
+
+
+<div class="chat-container"> 
+
+  @for (message of mssgSignals(); track message) {
+ 
+    <div class="message-wrapper"  [class.sent]="message.sndr!='g'"
+    [class.received]="message.sndr=='g'">
+
+      <div class="message-bubble">
+
+        <div class="message-sender">
+        {{message.sndr=="g"?"guest":"me"}}
+        </div>
+
+        <div class="message-content">
+            {{message.message}}
+        </div>
+
+        
+
+      </div>
+
+    </div>
+
+  } @empty {
+
+    <div class="text-center text-muted py-5">
+      No messages yet
+    </div>
+
+  }
+
+</div>
+
+<div class="modal-footer">
+
+  <div class="input-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Type a message..."
+      [(ngModel)]="messageToSend">
+
+    <button
+      class="btn btn-primary"
+      (click)="sendMessage()">
+      Send
+    </button>
+  </div>
+
+</div>
+
+

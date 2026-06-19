@@ -912,7 +912,21 @@
         "noPricing": " لا يوجد تسعيره لمشاكل",
         "deletePricing": "حذف التسعير",
         "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
-        "close": "إلغاء"
+        "close": "إلغاء",
+        "ProblemIsRequired": "اختيار المشكله مطلوب ."
+    },
+    "technicianCategories": {
+        "category": "التصنيف",
+        "manageYourCategoriesEasily": "قم بإدارة تصنيفاتك بسهولة",
+        "assignToCategory": "إضافة إلى تصنيف",
+        "noCategories": "لم تقم بالتسجيل في أي تصنيفات .",
+        "categories": "التصنيفات",
+        "selectCategory": "اختر تصنيفًا",
+        "close": "إلغاء",
+        "saveChanges": "حفظ",
+        "categoryIsRequired": "التصنيف مطلوب",
+        "delete": "حذف",
+        "deleteCategory": "هل تريد حذف التصنيف؟"
     },
     "problemType": {
         "startingFrom": "يبدأ من",
@@ -978,7 +992,10 @@
         "policies": "السياسات",
         "promoCodes": "أكواد الخصم",
         "staffManagement": "إدارة الموظفين",
-        "newsletter":"الموجز"
+        "newsletter":"الموجز",
+        "livesupport":"الدعم الفني المباشر",
+        "yourCategories": "الفئات التي تنضم اليها"
+       
     },
     "staffBookings": {
         "title": "الحجوزات",
@@ -1192,39 +1209,46 @@
         "empty": "لا توجد تقييمات مُبلّغ عنها.",
         "loadFail": "تعذّر تحميل تحليل التقييمات."
     },
-    
-    "favs":{
-        "favorite":"المفضلة",
-        "empty":"لا عناصر في المفضلة بعد!",
-        "emptyMessage":"الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
-        "browseCTA":" تصفح الخدمات"
+    "favs": {
+        "favorite": "المفضلة",
+        "empty": "لا عناصر في المفضلة بعد!",
+        "emptyMessage": "الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
+        "browseCTA": " تصفح الخدمات"
     },
-     "generalActins":{
-        "add":"إضافة",
-        "delete":"حذف",
-        "update":"تعديل",
-        "select":"تحديد"
+    "generalActins": {
+        "add": "إضافة",
+        "delete": "حذف",
+        "update": "تعديل",
+        "select": "تحديد"
     },
-     "newsletter":{
-        "pagetitle":"إرسال بريد موجز الأخبار",
-        "pagedescription":"كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
-        "subj":"الموضوع",
-        "publish":"إرسال",
-        "pre":"معاينة",
-        "subPre":"موضوع البريد هنا ...",
-        "content":"المحتوى"
-  
+    "newsletter": {
+        "pagetitle": "إرسال بريد موجز الأخبار",
+        "pagedescription": "كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
+        "subj": "الموضوع",
+        "publish": "إرسال",
+        "pre": "معاينة",
+        "subPre": "موضوع البريد هنا ...",
+        "content": "المحتوى"
     },
-     "newslettersubscribe":{
-        "subscribe":"اشترك",
-        "description":"اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
-
+    "newslettersubscribe": {
+        "subscribe": "اشترك",
+        "description": "اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
     },
-     "favorites": {
+    "favorites": {
         "add": "أضف إلى المفضلة",
         "remove": "إزالة من المفضلة",
         "added": "تمت الإضافة إلى المفضلة",
         "removed": "تمت الإزالة من المفضلة",
         "error": "تعذّر تحديث المفضلة"
+    },
+    "aboutUs":{
+        "aboutUs":"نبذة عنا",
+        "title":"هدفنا هو جعل حياتك أكثر راحة!",
+        "description":"منصتنا هي منصة شاملة تهدف لإيصال الفنيين بالعملاء المحليين، متضمنة مدى واسع من خدمات صيانة المنازل وخدمات النقل والتوصيل. أيا يكن ما تريده من خدمات، من سباكةأو تنظيف أو تشطيب منازل، تساعدك منصتنا على إيجاد الفني المتخصص بسهولة.",
+        "f1":"الثقة",
+        "f2":"التنوع",
+        "f3":"الدعم",
+        "f4":"الجودة"
+        
     }
 }

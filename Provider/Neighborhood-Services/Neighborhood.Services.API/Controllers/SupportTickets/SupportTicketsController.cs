@@ -61,14 +61,14 @@ namespace Neighborhood.Services.API.Controllers.SupportTickets
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
-        // PUT api/supporttickets/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateSupportTicketCommand command, CancellationToken cancellationToken)
-        {
-            command.Id = id;
-            var result = await _mediator.Send(command, cancellationToken);
-            return Ok(result);
-        }
+        //// PUT api/supporttickets/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> Update(int id, [FromBody] updateTicketStatusCommand command, CancellationToken cancellationToken)
+        //{
+        //    command.Id = id;
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return Ok(result);
+        //}
         [HttpPut("{id}/priority")]
         public async Task<IActionResult> UpdatePriority(int id, [FromBody] SupportTicketPriority priority)
         {

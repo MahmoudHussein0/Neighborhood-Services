@@ -28,7 +28,48 @@
       <div class="dropdown-item d-flex align-items-start" [ngClass]="{'bg-light': !not.isRead}" (click)="onNotificationClick(not)">
         <i class="bi bi-bell me-2"></i>
         <div>
-          <p class="mb-1">{{ not.message }}</p>
+          <p class="mb-1 bg-light">{{ not.message }}</p>
+          @switch ( not.type ) {
+  @case ("booking") {
+      <button class="btn btn-outline-success btn-sm" routerLink="/technician/browse-requests" routerLinkActive="active">
+         <i class="bi bi-calendar-check me-1"></i>
+              Go to Bookings
+            </button>
+  }
+  @case ("dispute") {
+      <button class="btn btn-outline-success btn-sm" routerLink="/staff/disputes" routerLinkActive="active">
+         <i class="bi bi-exclamation-triangle me-1"></i>
+              Go to Disputes
+            </button>
+  }
+  @case ("review") {
+   
+         <button class="btn btn-outline-success btn-sm" routerLink="/technician/reviews" routerLinkActive="active">
+                    <i class="bi bi-star-fill me-1"></i>
+
+              Go to Reviews
+            </button>
+  }
+  @case ("payment") {
+     <button class="btn btn-outline-success btn-sm" routerLink="/technician/wallet" routerLinkActive="active">
+              Go to Payments
+            </button>}
+  @case ("offer") {
+      <button class="btn btn-outline-success btn-sm" routerLink="/customer/service-requests" routerLinkActive="active">
+              Go to Offers
+            </button>
+  }
+  @case ("support") {
+     <button class="btn btn-outline-success btn-sm"routerLink="/staff/CustomerSupport" routerLinkActive="active">
+              Go to Live Support
+            </button>
+  }
+  @case ("system") {
+     <button class="btn bg-info mb-1">Go to Blablabla</button>
+  }
+}
+<!-- End of switch case -->
+          <!-- <button>{{ not.type }}</button> -->
           <small class="text-muted">{{ not.createdDate | date:'short' }}</small>
         </div>
       </div>

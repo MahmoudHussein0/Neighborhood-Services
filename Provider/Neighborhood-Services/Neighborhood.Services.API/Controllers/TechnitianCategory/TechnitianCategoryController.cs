@@ -18,24 +18,24 @@ namespace Neighborhood.Services.API.Controllers.TechnitianCategory
             _mediator = mediator;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetById( string? lang = "en" )
+            => Ok(await _mediator.Send(new GetTechnicianCategoryQuery(lang)));
 
-        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetById(int id)
-            => Ok(await _mediator.Send(new GetTechnicianCategoryQuery(id)));
+
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> Add (AddCategoryToTechnicianCommand command)
-             => Ok( await _mediator.Send(command));
+        public async Task<ActionResult<int>> Add ([FromBody] AddCategoryToTechnicianCommand categoryToTechnicianCommand)
+             => Ok( await _mediator.Send(categoryToTechnicianCommand));
 
 
 
 
-        [HttpDelete("{technicianId}/{categoryId}")]
-
-        public async Task<ActionResult<int>> Delete (int technicianId , int categoryId)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<int>> Delete(int id)
         {
-             return  Ok(await _mediator.Send(new DeleteCategortFromTechnicianCommand(technicianId , categoryId)));
+             return  Ok(await _mediator.Send(new DeleteCategortFromTechnicianCommand(id)));
         }
 
 

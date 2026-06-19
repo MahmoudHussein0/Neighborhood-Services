@@ -5,6 +5,7 @@ import { MessageDto } from '../../../core/models/message-dto';
 import { MessageSelectedDto } from '../../../core/models/message-selected-dto';
 import { MessagesService } from '../../customer/services/messages.service';
 
+
 import { from, Observable } from 'rxjs';
 
 
@@ -68,17 +69,66 @@ constructor(private apiService: ApiService,private messagesService: MessagesServ
 //     }).catch(err => console.error(err));
 // }
 
+private joinedGroups = new Set<string>();
 
+joinGroup(groupName: string): void {
+  if (this.joinedGroups.has(groupName)){console.log(this.joinedGroups); return;};
+
+  this.hubConnection.invoke('JoinGroup', groupName)
+    .then(() => {
+      this.joinedGroups.add(groupName);
+      console.log(`Joined group: ${groupName}`);
+    });
+}
+deinitialidzeChat(bookingId:number):Observable<void>{
+  console.log("from deinitialization")
+  
+  console.log(this.joinedGroups);
+  //this.hubConnection.invoke('LeaveGroup', bookingId.toString()).catch(err => console.error(err));
+
+  this.AllMessagesForBooking=signal<any[]>([]);
+  return from(this.hubConnection.stop());
+}
+
+deinitializeChat(): Observable<void> {
+  this.hubConnection.stop().then(() => {
+    this.joinedGroups.clear();
+    console.log('Hub stopped and groups cleared');
+  });
+    return from(this.hubConnection.stop());
+
+}
  initializeChat(bookingId: number) {
+   this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl('https://localhost:7228/chatHub')
+      .withAutomaticReconnect()
+      .build();
+
+  
+
+  this.hubConnection.onclose(() => {
+    console.log('Connection closed — clearing local group tracking');
+    this.joinedGroups.clear();
+  });
+
+  
         this.hubConnection.start().then(() => {
-      //     this.hubConnection.invoke('JoinGroup', bookingId.toString())
-      // .catch(err => console.error(err));
+          this.joinGroup(bookingId.toString())
+       //   this.hubConnection.invoke('JoinGroup', bookingId.toString())
+    //  .catch(err => console.error(err));
 
             console.log("initializaing hub")
             this.hubConnection.on('ReceiveMessage', (message: MessageDto) => {
+              console.log("receiving")
+              // this.AllMessagesForBooking.update(msgs => [...msgs, message]);
+                    console.log(this.AllMessagesForBooking())
+                    //this.AllMessagesForBooking.update(msgs => [...msgs, message]);
                 this.ngZone.run(() => {
-                    this.AllMessagesForBooking.update(msgs => [...msgs, message]);
-                });
+                  this.AllMessagesForBooking.update(msgs => [...msgs, message]);
+                    console.log(this.AllMessagesForBooking())
+            
+
+;                });
             });
 
             this.messagesService.getMessagesForBooking(bookingId).subscribe({

@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.CancellationPolicies.Commands.CreateCancellation;
 using Neighborhood.Services.Application.CancellationPolicies.Commands.DeleteCancellation;
 using Neighborhood.Services.Application.CancellationPolicies.Commands.UpdateCancellation;
 using Neighborhood.Services.Application.CancellationPolicies.Queries.GetAllCancellationPoliciesQuery;
 using Neighborhood.Services.Application.CancellationPolicies.Queries.GetCancellationPolicyQuery;
 using Neighborhood.Services.Domain.CancellationPolicies;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.CancellationPolicies
 {
@@ -23,6 +25,7 @@ namespace Neighborhood.Services.API.CancellationPolicies
         // ---------- Commands (admin only) ----------
 
         // POST /api/cancellationpolicies
+        [HasPermission(PermissionType.ManagePolicies)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCancellationPolicyCommand command)
         {
@@ -51,6 +54,7 @@ namespace Neighborhood.Services.API.CancellationPolicies
 
         // GET /api/cancellationpolicies
         [HttpGet]
+        [HasPermission(PermissionType.ManagePolicies)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _mediator.Send(new GetAllCancellationPoliciesQuery());

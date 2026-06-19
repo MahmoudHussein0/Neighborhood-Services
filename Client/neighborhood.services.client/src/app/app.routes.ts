@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -39,10 +38,8 @@ import { TechnicianProfileComponent } from './features/technician/pages/profile/
 import { TechnicianGalleryComponent } from './features/technician/pages/gallery/technician-gallery.component';
 import { TechnicianWalletComponent } from './features/technician/pages/wallet/technician-wallet.component';
 import { TechnicianEarningsComponent } from './features/technician/pages/earnings/technician-earnings.component';
-
 import { StaffUsersComponent } from './features/staff/pages/users/staff-users.component';
 import { StaffPromoCodesComponent } from './features/staff/pages/promo-codes/staff-promo-codes.component';
-
 import { CategoryComponent } from './features/staff/pages/categories/category/category.component';
 import { CategoryDetailsComponent } from './features/staff/pages/categories/category-details/category-details.component';
 import { AvailiabilityAndExceptionComponent } from './features/technician/pages/availabilities/availiability-and-exception/availiability-and-exception.component';
@@ -54,7 +51,10 @@ import { PublicProfileComponent } from './shared/components/public-profile/publi
 import { categoriesResolver } from './core/resolvers/categories-resolver';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
-import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
+import {CustomerSupportComponent} from '../app/features/public/pages/customersupport/customer-support/customer-support.component'
+import {CustomerSupportStaffComponent} from '../app/features/staff/pages/customer-support-staff/customer-support-staff.component'
+import { TechnicianCategoriesComponent } from './features/technician/pages/Technician-categories/Technician-categories.component';
+import { NewsletterpublishingComponent } from '../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 
 export const routes: Routes = [
   {
@@ -99,7 +99,7 @@ export const routes: Routes = [
       { path: 'recurring-bookings', component: RecurringBookingsComponent },
       { path: 'favorites', component: FavoriteListComponent, data: { title: 'Favorites' } },
       { path: 'wallet', component: CustomerWalletComponent },
-      { path: 'chat', component:CustomerChatsComponent, data: { title: 'Chat' } },
+      { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
       { path: 'profile', component: CustomerProfileComponent },
@@ -128,9 +128,13 @@ export const routes: Routes = [
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
       { path: 'reviews', component: TechReviewsComponent },
       { path: 'pricing', component: PricingComponent },
-      { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
+
+      { path: 'yourCategories', component: TechnicianCategoriesComponent, title: "Your categories" },
+        { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
     ]
   },
+
+
 
   {
     path: 'staff',
@@ -148,6 +152,7 @@ export const routes: Routes = [
       { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ', data: { permission: 'ManageCategories' } },
       { path: 'policies', component: PoliciesComponent, title: 'Staff Policies', data: { permission: 'ManagePolicies' } },
       { path: 'promo-codes', component: StaffPromoCodesComponent, data: { permission: 'ManagePromos' } },
+      {path:'CustomerSupport',component:CustomerSupportStaffComponent},
       {
         path: 'staff-management',
         data: { permission: 'FullAccess' },

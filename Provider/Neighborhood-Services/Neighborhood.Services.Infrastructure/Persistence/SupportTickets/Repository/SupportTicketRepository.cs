@@ -25,7 +25,10 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
         {
             return await _context.SupportTickets
                 .Include(t => t.Messages)
-                .ThenInclude(m => m.Sender)
+    .ThenInclude(m => m.Sender)
+
+.Include(t => t.Messages)
+    .ThenInclude(m => m.Attachments)
                 .FirstOrDefaultAsync(
                     t => t.Id == id,
                     cancellationToken);
@@ -36,6 +39,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.SupportTickets.Reposi
         public async Task<IReadOnlyList<SupportTicket>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _context.SupportTickets
+
                 .Where(t => t.UserId == userId)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);

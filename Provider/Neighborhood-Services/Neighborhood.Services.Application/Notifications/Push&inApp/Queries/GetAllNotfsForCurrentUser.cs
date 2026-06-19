@@ -41,6 +41,7 @@ namespace Neighborhood.Services.Application.Notifications.Push_inApp.Queries
                 Message = notf.message,
                 CreatedDate = notf.createdAt,
                 IsRead = notf.isRead,
+                type = notf.type.ToString()
 
             })
                 .ToList();

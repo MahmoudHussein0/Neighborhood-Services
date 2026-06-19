@@ -1,0 +1,146 @@
+<section class="py-4">
+    <div class="container">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">
+                    {{ "technicianCategories.category" | translate }}
+                </h2>
+                <p class="text-muted mb-0">
+                    {{"technicianCategories.manageYourCategoriesEasily" |translate}}
+                </p>
+            </div>
+
+            <button class="btn btn-primary px-4 py-2 rounded-3 shadow-sm" data-bs-toggle="modal"
+                data-bs-target="#technicianCategoryModal">
+                <i class="fa-solid fa-plus me-2"></i>
+                {{ "technicianCategories.assignToCategory" | translate }}
+            </button>
+        </div>
+
+        <!-- Categories -->
+        <div class="row g-4">
+            @if (isLoadingAPI()) {
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            }
+            @else {
+            @for (category of categories(); track category.id)
+            {
+            <div class="col-12 col-md-6 col-lg-4">
+                <app-card [category]="category" [showActions]=" false " (delete)=" technicianCategoryId = $event  ">
+                </app-card>
+            </div>
+            } @empty {
+
+            <p class=" p-5 bg-info-subtle fw-bold text-black border rounded-1  text-center"> {{
+                "technicianCategories.noCategories" | translate }} </p>
+            }
+            }
+        </div>
+
+    </div>
+</section>
+
+
+
+<!--  Modal -->
+<div class="modal fade" id="technicianCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header d-flex border-0 pb-0">
+                <h4 class="modal-title fw-bold text-primary">
+                    {{"technicianCategories.assignToCategory" |translate }}
+                </h4>
+            </div>
+
+
+
+            <div class="modal-body">
+                <form [formGroup]="form">
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">
+                            {{"technicianCategories.categories" |translate}}
+                        </label>
+
+                        <select class="form-select custom-input" formControlName="CategoryId">
+                            <option value=-1>
+                                ---- {{"technicianCategories.selectCategory" |translate}} ----
+                            </option>
+
+                            @for(category of allCategories(); track category.id) {
+                            <option [value]="category.id">
+                                {{ category.name }}
+                            </option>
+                            }
+
+                        </select>
+                        @if(form.get("CategoryId")?.getError('min') && form.get("CategoryId")?.touched )
+                        {
+                        <small class="text-danger">
+                            {{ "technicianCategories.categoryIsRequired" | translate }}
+                        </small>
+                        }
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button #closeBtn type="button" class="btn rtl-close btn-outline-secondary px-4 rounded-3"
+                    data-bs-dismiss="modal">
+                    {{ "technicianCategories.close" | translate }}
+                </button>
+                <button type="button" class="btn btn-success px-4 rounded-3 shadow-sm" [disabled]="  loadFlag()"
+                    (click)=" save()   ">
+                    {{ "technicianCategories.saveChanges" | translate }}
+                    @if(loadFlag())
+                    {
+                    <i class="fa-solid fa-spinner fa-spin ms-2"></i>
+                    }
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<app-delete modalId="deleteTechnicianCategoryModal">
+    <h5 class="text-black mb-3">{{"technicianCategories.deleteCategory" |translate}}</h5>
+    <button class="btn btn-danger me-3" (click)="  confirmDelete( )  ">
+        {{"technicianCategories.delete" |translate}}
+    </button>
+
+</app-delete>

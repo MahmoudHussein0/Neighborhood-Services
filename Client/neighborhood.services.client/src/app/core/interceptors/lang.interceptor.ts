@@ -7,7 +7,8 @@ export const langInterceptor: HttpInterceptorFn = (req, next) => {
   const endPointsNeedLang: string[] = [
     '/api/Categories',
     '/api/ProblemTypes',
-    '/api/TechnicianPricing'
+    '/api/TechnicianPricing',
+    '/api/TechnitianCategory'
   ];
 
 
