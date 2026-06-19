@@ -1,0 +1,205 @@
+<section class="auth-page">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8 col-xl-7">
+        <div class="auth-panel">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <a routerLink="/auth/register" class="auth-home-btn mb-0">
+              <i class="bi bi-arrow-left"></i>
+              {{ 'register.back' | translate }}
+            </a>
+            <app-language-switcher />
+          </div>
+          <div class="mb-4">
+            <span class="auth-kicker">{{ 'register.technicianKicker' | translate }}</span>
+            <h1 class="h3 fw-bold mt-2 mb-2">{{ 'register.createTitle' | translate }}</h1>
+            <p class="text-muted mb-0">{{ 'register.technicianFormSubtitle' | translate }}</p>
+          </div>
+
+          @if (apiError()) {
+            <div class="alert alert-danger" role="alert">
+              {{ apiError() }}
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="fullName" class="form-label">{{ 'register.fullName' | translate }}</label>
+                <input
+                  id="fullName"
+                  class="form-control"
+                  formControlName="fullName"
+                  autocomplete="name"
+                  [class.is-invalid]="form.controls.fullName.touched && form.controls.fullName.invalid"
+                />
+                @if (hasError('fullName', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.fullNameRequired' | translate }}</div>
+                } @else if (hasError('fullName', 'minlength')) {
+                  <div class="invalid-feedback">{{ 'register.fullNameMinlength' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label">{{ 'register.email' | translate }}</label>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  autocomplete="email"
+                  [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+                />
+                @if (hasError('email', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.emailRequired' | translate }}</div>
+                } @else if (hasError('email', 'email')) {
+                  <div class="invalid-feedback">{{ 'register.emailInvalid' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="password" class="form-label">{{ 'register.password' | translate }}</label>
+                <input
+                  id="password"
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+                />
+                @if (hasError('password', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.passwordRequired' | translate }}</div>
+                } @else if (hasError('password', 'minlength')) {
+                  <div class="invalid-feedback">{{ 'register.passwordMinlength' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="age" class="form-label">{{ 'register.age' | translate }}</label>
+                <input
+                  id="age"
+                  type="number"
+                  class="form-control"
+                  formControlName="age"
+                  min="13"
+                  max="120"
+                  [class.is-invalid]="form.controls.age.touched && form.controls.age.invalid"
+                />
+                @if (hasError('age', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.ageRequired' | translate }}</div>
+                } @else if (hasError('age', 'min') || hasError('age', 'max')) {
+                  <div class="invalid-feedback">{{ 'register.ageRange' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12">
+                <label for="address" class="form-label">{{ 'register.address' | translate }}</label>
+                <input
+                  id="address"
+                  class="form-control"
+                  formControlName="address"
+                  autocomplete="street-address"
+                  [placeholder]="'register.addressPlaceholder' | translate"
+                  [class.is-invalid]="form.controls.address.touched && form.controls.address.invalid"
+                />
+                @if (hasError('address', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.addressRequired' | translate }}</div>
+                } @else if (hasError('address', 'minlength')) {
+                  <div class="invalid-feedback">{{ 'register.addressMinlength' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="nationalId" class="form-label">{{ 'register.nationalId' | translate }}</label>
+                <input
+                  id="nationalId"
+                  class="form-control"
+                  formControlName="nationalId"
+                  [class.is-invalid]="form.controls.nationalId.touched && form.controls.nationalId.invalid"
+                />
+                @if (hasError('nationalId', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.nationalIdRequired' | translate }}</div>
+                } @else if (hasError('nationalId', 'minlength')) {
+                  <div class="invalid-feedback">{{ 'register.nationalIdMinlength' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="maxTravelDistance" class="form-label">{{ 'register.maxTravelDistance' | translate }}</label>
+                <input
+                  id="maxTravelDistance"
+                  type="number"
+                  class="form-control"
+                  formControlName="maxTravelDistance"
+                  min="1"
+                  [class.is-invalid]="form.controls.maxTravelDistance.touched && form.controls.maxTravelDistance.invalid"
+                />
+                @if (hasError('maxTravelDistance', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.maxTravelRequired' | translate }}</div>
+                } @else if (hasError('maxTravelDistance', 'min')) {
+                  <div class="invalid-feedback">{{ 'register.maxTravelMin' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12">
+                <label for="experience" class="form-label">{{ 'register.experience' | translate }}</label>
+                <textarea
+                  id="experience"
+                  class="form-control"
+                  rows="4"
+                  formControlName="experience"
+                  [class.is-invalid]="form.controls.experience.touched && form.controls.experience.invalid"
+                ></textarea>
+                @if (hasError('experience', 'required')) {
+                  <div class="invalid-feedback">{{ 'register.experienceRequired' | translate }}</div>
+                } @else if (hasError('experience', 'minlength')) {
+                  <div class="invalid-feedback">{{ 'register.experienceMinlength' | translate }}</div>
+                }
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">{{ 'register.categories' | translate }}</label>
+                <p class="text-muted small mb-2">{{ 'register.categoriesHint' | translate }}</p>
+                @if (categories().length === 0) {
+                  <p class="text-muted small mb-0">{{ 'register.categoriesLoading' | translate }}</p>
+                } @else {
+                  <div class="category-grid">
+                    @for (category of categories(); track category.id) {
+                      <label class="category-chip" [class.selected]="isSelected(category.id)">
+                        <input
+                          type="checkbox"
+                          class="visually-hidden"
+                          [checked]="isSelected(category.id)"
+                          (change)="toggleCategory(category.id)"
+                        />
+                        @if (category.icon) {
+                          <i class="bi" [class]="category.icon" aria-hidden="true"></i>
+                        }
+                        <span>{{ categoryName(category) }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+                @if (submitted() && selectedCategoryIds().length === 0) {
+                  <div class="text-danger small mt-2">{{ 'register.categoriesRequired' | translate }}</div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4" type="submit" [disabled]="isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              }
+              {{ 'register.createAccount' | translate }}
+            </button>
+          </form>
+
+          <p class="text-center text-muted small mb-0 mt-4">
+            {{ 'register.haveAccount' | translate }}
+            <a routerLink="/auth/login" class="fw-semibold text-decoration-none">{{ 'register.signIn' | translate }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

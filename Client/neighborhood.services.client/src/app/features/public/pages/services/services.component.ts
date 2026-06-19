@@ -2,12 +2,17 @@ import { Component, inject, OnDestroy, OnInit, signal, WritableSignal } from '@a
 import { CategoriesService } from '../../../../core/services/categories.service';
 import { Category } from '../../../../core/models/category';
 import { ProblemTypes } from '../../../staff/models/category-details';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+
+
 import { LangService } from '../../../../core/services/lang.service';
 import { skip, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+
+
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../auth/services/auth.service';
+
 
 @Component({
   selector: 'app-services',

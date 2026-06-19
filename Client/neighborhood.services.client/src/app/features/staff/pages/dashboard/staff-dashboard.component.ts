@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { AuthService } from '../../../auth/services/auth.service';
 
 import { StaffBookingService, StaffBooking, StaffBookingStatus } from '../../services/staff-booking.service';
 import { StaffUsersService } from '../../services/staff-users.service';
@@ -28,10 +29,12 @@ import { ToastrService } from 'ngx-toastr';
           <p class="dash-subtitle">Real-time snapshot of platform activity</p>
         </div>
         <div class="header-actions">
+          @if (can('FullAccess')) {
           <button class="btn-refresh btn-reindex" (click)="reindexKnowledge()" [disabled]="reindexing()">
             <span class="refresh-icon" [class.spinning]="reindexing()">{{ reindexing() ? '↻' : '🧠' }}</span>
             {{ reindexing() ? 'Reindexing…' : 'Reindex Knowledge' }}
           </button>
+          }
           <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
             <span class="refresh-icon" [class.spinning]="loading()">↻</span>
             Refresh
@@ -63,9 +66,10 @@ import { ToastrService } from 'ngx-toastr';
 
       @else {
 
-        <!-- ── Stat Cards ── -->
+        <!-- ── Stat Cards (each gated to the staffer's permission) ── -->
         <div class="stats-grid mb-4">
 
+          @if (can('ManageBookings')) {
           <a routerLink="/staff/bookings" class="stat-card" style="--c:#3b82f6">
             <div class="stat-icon">📋</div>
             <div class="stat-body">
@@ -75,7 +79,9 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#3b82f6"></div>
           </a>
+          }
 
+          @if (can('ManageUsers')) {
           <a routerLink="/staff/users" class="stat-card" style="--c:#8b5cf6">
             <div class="stat-icon">👥</div>
             <div class="stat-body">
@@ -85,7 +91,9 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#8b5cf6"></div>
           </a>
+          }
 
+          @if (can('ManageTickets')) {
           <a routerLink="/staff/support-tickets" class="stat-card" style="--c:#f59e0b">
             <div class="stat-icon">🎫</div>
             <div class="stat-body">
@@ -95,7 +103,9 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#f59e0b"></div>
           </a>
+          }
 
+          @if (can('ManageDisputes')) {
           <a routerLink="/staff/disputes" class="stat-card" style="--c:#ef4444">
             <div class="stat-icon">⚖️</div>
             <div class="stat-body">
@@ -105,7 +115,9 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#ef4444"></div>
           </a>
+          }
 
+          @if (can('MangeReviews')) {
           <a routerLink="/staff/reviews" class="stat-card" style="--c:#10b981">
             <div class="stat-icon">⭐</div>
             <div class="stat-body">
@@ -115,7 +127,9 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#10b981"></div>
           </a>
+          }
 
+          @if (can('ManageBookings')) {
           <a routerLink="/staff/bookings" class="stat-card" style="--c:#f43f5e">
             <div class="stat-icon">🚨</div>
             <div class="stat-body">
@@ -125,6 +139,7 @@ import { ToastrService } from 'ngx-toastr';
             </div>
             <div class="stat-accent" style="background:#f43f5e"></div>
           </a>
+          }
 
         </div>
 
@@ -132,6 +147,7 @@ import { ToastrService } from 'ngx-toastr';
         <div class="charts-row mb-4">
 
           <!-- Bookings by Status -->
+          @if (can('ManageBookings')) {
           <div class="chart-card">
             <h3 class="chart-title">Bookings by Status</h3>
             <div class="bar-list">
@@ -153,7 +169,10 @@ import { ToastrService } from 'ngx-toastr';
             </div>
           </div>
 
+          }
+
           <!-- Open Issues Donut -->
+          @if (canIssues()) {
           <div class="chart-card center-content">
             <h3 class="chart-title">Open Issues</h3>
             <div class="donut-wrap">
@@ -183,7 +202,10 @@ import { ToastrService } from 'ngx-toastr';
             </div>
           </div>
 
+          }
+
           <!-- Reviews Rings -->
+          @if (can('MangeReviews')) {
           <div class="chart-card">
             <h3 class="chart-title">Reviews Breakdown</h3>
             <div class="rings-wrap">
@@ -209,10 +231,12 @@ import { ToastrService } from 'ngx-toastr';
               }
             </div>
           </div>
+          }
 
         </div>
 
         <!-- ── Recent Bookings Table ── -->
+        @if (can('ManageBookings')) {
         <div class="table-card">
           <div class="table-head-row">
             <h3 class="chart-title mb-0">Recent Bookings</h3>
@@ -249,6 +273,7 @@ import { ToastrService } from 'ngx-toastr';
             </table>
           </div>
         </div>
+        }
 
       }
     </div>
@@ -430,7 +455,7 @@ import { ToastrService } from 'ngx-toastr';
     .mb-0 { margin-bottom:0; }
   `]
 })
-export class StaffDashboardComponent implements OnInit {
+export class StaffDashboardComponent {
   private bookingSvc = inject(StaffBookingService);
   private usersSvc   = inject(StaffUsersService);
   private ticketsSvc = inject(SupportTicketsService);
@@ -439,6 +464,28 @@ export class StaffDashboardComponent implements OnInit {
   private knowledgeSvc = inject(KnowledgeService);
   private confirm    = inject(ConfirmService);
   private toastr     = inject(ToastrService);
+  private auth       = inject(AuthService);
+
+  /** Template helper — does the current staffer hold this permission? */
+  can = (permission: string): boolean => this.auth.hasPermission(permission);
+
+  /** The "Open Issues" donut needs at least one of these to be meaningful. */
+  canIssues = (): boolean =>
+    this.can('ManageTickets') || this.can('ManageDisputes') || this.can('MangeReviews');
+
+  // Load the dashboard only once permissions are known, so we can skip the endpoints this
+  // staffer can't call (no 403 toasts, no wasted round-trips). permissionGuard resolves
+  // /me before this component is created, so permissionsLoaded() is usually already true.
+  private dataRequested = false;
+
+  constructor() {
+    effect(() => {
+      if (this.auth.permissionsLoaded() && !this.dataRequested) {
+        this.dataRequested = true;
+        this.loadAll();
+      }
+    });
+  }
 
   loading = signal(true);
   error   = signal(false);
@@ -516,23 +563,28 @@ export class StaffDashboardComponent implements OnInit {
     ];
   });
 
-  // ── Lifecycle ────────────────────────────────────────────────
-  ngOnInit() { this.loadAll(); }
-
   loadAll() {
     this.loading.set(true);
     this.error.set(false);
 
+    // Only call what this staffer is allowed to see — gated endpoints they lack would 403
+    // and fire a "no permission" toast. `of(...)` stands in for the skipped widgets.
+    const canBookings = this.can('ManageBookings');
+    const canUsers    = this.can('ManageUsers');
+    const canTickets  = this.can('ManageTickets');
+    const canDisputes = this.can('ManageDisputes');
+    const canReviews  = this.can('MangeReviews');
+
     // Per-stream catchError so one failing widget doesn't blank out the whole dashboard
     // (forkJoin's default behaviour is to abort all the other inner streams on any error).
     forkJoin({
-      bookings: this.bookingSvc.getBookings({ pageSize: 100 }).pipe(catchError(() => of(null))),
-      users:    this.usersSvc.getUsers().pipe(catchError(() => of([] as any[]))),
-      tickets:  this.ticketsSvc.getTickets({ pageSize: 100 }).pipe(catchError(() => of([] as any))),
-      disputes: this.disputeSvc.getByStatus('Open').pipe(catchError(() => of([] as any[]))),
-      reviews:  this.reviewsSvc.getAll().pipe(catchError(() => of([] as any[]))),
-      flagged:  this.reviewsSvc.getFlagged().pipe(catchError(() => of([] as any[]))),
-      approved: this.reviewsSvc.getByStatus('Approved' as any).pipe(catchError(() => of([] as any[]))),
+      bookings: canBookings ? this.bookingSvc.getBookings({ pageSize: 100 }).pipe(catchError(() => of(null))) : of(null),
+      users:    canUsers    ? this.usersSvc.getUsers().pipe(catchError(() => of([] as any[]))) : of([] as any[]),
+      tickets:  canTickets  ? this.ticketsSvc.getTickets({ pageSize: 100 }).pipe(catchError(() => of([] as any))) : of([] as any),
+      disputes: canDisputes ? this.disputeSvc.getByStatus('Open').pipe(catchError(() => of([] as any[]))) : of([] as any[]),
+      reviews:  canReviews  ? this.reviewsSvc.getAll().pipe(catchError(() => of([] as any[]))) : of([] as any[]),
+      flagged:  canReviews  ? this.reviewsSvc.getFlagged().pipe(catchError(() => of([] as any[]))) : of([] as any[]),
+      approved: canReviews  ? this.reviewsSvc.getByStatus('Approved' as any).pipe(catchError(() => of([] as any[]))) : of([] as any[]),
     }).subscribe({
       next: ({ bookings, users, tickets, disputes, reviews, flagged, approved }) => {
         // Bookings — PagedResult (null if the call failed; treat as empty)

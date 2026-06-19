@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { StaffBookingService, StaffBooking, StaffBookingStatus } from '../../services/staff-booking.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { CancelBookingModalComponent } from '../../../customer/components/cancel-booking-modal/cancel-booking-modal.component';
+import { StaffBookingDetailsModalComponent } from '../../components/staff-booking-details-modal/staff-booking-details-modal.component';
 
 type StatusTab = 'All' | StaffBookingStatus;
 
@@ -79,6 +80,11 @@ export class StaffBookingsComponent implements OnInit {
   onSearchInput(value: string) {
     this.searchTerm.set(value);
     this.search$.next(value);
+  }
+
+  openDetails(b: StaffBooking) {
+    const ref = this.modal.open(StaffBookingDetailsModalComponent, { size: 'md' });
+    ref.componentInstance.booking = b;
   }
 
   // Staff can cancel only active bookings (not finished, cancelled, or under dispute).

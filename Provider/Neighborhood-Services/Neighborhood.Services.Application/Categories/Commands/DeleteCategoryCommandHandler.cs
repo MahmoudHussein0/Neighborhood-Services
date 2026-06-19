@@ -13,21 +13,29 @@ namespace Neighborhood.Services.Application.Categories.Commands
     {
         private readonly ICategoryRepository _categoryRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBackgroundJobScheduler _jobs;
 
-        public DeleteCategoryCommandHandler(ICategoryRepository categoryRepo , IUnitOfWork unitOfWork)
+        public DeleteCategoryCommandHandler(ICategoryRepository categoryRepo , IUnitOfWork unitOfWork, IBackgroundJobScheduler jobs)
         {
             _categoryRepo = categoryRepo;
             _unitOfWork = unitOfWork;
+            _jobs = jobs;
         }
         public async Task<bool> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _categoryRepo.GetByIdAsync(request.Id);
-            
+
             if (category is null) throw new NotFoundException("Category" , request.Id);
-            
+
             await  _categoryRepo.DeleteAsync(category.Id);
-            return await _unitOfWork.SaveChangesAsync() > 0 ;
-         
+            var deleted = await _unitOfWork.SaveChangesAsync() > 0 ;
+
+            // Drop this category's vector from the RAG index off the request thread. Fail-open:
+            // a queue hiccup must never undo a committed delete.
+            if (deleted)
+                try { _jobs.EnqueueCategoryRemoval(category.Id); } catch { /* RAG sync is best-effort; /reindex is the backstop */ }
+
+            return deleted;
         }
     }
 }

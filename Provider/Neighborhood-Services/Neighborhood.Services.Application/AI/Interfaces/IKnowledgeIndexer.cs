@@ -21,5 +21,10 @@ namespace Neighborhood.Services.Application.AI.Interfaces
         // Remove the vector(s) for one item (call on admin delete).
         Task RemoveCategoryAsync(int categoryId);
         Task RemoveProblemTypeAsync(int problemTypeId);
+
+        // Cascade variants: a category's name is embedded into each of its problem types'
+        // text, so a category create/update/delete must also refresh/remove its children.
+        Task IndexCategoryWithChildrenAsync(int categoryId);
+        Task RemoveCategoryWithChildrenAsync(int categoryId);
     }
 }

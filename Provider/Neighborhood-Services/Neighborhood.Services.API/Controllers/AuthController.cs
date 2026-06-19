@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Neighborhood.Services.Application.Auth.Commands;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Customers;
 using NetTopologySuite.Geometries;
@@ -47,6 +48,28 @@ namespace Neighborhood.Services.API.Controllers
                 authResponse.Role,
                 authResponse.ExpiresAt
             });
+        }
+
+        // GET /api/Auth/me
+        // Returns the live permission list for the signed-in staff member so the SPA can
+        // hide menu items / buttons they lack. Non-staff (customer/technician) get an empty
+        // list. This is UX-only — the [HasPermission] attributes are the real enforcement.
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> Me([FromServices] IStaffRepository staffRepository)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var staff = await staffRepository.GetByUserIdAsync(userId);
+
+            var permissions = staff?.Permissions
+                .Select(p => p.Permission.ToString())
+                .Distinct()
+                .ToList() ?? new List<string>();
+
+            return Ok(new { permissions });
         }
 
         [HttpGet("google-login")]

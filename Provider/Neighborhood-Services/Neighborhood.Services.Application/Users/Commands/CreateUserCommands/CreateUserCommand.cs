@@ -19,5 +19,6 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
         public string? NationalId { get; set; }
         public string? Experience { get; set; }
         public int? MaxTravelDistance { get; set; }
+        public List<int>? CategoryIds { get; set; }
     }
 }
