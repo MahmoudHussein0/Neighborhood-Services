@@ -8,13 +8,15 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Queries
 {
     public class GetTechnicianCategoryQuery  : IRequest<IReadOnlyList<CategoryDto>>
     {
+       
 
         public string Lang { get; set; }
-        public int TechnicianId { get; set; }
-
-        public GetTechnicianCategoryQuery(int technicianId)
+        public GetTechnicianCategoryQuery(string lang)
         {
-            TechnicianId = technicianId;
+            Lang = lang;
         }
+
+
+
     }
 }

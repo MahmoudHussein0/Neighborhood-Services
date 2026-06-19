@@ -52,7 +52,8 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
                 DescriptionAr = request.DescriptionAr ,
                 MinPrice = request.MinPrice,
                 MaxPrice = request.MaxPrice ,
-                CategoryId = request.CategoryId
+                CategoryId = request.CategoryId,
+                ImageUrl = request.ImageUrl
             };
 
             await _problemTypeRepo.AddAsync(problemType);

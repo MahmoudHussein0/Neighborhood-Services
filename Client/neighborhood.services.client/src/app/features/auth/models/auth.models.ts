@@ -17,6 +17,7 @@ export interface RegisterRequest {
   nationalId?: string;
   experience?: string;
   maxTravelDistance?: number;
+  categoryIds?: number[];
 }
 
 export interface RegisterFormValue {

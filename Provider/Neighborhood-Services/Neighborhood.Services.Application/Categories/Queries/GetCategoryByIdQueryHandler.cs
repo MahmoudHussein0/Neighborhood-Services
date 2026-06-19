@@ -35,7 +35,8 @@ namespace Neighborhood.Services.Application.Categories.Queries
                 DescriptionEn =P.DescriptionEn,
                 Description = lang == "en" ? P.DescriptionEn : P.DescriptionAr,
                 MinPrice = P.MinPrice,
-                MaxPrice = P.MaxPrice
+                MaxPrice = P.MaxPrice ,
+                ImageUrl = P.ImageUrl??""
             }).ToList();
 
             var categoryDetailsDto = new CategoryDetailsDto()

@@ -192,6 +192,19 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
                     && !b.IsDeleted);
         }
 
+        public async Task<IEnumerable<Booking>> GetConfirmedBookingsInRangeAsync(int technicianId, DateTime from, DateTime to)
+        {
+            return await _context.Bookings
+                .Where(b => b.TechnicianId == technicianId
+                    && b.Status == BookingStatus.Confirmed
+                    && !b.IsDeleted
+                    && b.DurationMinutes != null
+                    && b.ScheduledAt >= from
+                    && b.ScheduledAt < to)
+                .OrderBy(b => b.ScheduledAt)
+                .ToListAsync();
+        }
+
         public async Task<bool> HasOverlappingConfirmedBookingAsync(int technicianId, DateTime start, DateTime end, int? excludeBookingId = null)
         {
             // Pull the technician's confirmed bookings that have a duration set,

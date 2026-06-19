@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -15,6 +14,8 @@ import { AboutComponent } from './features/public/pages/about/about.component';
 import { ContactComponent } from './features/public/pages/contact/contact.component';
 import { LoginComponent } from './features/auth/pages/login/login.component';
 import { RegisterComponent } from './features/auth/pages/register/register.component';
+import { RegisterCustomerComponent } from './features/auth/pages/register-customer/register-customer.component';
+import { RegisterTechnicianComponent } from './features/auth/pages/register-technician/register-technician.component';
 import { ExternalCallbackComponent } from './features/auth/pages/external-callback/external-callback.component';
 import { CustomerDashboardComponent } from './features/customer/pages/dashboard/customer-dashboard.component';
 import { BookingsComponent } from './features/customer/pages/bookings/bookings.component';
@@ -37,10 +38,8 @@ import { TechnicianProfileComponent } from './features/technician/pages/profile/
 import { TechnicianGalleryComponent } from './features/technician/pages/gallery/technician-gallery.component';
 import { TechnicianWalletComponent } from './features/technician/pages/wallet/technician-wallet.component';
 import { TechnicianEarningsComponent } from './features/technician/pages/earnings/technician-earnings.component';
-
 import { StaffUsersComponent } from './features/staff/pages/users/staff-users.component';
 import { StaffPromoCodesComponent } from './features/staff/pages/promo-codes/staff-promo-codes.component';
-
 import { CategoryComponent } from './features/staff/pages/categories/category/category.component';
 import { CategoryDetailsComponent } from './features/staff/pages/categories/category-details/category-details.component';
 import { AvailiabilityAndExceptionComponent } from './features/technician/pages/availabilities/availiability-and-exception/availiability-and-exception.component';
@@ -52,9 +51,10 @@ import { PublicProfileComponent } from './shared/components/public-profile/publi
 import { categoriesResolver } from './core/resolvers/categories-resolver';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
-import{NewsletterpublishingComponent} from'../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 import {CustomerSupportComponent} from '../app/features/public/pages/customersupport/customer-support/customer-support.component'
 import {CustomerSupportStaffComponent} from '../app/features/staff/pages/customer-support-staff/customer-support-staff.component'
+import { TechnicianCategoriesComponent } from './features/technician/pages/Technician-categories/Technician-categories.component';
+import { NewsletterpublishingComponent } from '../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 
 export const routes: Routes = [
   {
@@ -66,10 +66,18 @@ export const routes: Routes = [
       { path: 'problemType/:id', component: ProblemTypeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'auth/login', component: LoginComponent, canActivate: [guestGuard] },
-      { path: 'auth/register', component: RegisterComponent, canActivate: [guestGuard] },
-      { path: 'auth/external-callback', component: ExternalCallbackComponent },
-      { path: 'customer-service-chat', component: CustomerSupportComponent }
+    ],
+  },
+
+  {
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+      { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+      { path: 'register/customer', component: RegisterCustomerComponent, canActivate: [guestGuard] },
+      { path: 'register/technician', component: RegisterTechnicianComponent, canActivate: [guestGuard] },
+      { path: 'external-callback', component: ExternalCallbackComponent },
     ],
   },
 
@@ -91,7 +99,7 @@ export const routes: Routes = [
       { path: 'recurring-bookings', component: RecurringBookingsComponent },
       { path: 'favorites', component: FavoriteListComponent, data: { title: 'Favorites' } },
       { path: 'wallet', component: CustomerWalletComponent },
-      { path: 'chat', component:CustomerChatsComponent, data: { title: 'Chat' } },
+      { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
       { path: 'chats', redirectTo: 'chat', pathMatch: 'full' },
       { path: 'notifications', component: CustomerPlaceholderComponent, data: { title: 'Notifications' } },
       { path: 'profile', component: CustomerProfileComponent },
@@ -120,9 +128,13 @@ export const routes: Routes = [
       { path: 'availability', component: AvailiabilityAndExceptionComponent },
       { path: 'reviews', component: TechReviewsComponent },
       { path: 'pricing', component: PricingComponent },
-      { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
+
+      { path: 'yourCategories', component: TechnicianCategoriesComponent, title: "Your categories" },
+        { path: 'chat', component: CustomerChatsComponent, data: { title: 'Chat' } },
     ]
   },
+
+
 
   {
     path: 'staff',

@@ -17,6 +17,45 @@ import { CreateBooking, TechnicianPricingRange } from '../../models/booking.mode
   selector: 'app-create-booking-modal',
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './create-booking-modal.component.html',
+  styles: [`
+    .slot-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-height: 12rem;
+      overflow-y: auto;
+      padding: 0.25rem;
+      margin: -0.25rem;
+    }
+    .slot-chip {
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.6rem;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #334155;
+      cursor: pointer;
+      transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+      white-space: nowrap;
+    }
+    .slot-chip:hover {
+      border-color: #93c5fd;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+    .slot-chip.selected {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .slots-state {
+      font-size: 0.85rem;
+      color: #64748b;
+      padding: 0.5rem 0;
+    }
+  `],
 })
 export class CreateBookingModalComponent {
   private readonly fb = inject(FormBuilder);
@@ -54,10 +93,18 @@ export class CreateBookingModalComponent {
   // Set once the user tries to submit, so the (required) location error can show inline.
   submitAttempted = signal(false);
 
-  // Earliest selectable datetime (local "now") for the min attribute — "yyyy-MM-ddTHH:mm".
-  readonly minDateTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+  // Slot granularity for the time picker (minutes between bookable start-times).
+  readonly SLOT_MINUTES = 30;
+
+  // Earliest selectable DAY (local "today") for the date input's min — "yyyy-MM-dd".
+  readonly minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
-    .slice(0, 16);
+    .slice(0, 10);
+
+  // The chosen day, the free start-times for it, and a loading flag for the slots fetch.
+  selectedDate = signal<string>('');
+  availableSlots = signal<string[]>([]);
+  loadingSlots = signal(false);
 
   form = this.fb.group({
     categoryId: this.fb.control<number | null>(null, Validators.required),
@@ -130,6 +177,43 @@ export class CreateBookingModalComponent {
       },
       error: () => this.estimating.set(false),
     });
+  }
+
+  /** Day changed → clear any time picked for the old day and load this day's free slots. */
+  onDateChange(value: string) {
+    this.selectedDate.set(value);
+    this.form.controls.scheduledAt.setValue('');
+    this.availableSlots.set([]);
+    if (!value || !this._technicianId) return;
+
+    this.loadingSlots.set(true);
+    this.tech.getAvailableSlots(this._technicianId, value, this.SLOT_MINUTES).subscribe({
+      next: (slots) => {
+        this.availableSlots.set(slots ?? []);
+        this.loadingSlots.set(false);
+      },
+      error: () => {
+        this.availableSlots.set([]);
+        this.loadingSlots.set(false);
+      },
+    });
+  }
+
+  /** Picking a slot stores it as a wall-clock "yyyy-MM-ddTHH:mm" (submit appends ":00"). */
+  selectSlot(iso: string) {
+    this.form.controls.scheduledAt.setValue(iso.slice(0, 16));
+  }
+
+  isSelectedSlot(iso: string): boolean {
+    return this.form.controls.scheduledAt.value === iso.slice(0, 16);
+  }
+
+  /** "2026-06-22T09:30:00" → "9:30 AM" (wall-clock, no timezone math). */
+  slotLabel(iso: string): string {
+    const [h, m] = iso.slice(11, 16).split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 || 12;
+    return `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
   }
 
   /** Informational warning if the chosen slot is outside the technician's working days/hours. */

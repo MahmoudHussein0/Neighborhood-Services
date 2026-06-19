@@ -8,7 +8,10 @@ using Neighborhood.Services.API.Middlewares;
 using Neighborhood.Services.Application;
 using Neighborhood.Services.Application.AI.Interfaces;
 using Neighborhood.Services.Application.Authorization;
+using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Cloudinary;
+using Neighborhood.Services.Application.TechnitianAvailability.Interfaces;
+using Neighborhood.Services.Application.TechnitianPricing.Interface;
 using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Infrastructure;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -235,6 +238,25 @@ namespace Neighborhood.Services.API
                 var environment = app.Services.GetRequiredService<IWebHostEnvironment>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 await DbSeeder.SeedAsync(scope.ServiceProvider, environment, logger);
+
+                // Warm the booking-flow query plans so the first booking-modal click isn't cold.
+                // (The seeder above already built the EF model + opened the first connection;
+                // this just compiles the specific query shapes the modal fires.) Best-effort.
+                try
+                {
+                    var sp = scope.ServiceProvider;
+                    var now = DateTime.UtcNow;
+                    await sp.GetRequiredService<IBookingRepository>()
+                        .GetConfirmedBookingsInRangeAsync(0, now, now.AddDays(1));
+                    await sp.GetRequiredService<ITechnicianPricingRepository>()
+                        .GetByConditionAsync(p => !p.IsDeleted && p.TechnicianId == 0 && p.ProblemTypeId == 0);
+                    await sp.GetRequiredService<ITechnicianAvailabilityRepository>()
+                        .GetByConditionAsync(a => a.TechnicianId == 0);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Booking-flow warm-up skipped.");
+                }
             }
 
             

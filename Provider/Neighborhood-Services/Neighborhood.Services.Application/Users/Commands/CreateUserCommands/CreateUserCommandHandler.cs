@@ -3,11 +3,13 @@ using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Application.Technicians.Interfaces;
+using Neighborhood.Services.Application.TechnitianCategory.Interface;
 using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Customers;
 using Neighborhood.Services.Domain.Staffs;
+using Neighborhood.Services.Domain.TechnicianCategories;
 using Neighborhood.Services.Domain.Technicians;
 using Neighborhood.Services.Domain.Wallets;
 using NetTopologySuite.Geometries;
@@ -18,6 +20,7 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
         IUserRepository userRepository,
         ICustomerRepository customerRepository,
         ITechnicianRepository technicianRepository,
+        ITechnicianCategoryRepository technicianCategoryRepository,
         IStaffRepository staffRepository,
         IWalletRepository walletRepository,
         IUnitOfWork unitOfWork) : IRequestHandler<CreateUserCommand, string>
@@ -25,6 +28,7 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
         private readonly IUserRepository _userRepository = userRepository;
         private readonly ICustomerRepository _customerRepository = customerRepository;
         private readonly ITechnicianRepository _technicianRepository = technicianRepository;
+        private readonly ITechnicianCategoryRepository _technicianCategoryRepository = technicianCategoryRepository;
         private readonly IStaffRepository _staffRepository = staffRepository;
         private readonly IWalletRepository _walletRepository = walletRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -91,9 +95,10 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                     break;
 
                 case ApplicationUserRole.Technician:
-                    if (await _technicianRepository.GetByUserIdAsync(applicationUserId) is null)
+                    var technician = await _technicianRepository.GetByUserIdAsync(applicationUserId);
+                    if (technician is null)
                     {
-                        await _technicianRepository.CreateAsync(new Technician
+                        technician = new Technician
                         {
                             ApplicationUserId = applicationUserId,
                             NationalId = request.NationalId?.Trim() ?? string.Empty,
@@ -106,7 +111,30 @@ namespace Neighborhood.Services.Application.Users.Commands.CreateUserCommands
                             IsActive = true,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow
-                        });
+                        };
+                        // CreateAsync saves immediately, so technician.Id is populated afterwards.
+                        await _technicianRepository.CreateAsync(technician);
+                    }
+
+                    // Attach the categories the technician selected at registration.
+                    if (request.CategoryIds is { Count: > 0 })
+                    {
+                        foreach (var categoryId in request.CategoryIds.Distinct())
+                        {
+                            var exists = (await _technicianCategoryRepository
+                                .GetByConditionAsync(tc => tc.TechnicianId == technician.Id && tc.CategoryId == categoryId))
+                                .Any();
+
+                            if (!exists)
+                            {
+                                await _technicianCategoryRepository.AddAsync(new TechnicianCategory
+                                {
+                                    TechnicianId = technician.Id,
+                                    CategoryId = categoryId
+                                });
+                            }
+                        }
+                        await _unitOfWork.SaveChangesAsync(cancellationToken);
                     }
                     // Create a wallet for the new technician if they don't have one
                     if (await _walletRepository.GetByUserIdAsync(applicationUserId) is null)
