@@ -2,9 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit.Encodings;
 using Neighborhood.Services.Application.Messages.DTOs;
 using Neighborhood.Services.Application.Shared;
+using NetTopologySuite.Index.HPRtree;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -38,6 +41,24 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
             //    return;
             //}
             await base.OnConnectedAsync();
+        }
+        private static readonly ConcurrentDictionary<string, HashSet<string>> _userGroups = new();
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            var connId = Context.ConnectionId;
+
+            if (_userGroups.TryRemove(connId, out var groups))
+            {
+                // SignalR removes groups automatically, but we clean our tracking dict
+                foreach (var group in groups)
+                {
+                    await Groups.RemoveFromGroupAsync(connId, group);
+                    Console.WriteLine($"Connection {connId} left group {group}");
+                }
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendPrivateMessage(string userId, string message)
@@ -77,14 +98,27 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
         {
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+            
         }
 
 
         //After booking is accepted, we want the technician and the client both to join the group.
+
         public async Task JoinGroup(string groupName)
         {
            // await _chatService.JoinGroup(Context.ConnectionId, groupName);
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+         //   await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            var connId = Context.ConnectionId;
+           // _userGroups.TryAdd(connId, new HashSet<string>());
+            if(_userGroups.TryAdd(connId, new HashSet<string>()) == false) { throw new Exception("AlreadyExists"); }
+             _userGroups.TryAdd(connId, new HashSet<string>());
+
+
+            if (_userGroups[connId].Contains(groupName))
+                return; // already in group, skip
+
+            _userGroups[connId].Add(groupName);
+            await Groups.AddToGroupAsync(connId, groupName);
         }
 
         

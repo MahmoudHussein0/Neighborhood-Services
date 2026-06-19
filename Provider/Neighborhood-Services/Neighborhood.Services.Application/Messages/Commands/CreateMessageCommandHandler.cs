@@ -43,11 +43,11 @@ namespace Neighborhood.Services.Application.Messages.Commands
         {
             var msg = new Message
             {
-                SenderId = _currentUserService.UserId??request.SenderId,
+                SenderId = request.SenderId ?? _currentUserService.UserId ?? throw new Exception("Not Authenticated"),
                 content = request.content,
                 isRead = false,
-                createdAt=DateTime.UtcNow,
-                IsDeleted=false
+                createdAt = DateTime.UtcNow,
+                IsDeleted = false
             };
 
             //Verfiy There is a booking with this iD

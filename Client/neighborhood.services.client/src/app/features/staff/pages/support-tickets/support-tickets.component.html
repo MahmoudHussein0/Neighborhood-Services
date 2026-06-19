@@ -1,7 +1,7 @@
-<div class="st-layout" [class.has-selected]="selectedTicketId !== null">
+<div class="st-layout" [class.has-selected]="selectedTicketId !== null" >
 
   <!-- ========== SIDEBAR ========== -->
-  <aside class="st-sidebar">
+  <aside class="st-sidebar" >
 
     <div class="st-sidebar-header">
       <h2 class="st-title">Support tickets</h2>
@@ -73,7 +73,7 @@
   </aside>
 
   <!-- ========== DETAIL PANEL ========== -->
-  <main class="st-detail">
+  <main class="st-detail" style="overflow-y:scroll;">
 
     <!-- Placeholder -->
     <div *ngIf="!selectedTicketId" class="st-placeholder">

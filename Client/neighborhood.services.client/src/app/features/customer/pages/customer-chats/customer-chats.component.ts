@@ -8,11 +8,9 @@ import { computed, NgModule,  inject, Signal, NgZone } from '@angular/core';
 import { MessageDto } from '../../../../core/models/message-dto';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-
-
-
-
-
+import { ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit,ViewChild, ViewChildren, ElementRef,   QueryList, HostListener
+ } from '@angular/core';
 
 
 
@@ -22,8 +20,59 @@ import { DatePipe } from '@angular/common';
   templateUrl: './customer-chats.component.html',
   styleUrl: './customer-chats.component.css',
 })
-export class CustomerChatsComponent {
+export class CustomerChatsComponent implements AfterViewInit{
 
+  @ViewChild('scrollframe', {static: false}) scrollFrame!: ElementRef;
+  @ViewChildren('item') itemElements!: QueryList<any>;
+
+  private itemContainer: any;
+  private scrollContainer: any;
+  //public items :string[]=[];
+  private isNearBottom = true;
+
+  ngAfterViewInit() {
+    this.isLoading.set(true)
+    this.scrollContainer = this.scrollFrame.nativeElement;
+    this.itemElements.changes.subscribe(_ => this.onItemElementsChanged());    
+
+    // Add a new item every 2 seconds for demo purposes
+    // setInterval(() => {
+      
+    //   this.items.push("hi");
+    //    this.isLoading.set(false);
+     
+    // }, 2000);
+      this.isLoading.set(false);
+  }
+
+  private onItemElementsChanged(): void {
+    if (this.isNearBottom) {
+      this.scrollToBottom();
+    }
+  }
+
+  private scrollToBottom(): void {
+    this.scrollContainer.scroll({
+      top: this.scrollContainer.scrollHeight,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }
+ private isUserNearBottom(): boolean {
+    const threshold = 30;
+    const position = this.scrollContainer.scrollTop + this.scrollContainer.offsetHeight;
+    const height = this.scrollContainer.scrollHeight;
+    return position > height - threshold;
+  }
+
+  scrolled(event: any): void {
+    this.isNearBottom = this.isUserNearBottom();
+  }
+
+
+
+
+  ////////////////
   ConvSignals = signal<ConversationDto[]>([]);
   chosenBookingId = signal<number>(0);
 
@@ -61,10 +110,12 @@ private ngZone = inject(NgZone);
 
 
   constructor(private conversationService: ConversationService,
-    private chatService: ChatService, private messagesService: MessagesService) {
+    private chatService: ChatService, private messagesService: MessagesService,private cdr: ChangeDetectorRef) {
       this.isLoading = signal(false);
     this.AllMessagesForBooking = this.chatService.AllMessagesForBooking;
     this.CurrentConversationMessages=this.AllMessagesForBooking;
+    /////
+   
     }
 
   ngOnInit(): void {
@@ -88,9 +139,9 @@ private ngZone = inject(NgZone);
         console.log('Conversations loaded:', data);
         if(data.at(0)!=null){this.bookingId=data.at(0)?.bookingId!}
         console.log('BookingId:', this.bookingId);
-         this.chatService.initializeChat(this.bookingId)
+        //  this.chatService.initializeChat(this.bookingId)
         this.getMyId();
-    console.log("from init", this.chatService.AllMessagesForBooking());
+    // console.log("from init", this.chatService.AllMessagesForBooking());
     //this.loadConversationMessages(this.bookingId);
 
 
@@ -111,6 +162,12 @@ private ngZone = inject(NgZone);
 
 this.bookingId=id;
 console.log(this.bookingId);
+this.chatService.deinitializeChat().subscribe({
+      next:()=>{ console.log("deinitialized");this.AllMessagesForBooking=signal<any[]>([]);
+        this.chatService.AllMessagesForBooking=signal<any[]>([]); this.chatService.initializeChat(this.bookingId); 
+        this.AllMessagesForBooking.set(this.chatService.AllMessagesForBooking())
+}
+    })
 this.chosenBookingId.set(this.bookingId);
  this.isLoading.set(true);
  this.messagesService.getMessagesForBooking(id).subscribe({
@@ -127,28 +184,33 @@ this.chosenBookingId.set(this.bookingId);
                 error: (err) => console.error(err)
             });
 
-    this.conversationService.getMyConversations().subscribe({
-      next: data => {
+    // this.conversationService.getMyConversations().subscribe({
+    //   next: data => {
        
-        this.ConvSignals.set(data);
-        this.ConvDtos = [...data];
-        console.log('Conversations loaded:', data);
+    //     this.ConvSignals.set(data);
+    //     this.ConvDtos = [...data];
+    //     console.log('Conversations loaded:', data);
         
-        console.log('BookingId:', this.chosenBookingId());
+    //     console.log('BookingId:', this.chosenBookingId());
       
-         this.isLoading.set(false);
-    console.log("from init", this.chatService.AllMessagesForBooking());
-    //this.loadConversationMessages(this.chosenBookingId());
+    //      this.isLoading.set(false);
+    // console.log("from init", this.chatService.AllMessagesForBooking());
+    // //this.loadConversationMessages(this.chosenBookingId());
 
 
-        this.isLoading.set(false);
+    //     this.isLoading.set(false);
         
-      },
-      error: err => {
-        console.error(err);
-        this.isLoading.set(false);
-      }
-    });
+    //   },
+    //   error: err => {
+    //     console.error(err);
+    //     this.isLoading.set(false);
+    //   }
+    // });
+//     this.chatService.deinitializeChat().subscribe({
+//       next:()=>{ console.log("deinitialized");this.AllMessagesForBooking=signal<any[]>([]);this.chatService.initializeChat(this.bookingId); 
+// }
+//     })
+        //  this.chatService.initializeChat(this.bookingId)
 
 
 this.isLoading.set(!this.isLoading())
@@ -195,11 +257,22 @@ getMyId(): void {
         next: () => {
           this.ngZone.run(() => {  
             console.log("message sent!");
-            this.ngZone.run(() => {
-                    this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
-                });
+            
+          //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
+          this.AllMessagesForBooking=this.chatService.AllMessagesForBooking;
+           console.log("after send");
+           console.log(this.AllMessagesForBooking())
+          this.MessageToBeSent.content = '';
+
+           this.cdr.detectChanges();
+        
+            // this.ngZone.run(() => {
+           
+              
+            //         //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
+            //     });
             //this.AllMessagesForBooking().push(this.MessageToBeSent);
-             this.isLoading.set(true);
+             this.isLoading.set(false);
              
             this.messageContent = '';
             this.MessageToBeSent = new MessageDto();

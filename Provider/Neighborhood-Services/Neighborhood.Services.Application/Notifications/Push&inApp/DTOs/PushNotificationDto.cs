@@ -9,7 +9,10 @@ namespace Neighborhood.Services.Application.Notifications.Push_inApp.DTOs
         public int Id { get; set; }
         public string Message { get; set; } = string.Empty;
         public bool IsRead { get; set; } = false;
-        public string UserId { get; set; } // who will see this        
+        public string UserId { get; set; } // who will see this
+                                           // 
+        public int refId { set; get; }
+        public string type { set; get; }
         public DateTime CreatedDate { get; set; }
     }
 }

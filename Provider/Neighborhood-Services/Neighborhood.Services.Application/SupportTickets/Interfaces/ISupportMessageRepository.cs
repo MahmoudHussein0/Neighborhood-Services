@@ -12,9 +12,8 @@ namespace Neighborhood.Services.Application.SupportTickets.Interfaces
       
         Task<IReadOnlyList<SupportMessage>> GetByTicketIdAsync(int ticketId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<SupportMessage>> GetUnreadByTicketIdAsync(int ticketId, CancellationToken cancellationToken = default);
-
         // ── Commands ─────────────────────────────────────────────────────────
-     
+
         Task DeleteAsync(SupportMessage message, CancellationToken cancellationToken = default);
     }
 }

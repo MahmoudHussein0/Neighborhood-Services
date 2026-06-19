@@ -11,6 +11,7 @@ namespace Neighborhood.Services.Application.Shared.Mappers
             UserId = ticket.UserId,
             Subject = ticket.Subject,
             Description = ticket.Description,
+            BookingId = ticket.BookingId,
             SenderName = ticket.SenderName,
             SenderEmail = ticket.SenderEmail,
             Status = ticket.Status.ToString(),
@@ -23,11 +24,28 @@ namespace Neighborhood.Services.Application.Shared.Mappers
         {
             Id = message.Id,
             TicketId = message.TicketId,
+
             SenderId = message.SenderId,
+
+            SenderType = message.SenderType.ToString(),
+
             Message = message.Message,
+
             Channel = message.Channel.ToString(),
+
             ReadAt = message.ReadAt,
-            CreatedAt = message.CreatedAt
+
+            CreatedAt = message.CreatedAt,
+
+            Attachments = message.Attachments?
+         .Select(a => new AttachmentDto
+         {
+             Id = a.Id,
+             Url = a.Url,
+             PublicId = a.PublicId,
+             Type = a.Type.ToString()
+         })
+         .ToList() ?? new()
         };
     }
 }

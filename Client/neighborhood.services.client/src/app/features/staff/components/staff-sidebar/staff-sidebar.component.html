@@ -43,6 +43,11 @@
       <i class="bi bi-life-preserver"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.supportTickets' | translate }}</span> }
     </a>
+     <a routerLink="/staff/CustomerSupport" routerLinkActive="active" class="sidebar-link">
+      <i class="bi bi-broadcast"></i>
+      @if (!collapsed()) { <span>{{ 'sidebar.livesupport' | translate }}</span> }
+    </a>
+    
     <a *appHasPermission="'ManageCategories'" routerLink="/staff/categories" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-grid"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.categories' | translate }}</span> }

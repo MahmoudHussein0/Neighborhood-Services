@@ -977,8 +977,10 @@
         "policies": "Policies",
         "promoCodes": "Promo Codes",
         "staffManagement": "Staff Management",
-        "yourCategories": "Your Categories",
-        "newsletter": "Newsletter"
+        "newsletter": "Newsletter",
+        "livesupport":"Customer Live Chat"
+        "yourCategories": "Your Categories"
+       
     },
     "staffBookings": {
         "title": "Bookings",
@@ -1225,5 +1227,14 @@
         "added": "Added to favorites",
         "removed": "Removed from favorites",
         "error": "Could not update favorites"
-    }
+    },
+    "aboutUs":{
+        "aboutUs":"About Us",
+        "title":"Our mission is to make your life easier.",
+        "description":"Neighborhood Services is a trusted platform that connects clients with skilled local technicians for a wide range of home and maintenance services. Whether you need plumbing, electrical work, painting, carpentry, cleaning, or appliance repair, our platform helps you find qualified professionals quickly and easily",
+        "f1":"Trust",
+        "f2":"Variety",
+        "f3":"Support",
+        "f4":"Qulaity"
+}
 }

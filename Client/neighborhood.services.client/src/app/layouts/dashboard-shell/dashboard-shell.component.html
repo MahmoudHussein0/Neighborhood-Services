@@ -26,7 +26,11 @@
 
       <div class="d-flex align-items-center gap-3">
         <app-language-switcher />
+      
         <app-notification-bell />
+         <!-- @if(currentUser()?.role =="Technician"){
+        <app-notification-bell />} -->
+        
         <div class="user-summary d-none d-sm-flex flex-column align-items-end">
           <span class="fw-semibold small">{{ currentUser()?.fullName || 'Account' }}</span>
           <span class="text-muted user-role">{{ currentUser()?.role || 'User' }}</span>

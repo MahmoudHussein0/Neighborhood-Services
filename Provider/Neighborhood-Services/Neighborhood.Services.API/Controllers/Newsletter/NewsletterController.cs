@@ -39,10 +39,10 @@ namespace Neighborhood.Services.API.Controllers.Newsletter
         }
 
         [HttpPost]
-        public async Task<IActionResult> Subscribe([FromBody]string email)
+        public async Task<IActionResult> Subscribe([FromBody] CreateNewsCommandDTO command)
         {
-            var command = new CreateNewsCommandDTO();
-            command.email = email;
+           // var command = new CreateNewsCommandDTO();
+           // command.email = email;
             var result = await _mediator.Send(command);
 
 

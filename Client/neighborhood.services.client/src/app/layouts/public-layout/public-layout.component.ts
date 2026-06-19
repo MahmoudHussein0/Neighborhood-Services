@@ -8,6 +8,7 @@ import { CustomerChatsComponent } from '../../features/customer/pages/customer-c
 import { ChatRoomComponent } from '../../features/customer/components/chat-room/chat-room.component';
 import {NewsletterpublishingComponent} from '../../features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 import {NewsletterSubscribeComponent} from '../../shared/components/newsletter-subscribe/newsletter-subscribe.component'
+import {CustomerSupportFormComponent} from'../../features/public/pages/customer-support-form/customer-support-form.component';
 
 
 @Component({
@@ -18,17 +19,20 @@ import {NewsletterSubscribeComponent} from '../../shared/components/newsletter-s
     CustomerChatsComponent,
     ChatRoomComponent,
     NewsletterpublishingComponent,
-    NewsletterSubscribeComponent
+    NewsletterSubscribeComponent,
+    CustomerSupportFormComponent
+    
   ],
   template: `
     <app-navbar />
   
     <main class="flex-grow-1">
- 
 
 
       <router-outlet />
     </main>
+     <app-customer-support-form/>
+
     <app-newsletter-subscribe/>
     <app-footer />
   `,

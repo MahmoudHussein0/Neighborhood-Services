@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal,inject,computed } from '@angular/core';
 // import { MaterialModule } from '../../shared/material.module';
 import { CommonModule } from '@angular/common';
 import { NotificationServiceService } from '../../../shared/services/notification-service.service';
@@ -7,11 +7,15 @@ import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationMessage } from './../../../core/models/notification-message';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../../features/auth/services/auth.service';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+
 
 
 @Component({
   selector: 'app-notification-bell',
-  imports: [CommonModule, NgbDropdownModule],
+  imports: [CommonModule, NgbDropdownModule,RouterLink, RouterLinkActive],
   templateUrl: './notification-bell.component.html',
   styleUrl: './notification-bell.component.css',
 
@@ -24,8 +28,24 @@ export class NotificationBellComponent {
   // open() {
   //   // placeholder
   // }
+ 
   notifications$ = new BehaviorSubject<NotificationMessage[]>([]);
   unreadCount$ = new BehaviorSubject<number>(0);
+
+//the auth service
+ private readonly authService = inject(AuthService);
+  readonly currentUser = this.authService.currentUser;
+  //to get current role
+  readonly currentUserRole = computed(() => {
+    const role = this.currentUser()?.role;
+    return role;
+  });
+  //to get current id
+  readonly currentUserId = computed(() => {
+    const Id = this.currentUser()?.userId;
+    return Id;
+  });
+
   
   private subscriptions: Subscription[] = [];
 

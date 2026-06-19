@@ -14,11 +14,13 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
         private readonly IHubContext<ChatHub> _hubContext;
      
         private readonly ILogger<ChatService> _logger;
+        private readonly ICurrentUserService _current;
 
-        public ChatService(IHubContext<ChatHub> hubContext, ILogger<ChatService> logger)
+        public ChatService(IHubContext<ChatHub> hubContext, ILogger<ChatService> logger,ICurrentUserService current)
         {
             _hubContext= hubContext;
             _logger= logger;
+            _current = current;
             
         }
 
@@ -33,7 +35,7 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
 
         public async Task SendGroupMessage(string groupName, string message)
         {
-            await _hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", message);
+            await _hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", new {content=message, senderId = _current.UserId});
         }
 
         public async Task SendGroupMessageDto(string groupName, MessageCreatedDto message)

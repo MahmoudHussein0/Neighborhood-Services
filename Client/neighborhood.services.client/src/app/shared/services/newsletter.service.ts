@@ -11,10 +11,12 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class NewsletterService {
-private Endpoint = '/api/Newsletter';
+private Endpoint = '/Newsletter';
 constructor(private apiService: ApiService,private http: HttpClient) { }
 newssubscribers?: string[];
-
+objectTosend={
+  "email":" "
+}
 //to get all subscribers
   getAll(): Observable<string[]> {
       return this.apiService.get<string[]>(this.Endpoint);
@@ -52,7 +54,7 @@ subscribbel(email: string) {
 
 
   //to publish a new letter
-   publish(obj:any): Observable<string[]> {
+   publish(obj:any): Observable<any> {
       return this.apiService.post(this.Endpoint+'/SendNewsLetter',obj);
     }
 

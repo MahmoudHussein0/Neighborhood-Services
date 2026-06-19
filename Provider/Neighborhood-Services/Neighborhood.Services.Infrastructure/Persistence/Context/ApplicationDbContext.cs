@@ -88,6 +88,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Context
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<ChatbotSession> ChatbotSessions { get; set; }
         public DbSet<ChatbotMessage> ChatbotMessages { get; set; }
+        public DbSet<MessageAttachment> MessageAttachments {  get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

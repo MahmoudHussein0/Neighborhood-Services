@@ -19,6 +19,7 @@ public class SupportTicket : BaseEntity<int>
     public SupportTicketStatus Status { get; set; }
     public SupportTicketPriority Priority { get; set; } = SupportTicketPriority.Low;
 
+    public bool IsGuest => string.IsNullOrEmpty(UserId);
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

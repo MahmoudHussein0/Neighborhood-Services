@@ -1,10 +1,17 @@
 <section>
+
+     <!-- <div class="frame" (scroll)="scrolled($event)" #scrollframe style="border:1px solid black">
+  <div *ngFor="let item of items" class="item" #item>
+    Item
+  </div>
+</div> -->
+
   <div class="container py-5">
 
     <div class="row">
       <!-- allConversations -->
 
-      <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0" style="overflow-y: scroll;height:80vh">
+      <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0" style="overflow-y: scroll;height:80vh" >
 
         <div class="card">
           <div class="card-body" >
@@ -22,11 +29,11 @@
                       class="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60">
                     <div class="pt-1">
                       <p class="fw-bold mb-0">{{item.othersName}}</p>
-                      @if (item.messageSenderId==myId){
-                      <p class="small text-muted text-end"><span>you:</span>{{item.lastMessage}}</p>}
-                      @else{
-                        <p class="small text-muted ">{{item.lastMessage}}</p>
-                      }
+                      <!-- @if (item.messageSenderId==myId){ -->
+                      <!-- <p class="small text-muted text-end"><span>you:</span>{{item.lastMessage}}</p>} -->
+                      <!-- @else{ -->
+                        <!-- <p class="small text-muted ">{{item.lastMessage}}</p> -->
+                      <!-- } -->
                     </div>
                   </div>
                   <div class="pt-1">
@@ -43,14 +50,15 @@
 
       </div>
       <!-- End Of allConversations -->
+  
 
       <!-- CurrentConversation -->
 
       <div class="col-md-6 col-lg-7 col-xl-8" >
 
-        <ul class="list-unstyled" style="overflow-y: scroll;height:50vh">
+        <ul class="list-unstyled"  (scroll)="scrolled($event)" #scrollframe style="border:1px solid black" style="overflow-y: scroll;max-height:50vh">
           
-          <div *ngFor="let mssg of AllMessagesForBooking(); ">
+          <div *ngFor="let mssg of AllMessagesForBooking(); " class="item" #item>
 
   @if (mssg.senderId!=myId){
               <div class="d-flex flex-row justify-content-start " >
