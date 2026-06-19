@@ -39,15 +39,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Conversations
             return await _context.Conversations
         .Include(c => c.Messages)
             .ThenInclude(m => m.Sender)
-            .Include(e => e.Booking).ThenInclude(b => b.Customer)
-            .Include(e => e.Booking).ThenInclude(b => b.Technician)
-        // A conversation belongs to a user if they are the booking's customer or technician —
-        // not only once they've sent a message. Otherwise a freshly-created, message-less
-        // conversation would never appear, so neither party could ever send the first message.
-        .Where(c => c.Booking.Customer.ApplicationUserId == UserId
-                 || c.Booking.Technician.ApplicationUserId == UserId)
-        // Most recent activity first; message-less conversations sort last (NULL max).
-        .OrderByDescending(c => c.Messages.Max(m => (DateTime?)m.createdAt))
+            .Include(e=>e.Booking)
+        .Where(c => c.Messages.Any(m => m.SenderId == UserId))
+        .OrderByDescending(c => c.Messages.Max(m => m.createdAt))
         .ToListAsync();
         }
             

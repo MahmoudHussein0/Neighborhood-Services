@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
+using Neighborhood.Services.Application.Messages.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Notifications.Services;
@@ -97,6 +98,31 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
             await _bookingRepository.UpdateAsync(booking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
+
+            // Seed a short greeting from each side so the conversation shows up for both parties
+            // with the other person's name/avatar populated (best effort — never blocks the accept).
+            try
+            {
+                if (!string.IsNullOrEmpty(booking.Customer?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = booking.Customer.ApplicationUserId,
+                        content = "Hi 👋"
+                    }, cancellationToken);
+
+                if (!string.IsNullOrEmpty(booking.Technician?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = booking.Technician.ApplicationUserId,
+                        content = "Hello 👋"
+                    }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Seeding chat starter messages failed for booking {Id}.", booking.Id);
+            }
 
             // Booking confirmed + conversation opened — notify both parties about the chat (best effort).
             try

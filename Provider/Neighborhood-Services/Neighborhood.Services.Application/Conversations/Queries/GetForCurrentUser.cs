@@ -38,7 +38,7 @@ namespace Neighborhood.Services.Application.Conversations.Queries
                 othersName=_convrepository.GetOther(item.Id, _current.UserId).Result ?? null!,
                 //coversationImage= item.lastMessage?.Sender?.Photo??null!,
                 messageSenderId =item.lastMessage.SenderId,
-                messageSenderName=item.lastMessage.Sender?.FullName,
+                messageSenderName=item.lastMessage.Sender.FullName,
                 updatedAt=item.lastMessage.createdAt,
                
 

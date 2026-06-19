@@ -20,7 +20,7 @@ namespace Neighborhood.Services.Domain.Conversation
         //Foriegn key
         // public int ServiceRequestId { get; }
         public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public Message.Message lastMessage => Messages.LastOrDefault() ?? new Message.Message();
+        public Message.Message lastMessage => Messages.ToList().Last()??new Message.Message();
 
 
 
