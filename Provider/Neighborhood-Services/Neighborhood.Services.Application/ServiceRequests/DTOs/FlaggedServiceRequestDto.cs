@@ -12,5 +12,8 @@ namespace Neighborhood.Services.Application.ServiceRequests.DTOs
         public int CustomerId { get; set; }
         public DateTime ScheduledAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        // Why the moderation agent flagged it. Read back from the agent log's stored
+        // verdict (no column on the request itself). Null if the log is missing/unparseable.
+        public string? Reason { get; set; }
     }
 }

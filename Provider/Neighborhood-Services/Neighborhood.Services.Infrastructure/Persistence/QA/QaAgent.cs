@@ -7,6 +7,7 @@ using Neighborhood.Services.Application.QA.Interface;
 using Neighborhood.Services.Application.ReviewsAnalysis.Commands;
 using Neighborhood.Services.Domain.AgentLogs;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Neighborhood.Services.Infrastructure.Persistence.QA
 {
@@ -14,6 +15,16 @@ namespace Neighborhood.Services.Infrastructure.Persistence.QA
     {
         private readonly IAiClient _aiClient;
         private readonly IMediator _mediator;
+
+        // The LLM returns sentiment as a string ("Positive"), but ReviewSentiment is an enum.
+        // System.Text.Json maps enums from numbers by default, so without this converter the
+        // deserialize throws JsonException — which the review handler swallows fail-open,
+        // leaving every review stuck in Pending. Case-insensitive to tolerate "positive" too.
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
         private const string ReviewSystemPrompt =
                        """
                             You are a review analysis assistant.
@@ -62,9 +73,12 @@ namespace Neighborhood.Services.Infrastructure.Persistence.QA
                 throw new BadRequestException("Invalid AI response");
             ReviewAnalysisDto? reviewAnalysisDto;
 
+            // Strip any markdown code fences the model may wrap the JSON in.
+            var json = response.Replace("```json", "").Replace("```", "").Trim();
+
             try
             {
-                reviewAnalysisDto = JsonSerializer.Deserialize<ReviewAnalysisDto>(response);
+                reviewAnalysisDto = JsonSerializer.Deserialize<ReviewAnalysisDto>(json, JsonOptions);
 
                 if (reviewAnalysisDto is null)
                     throw new Exception("AI returned empty response.");
@@ -91,7 +105,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.QA
                 ReferenceType = AgentLogReferenceType.Dispute,
                 ReferenceId = disputeId
             });
-            return JsonSerializer.Deserialize<DisputeAnalysisDto>(response)!;
+            return JsonSerializer.Deserialize<DisputeAnalysisDto>(response, JsonOptions)!;
 
         }
 

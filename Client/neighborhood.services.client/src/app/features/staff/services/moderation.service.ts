@@ -13,6 +13,7 @@ export interface FlaggedServiceRequest {
   customerId: number;
   scheduledAt: string;
   createdAt: string;
+  reason?: string | null; // why the moderation agent flagged it (from its agent log)
 }
 
 @Injectable({ providedIn: 'root' })

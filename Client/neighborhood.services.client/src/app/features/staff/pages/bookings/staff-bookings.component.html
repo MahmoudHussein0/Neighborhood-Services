@@ -61,7 +61,10 @@
                     <button class="btn btn-sm btn-outline-secondary" (click)="openDetails(b)">
                       <i class="bi bi-eye me-1"></i>{{ 'staffBookings.details' | translate }}
                     </button>
-                    @if (canCancel(b.status)) {
+                    <!-- Staff oversight cancel hidden: it only flips status with no escrow refund and
+                         is redundant with the dispute flow (refund/release settles money properly).
+                         Backend endpoint left in place. -->
+                    @if (false && canCancel(b.status)) {
                       <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === b.id" (click)="cancel(b)">
                         <i class="bi bi-x-lg me-1"></i>{{ 'staffBookings.cancel' | translate }}
                       </button>

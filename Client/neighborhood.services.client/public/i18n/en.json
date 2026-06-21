@@ -1068,7 +1068,8 @@
         "budget": "Budget",
         "posted": "Posted",
         "reject": "Reject",
-        "approve": "Approve & Publish"
+        "approve": "Approve & Publish",
+        "reason": "AI reason"
     },
     "staffDisputes": {
         "title": "Staff Disputes",
