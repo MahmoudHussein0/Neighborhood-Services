@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Neighborhood.Services.API.Hubs
+namespace Neighborhood.Services.Infrastructure.Services.SupportChat
 {
     public class SupportChatHub : Hub
     {
@@ -21,12 +24,12 @@ namespace Neighborhood.Services.API.Hubs
         }
 
         // Broadcast message to everyone in the ticket room
-        public async Task SendMessage(
-            string ticketId,
-            object message)
-        {
-            await Clients.Group($"ticket-{ticketId}")
-                .SendAsync("ReceiveMessage", message);
-        }
+        //public async Task SendMessage(
+        //    string ticketId,
+        //    object message)
+        //{
+        //    await Clients.Group($"ticket-{ticketId}")
+        //        .SendAsync("ReceiveMessage", message);
+        //}
     }
 }

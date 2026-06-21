@@ -1,8 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { SupportTicket } from '../models/support-ticket.model';
+import { SupportTicketDetails } from '../models/support-ticket-details.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,8 +20,8 @@ filters = {
 private readonly baseUrl = `${environment.apiUrl}/api/SupportTickets`;
   constructor(private http: HttpClient) {}
 
- 
-getTickets(filters: any) {
+
+getTickets(filters: any): Observable<SupportTicket[]> {
   let params = new HttpParams();
 
   Object.keys(filters).forEach(key => {
@@ -27,11 +30,9 @@ getTickets(filters: any) {
     }
   });
 
-  return this.http.get(this.baseUrl, { params });
+  return this.http.get<SupportTicket[]>(this.baseUrl, { params });
 }
-  getTicketDetails(id: number) {
-    return this.http.get(`${this.baseUrl}/${id}`);
-  }
+
 // دالة تحديث الحالة -> /api/SupportTickets/{id}/status
 updateTicketStatus(id: number, status: number) {
   // بنبعت رقم الـ Enum مباشرة في الـ Body زي ما الـ [FromBody] مستني في الباك إند
@@ -52,5 +53,10 @@ updateTicket(id: number, ticketData: { status: number; priority: number }) {
 }
 deleteTicket(id: number) {
   return this.http.delete(`${this.baseUrl}/${id}`);
+}
+getTicketDetails(id: number): Observable<SupportTicketDetails> {
+  return this.http.get<SupportTicketDetails>(
+    `${this.baseUrl}/${id}/details`
+  );
 }
 }

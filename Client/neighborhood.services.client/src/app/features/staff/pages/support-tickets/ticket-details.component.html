@@ -1,40 +1,196 @@
-<!-- أضيفيه تحت الـ td-body div -->
-<div class="td-chat-section">
-  
-  <!-- Connection status -->
-  <div class="td-chat-status" [ngClass]="connectionState">
-    <span *ngIf="connectionState === 'connected'">🟢 Connected</span>
-    <span *ngIf="connectionState === 'reconnecting'">🟡 Reconnecting…</span>
-    <span *ngIf="connectionState === 'disconnected'">🔴 Disconnected</span>
-  </div>
+<!-- Loading -->
+<div *ngIf="loading" class="td-loading">
+  <div class="td-skeleton-header"></div>
+  <div class="td-skeleton-line" *ngFor="let _ of [1,2,3]"></div>
+</div>
 
-  <!-- Messages -->
-  <div class="td-messages" #messagesContainer>
-    <div *ngFor="let msg of messages" 
-         class="td-message"
-         [class.td-message--mine]="msg.senderId === senderId">
-      <p class="td-message-text">{{ msg.message }}</p>
-      <span class="td-message-time">
-        {{ msg.createdAt | date:'HH:mm' }}
-      </span>
-    </div>
-    <div *ngIf="messages.length === 0" class="td-no-messages">
-      No messages yet. Start the conversation!
-    </div>
-  </div>
+<ng-container *ngIf="!loading && ticket">
 
-  <!-- Input -->
-  <div class="td-chat-input">
-    <input
-      [(ngModel)]="newMessage"
-      (keyup.enter)="sendMessage()"
-      placeholder="Type a message…"
-      [disabled]="connectionState !== 'connected'" />
-    <button 
-      (click)="sendMessage()"
-      [disabled]="connectionState !== 'connected' || !newMessage.trim()">
-      <i class="ti ti-send"></i>
+  <!-- Header -->
+  <header class="td-header">
+    <button class="td-back-btn" type="button" (click)="close.emit()" title="Back to list">
+      <i class="ti ti-arrow-left"></i>
     </button>
+
+    <div class="td-header-identity">
+      <span class="td-avatar">{{ getInitials(ticket.senderName) }}</span>
+      <div class="td-header-text">
+        <h3 class="td-subject">{{ ticket.subject }}</h3>
+        <div class="td-header-meta">
+          <span class="td-sender-name">{{ ticket.senderName }}</span>
+          <span class="td-meta-sep">.</span>
+          <button class="td-email-link" type="button" (click)="copyEmail(ticket.senderEmail)" [title]="'Copy ' + ticket.senderEmail">
+            {{ ticket.senderEmail }}
+            <i class="ti ti-copy"></i>
+          </button>
+          <span class="td-meta-sep">.</span>
+          <span class="td-ticket-id">#{{ ticket.id }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="td-header-controls">
+      <span class="td-conn-dot" [ngClass]="connectionState" [title]="'Chat: ' + connectionState"></span>
+
+      <select
+        class="td-priority-select"
+        [class.is-high]="ticket.priority === 'High'"
+        [class.is-medium]="ticket.priority === 'Medium'"
+        [class.is-low]="ticket.priority === 'Low'"
+        [ngModel]="ticket.priority"
+        (change)="changePriority($any($event.target).value)">
+        <option value="High">High priority</option>
+        <option value="Medium">Medium priority</option>
+        <option value="Low">Low priority</option>
+      </select>
+
+      <span class="badge-pill" [ngClass]="getStatusClass(ticket.status)">
+        {{ getStatusLabel(ticket.status) }}
+      </span>
+
+      <div class="td-menu" tabindex="0">
+        <button class="td-icon-btn" type="button" title="More actions">
+          <i class="ti ti-dots-vertical"></i>
+        </button>
+        <div class="td-menu-dropdown">
+          <button *ngIf="ticket.status === 'Open'" class="td-menu-item" type="button" (click)="updateStatus(2)">
+            <i class="ti ti-player-play"></i> Start progress
+          </button>
+          <button *ngIf="ticket.status === 'InProgress' || ticket.status === 'WaitingOnCustomer'" class="td-menu-item" type="button" (click)="updateStatus(4)">
+            <i class="ti ti-circle-check"></i> Mark resolved
+          </button>
+          <button *ngIf="ticket.status === 'Resolved'" class="td-menu-item" type="button" (click)="updateStatus(2)">
+            <i class="ti ti-rotate"></i> Reopen ticket
+          </button>
+          <div class="td-menu-divider"></div>
+          <button class="td-menu-item td-menu-item--danger" type="button" (click)="deleteTicket()">
+            <i class="ti ti-trash"></i> Delete ticket
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Original issue -->
+  <div class="td-issue-banner">
+    <i class="ti ti-message-circle-2" aria-hidden="true"></i>
+    <p>{{ ticket.description }}</p>
   </div>
 
+  <!-- Attachments strip -->
+  <div class="td-attach-strip" *ngIf="galleryAttachments.length">
+    <span class="td-attach-strip-label">
+      <i class="ti ti-paperclip"></i> {{ galleryAttachments.length }} attachment{{ galleryAttachments.length > 1 ? 's' : '' }}
+    </span>
+    <div class="td-attach-strip-thumbs">
+      <button
+        type="button"
+        class="td-attach-thumb"
+        *ngFor="let att of galleryAttachments"
+        (click)="openLightbox(att.url, att.type)">
+        <img *ngIf="att.type === 'Image'" [src]="att.url" alt="attachment" loading="lazy" />
+        <video *ngIf="att.type === 'Video'" [src]="att.url" muted></video>
+        <span *ngIf="att.type === 'Video'" class="td-attach-play"><i class="ti ti-player-play-filled"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Conversation -->
+  <div class="td-thread">
+    <div class="td-thread-scroll">
+
+      <div *ngIf="messages.length === 0" class="td-thread-empty">
+        <i class="ti ti-messages" aria-hidden="true"></i>
+        <p>No replies yet. Send the first message below.</p>
+      </div>
+
+      <ng-container *ngFor="let msg of messages; let i = index">
+
+        <div class="td-day-row" *ngIf="showSenderHeader(i)">
+          <span class="td-sender-chip" [class.td-sender-chip--staff]="isStaffMessage(msg)">
+            {{ isStaffMessage(msg) ? 'Support team' : ticket.senderName }}
+          </span>
+        </div>
+
+        <div class="td-bubble-row" [class.td-bubble-row--staff]="isStaffMessage(msg)">
+          <div class="td-bubble" [class.td-bubble--staff]="isStaffMessage(msg)">
+
+            <p class="td-bubble-text" *ngIf="msg.message">{{ msg.message }}</p>
+
+            <div class="td-bubble-attachments" *ngIf="msg.attachments?.length">
+              <button
+                type="button"
+                class="td-bubble-attachment"
+                *ngFor="let att of msg.attachments"
+                (click)="att.type === 'Image' || att.type === 'Video' ? openLightbox(att.url, att.type) : null">
+                <img *ngIf="att.type === 'Image'" [src]="att.url" alt="attachment" />
+                <video *ngIf="att.type === 'Video'" [src]="att.url" muted></video>
+                <a *ngIf="att.type !== 'Image' && att.type !== 'Video'"
+                   [href]="att.url" target="_blank" rel="noopener" class="td-file-chip" (click)="$event.stopPropagation()">
+                  <i class="ti ti-file"></i> Open file
+                </a>
+              </button>
+            </div>
+
+            <span class="td-bubble-time">{{ msg.createdAt | date:'HH:mm' }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div #scrollAnchor></div>
+    </div>
+
+    <!-- Composer -->
+    <div class="td-composer" *ngIf="ticket.status !== 'Resolved'; else resolvedNotice">
+      <div *ngIf="uploadError" class="td-composer-error">
+        <i class="ti ti-alert-circle"></i> {{ uploadError }}
+      </div>
+
+      <div class="td-pending-attachment" *ngIf="pendingAttachment">
+        <img *ngIf="pendingAttachment.type === 1" [src]="pendingAttachment.previewUrl" alt="" />
+        <video *ngIf="pendingAttachment.type === 2" [src]="pendingAttachment.previewUrl" muted></video>
+        <button type="button" class="td-remove-pending" (click)="removePendingAttachment()" title="Remove">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+
+      <div class="td-composer-row">
+        <label class="td-attach-btn" title="Attach a photo or video">
+          <input type="file" accept="image/*,video/*" (change)="onFileSelected($event)" [disabled]="uploadingAttachment" hidden />
+          <i *ngIf="!uploadingAttachment" class="ti ti-paperclip"></i>
+          <span *ngIf="uploadingAttachment" class="td-mini-spinner"></span>
+        </label>
+
+        <textarea
+          class="td-composer-input"
+          rows="1"
+          placeholder="Write a reply..."
+          [(ngModel)]="draft"
+          (keydown.enter)="$event.preventDefault(); sendMessage()">
+        </textarea>
+
+        <button type="button" class="td-send-btn"
+                [disabled]="sending || uploadingAttachment || (!draft.trim() && !pendingAttachment)"
+                (click)="sendMessage()">
+          <i *ngIf="!sending" class="ti ti-send"></i>
+          <span *ngIf="sending" class="td-mini-spinner td-mini-spinner--light"></span>
+        </button>
+      </div>
+    </div>
+
+    <ng-template #resolvedNotice>
+      <div class="td-resolved-banner">
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        This ticket is resolved.
+        <button type="button" class="td-reopen-link" (click)="updateStatus(2)">Reopen to keep chatting</button>
+      </div>
+    </ng-template>
+  </div>
+</ng-container>
+
+<!-- Lightbox -->
+<div class="td-lightbox" *ngIf="lightboxUrl" (click)="closeLightbox()">
+  <button class="td-lightbox-close" type="button" (click)="closeLightbox()"><i class="ti ti-x"></i></button>
+  <img *ngIf="!lightboxIsVideo" [src]="lightboxUrl" alt="attachment" (click)="$event.stopPropagation()" />
+  <video *ngIf="lightboxIsVideo" [src]="lightboxUrl" controls autoplay (click)="$event.stopPropagation()"></video>
 </div>

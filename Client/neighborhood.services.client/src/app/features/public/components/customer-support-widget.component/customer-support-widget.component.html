@@ -1,0 +1,192 @@
+<!-- Floating action button -->
+<button type="button" class="csw-fab" (click)="toggle()" [attr.aria-label]="'supportWidget.title' | translate">
+  <i class="ti" [class.ti-headset]="!isOpen()" [class.ti-x]="isOpen()"></i>
+  @if (!isOpen() && ticket() && ticket()?.status !== 'Resolved') {
+    <span class="csw-fab-dot"></span>
+  }
+</button>
+
+@if (isOpen()) {
+  <div class="csw-panel">
+
+    <!-- Header -->
+    <div class="csw-header">
+      <div class="csw-header-text">
+        <i class="ti ti-headset"></i>
+        <div>
+          <span class="csw-header-title">{{ 'supportWidget.title' | translate }}</span>
+          @if (view() === 'chat' && ticket()) {
+            <span class="csw-header-sub">
+              <span class="csw-conn-dot" [class.connected]="connectionState() === 'connected'"
+                    [class.reconnecting]="connectionState() === 'reconnecting'"
+                    [class.disconnected]="connectionState() === 'disconnected'"></span>
+              {{ getStatusLabel(ticket()!.status) }} · #{{ ticket()!.id }}
+            </span>
+          }
+        </div>
+      </div>
+      <div class="csw-header-actions">
+        @if (view() === 'chat') {
+          <button type="button" class="csw-icon-btn" (click)="startNewTicket()" [title]="'supportWidget.newTicket' | translate">
+            <i class="ti ti-plus"></i>
+          </button>
+        }
+        <button type="button" class="csw-icon-btn" (click)="close()" [title]="'common.close' | translate">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== Step 1: New ticket form ===== -->
+    @if (view() === 'form') {
+      <form class="csw-form" (ngSubmit)="submitTicket()">
+
+        <p class="csw-form-intro">{{ 'supportWidget.intro' | translate }}</p>
+
+        @if (formError()) {
+          <div class="csw-alert">
+            <i class="ti ti-alert-circle"></i> {{ formError() }}
+          </div>
+        }
+
+        <div class="csw-field">
+          <label>{{ 'supportWidget.name' | translate }}</label>
+          <input type="text" [(ngModel)]="senderName" name="senderName" required
+                 [placeholder]="'supportWidget.namePlaceholder' | translate" />
+        </div>
+
+        <div class="csw-field">
+          <label>{{ 'supportWidget.email' | translate }}</label>
+          <input type="email" [(ngModel)]="senderEmail" name="senderEmail" required
+                 [placeholder]="'supportWidget.emailPlaceholder' | translate" />
+        </div>
+
+        <div class="csw-field">
+          <label>{{ 'supportWidget.subject' | translate }}</label>
+          <input type="text" [(ngModel)]="subject" name="subject" required
+                 [placeholder]="'supportWidget.subjectPlaceholder' | translate" />
+        </div>
+
+        <div class="csw-field">
+          <label>{{ 'supportWidget.description' | translate }}</label>
+          <textarea rows="4" [(ngModel)]="description" name="description" required
+                    [placeholder]="'supportWidget.descriptionPlaceholder' | translate"></textarea>
+        </div>
+
+        <button type="submit" class="csw-submit-btn" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="csw-spinner"></span> {{ 'supportWidget.submitting' | translate }}
+          } @else {
+            <i class="ti ti-send"></i> {{ 'supportWidget.submit' | translate }}
+          }
+        </button>
+      </form>
+    }
+
+    <!-- ===== Step 2: Chat ===== -->
+    @if (view() === 'chat' && ticket()) {
+      <div class="csw-chat">
+
+        <div class="csw-thread">
+          @if (messages().length === 0) {
+            <div class="csw-thread-empty">
+              <i class="ti ti-messages"></i>
+              <p>{{ 'supportWidget.waitingFirstReply' | translate }}</p>
+            </div>
+          }
+
+          @for (msg of messages(); track msg.id; let i = $index) {
+
+            @if (showSenderHeader(i)) {
+              <div class="csw-day-row">
+                <span class="csw-sender-chip" [class.csw-sender-chip--staff]="isStaffMessage(msg)">
+                  {{ isStaffMessage(msg) ? ('supportWidget.supportTeam' | translate) : ('supportWidget.you' | translate) }}
+                </span>
+              </div>
+            }
+
+            <div class="csw-bubble-row" [class.csw-bubble-row--mine]="!isStaffMessage(msg)">
+              <div class="csw-bubble" [class.csw-bubble--mine]="!isStaffMessage(msg)">
+
+                @if (msg.message) {
+                  <p class="csw-bubble-text">{{ msg.message }}</p>
+                }
+
+                @if (msg.attachments?.length) {
+                  <div class="csw-bubble-attachments">
+                    @for (att of msg.attachments; track att.id) {
+                      <button type="button" class="csw-bubble-attachment"
+                              (click)="att.type === 'Image' || att.type === 'Video' ? openLightbox(att.url, att.type) : null">
+                        @if (att.type === 'Image') { <img [src]="att.url" alt="attachment" /> }
+                        @if (att.type === 'Video') { <video [src]="att.url" muted></video> }
+                      </button>
+                    }
+                  </div>
+                }
+
+                <span class="csw-bubble-time">{{ msg.createdAt | date:'HH:mm' }}</span>
+              </div>
+            </div>
+          }
+
+          <div #scrollAnchor></div>
+        </div>
+
+        <!-- Composer -->
+        @if (ticket()!.status !== 'Resolved') {
+          <div class="csw-composer">
+            @if (uploadError()) {
+              <div class="csw-composer-error"><i class="ti ti-alert-circle"></i> {{ uploadError() }}</div>
+            }
+
+            @if (pendingAttachment(); as pending) {
+              <div class="csw-pending-attachment">
+                @if (pending.type === 1) { <img [src]="pending.previewUrl" alt="" /> }
+                @if (pending.type === 2) { <video [src]="pending.previewUrl" muted></video> }
+                <button type="button" class="csw-remove-pending" (click)="removePendingAttachment()">
+                  <i class="ti ti-x"></i>
+                </button>
+              </div>
+            }
+
+            <div class="csw-composer-row">
+              <label class="csw-attach-btn" [title]="'supportWidget.attach' | translate">
+                <input type="file" accept="image/*,video/*" (change)="onFileSelected($event)" [disabled]="uploadingAttachment()" hidden />
+                @if (!uploadingAttachment()) { <i class="ti ti-paperclip"></i> }
+                @if (uploadingAttachment()) { <span class="csw-mini-spinner"></span> }
+              </label>
+
+              <textarea
+                class="csw-composer-input"
+                rows="1"
+                [placeholder]="'supportWidget.placeholder' | translate"
+                [(ngModel)]="draft"
+                (keydown.enter)="$event.preventDefault(); sendMessage()">
+              </textarea>
+
+              <button type="button" class="csw-send-btn"
+                      [disabled]="sending() || uploadingAttachment() || (!draft.trim() && !pendingAttachment())"
+                      (click)="sendMessage()">
+                @if (!sending()) { <i class="ti ti-send"></i> }
+                @if (sending()) { <span class="csw-mini-spinner csw-mini-spinner--light"></span> }
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="csw-resolved-banner">
+            <i class="ti ti-circle-check"></i> {{ 'supportWidget.resolvedNotice' | translate }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+
+<!-- Lightbox -->
+@if (lightboxUrl()) {
+  <div class="csw-lightbox" (click)="closeLightbox()">
+    <button type="button" class="csw-lightbox-close" (click)="closeLightbox()"><i class="ti ti-x"></i></button>
+    @if (!lightboxIsVideo()) { <img [src]="lightboxUrl()" alt="attachment" (click)="$event.stopPropagation()" /> }
+    @if (lightboxIsVideo()) { <video [src]="lightboxUrl()" controls autoplay (click)="$event.stopPropagation()"></video> }
+  </div>
+}

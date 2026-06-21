@@ -1,66 +1,162 @@
-// chat-signalr.service.ts
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
 
 export interface ChatMessage {
-  ticketId: string;
-  senderId: string;
-  message: string;
+  id?: number;
+
+  ticketId: number;
+
+  senderId?: string;
+
+  senderType: string;
+
+  message?: string;
+
+  channel: string;
+
   createdAt: string;
+
+  attachments?: any[];
 }
 
-@Injectable({ providedIn: 'root' })
-export class ChatSignalRService implements OnDestroy {
-  private hubConnection: signalR.HubConnection | null = null;
-  
-  // الـ components بتـ subscribe عليه
-  message$ = new Subject<ChatMessage>();
-  connectionState$ = new Subject<'connected' | 'disconnected' | 'reconnecting'>();
+@Injectable({
+  providedIn: 'root'
+})
+export class ChatSignalRService {
 
-  startConnection(): Promise<void> {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl}/hubs/support-chat`)
-      .withAutomaticReconnect()
-      .build();
+  private hubConnection?: signalR.HubConnection;
 
-    // لما يوصل رسالة جديدة
-    this.hubConnection.on('ReceiveMessage', (msg: ChatMessage) => {
-      this.message$.next(msg);
+  private readonly hubUrl =
+    `${environment.apiUrl}/hubs/SupportChatHub`;
+
+  private messageSubject =
+    new Subject<ChatMessage>();
+
+  message$ =
+    this.messageSubject.asObservable();
+
+  private connectionStateSubject =
+    new BehaviorSubject<
+      'connected' |
+      'disconnected' |
+      'reconnecting'
+    >('disconnected');
+
+  connectionState$ =
+    this.connectionStateSubject.asObservable();
+
+  async startConnection() {
+
+    if (
+      this.hubConnection &&
+      this.hubConnection.state !== signalR.HubConnectionState.Disconnected
+    ) {
+      return;
+    }
+
+    this.hubConnection =
+      new signalR.HubConnectionBuilder()
+        .withUrl(this.hubUrl, {
+          withCredentials: true
+        })
+        .withAutomaticReconnect()
+        .build();
+
+    this.registerEvents();
+
+    await this.hubConnection.start();
+
+    this.connectionStateSubject.next(
+      'connected'
+    );
+  }
+
+  async stopConnection() {
+
+    if (!this.hubConnection)
+      return;
+
+    await this.hubConnection.stop();
+
+    this.connectionStateSubject.next(
+      'disconnected'
+    );
+  }
+
+  async joinTicket(ticketId: number) {
+
+    if (!this.hubConnection)
+      return;
+
+    await this.hubConnection.invoke(
+      'JoinTicket',
+      ticketId.toString()
+    );
+  }
+
+  async leaveTicket(ticketId: number) {
+
+    if (!this.hubConnection)
+      return;
+
+    await this.hubConnection.invoke(
+      'LeaveTicket',
+      ticketId.toString()
+    );
+  }
+
+  async sendMessage(
+    ticketId: number,
+    message: ChatMessage
+  ) {
+
+    if (!this.hubConnection)
+      return;
+
+    await this.hubConnection.invoke(
+      'SendMessage',
+      ticketId.toString(),
+      message
+    );
+  }
+
+  private registerEvents() {
+
+    if (!this.hubConnection)
+      return;
+
+    this.hubConnection.on(
+      'ReceiveMessage',
+      (message: ChatMessage) => {
+
+        this.messageSubject.next(
+          message
+        );
+      }
+    );
+
+    this.hubConnection.onreconnecting(() => {
+
+      this.connectionStateSubject.next(
+        'reconnecting'
+      );
     });
 
-    this.hubConnection.onreconnecting(() => 
-      this.connectionState$.next('reconnecting'));
-    
-    this.hubConnection.onreconnected(() => 
-      this.connectionState$.next('connected'));
-    
-    this.hubConnection.onclose(() => 
-      this.connectionState$.next('disconnected'));
+    this.hubConnection.onreconnected(() => {
 
-    return this.hubConnection.start()
-      .then(() => this.connectionState$.next('connected'));
-  }
+      this.connectionStateSubject.next(
+        'connected'
+      );
+    });
 
-  joinTicket(ticketId: number): Promise<void> {
-    return this.hubConnection!.invoke('JoinTicket', ticketId.toString());
-  }
+    this.hubConnection.onclose(() => {
 
-  leaveTicket(ticketId: number): Promise<void> {
-    return this.hubConnection!.invoke('LeaveTicket', ticketId.toString());
-  }
-
-  sendMessage(ticketId: number, senderId: string, message: string): Promise<void> {
-    return this.hubConnection!.invoke('SendMessage', 
-      ticketId.toString(), senderId, message);
-  }
-
-  stopConnection(): Promise<void> {
-    return this.hubConnection?.stop() ?? Promise.resolve();
-  }
-
-  ngOnDestroy() {
-    this.stopConnection();
+      this.connectionStateSubject.next(
+        'disconnected'
+      );
+    });
   }
 }

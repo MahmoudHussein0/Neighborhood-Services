@@ -1,92 +1,106 @@
-<div class="st-layout" [class.has-selected]="selectedTicketId !== null" >
+<div class="tix-layout" [class.has-selected]="selectedTicketId !== null">
 
-  <!-- ========== SIDEBAR ========== -->
-  <aside class="st-sidebar" >
+  <!-- ========== LIST PANEL ========== -->
+  <aside class="tix-list-panel">
 
-    <div class="st-sidebar-header">
-      <h2 class="st-title">Support tickets</h2>
+    <div class="tix-list-header">
+      <div class="tix-list-title-row">
+        <h2 class="tix-list-title">Support tickets</h2>
+        <button class="tix-icon-btn" type="button" (click)="loadTickets()" title="Refresh" [class.spinning]="loading">
+          <i class="ti ti-refresh"></i>
+        </button>
+      </div>
 
-      <div class="st-filters">
-        <div class="st-filter-row">
-          <select [(ngModel)]="filters.status" (change)="onFilterChange()">
-  <option value="">All statuses</option>
-  <option value="Open">Open</option>
-  <option value="InProgress">In progress</option>
-  <option value="WaitingOnCustomer">Waiting on customer</option>
-  <option value="Resolved">Resolved</option>
-</select>
-
-<select [(ngModel)]="filters.priority" (change)="onFilterChange()">
-  <option value="">All priorities</option>
-  <option value="High">High</option>
-  <option value="Medium">Medium</option>
-  <option value="Low">Low</option>
-</select>
-        </div>
-
+      <div class="tix-search">
+        <i class="ti ti-search"></i>
         <input
           [(ngModel)]="filters.search"
           (input)="onSearchInput()"
-          placeholder="Search by subject or description..."
-          class="st-search" />
+          placeholder="Search subject, sender, or message…" />
+      </div>
+
+      <div class="tix-filter-row">
+        <select [(ngModel)]="filters.status" (change)="onFilterChange()">
+          <option value="">All statuses</option>
+          <option value="Open">Open</option>
+          <option value="InProgress">In progress</option>
+          <option value="WaitingOnCustomer">Waiting on customer</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
+        <select [(ngModel)]="filters.priority" (change)="onFilterChange()">
+          <option value="">All priorities</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <button
+          class="tix-icon-btn"
+          type="button"
+          *ngIf="filters.status || filters.priority || filters.search"
+          (click)="resetFilters()"
+          title="Clear filters">
+          <i class="ti ti-x"></i>
+        </button>
       </div>
     </div>
 
     <!-- List -->
-    <div class="st-list">
-      <div *ngIf="loading" class="st-spinner">
-        <span></span><span></span><span></span>
+    <div class="tix-list-scroll">
+      <div *ngIf="loading" class="tix-skeleton-list">
+        <div class="tix-skeleton-row" *ngFor="let _ of [1,2,3,4,5,6]"></div>
       </div>
 
       <ng-container *ngIf="!loading">
         <button
-          *ngFor="let t of tickets"
-          class="st-ticket-item"
+          *ngFor="let t of tickets; trackBy: trackByTicketId"
+          class="tix-row"
           [class.active]="selectedTicketId === t.id"
           (click)="openTicket(t.id)">
 
-          <div class="st-item-top">
-            <span class="st-subject">{{ t.subject }}</span>
-            <span class="st-badge" [ngClass]="getStatusClass(t.status)">
-              {{ getStatusLabel(t.status) }}
-            </span>
-          </div>
+          <span class="tix-row-avatar">{{ initials(t.senderName) }}</span>
 
-          <p class="st-desc">
-            {{ t.description | slice:0:70 }}{{ (t.description?.length ?? 0) > 70 ? '…' : '' }}
-          </p>
-
-          <div class="st-item-footer">
-            <span class="st-badge" [ngClass]="getPriorityClass(t.priority)">
-              {{ t.priority }}
+          <span class="tix-row-body">
+            <span class="tix-row-top">
+              <span class="tix-row-sender">{{ t.senderName }}</span>
+              <span class="tix-row-time">{{ rowTime(t.updatedAt) }}</span>
             </span>
-            <span class="st-date">{{ t.createdAt | date:'dd MMM' }}</span>
-          </div>
+
+            <span class="tix-row-subject">{{ t.subject }}</span>
+            <span class="tix-row-preview">{{ t.description }}</span>
+
+            <span class="tix-row-tags">
+              <span class="tix-tag" [ngClass]="getStatusClass(t.status)">{{ getStatusLabel(t.status) }}</span>
+              <span class="tix-tag tix-tag--dot" [ngClass]="getPriorityClass(t.priority)">
+                <i class="tix-dot"></i>{{ t.priority }}
+              </span>
+            </span>
+          </span>
         </button>
 
-        <div *ngIf="tickets.length === 0" class="st-empty">
-          No tickets match your filters.
+        <div *ngIf="tickets.length === 0" class="tix-empty">
+          <i class="ti ti-inbox" aria-hidden="true"></i>
+          <p>No tickets match your filters.</p>
         </div>
       </ng-container>
     </div>
-
   </aside>
 
   <!-- ========== DETAIL PANEL ========== -->
-  <main class="st-detail" style="overflow-y:scroll;">
+  <main class="tix-detail-panel">
 
-    <!-- Placeholder -->
-    <div *ngIf="!selectedTicketId" class="st-placeholder">
-      <i class="ti ti-message-circle" style="font-size:40px; opacity:0.25" aria-hidden="true"></i>
-      <span>Select a ticket to view conversation</span>
+    <div *ngIf="!selectedTicketId" class="tix-placeholder">
+      <i class="ti ti-mail-opened" aria-hidden="true"></i>
+      <p class="tix-placeholder-title">Select a ticket</p>
+      <p class="tix-placeholder-text">Pick a conversation from the list to view the thread and reply.</p>
     </div>
 
-    <!-- Ticket details component -->
     <app-ticket-details
       *ngIf="selectedTicketId"
       [ticketId]="selectedTicketId!"
-      (ticketUpdated)="loadTickets()"
-      (close)="selectedTicketId = null">
+      (ticketUpdated)="onTicketUpdated()"
+      (close)="closeTicket()">
     </app-ticket-details>
 
   </main>

@@ -18,6 +18,7 @@ using Neighborhood.Services.Infrastructure.Persistence.Context;
 using Neighborhood.Services.Infrastructure.Persistence.Seeding;
 using Neighborhood.Services.Infrastructure.Services;
 using Neighborhood.Services.Infrastructure.Services.CloudinaryService;
+using Neighborhood.Services.Infrastructure.Services.SupportChat;
 using StackExchange.Redis;
 using System.Text;
 
@@ -216,7 +217,7 @@ namespace Neighborhood.Services.API
 
 
             //Amira
-            app.MapHub<SupportChatHub>("/hubs/support-chat");
+            app.MapHub<SupportChatHub>("/hubs/SupportChatHub");
             // End of Amira 
 
 

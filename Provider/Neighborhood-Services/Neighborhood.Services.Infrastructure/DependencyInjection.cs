@@ -104,6 +104,7 @@ using Neighborhood.Services.Infrastructure.Persistence.ReviewsAnalysis;
     using Neighborhood.Services.Infrastructure.Shared;
     using Qdrant.Client;
 using Neighborhood.Services.Infrastructure.Services.ChatService;
+using Neighborhood.Services.Infrastructure.Services.SupportChat;
 
 
 
@@ -243,9 +244,12 @@ namespace Neighborhood.Services.Infrastructure
                 services.AddScoped<IQaAgent, QaAgent>();
                 //Amira
                 services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-                services.AddScoped<ICloudinaryService,CloudinaryService>();
-                //end Amira
-                return services;
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<ISupportNotificationService,SupportNotificationService>();
+            //end Amira
+
+
+            return services;
             }
         }
     }

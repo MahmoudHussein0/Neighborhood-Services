@@ -18,19 +18,21 @@ namespace Neighborhood.Services.Application.SupportTickets.Handlers
         private readonly ICurrentUserService _currentUser;
         private readonly ISupportTicketRepository _ticketRepository;
         private readonly IStaffRepository _staffRepository;
-
+        private readonly ISupportNotificationService _notificationService;
         public CreateSupportMessageCommandHandler(
             ISupportMessageRepository repository,
             IUnitOfWork unitOfWork,
             ICurrentUserService currentUser,
             ISupportTicketRepository ticketRepository,
-            IStaffRepository staffRepository)
+            IStaffRepository staffRepository,
+            ISupportNotificationService notificationService)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _ticketRepository = ticketRepository;
             _staffRepository = staffRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<SupportMessageDto> Handle(
@@ -114,8 +116,14 @@ namespace Neighborhood.Services.Application.SupportTickets.Handlers
             await _ticketRepository.UpdateAsync(ticket);
 
             await _unitOfWork.SaveChangesAsync();
+            var dto = SupportMapper.MapMessageToDto(message);
 
-            return SupportMapper.MapMessageToDto(message);
+            await _notificationService.NotifyNewMessageAsync(
+                request.TicketId,
+                dto);
+
+            return dto;
+            //return SupportMapper.MapMessageToDto(message);
         }
     }
 }
