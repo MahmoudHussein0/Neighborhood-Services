@@ -3,4 +3,5 @@
 @if (showSupportWidget()) {
   <app-customer-support-widget></app-customer-support-widget>
 }
-<router-outlet />
+<!-- Removed duplicate primary <router-outlet />: Angular allows only one unnamed (primary) outlet; the second conflicts/renders twice. -->
+<!-- <router-outlet /> -->
