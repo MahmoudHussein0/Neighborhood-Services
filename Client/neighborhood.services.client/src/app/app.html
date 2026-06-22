@@ -1,3 +1,6 @@
 <router-outlet />
 <app-chat-widget />
+@if (showSupportWidget()) {
+  <app-customer-support-widget></app-customer-support-widget>
+}
 <router-outlet />
