@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 :root {
   --brand-orange: #ff7a1a;
   --btn-browse-bg: rgba(255, 255, 255, 0.1);

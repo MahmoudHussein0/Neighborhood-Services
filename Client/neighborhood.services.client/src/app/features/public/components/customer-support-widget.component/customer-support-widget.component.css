@@ -1,8 +1,8 @@
 /* ── Floating action button — bottom-right (LTR), bottom-left (RTL) ────── */
 .csw-fab {
   position: fixed;
-  bottom: 1.25rem;
-  right: 6rem;
+  bottom: 3rem;
+ inset-inline-end: 1.25rem;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -38,7 +38,7 @@
 :host-context([dir='rtl']) .csw-fab,
 :host-context([dir='rtl']) .csw-panel {
   right: auto;
-  left: 6rem;
+  left: 1.25rem;
 }
 
 /* ── Panel ───────────────────────────────────────────────────────────── */

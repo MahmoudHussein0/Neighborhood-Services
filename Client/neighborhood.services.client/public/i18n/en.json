@@ -1280,5 +1280,26 @@
         "f2":"Variety",
         "f3":"Support",
         "f4":"Qulaity"
-}
+},
+ "supportWidget": {
+    "title": "Customer Support",
+    "intro": "Tell us about your issue and our team will get back to you.",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "subject": "Subject",
+    "subjectPlaceholder": "Brief summary of the issue",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your issue",
+    "submit": "Create Ticket",
+    "submitting": "Creating...",
+    "newTicket": "New Ticket",
+    "attach": "Attach File",
+    "placeholder": "Type your message...",
+    "supportTeam": "Support Team",
+    "you": "You",
+    "waitingFirstReply": "Waiting for the first reply",
+    "resolvedNotice": "This ticket has been resolved"    
+  }
 }

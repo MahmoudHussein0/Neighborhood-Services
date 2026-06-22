@@ -1294,5 +1294,26 @@
         "f3":"الدعم",
         "f4":"الجودة"
         
-    }
+    },
+ "supportWidget": {
+    "title": "الدعم الفني",
+    "intro": "اشرح المشكلة وسيتواصل معك فريق الدعم.",
+    "name": "الاسم",
+    "namePlaceholder": "أدخل الاسم",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل البريد الإلكتروني",
+    "subject": "الموضوع",
+    "subjectPlaceholder": "اكتب عنوان المشكلة",
+    "description": "الوصف",
+    "descriptionPlaceholder": "اشرح المشكلة بالتفصيل",
+    "submit": "إنشاء تذكرة",
+    "submitting": "جارٍ الإنشاء...",
+    "newTicket": "تذكرة جديدة",
+    "attach": "إرفاق ملف",
+    "placeholder": "اكتب رسالتك...",
+    "supportTeam": "فريق الدعم",
+    "you": "أنت",
+    "waitingFirstReply": "في انتظار أول رد",
+    "resolvedNotice": "تم حل هذه التذكرة"
+  }
 }
