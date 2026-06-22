@@ -20,7 +20,7 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetBookingsForStaff
             var page = request.Page < 1 ? 1 : request.Page;
             var pageSize = request.PageSize is < 1 or > 100 ? 10 : request.PageSize;
 
-            return await _bookingRepository.GetBookingsForStaffPagedAsync(request.Status, request.Search, page, pageSize);
+            return await _bookingRepository.GetBookingsForStaffPagedAsync(request.Status, request.Search, page, pageSize, request.Sort);
         }
     }
 }

@@ -35,7 +35,7 @@ export class TechnicianOffersComponent implements OnInit {
     { value: 'Withdrawn' },
     { value: 'Expired' },
   ];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<Offer> | null>(null);

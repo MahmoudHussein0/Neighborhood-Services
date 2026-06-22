@@ -6,7 +6,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 
-import { StaffBookingService, StaffBooking, StaffBookingStatus } from '../../services/staff-booking.service';
+import { StaffBookingService, StaffBooking, StaffBookingStatus, BookingSort } from '../../services/staff-booking.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { CancelBookingModalComponent } from '../../../customer/components/cancel-booking-modal/cancel-booking-modal.component';
 import { StaffBookingDetailsModalComponent } from '../../components/staff-booking-details-modal/staff-booking-details-modal.component';
@@ -24,13 +24,16 @@ export class StaffBookingsComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
 
   readonly tabs: StatusTab[] = ['All', 'Pending', 'Quoted', 'Confirmed', 'Completed', 'Cancelled', 'Disputed'];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<StaffBooking> | null>(null);
   activeTab = signal<StatusTab>('All');
   searchTerm = signal('');
+  sort = signal<BookingSort>('NewestCreated');
   page = signal(1);
+
+  readonly sortOptions: BookingSort[] = ['NewestCreated', 'OldestCreated', 'SoonestScheduled', 'LatestScheduled'];
   busyId = signal<number | null>(null);
 
   private readonly search$ = new Subject<string>();
@@ -54,6 +57,7 @@ export class StaffBookingsComponent implements OnInit {
       .getBookings({
         status: this.activeTab() === 'All' ? undefined : (this.activeTab() as StaffBookingStatus),
         search: this.searchTerm(),
+        sort: this.sort(),
         page: this.page(),
         pageSize: this.pageSize,
       })
@@ -68,6 +72,12 @@ export class StaffBookingsComponent implements OnInit {
 
   selectTab(tab: StatusTab) {
     this.activeTab.set(tab);
+    this.page.set(1);
+    this.load();
+  }
+
+  changeSort(value: string) {
+    this.sort.set(value as BookingSort);
     this.page.set(1);
     this.load();
   }

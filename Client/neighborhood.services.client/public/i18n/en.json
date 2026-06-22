@@ -268,6 +268,13 @@
         "title": "My Bookings",
         "search": "Search description, address, or id",
         "filterAll": "All",
+        "sort": {
+            "label": "Sort by",
+            "NewestCreated": "Newest created",
+            "OldestCreated": "Oldest created",
+            "SoonestScheduled": "Soonest appointment",
+            "LatestScheduled": "Latest appointment"
+        },
         "empty": "No bookings here yet.",
         "details": "Details",
         "viewInvoice": "View Invoice",
@@ -633,6 +640,13 @@
             "title": "My Jobs",
             "search": "Search description, address, or id",
             "empty": "No jobs here yet.",
+            "sort": {
+                "label": "Sort by",
+                "NewestCreated": "Newest created",
+                "OldestCreated": "Oldest created",
+                "SoonestScheduled": "Soonest appointment",
+                "LatestScheduled": "Latest appointment"
+            },
             "estimated": "Estimated",
             "yourPrice": "Your price",
             "min": "min",
@@ -987,6 +1001,13 @@
         "title": "Bookings",
         "subtitle": "Every booking across the marketplace.",
         "searchPlaceholder": "Search customer, technician, id…",
+        "sort": {
+            "label": "Sort by",
+            "NewestCreated": "Newest created",
+            "OldestCreated": "Oldest created",
+            "SoonestScheduled": "Soonest appointment",
+            "LatestScheduled": "Latest appointment"
+        },
         "empty": "No bookings here.",
         "customer": "Customer",
         "technician": "Technician",

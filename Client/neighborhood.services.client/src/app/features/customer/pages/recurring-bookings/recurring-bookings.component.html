@@ -106,7 +106,7 @@
       }
     </div>
 
-    @if (res.totalPages > 1) {
+    @if (res.totalCount > 0) {
       <div class="d-flex align-items-center justify-content-between mt-4">
         <span class="text-muted small">
           {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}

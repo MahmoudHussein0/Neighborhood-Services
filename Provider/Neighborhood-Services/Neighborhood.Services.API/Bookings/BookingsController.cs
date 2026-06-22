@@ -17,6 +17,7 @@ using Neighborhood.Services.Application.Bookings.Commands.StaffCancelBookingComm
 using Neighborhood.Services.Application.Bookings.Queries.EstimateBookingPriceQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetAllBookingsQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingByIdQuery;
+using Neighborhood.Services.Application.Bookings.Enums;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByCustomerQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByRecurringQuery;
 using Neighborhood.Services.Application.Bookings.Queries.GetBookingsByStatusQuery;
@@ -45,21 +46,23 @@ namespace Neighborhood.Services.API.Bookings
 
         // ---------- Staff oversight ----------
 
-        // GET /api/bookings/staff?status=&search=&page=1&pageSize=10
+        // GET /api/bookings/staff?status=&search=&page=1&pageSize=10&sort=NewestCreated
         [HasPermission(PermissionType.ManageBookings)]
         [HttpGet("staff")]
         public async Task<IActionResult> GetForStaff(
             [FromQuery] BookingStatus? status,
             [FromQuery] string? search,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] BookingSortBy sort = BookingSortBy.NewestCreated)
         {
             var result = await _mediator.Send(new GetBookingsForStaffQuery
             {
                 Status = status,
                 Search = search,
                 Page = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Sort = sort
             });
             return Ok(result);
         }
@@ -175,12 +178,12 @@ namespace Neighborhood.Services.API.Bookings
             return Ok(result);
         }
 
-        // GET /api/bookings/mine?status=Confirmed&page=1&pageSize=10
+        // GET /api/bookings/mine?status=Confirmed&page=1&pageSize=10&sort=NewestCreated
         // (authenticated customer or technician — their own bookings, paged + optional status filter)
         [HttpGet("mine")]
-        public async Task<IActionResult> GetMine([FromQuery] BookingStatus? status, [FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetMine([FromQuery] BookingStatus? status, [FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] BookingSortBy sort = BookingSortBy.NewestCreated)
         {
-            var result = await _mediator.Send(new GetMyBookingsQuery { Status = status, Search = search, Page = page, PageSize = pageSize });
+            var result = await _mediator.Send(new GetMyBookingsQuery { Status = status, Search = search, Page = page, PageSize = pageSize, Sort = sort });
             return Ok(result);
         }
 

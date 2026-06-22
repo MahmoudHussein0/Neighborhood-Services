@@ -16,11 +16,15 @@ import {
   DisputeType,
 } from '../models/booking.model';
 
+// Mirrors the backend BookingSortBy enum (names sent verbatim as the `sort` query param).
+export type BookingSort = 'NewestCreated' | 'OldestCreated' | 'SoonestScheduled' | 'LatestScheduled';
+
 export interface GetMyBookingsParams {
   status?: BookingStatus;
   search?: string;
   page?: number;
   pageSize?: number;
+  sort?: BookingSort;
 }
 
 /** Result of previewing a promo code for the current user before accepting (does not consume it). */
@@ -45,6 +49,7 @@ export class BookingService {
     if (params.search?.trim()) query.set('search', params.search.trim());
     query.set('page', String(params.page ?? 1));
     query.set('pageSize', String(params.pageSize ?? 10));
+    if (params.sort) query.set('sort', params.sort);
 
     return this.api.get<PagedResult<MyBookingSummary>>(`/bookings/mine?${query.toString()}`);
   }

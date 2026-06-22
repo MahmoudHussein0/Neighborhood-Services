@@ -15,7 +15,7 @@ export class FlaggedRequestsComponent implements OnInit {
   private readonly service = inject(ModerationService);
   private readonly toastr = inject(ToastrService);
 
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<FlaggedServiceRequest> | null>(null);

@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Application.Bookings.DTOs;
+using Neighborhood.Services.Application.Bookings.Enums;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Bookings;
 using System;
@@ -10,7 +11,7 @@ namespace Neighborhood.Services.Application.Bookings.Interface
     public interface IBookingRepository: IGenericRepository<Booking,int>
     {
         // Staff oversight: every booking, paged, with customer + technician names, filter + search.
-        Task<PagedResult<StaffBookingDto>> GetBookingsForStaffPagedAsync(BookingStatus? status, string? search, int page, int pageSize);
+        Task<PagedResult<StaffBookingDto>> GetBookingsForStaffPagedAsync(BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated);
         Task<Booking?> GetBookingWithDetailsAsync(int bookingId);
         Task<IEnumerable<Booking>> GetCustomerBookingsAsync(int customerId, bool includeDeleted = false);
         Task<IEnumerable<Booking>> GetTechnicianBookingsAsync(int technicianId);
@@ -19,8 +20,8 @@ namespace Neighborhood.Services.Application.Bookings.Interface
         Task<IEnumerable<Booking>> GetByRecurringBookingIdAsync(int recurringBookingId);
 
         // Paged + optional status filter (used by "my bookings")
-        Task<PagedResult<Booking>> GetCustomerBookingsPagedAsync(int customerId, BookingStatus? status, string? search, int page, int pageSize);
-        Task<PagedResult<Booking>> GetTechnicianBookingsPagedAsync(int technicianId, BookingStatus? status, string? search, int page, int pageSize);
+        Task<PagedResult<Booking>> GetCustomerBookingsPagedAsync(int customerId, BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated);
+        Task<PagedResult<Booking>> GetTechnicianBookingsPagedAsync(int technicianId, BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated);
         Task<IEnumerable<Booking>> GetAllBookingsAsync();  // admin
         Task<Booking?> GetBookingWithImagesAsync(int bookingId);
         Task<IEnumerable<Booking>> GetBookingsByStatusAsync(BookingStatus status);

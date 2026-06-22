@@ -268,6 +268,13 @@
         "title": "حجوزاتي",
         "search": "ابحث بالوصف أو العنوان أو الرقم",
         "filterAll": "الكل",
+        "sort": {
+            "label": "ترتيب حسب",
+            "NewestCreated": "الأحدث إنشاءً",
+            "OldestCreated": "الأقدم إنشاءً",
+            "SoonestScheduled": "الأقرب موعدًا",
+            "LatestScheduled": "الأبعد موعدًا"
+        },
         "empty": "لا توجد حجوزات هنا بعد.",
         "details": "التفاصيل",
         "viewInvoice": "عرض الفاتورة",
@@ -633,6 +640,13 @@
             "title": "مهامي",
             "search": "ابحث بالوصف أو العنوان أو الرقم",
             "empty": "لا توجد مهام هنا بعد.",
+            "sort": {
+                "label": "ترتيب حسب",
+                "NewestCreated": "الأحدث إنشاءً",
+                "OldestCreated": "الأقدم إنشاءً",
+                "SoonestScheduled": "الأقرب موعدًا",
+                "LatestScheduled": "الأبعد موعدًا"
+            },
             "estimated": "السعر التقديري",
             "yourPrice": "سعرك",
             "min": "دقيقة",
@@ -1002,6 +1016,13 @@
         "title": "الحجوزات",
         "subtitle": "كل الحجوزات عبر المنصة.",
         "searchPlaceholder": "ابحث بالعميل أو الفني أو الرقم…",
+        "sort": {
+            "label": "ترتيب حسب",
+            "NewestCreated": "الأحدث إنشاءً",
+            "OldestCreated": "الأقدم إنشاءً",
+            "SoonestScheduled": "الأقرب موعدًا",
+            "LatestScheduled": "الأبعد موعدًا"
+        },
         "empty": "لا توجد حجوزات هنا.",
         "customer": "العميل",
         "technician": "الفني",

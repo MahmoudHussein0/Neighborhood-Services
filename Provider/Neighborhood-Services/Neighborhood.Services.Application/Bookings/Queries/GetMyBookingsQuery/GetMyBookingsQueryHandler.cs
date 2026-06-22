@@ -44,7 +44,7 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
             var customer = await _customerRepository.GetByUserIdAsync(userId);
             if (customer != null)
             {
-                var paged = await _bookingRepository.GetCustomerBookingsPagedAsync(customer.Id, request.Status, request.Search, page, pageSize);
+                var paged = await _bookingRepository.GetCustomerBookingsPagedAsync(customer.Id, request.Status, request.Search, page, pageSize, request.Sort);
                 return await MapToDtoAsync(paged, userId, cancellationToken);
             }
 
@@ -52,7 +52,7 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
             var technician = await _technicianRepository.GetByUserIdAsync(userId);
             if (technician != null)
             {
-                var paged = await _bookingRepository.GetTechnicianBookingsPagedAsync(technician.Id, request.Status, request.Search, page, pageSize);
+                var paged = await _bookingRepository.GetTechnicianBookingsPagedAsync(technician.Id, request.Status, request.Search, page, pageSize, request.Sort);
                 return await MapToDtoAsync(paged, userId, cancellationToken);
             }
 
