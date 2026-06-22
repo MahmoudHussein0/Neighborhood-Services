@@ -22,6 +22,9 @@ export class StaffPromoCodesComponent implements OnInit {
   newMaxUses = signal<number>(100);
   newExpiresAt = signal<string>('');
 
+  // Earliest selectable expiry — today (yyyy-MM-dd for the native date input's min attr).
+  readonly today = new Date().toISOString().split('T')[0];
+
   constructor(
     private promoCodeService: StaffPromoCodeService,
     private toastr: ToastrService
@@ -46,6 +49,11 @@ export class StaffPromoCodesComponent implements OnInit {
   createPromoCode(): void {
     if (!this.newCode()) {
       this.toastr.warning('Please enter a promo code');
+      return;
+    }
+
+    if (!this.newExpiresAt() || this.newExpiresAt() < this.today) {
+      this.toastr.warning('Expiry date must be today or later');
       return;
     }
 

@@ -16,5 +16,7 @@ namespace Neighborhood.Services.Application.ProblemTypes.Commands
         public decimal MaxPrice { get; set; }
         public int CategoryId { get; set; }
 
+        public string? ImageUrl { get; set; }
+
     }
 }

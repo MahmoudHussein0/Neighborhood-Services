@@ -16,15 +16,33 @@
         </div>
       </div>
 
-      <!-- Date & Time -->
+      <!-- Date -->
       <div class="col-md-6">
-        <label class="form-label">{{ 'bookings.bookNow.dateTime' | translate }}</label>
-        <input type="datetime-local" class="form-control" formControlName="scheduledAt" [min]="minDateTime" />
-        @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
-          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errDateTime' | translate }}</div>
+        <label class="form-label">{{ 'bookings.bookNow.date' | translate }}</label>
+        <input type="date" class="form-control" [min]="minDate"
+               [value]="selectedDate()" (change)="onDateChange($any($event.target).value)" />
+      </div>
+
+      <!-- Time slots (only the technician's free start-times for the chosen day) -->
+      <div class="col-12">
+        <label class="form-label">{{ 'bookings.bookNow.time' | translate }}</label>
+        @if (!selectedDate()) {
+          <div class="slots-state"><i class="bi bi-calendar-day me-1"></i>{{ 'bookings.bookNow.pickDateFirst' | translate }}</div>
+        } @else if (loadingSlots()) {
+          <div class="slots-state"><span class="spinner-border spinner-border-sm me-1"></span>{{ 'bookings.bookNow.loadingSlots' | translate }}</div>
+        } @else if (availableSlots().length === 0) {
+          <div class="slots-state"><i class="bi bi-x-circle me-1"></i>{{ 'bookings.bookNow.noSlots' | translate }}</div>
+        } @else {
+          <div class="slot-grid">
+            @for (slot of availableSlots(); track slot) {
+              <button type="button" class="slot-chip" [class.selected]="isSelectedSlot(slot)" (click)="selectSlot(slot)">
+                {{ slotLabel(slot) }}
+              </button>
+            }
+          </div>
         }
-        @if (availabilityWarning(); as warn) {
-          <div class="text-warning small mt-1"><i class="bi bi-exclamation-triangle me-1"></i>{{ warn }}</div>
+        @if (form.controls.scheduledAt.touched && form.controls.scheduledAt.invalid) {
+          <div class="text-danger small mt-1">{{ 'bookings.bookNow.errTime' | translate }}</div>
         }
       </div>
 

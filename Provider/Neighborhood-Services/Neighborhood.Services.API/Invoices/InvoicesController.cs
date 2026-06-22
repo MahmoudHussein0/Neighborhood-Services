@@ -1,12 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Invoices.Commands.VoidInvoice;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByBookingId;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByCustomerId;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoicesByTechnicianId;
 using Neighborhood.Services.Application.Invoices.Services;
 using Neighborhood.Services.Application.Invoices.Commands.CreateInvoice;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Invoices
 {
@@ -45,7 +47,7 @@ namespace Neighborhood.Services.API.Invoices
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [HasPermission(PermissionType.FullAccess)]
         [HttpPost("{invoiceId:int}/void")]
         public async Task<IActionResult> VoidInvoice(int invoiceId)
         {
@@ -53,7 +55,7 @@ namespace Neighborhood.Services.API.Invoices
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [HasPermission(PermissionType.FullAccess)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateInvoiceCommand command)
         {

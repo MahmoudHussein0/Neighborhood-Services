@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Neighborhood.Services.Application.Transactions.DTOs;
 using Neighborhood.Services.Application.Transactions.Interfaces;
 namespace Neighborhood.Services.Application.Transactions.Queries.GetTransactionByType
@@ -24,7 +24,7 @@ namespace Neighborhood.Services.Application.Transactions.Queries.GetTransactionB
                 Currency = t.Currency,
                 Type = t.Type,
                 Status = t.Status,
-                CreatedAt = t.CreatedAt
+                CreatedAt = DateTime.SpecifyKind(t.CreatedAt, DateTimeKind.Utc)
             });
         }
     }

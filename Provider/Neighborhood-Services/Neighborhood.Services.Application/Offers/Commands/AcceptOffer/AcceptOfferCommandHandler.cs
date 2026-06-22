@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
+using Neighborhood.Services.Application.Messages.Commands;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Offers.Interfaces;
@@ -213,14 +214,46 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             }, cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
 
-            // Notify the winning technician their offer was accepted — best effort.
+            // Seed a short greeting from each side so the conversation shows up for both parties
+            // with the other person's name/avatar populated (best effort — never blocks the accept).
+            try
+            {
+                var seedTech = await _technicianRepository.GetByIdAsync(offer.TechnicianId);
+
+                if (!string.IsNullOrEmpty(serviceRequest.Customer?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = serviceRequest.Customer.ApplicationUserId,
+                        content = "Hi 👋"
+                    }, cancellationToken);
+
+                if (!string.IsNullOrEmpty(seedTech?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = seedTech.ApplicationUserId,
+                        content = "Hello 👋"
+                    }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Seeding chat starter messages failed for booking {Id}.", booking.Id);
+            }
+
+            // Booking confirmed + conversation opened — notify both parties about the chat (best effort).
             try
             {
                 var technician = await _technicianRepository.GetByIdAsync(offer.TechnicianId);
                 if (!string.IsNullOrEmpty(technician?.ApplicationUserId))
                     await _notificationService.SendNotificationToUser(
                         technician.ApplicationUserId,
-                        $"Your offer on service request #{serviceRequest.Id} was accepted. Booking #{booking.Id} is confirmed.");
+                        $"Your offer on service request #{serviceRequest.Id} was accepted. Booking #{booking.Id} is confirmed — you can now chat with the customer.");
+
+                if (!string.IsNullOrEmpty(serviceRequest.Customer?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        serviceRequest.Customer.ApplicationUserId,
+                        $"Booking #{booking.Id} is confirmed. You can now chat with your technician.");
             }
             catch (Exception ex)
             {

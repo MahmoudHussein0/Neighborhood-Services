@@ -1,7 +1,9 @@
 ﻿using MediatR;
+using Neighborhood.Services.Application.Categories.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.TechnitianCategory.Interface;
+using Neighborhood.Services.Application.TechnitianPricing.Interface;
 
 namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 {
@@ -10,23 +12,41 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Commands
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITechnicianCategoryRepository _technicianCategoryRepo;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ITechnicianPricingRepository _technicianPricingRepository;
 
-
-        public DeleteCategortFromTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo, IUnitOfWork unitOfWork)
+        public DeleteCategortFromTechnicianCommandHandler(ITechnicianCategoryRepository technicianCategoryRepo, ICategoryRepository categoryRepository, ITechnicianPricingRepository technicianPricingRepository, IUnitOfWork unitOfWork)
         {
             _technicianCategoryRepo = technicianCategoryRepo;
+            _categoryRepository = categoryRepository;
+            _technicianPricingRepository = technicianPricingRepository;
             _unitOfWork = unitOfWork;
         }
-        public async  Task<bool> Handle(DeleteCategortFromTechnicianCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteCategortFromTechnicianCommand request, CancellationToken cancellationToken)
         {
-            var techCategories = await _technicianCategoryRepo.GetByConditionAsync(TC => TC.TechnicianId == request.TechnicianId && TC.CategoryId == request.CategoryId);
-            var techCategory = techCategories.FirstOrDefault();
-            
-            if (techCategory is null)
-                throw new NotFoundException("TechnicianCategory" , techCategory.Id);
 
-                   await  _technicianCategoryRepo.DeleteAsync(techCategory.Id);
-            return await _unitOfWork.SaveChangesAsync() > 0; 
+            var technicianCategory = await _technicianCategoryRepo.GetByIdAsync(request.Id);
+
+            if (technicianCategory is null)
+                throw new NotFoundException("TechnicianCategory", request.Id);
+
+
+            // delete all problemTypes related to this Category
+            var category = (await _categoryRepository.GetByConditionAsync(c => c.Id == technicianCategory.CategoryId, "ProblemTypes")).FirstOrDefault();
+            var problemTypeIds = category?.ProblemTypes.Select(p => p.Id) ?? Enumerable.Empty<int>();
+
+
+            // get problemTypes from TechnicianPricingRepo
+            foreach (var id in problemTypeIds)
+            {
+                var problemType = (await _technicianPricingRepository.GetByConditionAsync(tp => tp.ProblemTypeId == id)).FirstOrDefault();
+                if (problemType is not null)
+                    await _technicianPricingRepository.DeleteAsync(problemType.Id);
+            }
+
+            await _technicianCategoryRepo.DeleteAsync(request.Id);
+
+            return await _unitOfWork.SaveChangesAsync() > 0;
 
         }
     }

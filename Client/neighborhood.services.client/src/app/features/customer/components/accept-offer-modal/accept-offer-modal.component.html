@@ -9,7 +9,14 @@
   <div class="d-flex gap-4">
     <div>
       <div class="text-muted small">{{ 'serviceRequests.acceptModal.price' | translate }}</div>
-      <div class="h5 fw-bold mb-0">{{ price | currency: 'EGP ' }}</div>
+      @if (discountedPrice() !== null) {
+        <div class="h5 fw-bold mb-0">
+          <span class="text-decoration-line-through text-muted me-2">{{ price | currency: 'EGP ' }}</span>
+          <span class="text-success">{{ discountedPrice() | currency: 'EGP ' }}</span>
+        </div>
+      } @else {
+        <div class="h5 fw-bold mb-0">{{ price | currency: 'EGP ' }}</div>
+      }
     </div>
     <div>
       <div class="text-muted small">{{ 'serviceRequests.acceptModal.duration' | translate }}</div>
@@ -24,8 +31,11 @@
       <span class="text-muted">{{ 'common.optional' | translate }}</span>
     </label>
     <input type="text" class="form-control form-control-sm"
-           [ngModel]="promoCode()" (ngModelChange)="promoCode.set($event)"
+           [ngModel]="promoCode()" (ngModelChange)="onPromoChange($event)"
            [placeholder]="'serviceRequests.acceptModal.promoPlaceholder' | translate" />
+    @if (promoUnavailable()) {
+      <div class="text-danger small mt-1">{{ 'common.promoUnavailable' | translate }}</div>
+    }
   </div>
 </div>
 

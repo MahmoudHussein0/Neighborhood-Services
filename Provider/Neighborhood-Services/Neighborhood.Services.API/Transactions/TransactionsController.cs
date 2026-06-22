@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Authorization;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Transactions.Commands.CreateTransaction;
 using Neighborhood.Services.Application.Transactions.Queries.GetTransactionByType;
 using Neighborhood.Services.Application.Transactions.Queries.GetTransactionsByWalletId;
 using Neighborhood.Services.Application.Wallets.Queries.GetWalletByUserId;
+using Neighborhood.Services.Domain.Staffs;
 using Neighborhood.Services.Domain.Transactions;
 
 namespace Neighborhood.Services.API.Transactions
@@ -43,7 +45,7 @@ namespace Neighborhood.Services.API.Transactions
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [HasPermission(PermissionType.FullAccess)]
         [HttpGet("type/{type}")]
         public async Task<IActionResult> GetByType(TransactionType type)
         {
@@ -51,7 +53,7 @@ namespace Neighborhood.Services.API.Transactions
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [HasPermission(PermissionType.FullAccess)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTransactionCommand command)
         {

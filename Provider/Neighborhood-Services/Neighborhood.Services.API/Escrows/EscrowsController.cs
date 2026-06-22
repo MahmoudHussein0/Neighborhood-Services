@@ -5,10 +5,12 @@ using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Escrows.Commands.RefundEscrow;
 using Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow;
 using Neighborhood.Services.Application.Escrows.Queries.GetEscrowByBookingId;
+using Neighborhood.Services.Application.Authorization;
+using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Escrows
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EscrowsController : ControllerBase
@@ -34,6 +36,7 @@ namespace Neighborhood.Services.API.Escrows
             return Ok(result);
         }
 
+        [HasPermission(PermissionType.ManageDisputes)]
         [HttpPost("{escrowId:int}/release")]
         public async Task<IActionResult> Release(int escrowId)
         {
@@ -41,6 +44,7 @@ namespace Neighborhood.Services.API.Escrows
             return Ok(result);
         }
 
+        [HasPermission(PermissionType.ManageDisputes)]
         [HttpPost("{escrowId:int}/refund")]
         public async Task<IActionResult> Refund(int escrowId)
         {

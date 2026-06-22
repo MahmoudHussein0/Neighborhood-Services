@@ -33,4 +33,12 @@ export class TechnicianService {
   getAvailability(technicianId: number): Observable<TechnicianAvailabilitySlot[]> {
     return this.api.get<TechnicianAvailabilitySlot[]>(`/technitianavailability/${technicianId}`);
   }
+
+  /**
+   * GET /api/technicians/{id}/available-slots — bookable start-times for a day (working hours
+   * minus confirmed bookings minus past). Returns wall-clock ISO strings e.g. "2026-06-22T09:00:00".
+   */
+  getAvailableSlots(technicianId: number, date: string, slotMinutes = 30): Observable<string[]> {
+    return this.api.get<string[]>(`/technicians/${technicianId}/available-slots?date=${date}&slotMinutes=${slotMinutes}`);
+  }
 }

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
+using Neighborhood.Services.Application.Messages.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.Notifications.Services;
@@ -98,13 +99,43 @@ namespace Neighborhood.Services.Application.Bookings.Commands.AcceptQuoteCommand
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
 
-            // Notify the technician their quote was accepted — best effort.
+            // Seed a short greeting from each side so the conversation shows up for both parties
+            // with the other person's name/avatar populated (best effort — never blocks the accept).
+            try
+            {
+                if (!string.IsNullOrEmpty(booking.Customer?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = booking.Customer.ApplicationUserId,
+                        content = "Hi 👋"
+                    }, cancellationToken);
+
+                if (!string.IsNullOrEmpty(booking.Technician?.ApplicationUserId))
+                    await _mediator.Send(new CreateMessageCommand
+                    {
+                        BookingId = booking.Id,
+                        SenderId = booking.Technician.ApplicationUserId,
+                        content = "Hello 👋"
+                    }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Seeding chat starter messages failed for booking {Id}.", booking.Id);
+            }
+
+            // Booking confirmed + conversation opened — notify both parties about the chat (best effort).
             try
             {
                 if (!string.IsNullOrEmpty(booking.Technician?.ApplicationUserId))
                     await _notificationService.SendNotificationToUser(
                         booking.Technician.ApplicationUserId,
-                        $"Your quote for booking #{booking.Id} was accepted. The job is confirmed.");
+                        $"Your quote for booking #{booking.Id} was accepted. The job is confirmed — you can now chat with the customer.");
+
+                if (!string.IsNullOrEmpty(booking.Customer?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        booking.Customer.ApplicationUserId,
+                        $"Booking #{booking.Id} is confirmed. You can now chat with your technician.");
             }
             catch (Exception ex)
             {

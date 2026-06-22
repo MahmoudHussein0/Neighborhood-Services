@@ -30,25 +30,47 @@
             {{"staffCategory.clickToViewCategoryDetails" |translate}}
         </p>
 
+
+
         <!-- Actions -->
         <div class="d-flex justify-content-center gap-2 flex-wrap">
 
-            <button (click)="edit.emit(category())" data-bs-toggle="modal" data-bs-target="#categoryModal"
+            @if (showActions()) {
+
+            <button (click)="edit.emit($any(category()))" data-bs-toggle="modal" data-bs-target="#categoryModal"
                 class="btn btn-outline-primary rounded-3 px-3">
 
                 <i class="fa-solid fa-pen-to-square me-2"></i>
-
                 {{ "staffCategory.update" | translate }}
 
             </button>
-
-            <button class="btn btn-outline-danger rounded-3 px-3" (click)="   delete.emit( category().id )     "
-                data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+            <button class="btn btn-outline-danger rounded-3 px-3" (click)="onDelete(category())" data-bs-toggle="modal"
+                data-bs-target="#deleteCategoryModal">
 
                 <i class="fa-solid fa-trash me-2"></i>
                 {{ "staffCategory.delete" | translate }}
 
             </button>
+            }
+
+
+            @else {
+            <button class="btn btn-outline-danger rounded-3 px-3" (click)="onDelete(category())" data-bs-toggle="modal"
+                data-bs-target="#deleteTechnicianCategoryModal">
+
+                <i class="fa-solid fa-trash me-2"></i>
+                {{ "technicianCategories.delete" | translate }}
+
+            </button>
+            }
+
+
+
         </div>
+
+
+
+
+
     </div>
 </div>

@@ -99,6 +99,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.RecurringBookings
         public async Task<IEnumerable<RecurringBooking>> GetDueRecurringBookingsAsync(DateOnly date)
         {
             return await _context.RecurringBookings
+                .Include(rb => rb.Customer)
                 .Where(rb => rb.Status == RecurringBookingStatus.Active
                     && !rb.IsDeleted
                     && (rb.EndDate == null || rb.EndDate >= date))

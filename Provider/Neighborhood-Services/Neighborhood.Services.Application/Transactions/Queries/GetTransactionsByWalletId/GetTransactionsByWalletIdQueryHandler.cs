@@ -24,7 +24,7 @@ namespace Neighborhood.Services.Application.Transactions.Queries.GetTransactions
                 Currency = t.Currency,
                 Type = t.Type,
                 Status = t.Status,
-                CreatedAt = t.CreatedAt
+                CreatedAt = DateTime.SpecifyKind(t.CreatedAt, DateTimeKind.Utc)
             });
         }
     }

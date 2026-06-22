@@ -1,200 +1,66 @@
 <section class="auth-page">
   <div class="container py-5">
     <div class="row justify-content-center">
-      <div class="col-12 col-lg-8 col-xl-7">
+      <div class="col-12 col-lg-10 col-xl-9">
         <div class="auth-panel">
-          <a routerLink="/" class="auth-home-btn">
-            <i class="bi bi-arrow-left"></i>
-            Home
-          </a>
-          <div class="mb-4">
-            <span class="auth-kicker">Get started</span>
-            <h1 class="h3 fw-bold mt-2 mb-2">Create account</h1>
-            <p class="text-muted mb-0">Set up your Neighborhood Services profile.</p>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <a routerLink="/" class="auth-home-btn mb-0">
+              <i class="bi bi-arrow-left"></i>
+              {{ 'navbar.home' | translate }}
+            </a>
+            <app-language-switcher />
+          </div>
+          <div class="mb-4 text-center">
+            <span class="auth-kicker">{{ 'register.kicker' | translate }}</span>
+            <h1 class="h3 fw-bold mt-2 mb-2">{{ 'register.chooseTitle' | translate }}</h1>
+            <p class="text-muted mb-0">{{ 'register.chooseSubtitle' | translate }}</p>
           </div>
 
-          @if (apiError()) {
-            <div class="alert alert-danger" role="alert">
-              {{ apiError() }}
-            </div>
-          }
-
-          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-            <div class="row g-3">
-              <div class="col-12">
-                <div class="register-tabs" role="tablist" aria-label="Account type">
-                  <button
-                    class="register-tab"
-                    type="button"
-                    role="tab"
-                    [class.active]="selectedRole() === 'Customer'"
-                    [attr.aria-selected]="selectedRole() === 'Customer'"
-                    (click)="setRole('Customer')"
-                  >
-                    <i class="bi bi-house-heart" aria-hidden="true"></i>
-                    Customer
-                  </button>
-                  <button
-                    class="register-tab"
-                    type="button"
-                    role="tab"
-                    [class.active]="selectedRole() === 'Technician'"
-                    [attr.aria-selected]="selectedRole() === 'Technician'"
-                    (click)="setRole('Technician')"
-                  >
-                    <i class="bi bi-tools" aria-hidden="true"></i>
-                    Technician
-                  </button>
+          <div class="row g-4">
+            <div class="col-12 col-md-6">
+              <div class="role-card role-card--customer h-100">
+                <div class="role-icon role-icon--customer">
+                  <i class="bi bi-house-heart" aria-hidden="true"></i>
                 </div>
+                <h2 class="h5 fw-bold mb-1">{{ 'register.customerTitle' | translate }}</h2>
+                <p class="text-muted small mb-3">{{ 'register.customerDesc' | translate }}</p>
+                <ul class="role-features">
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.customerFeature1' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.customerFeature2' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.customerFeature3' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.customerFeature4' | translate }}</li>
+                </ul>
+                <a routerLink="/auth/register/customer" class="role-cta role-cta--customer">
+                  {{ 'register.continueCustomer' | translate }}
+                  <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
               </div>
-
-              <div class="col-12">
-                <label for="fullName" class="form-label">Full name</label>
-                <input
-                  id="fullName"
-                  class="form-control"
-                  formControlName="fullName"
-                  autocomplete="name"
-                  [class.is-invalid]="form.controls.fullName.touched && form.controls.fullName.invalid"
-                />
-                @if (hasError('fullName', 'required')) {
-                  <div class="invalid-feedback">Full name is required.</div>
-                } @else if (hasError('fullName', 'minlength')) {
-                  <div class="invalid-feedback">Full name must be at least 2 characters.</div>
-                }
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label for="email" class="form-label">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  class="form-control"
-                  formControlName="email"
-                  autocomplete="email"
-                  [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
-                />
-                @if (hasError('email', 'required')) {
-                  <div class="invalid-feedback">Email is required.</div>
-                } @else if (hasError('email', 'email')) {
-                  <div class="invalid-feedback">Enter a valid email address.</div>
-                }
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label for="password" class="form-label">Password</label>
-                <input
-                  id="password"
-                  type="password"
-                  class="form-control"
-                  formControlName="password"
-                  autocomplete="new-password"
-                  [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
-                />
-                @if (hasError('password', 'required')) {
-                  <div class="invalid-feedback">Password is required.</div>
-                } @else if (hasError('password', 'minlength')) {
-                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
-                }
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label for="age" class="form-label">Age</label>
-                <input
-                  id="age"
-                  type="number"
-                  class="form-control"
-                  formControlName="age"
-                  min="13"
-                  max="120"
-                  [class.is-invalid]="form.controls.age.touched && form.controls.age.invalid"
-                />
-                @if (hasError('age', 'required')) {
-                  <div class="invalid-feedback">Age is required.</div>
-                } @else if (hasError('age', 'min') || hasError('age', 'max')) {
-                  <div class="invalid-feedback">Age must be between 13 and 120.</div>
-                }
-              </div>
-
-              <div class="col-12">
-                <label for="address" class="form-label">Location Address</label>
-                <input
-                  id="address"
-                  class="form-control"
-                  formControlName="address"
-                  autocomplete="street-address"
-                  placeholder="Street, area, city"
-                  [class.is-invalid]="form.controls.address.touched && form.controls.address.invalid"
-                />
-                @if (hasError('address', 'required')) {
-                  <div class="invalid-feedback">Address is required.</div>
-                } @else if (hasError('address', 'minlength')) {
-                  <div class="invalid-feedback">Enter a more specific address.</div>
-                }
-              </div>
-
-              @if (selectedRole() === 'Technician') {
-                <div class="col-12 col-md-6">
-                  <label for="nationalId" class="form-label">National ID</label>
-                  <input
-                    id="nationalId"
-                    class="form-control"
-                    formControlName="nationalId"
-                    [class.is-invalid]="form.controls.nationalId.touched && form.controls.nationalId.invalid"
-                  />
-                  @if (hasError('nationalId', 'required')) {
-                    <div class="invalid-feedback">National ID is required.</div>
-                  } @else if (hasError('nationalId', 'minlength')) {
-                    <div class="invalid-feedback">National ID must be at least 8 characters.</div>
-                  }
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <label for="maxTravelDistance" class="form-label">Max travel distance</label>
-                  <input
-                    id="maxTravelDistance"
-                    type="number"
-                    class="form-control"
-                    formControlName="maxTravelDistance"
-                    min="1"
-                    [class.is-invalid]="form.controls.maxTravelDistance.touched && form.controls.maxTravelDistance.invalid"
-                  />
-                  @if (hasError('maxTravelDistance', 'required')) {
-                    <div class="invalid-feedback">Max travel distance is required.</div>
-                  } @else if (hasError('maxTravelDistance', 'min')) {
-                    <div class="invalid-feedback">Max travel distance must be greater than 0.</div>
-                  }
-                </div>
-
-                <div class="col-12">
-                  <label for="experience" class="form-label">Experience</label>
-                  <textarea
-                    id="experience"
-                    class="form-control"
-                    rows="4"
-                    formControlName="experience"
-                    [class.is-invalid]="form.controls.experience.touched && form.controls.experience.invalid"
-                  ></textarea>
-                  @if (hasError('experience', 'required')) {
-                    <div class="invalid-feedback">Experience is required.</div>
-                  } @else if (hasError('experience', 'minlength')) {
-                    <div class="invalid-feedback">Experience must be at least 10 characters.</div>
-                  }
-                </div>
-              }
             </div>
 
-            <button class="btn btn-primary w-100 mt-4" type="submit" [disabled]="isSubmitting()">
-              @if (isSubmitting()) {
-                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-              }
-              Create account
-            </button>
-          </form>
+            <div class="col-12 col-md-6">
+              <div class="role-card role-card--technician h-100">
+                <div class="role-icon role-icon--technician">
+                  <i class="bi bi-tools" aria-hidden="true"></i>
+                </div>
+                <h2 class="h5 fw-bold mb-1">{{ 'register.technicianTitle' | translate }}</h2>
+                <p class="text-muted small mb-3">{{ 'register.technicianDesc' | translate }}</p>
+                <ul class="role-features">
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.technicianFeature1' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.technicianFeature2' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.technicianFeature3' | translate }}</li>
+                  <li><i class="bi bi-check-circle-fill"></i> {{ 'register.technicianFeature4' | translate }}</li>
+                </ul>
+                <a routerLink="/auth/register/technician" class="role-cta role-cta--technician">
+                  {{ 'register.continueTechnician' | translate }}
+                  <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+          </div>
 
           <p class="text-center text-muted small mb-0 mt-4">
-            Already have an account?
-            <a routerLink="/auth/login" class="fw-semibold text-decoration-none">Sign in</a>
+            {{ 'register.haveAccount' | translate }}
+            <a routerLink="/auth/login" class="fw-semibold text-decoration-none">{{ 'register.signIn' | translate }}</a>
           </p>
         </div>
       </div>

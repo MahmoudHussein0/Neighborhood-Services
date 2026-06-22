@@ -33,7 +33,8 @@
             @for (category of categories(); track category.id)
             {
             <div class="col-12 col-md-6 col-lg-4">
-                <app-card [category]="category" (edit)="updateModal($event)" (delete)="  categoryId =  $event      ">
+                <app-card [category]="category" [showActions]="true" (edit)="updateModal($event)"
+                    (delete)="  categoryId =  $event      ">
                 </app-card>
             </div>
             } @empty {

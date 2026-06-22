@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 
 import { DisputeService } from '../../services/disputes.service';
 import { DisputeDto } from '../../models/staff-disput.model';
@@ -173,13 +173,25 @@ export class DisputeDetailsComponent implements OnChanges {
       case 'refund':
         if (this.dispute.escrowId)
           this.runAction('refund',
-            this.disputeService.refundEscrow(this.dispute.escrowId),
+            // Settle the escrow, then mark the dispute resolved (staff id is
+            // derived server-side from the authenticated user).
+            this.disputeService.refundEscrow(this.dispute.escrowId).pipe(
+              switchMap(() => this.disputeService.updateDispute(this.disputeId, {
+                status: 'Resolved',
+                resolution: 'Refunded to customer'
+              }))
+            ),
             this.t('refunded'));
         break;
       case 'release':
         if (this.dispute.escrowId)
           this.runAction('release',
-            this.disputeService.releaseEscrow(this.dispute.escrowId),
+            this.disputeService.releaseEscrow(this.dispute.escrowId).pipe(
+              switchMap(() => this.disputeService.updateDispute(this.disputeId, {
+                status: 'Resolved',
+                resolution: 'Released to technician'
+              }))
+            ),
             this.t('released'));
         break;
     }

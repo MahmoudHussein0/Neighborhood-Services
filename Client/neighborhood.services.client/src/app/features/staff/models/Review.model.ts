@@ -5,6 +5,8 @@ export interface ReviewDto {
   bookingId: number;
   reviewerId: string;
   revieweeId: string;
+  reviewerName?: string;
+  revieweeName?: string;
   rating: number;
   comment: string;
   status: ReviewStatus;

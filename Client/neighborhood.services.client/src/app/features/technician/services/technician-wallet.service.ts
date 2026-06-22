@@ -19,7 +19,7 @@ export class TechnicianWalletService {
   }
 
   withdraw(amount: number): Observable<any> {
-    return this.api.post<any>('/wallets/withdraw', { amount });
+    return this.api.post<any>('/wallets/me/withdraw', { amount });
   }
 }
 

@@ -30,7 +30,7 @@ export class ServiceRequestsComponent implements OnInit {
   private readonly notificationService = inject(NotificationServiceService);
 
   readonly tabs: StatusTab[] = ['All', 'Open', 'Closed', 'Expired'];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<ServiceRequestSummary> | null>(null);

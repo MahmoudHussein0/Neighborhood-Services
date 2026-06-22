@@ -28,6 +28,14 @@
       border-radius: 0.75rem;
       overflow: hidden;
     }
+    .review-details-card {
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 0.75rem;
+    }
     .confirm-icon {
       width: 2.75rem;
       height: 2.75rem;

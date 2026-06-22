@@ -1,4 +1,72 @@
 {
+    "register": {
+        "kicker": "Get started",
+        "chooseTitle": "How do you want to join?",
+        "chooseSubtitle": "Choose the account that fits you. You can always create another later.",
+        "customerTitle": "I'm a Customer",
+        "customerDesc": "Get household problems fixed by trusted local technicians.",
+        "customerFeature1": "Book technicians or post a job for offers",
+        "customerFeature2": "Compare ratings, prices and distance",
+        "customerFeature3": "Set up recurring visits & track bookings",
+        "customerFeature4": "Pay securely and leave reviews",
+        "continueCustomer": "Continue as Customer",
+        "technicianTitle": "I'm a Technician",
+        "technicianDesc": "Grow your business and get matched with nearby jobs.",
+        "technicianFeature1": "Pick the categories you work in",
+        "technicianFeature2": "Receive direct bookings & make offers",
+        "technicianFeature3": "Set your travel radius and availability",
+        "technicianFeature4": "Earn, withdraw and build your reputation",
+        "continueTechnician": "Continue as Technician",
+        "haveAccount": "Already have an account?",
+        "signIn": "Sign in",
+        "back": "Back",
+        "customerKicker": "Customer",
+        "technicianKicker": "Technician",
+        "createTitle": "Create your account",
+        "customerFormSubtitle": "Set up your Neighborhood Services profile.",
+        "technicianFormSubtitle": "Tell us about your work so customers can find you.",
+        "fullName": "Full name",
+        "fullNameRequired": "Full name is required.",
+        "fullNameMinlength": "Full name must be at least 2 characters.",
+        "email": "Email",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "password": "Password",
+        "passwordRequired": "Password is required.",
+        "passwordMinlength": "Password must be at least 6 characters.",
+        "age": "Age",
+        "ageRequired": "Age is required.",
+        "ageRange": "Age must be between 13 and 120.",
+        "address": "Location Address",
+        "addressPlaceholder": "Street, area, city",
+        "addressRequired": "Address is required.",
+        "addressMinlength": "Enter a more specific address.",
+        "nationalId": "National ID",
+        "nationalIdRequired": "National ID is required.",
+        "nationalIdMinlength": "National ID must be at least 8 characters.",
+        "maxTravelDistance": "Max travel distance",
+        "maxTravelRequired": "Max travel distance is required.",
+        "maxTravelMin": "Max travel distance must be greater than 0.",
+        "experience": "Experience",
+        "experienceRequired": "Experience is required.",
+        "experienceMinlength": "Experience must be at least 10 characters.",
+        "categories": "Categories you work in",
+        "categoriesHint": "Select all the services you provide.",
+        "categoriesLoading": "Loading categories…",
+        "categoriesRequired": "Select at least one category.",
+        "createAccount": "Create account",
+        "submitError": "Unable to create the account. Please review your details and try again."
+    },
+    "login": {
+        "kicker": "Welcome back",
+        "title": "Sign in",
+        "subtitle": "Access your Neighborhood Services account.",
+        "or": "or",
+        "continueGoogle": "Continue with Google",
+        "newHere": "New here?",
+        "createAccount": "Create an account",
+        "submitError": "Unable to sign in. Please check your email and password."
+    },
     "chatbot": {
         "title": "Assistant",
         "placeholder": "Ask about services, prices, booking…",
@@ -130,6 +198,7 @@
         "create": "Create",
         "creating": "Creating…",
         "optional": "(optional)",
+        "promoUnavailable": "This promo code can't be used (invalid, expired, or already used).",
         "location": "Location",
         "useMyLocation": "Use my location",
         "locating": "Locating…",
@@ -199,6 +268,13 @@
         "title": "My Bookings",
         "search": "Search description, address, or id",
         "filterAll": "All",
+        "sort": {
+            "label": "Sort by",
+            "NewestCreated": "Newest created",
+            "OldestCreated": "Oldest created",
+            "SoonestScheduled": "Soonest appointment",
+            "LatestScheduled": "Latest appointment"
+        },
         "empty": "No bookings here yet.",
         "details": "Details",
         "viewInvoice": "View Invoice",
@@ -215,6 +291,12 @@
             "title": "Book a Technician",
             "technician": "Technician",
             "dateTime": "Date & Time",
+            "date": "Date",
+            "time": "Time",
+            "pickDateFirst": "Pick a date to see available times.",
+            "loadingSlots": "Loading available times…",
+            "noSlots": "No available times on this day. Try another date.",
+            "errTime": "Pick a time slot.",
             "category": "Category",
             "chooseCategory": "Choose a category",
             "problemType": "Problem Type",
@@ -558,6 +640,13 @@
             "title": "My Jobs",
             "search": "Search description, address, or id",
             "empty": "No jobs here yet.",
+            "sort": {
+                "label": "Sort by",
+                "NewestCreated": "Newest created",
+                "OldestCreated": "Oldest created",
+                "SoonestScheduled": "Soonest appointment",
+                "LatestScheduled": "Latest appointment"
+            },
             "estimated": "Estimated",
             "yourPrice": "Your price",
             "min": "min",
@@ -824,7 +913,21 @@
         "editPricing": "Update Pricing",
         "enterMinimumPrice": "Enter minimum price",
         "enterMaximumPrice": "Enter maximum price",
-        "noPricing": "No Pricing"
+        "noPricing": "No Pricing",
+        "ProblemIsRequired": "Problem Is Required"
+    },
+    "technicianCategories": {
+        "category": "Category",
+        "manageYourCategoriesEasily": "Manage your categories easily",
+        "assignToCategory": " Assign To Category",
+        "noCategories": "You havn't listed any service categories.",
+        "categories": "Categories",
+        "selectCategory": "Select Category",
+        "close": "Cancle",
+        "saveChanges": "Save",
+        "categoryIsRequired": "Category is required",
+        "delete": "Delete",
+        "deleteCategory": "Delete Category?"
     },
     "problemType": {
         "startingFrom": "Starting from",
@@ -890,12 +993,21 @@
         "promoCodes": "Promo Codes",
         "staffManagement": "Staff Management",
         "newsletter": "Newsletter",
-        "livesupport":"Customer Live Chat"
+        "livesupport":"Customer Live Chat",
+        "yourCategories": "Your Categories"
+       
     },
     "staffBookings": {
         "title": "Bookings",
         "subtitle": "Every booking across the marketplace.",
         "searchPlaceholder": "Search customer, technician, id…",
+        "sort": {
+            "label": "Sort by",
+            "NewestCreated": "Newest created",
+            "OldestCreated": "Oldest created",
+            "SoonestScheduled": "Soonest appointment",
+            "LatestScheduled": "Latest appointment"
+        },
         "empty": "No bookings here.",
         "customer": "Customer",
         "technician": "Technician",
@@ -977,7 +1089,8 @@
         "budget": "Budget",
         "posted": "Posted",
         "reject": "Reject",
-        "approve": "Approve & Publish"
+        "approve": "Approve & Publish",
+        "reason": "AI reason"
     },
     "staffDisputes": {
         "title": "Staff Disputes",
@@ -1059,8 +1172,9 @@
         "allRatings": "All ratings",
         "flaggedOnly": "Flagged only",
         "reset": "Reset",
-        "reviewer": "Reviewer ID",
-        "reviewee": "Reviewee ID",
+        "reviewer": "Reviewer",
+        "reviewee": "Reviewee",
+        "unknownUser": "Unknown user",
         "booking": "Booking",
         "rating": "Rating",
         "comment": "Comment",
@@ -1081,11 +1195,31 @@
         "statusUpdated": "Review #{{id}} marked {{status}}.",
         "statusFail": "Failed to update review status.",
         "deleted": "Review #{{id}} deleted.",
+        "details": "Details",
+        "detailsTitle": "Review #{{id}}",
+        "close": "Close",
+        "aiAnalysis": "AI Analysis",
+        "sentiment": "Sentiment",
+        "qualityScore": "Quality Score",
+        "aiFlagged": "Flagged by AI",
+        "noAnalysis": "No AI analysis available for this review.",
+        "selectAll": "Select all on this page",
+        "selectedCount": "{{count}} selected",
+        "bulkApprove": "Approve selected",
+        "bulkReject": "Reject selected",
+        "clearSelection": "Clear",
+        "bulkDone": "{{count}} reviews marked {{status}}.",
+        "bulkFail": "Failed to update some reviews.",
         "status_map": {
             "Pending": "Pending",
             "Approved": "Approved",
             "Rejected": "Rejected",
             "Flagged": "Flagged"
+        },
+        "sentiment_map": {
+            "Positive": "Positive",
+            "Neutral": "Neutral",
+            "Negative": "Negative"
         }
     },
     "reviewsAnalysis": {
@@ -1104,36 +1238,32 @@
         "empty": "No flagged reviews found.",
         "loadFail": "Failed to load review analysis."
     },
-    "favs":{
-        "favorite":"Favorites",
-        "empty":"No Items Yet!",
-        "emptyMessage":"Technicians that have been added to Favorite appear here",
-        "browseCTA":"Browse Technicians"
+    "favs": {
+        "favorite": "Favorites",
+        "empty": "No Items Yet!",
+        "emptyMessage": "Technicians that have been added to Favorite appear here",
+        "browseCTA": "Browse Technicians"
     },
-     "generalActins":{
-        "add":"Add",
-        "delete":"Delete",
-        "update":"Update",
-        "select":"Select"
+    "generalActins": {
+        "add": "Add",
+        "delete": "Delete",
+        "update": "Update",
+        "select": "Select"
     },
-     "newsletter":{
-        "pagetitle":"Newsletter Publisher",
-        "pagedescription":"Create and preview newsletters before publishing.",
-        "subj":"Subject",
-        "publish":"Publish",
-        "update":"Update",
-        "select":"Select",
-        "pre":"Live Preview",
-        "subPre":"Newsletter Subject Preview",
-        "content":"Content"
-        
+    "newsletter": {
+        "pagetitle": "Newsletter Publisher",
+        "pagedescription": "Create and preview newsletters before publishing.",
+        "subj": "Subject",
+        "publish": "Publish",
+        "update": "Update",
+        "select": "Select",
+        "pre": "Live Preview",
+        "subPre": "Newsletter Subject Preview",
+        "content": "Content"
     },
-     "newslettersubscribe":{
-        "subscribe":"Subscribe",
-        "description":"Subscribe to get news about our latest offers and promocodes!"
-
-
-
+    "newslettersubscribe": {
+        "subscribe": "Subscribe",
+        "description": "Subscribe to get news about our latest offers and promocodes!"
     },
     "favorites": {
         "add": "Add to favorites",

@@ -45,7 +45,7 @@ export class RecurringBookingsComponent implements OnInit {
     { value: 'Paused', label: 'Paused' },
     { value: 'Cancelled', label: 'Cancelled' },
   ];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<RecurringBooking> | null>(null);

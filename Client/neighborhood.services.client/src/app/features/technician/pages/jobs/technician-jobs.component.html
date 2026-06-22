@@ -1,13 +1,24 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
   <h2 class="h4 fw-bold mb-0">{{ 'technician.jobs.title' | translate }}</h2>
-  <div class="input-group" style="max-width: 280px;">
-    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-    <input
-      type="search"
-      class="form-control"
-      [placeholder]="'technician.jobs.search' | translate"
-      [value]="searchTerm()"
-      (input)="onSearchInput($any($event.target).value)" />
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <div class="input-group" style="max-width: 280px;">
+      <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+      <input
+        type="search"
+        class="form-control"
+        [placeholder]="'technician.jobs.search' | translate"
+        [value]="searchTerm()"
+        (input)="onSearchInput($any($event.target).value)" />
+    </div>
+    <div class="input-group" style="max-width: 240px;">
+      <span class="input-group-text bg-white"><i class="bi bi-sort-down"></i></span>
+      <select class="form-select" [value]="sort()" (change)="changeSort($any($event.target).value)"
+        [title]="'technician.jobs.sort.label' | translate">
+        @for (opt of sortOptions; track opt) {
+          <option [value]="opt">{{ ('technician.jobs.sort.' + opt) | translate }}</option>
+        }
+      </select>
+    </div>
   </div>
 </div>
 
@@ -100,7 +111,7 @@
       }
     </div>
 
-    @if (res.totalPages > 1) {
+    @if (res.totalCount > 0) {
       <div class="d-flex align-items-center justify-content-between mt-4">
         <span class="text-muted small">
           {{ 'common.pageInfo' | translate: { page: res.page, total: res.totalPages, count: res.totalCount } }}

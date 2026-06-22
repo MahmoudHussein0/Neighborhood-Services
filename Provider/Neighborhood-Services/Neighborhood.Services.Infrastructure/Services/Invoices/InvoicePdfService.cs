@@ -90,7 +90,7 @@ namespace Neighborhood.Services.Infrastructure.Services.Invoices
                 });
 
                 // Base Booking Cost
-                table.Cell().Element(CellStyle).Text($"Service Booking #{invoice.BookingId}");
+                table.Cell().Element(CellStyle).Text($"Quoted Service Price (Booking #{invoice.BookingId})");
                 table.Cell().Element(CellStyle).AlignRight().Text($"EGP {invoice.BaseAmount:N2}");
                 table.Cell().Element(CellStyle).AlignRight().Text("-");
 
@@ -166,7 +166,7 @@ namespace Neighborhood.Services.Infrastructure.Services.Invoices
                 column.Spacing(4);
                 column.Item().Text($"Invoice #{Invoice.Id}").SemiBold().FontColor(Colors.Grey.Darken3);
                 column.Item().Text($"Status: {Invoice.Status}").FontSize(11).FontColor(Colors.Black);
-                column.Item().Text($"Issued: {Invoice.IssuedAt:dd MMM yyyy}").FontSize(11).FontColor(Colors.Black);
+                column.Item().Text($"Issued: {Invoice.IssuedAt:dd MMM yyyy, hh:mm tt}").FontSize(11).FontColor(Colors.Black);
             });
         }
     }

@@ -15,10 +15,23 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
 
         // ── Queries ────────────────────────────────────────────────────────────
 
+        // Override so the staff reviews list carries reviewer/reviewee names (FullName) + analysis.
+        public override async Task<IReadOnlyList<Review>> GetAllAsync()
+        {
+            return await _context.Reviews
+                .Include(r => r.Analysis)
+                .Include(r => r.Reviewer)
+                .Include(r => r.Reviewee)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<Review?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Reviews
                 .Include(r => r.Analysis)
+                .Include(r => r.Reviewer)
+                .Include(r => r.Reviewee)
                 .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
 
@@ -62,6 +75,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Reviews.Repository
         {
             return await _context.Reviews
                 .Include(r => r.Analysis)
+                .Include(r => r.Reviewer)
+                .Include(r => r.Reviewee)
                 .Where(r => r.Analysis != null && r.Analysis.IsFlagged)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);

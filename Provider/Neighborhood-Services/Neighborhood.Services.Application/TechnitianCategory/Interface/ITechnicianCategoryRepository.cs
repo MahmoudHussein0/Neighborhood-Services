@@ -8,7 +8,6 @@ namespace Neighborhood.Services.Application.TechnitianCategory.Interface
 {
     public interface  ITechnicianCategoryRepository : IGenericRepository<TechnicianCategory , int>
     {
-        Task<bool> IsExists(int technicianId , int categoryId);
 
     }
 }

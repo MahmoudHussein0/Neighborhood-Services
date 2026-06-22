@@ -11,6 +11,8 @@ namespace Neighborhood.Services.Application.Shared.Mappers
             BookingId = review.BookingId,
             ReviewerId = review.ReviewerId,
             RevieweeId = review.RevieweeId,
+            ReviewerName = review.Reviewer?.FullName,
+            RevieweeName = review.Reviewee?.FullName,
             Rating = review.Rating,
             Comment = review.Comment,
             Status = review.Status.ToString(),

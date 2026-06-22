@@ -3,6 +3,7 @@ using Neighborhood.Services.Application.Disputes.Commands;
 using Neighborhood.Services.Application.Disputes.DTOs;
 using Neighborhood.Services.Application.Disputes.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Staffs.Interfaces;
 using Neighborhood.Services.Domain.Disputes;
 using Neighborhood.Services.Application.Shared.Mappers;
 
@@ -13,13 +14,19 @@ namespace Neighborhood.Services.Application.Disputes.Handlers
     {
         private readonly IDisputeRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IStaffRepository _staffRepository;
 
         public UpdateDisputeCommandHandler(
             IDisputeRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICurrentUserService currentUserService,
+            IStaffRepository staffRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
+            _staffRepository = staffRepository;
         }
 
         public async Task<DisputeDto> Handle(
@@ -50,13 +57,21 @@ namespace Neighborhood.Services.Application.Disputes.Handlers
             // 4. When resolving → enforce rules
             if (request.Status == DisputeStatus.Resolved)
             {
-                if (!request.ResolvedByStaffId.HasValue)
-                    throw new Exception("ResolvedByStaffId is required when resolving a dispute.");
-
                 if (string.IsNullOrWhiteSpace(request.Resolution))
                     throw new Exception("Resolution is required when resolving a dispute.");
 
-                dispute.ResolvedByStaffId = request.ResolvedByStaffId;
+                // Always derive the resolving staff from the authenticated user rather
+                // than trusting a client-supplied id (the frontend has no reliable Staff
+                // id, and the request value was being hardcoded to 1).
+                var userId = _currentUserService.UserId;
+                var staff = string.IsNullOrWhiteSpace(userId)
+                    ? null
+                    : await _staffRepository.GetByUserIdAsync(userId);
+
+                if (staff is null)
+                    throw new Exception("Could not determine the resolving staff member.");
+
+                dispute.ResolvedByStaffId = staff.Id;
                 dispute.ResolvedAt = DateTime.UtcNow;
             }
 
@@ -78,7 +93,8 @@ namespace Neighborhood.Services.Application.Disputes.Handlers
             return currentStatus switch
             {
                 DisputeStatus.Open =>
-                    newStatus == DisputeStatus.UnderReview,
+                    newStatus == DisputeStatus.UnderReview
+                    || newStatus == DisputeStatus.Resolved,
 
                 DisputeStatus.UnderReview =>
                     newStatus == DisputeStatus.Resolved,

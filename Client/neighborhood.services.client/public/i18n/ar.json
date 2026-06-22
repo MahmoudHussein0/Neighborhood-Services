@@ -1,4 +1,72 @@
 {
+    "register": {
+        "kicker": "ابدأ الآن",
+        "chooseTitle": "كيف تريد الانضمام؟",
+        "chooseSubtitle": "اختر الحساب المناسب لك. يمكنك دائمًا إنشاء حساب آخر لاحقًا.",
+        "customerTitle": "أنا عميل",
+        "customerDesc": "احصل على إصلاح مشاكل منزلك من فنيين محليين موثوقين.",
+        "customerFeature1": "احجز فنيين أو انشر مهمة لتلقّي العروض",
+        "customerFeature2": "قارن بين التقييمات والأسعار والمسافة",
+        "customerFeature3": "حدّد زيارات متكررة وتابع حجوزاتك",
+        "customerFeature4": "ادفع بأمان واترك تقييمات",
+        "continueCustomer": "المتابعة كعميل",
+        "technicianTitle": "أنا فني",
+        "technicianDesc": "طوّر عملك واحصل على مهام قريبة منك.",
+        "technicianFeature1": "اختر الفئات التي تعمل بها",
+        "technicianFeature2": "استقبل حجوزات مباشرة وقدّم عروضًا",
+        "technicianFeature3": "حدّد نطاق تنقلك وأوقات توفّرك",
+        "technicianFeature4": "اكسب واسحب أموالك وابنِ سمعتك",
+        "continueTechnician": "المتابعة كفني",
+        "haveAccount": "لديك حساب بالفعل؟",
+        "signIn": "تسجيل الدخول",
+        "back": "رجوع",
+        "customerKicker": "عميل",
+        "technicianKicker": "فني",
+        "createTitle": "أنشئ حسابك",
+        "customerFormSubtitle": "أنشئ ملفك الشخصي في خدمات الحي.",
+        "technicianFormSubtitle": "أخبرنا عن عملك حتى يجدك العملاء.",
+        "fullName": "الاسم الكامل",
+        "fullNameRequired": "الاسم الكامل مطلوب.",
+        "fullNameMinlength": "يجب أن يتكون الاسم من حرفين على الأقل.",
+        "email": "البريد الإلكتروني",
+        "emailRequired": "البريد الإلكتروني مطلوب.",
+        "emailInvalid": "أدخل بريدًا إلكترونيًا صحيحًا.",
+        "password": "كلمة المرور",
+        "passwordRequired": "كلمة المرور مطلوبة.",
+        "passwordMinlength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
+        "age": "العمر",
+        "ageRequired": "العمر مطلوب.",
+        "ageRange": "يجب أن يكون العمر بين 13 و120.",
+        "address": "عنوان الموقع",
+        "addressPlaceholder": "الشارع، المنطقة، المدينة",
+        "addressRequired": "العنوان مطلوب.",
+        "addressMinlength": "أدخل عنوانًا أكثر تحديدًا.",
+        "nationalId": "الرقم القومي",
+        "nationalIdRequired": "الرقم القومي مطلوب.",
+        "nationalIdMinlength": "يجب أن يتكون الرقم القومي من 8 أرقام على الأقل.",
+        "maxTravelDistance": "أقصى مسافة تنقّل",
+        "maxTravelRequired": "أقصى مسافة تنقّل مطلوبة.",
+        "maxTravelMin": "يجب أن تكون مسافة التنقل أكبر من 0.",
+        "experience": "الخبرة",
+        "experienceRequired": "الخبرة مطلوبة.",
+        "experienceMinlength": "يجب أن تتكون الخبرة من 10 أحرف على الأقل.",
+        "categories": "الفئات التي تعمل بها",
+        "categoriesHint": "اختر جميع الخدمات التي تقدّمها.",
+        "categoriesLoading": "جارٍ تحميل الفئات…",
+        "categoriesRequired": "اختر فئة واحدة على الأقل.",
+        "createAccount": "إنشاء الحساب",
+        "submitError": "تعذّر إنشاء الحساب. يرجى مراجعة بياناتك والمحاولة مرة أخرى."
+    },
+    "login": {
+        "kicker": "مرحبًا بعودتك",
+        "title": "تسجيل الدخول",
+        "subtitle": "ادخل إلى حساب خدمات الحي.",
+        "or": "أو",
+        "continueGoogle": "المتابعة باستخدام Google",
+        "newHere": "مستخدم جديد؟",
+        "createAccount": "أنشئ حسابًا",
+        "submitError": "تعذّر تسجيل الدخول. يرجى التحقق من بريدك الإلكتروني وكلمة المرور."
+    },
     "chatbot": {
         "title": "المساعد",
         "placeholder": "اسأل عن الخدمات أو الأسعار أو الحجز…",
@@ -130,6 +198,7 @@
         "create": "إنشاء",
         "creating": "جارٍ الإنشاء…",
         "optional": "(اختياري)",
+        "promoUnavailable": "لا يمكن استخدام هذا الكود (غير صالح أو منتهٍ أو مستخدَم من قبل).",
         "location": "الموقع",
         "useMyLocation": "استخدم موقعي",
         "locating": "جارٍ تحديد الموقع…",
@@ -199,6 +268,13 @@
         "title": "حجوزاتي",
         "search": "ابحث بالوصف أو العنوان أو الرقم",
         "filterAll": "الكل",
+        "sort": {
+            "label": "ترتيب حسب",
+            "NewestCreated": "الأحدث إنشاءً",
+            "OldestCreated": "الأقدم إنشاءً",
+            "SoonestScheduled": "الأقرب موعدًا",
+            "LatestScheduled": "الأبعد موعدًا"
+        },
         "empty": "لا توجد حجوزات هنا بعد.",
         "details": "التفاصيل",
         "viewInvoice": "عرض الفاتورة",
@@ -215,6 +291,12 @@
             "title": "حجز فني",
             "technician": "الفني",
             "dateTime": "التاريخ والوقت",
+            "date": "التاريخ",
+            "time": "الوقت",
+            "pickDateFirst": "اختر تاريخًا لعرض الأوقات المتاحة.",
+            "loadingSlots": "جارٍ تحميل الأوقات المتاحة…",
+            "noSlots": "لا توجد أوقات متاحة في هذا اليوم. جرّب تاريخًا آخر.",
+            "errTime": "اختر وقتًا.",
             "category": "الفئة",
             "chooseCategory": "اختر فئة",
             "problemType": "نوع المشكلة",
@@ -558,6 +640,13 @@
             "title": "مهامي",
             "search": "ابحث بالوصف أو العنوان أو الرقم",
             "empty": "لا توجد مهام هنا بعد.",
+            "sort": {
+                "label": "ترتيب حسب",
+                "NewestCreated": "الأحدث إنشاءً",
+                "OldestCreated": "الأقدم إنشاءً",
+                "SoonestScheduled": "الأقرب موعدًا",
+                "LatestScheduled": "الأبعد موعدًا"
+            },
             "estimated": "السعر التقديري",
             "yourPrice": "سعرك",
             "min": "دقيقة",
@@ -838,7 +927,21 @@
         "noPricing": " لا يوجد تسعيره لمشاكل",
         "deletePricing": "حذف التسعير",
         "thisActionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
-        "close": "إلغاء"
+        "close": "إلغاء",
+        "ProblemIsRequired": "اختيار المشكله مطلوب ."
+    },
+    "technicianCategories": {
+        "category": "التصنيف",
+        "manageYourCategoriesEasily": "قم بإدارة تصنيفاتك بسهولة",
+        "assignToCategory": "إضافة إلى تصنيف",
+        "noCategories": "لم تقم بالتسجيل في أي تصنيفات .",
+        "categories": "التصنيفات",
+        "selectCategory": "اختر تصنيفًا",
+        "close": "إلغاء",
+        "saveChanges": "حفظ",
+        "categoryIsRequired": "التصنيف مطلوب",
+        "delete": "حذف",
+        "deleteCategory": "هل تريد حذف التصنيف؟"
     },
     "problemType": {
         "startingFrom": "يبدأ من",
@@ -905,12 +1008,21 @@
         "promoCodes": "أكواد الخصم",
         "staffManagement": "إدارة الموظفين",
         "newsletter":"الموجز",
-        "livesupport":"الدعم الفني المباشر"
+        "livesupport":"الدعم الفني المباشر",
+        "yourCategories": "الفئات التي تنضم اليها"
+       
     },
     "staffBookings": {
         "title": "الحجوزات",
         "subtitle": "كل الحجوزات عبر المنصة.",
         "searchPlaceholder": "ابحث بالعميل أو الفني أو الرقم…",
+        "sort": {
+            "label": "ترتيب حسب",
+            "NewestCreated": "الأحدث إنشاءً",
+            "OldestCreated": "الأقدم إنشاءً",
+            "SoonestScheduled": "الأقرب موعدًا",
+            "LatestScheduled": "الأبعد موعدًا"
+        },
         "empty": "لا توجد حجوزات هنا.",
         "customer": "العميل",
         "technician": "الفني",
@@ -992,7 +1104,8 @@
         "budget": "الميزانية",
         "posted": "نُشر",
         "reject": "رفض",
-        "approve": "موافقة ونشر"
+        "approve": "موافقة ونشر",
+        "reason": "سبب الذكاء الاصطناعي"
     },
     "staffDisputes": {
         "title": "نزاعات الموظفين",
@@ -1074,8 +1187,9 @@
         "allRatings": "كل التقييمات",
         "flaggedOnly": "المُبلّغ عنها فقط",
         "reset": "إعادة تعيين",
-        "reviewer": "معرّف المُقيّم",
-        "reviewee": "معرّف المُقيَّم",
+        "reviewer": "المُقيّم",
+        "reviewee": "المُقيَّم",
+        "unknownUser": "مستخدم غير معروف",
         "booking": "الحجز",
         "rating": "التقييم",
         "comment": "التعليق",
@@ -1096,11 +1210,31 @@
         "statusUpdated": "تم وضع التقييم #{{id}} كـ {{status}}.",
         "statusFail": "تعذّر تحديث حالة التقييم.",
         "deleted": "تم حذف التقييم #{{id}}.",
+        "details": "التفاصيل",
+        "detailsTitle": "التقييم #{{id}}",
+        "close": "إغلاق",
+        "aiAnalysis": "تحليل الذكاء الاصطناعي",
+        "sentiment": "المشاعر",
+        "qualityScore": "درجة الجودة",
+        "aiFlagged": "مُبلّغ عنه بواسطة الذكاء الاصطناعي",
+        "noAnalysis": "لا يوجد تحليل ذكاء اصطناعي لهذا التقييم.",
+        "selectAll": "تحديد الكل في هذه الصفحة",
+        "selectedCount": "تم تحديد {{count}}",
+        "bulkApprove": "قبول المحدد",
+        "bulkReject": "رفض المحدد",
+        "clearSelection": "مسح",
+        "bulkDone": "تم وضع {{count}} تقييم كـ {{status}}.",
+        "bulkFail": "تعذّر تحديث بعض التقييمات.",
         "status_map": {
             "Pending": "قيد الانتظار",
             "Approved": "مقبول",
             "Rejected": "مرفوض",
             "Flagged": "مُبلّغ عنه"
+        },
+        "sentiment_map": {
+            "Positive": "إيجابي",
+            "Neutral": "محايد",
+            "Negative": "سلبي"
         }
     },
     "reviewsAnalysis": {
@@ -1119,35 +1253,32 @@
         "empty": "لا توجد تقييمات مُبلّغ عنها.",
         "loadFail": "تعذّر تحميل تحليل التقييمات."
     },
-    
-    "favs":{
-        "favorite":"المفضلة",
-        "empty":"لا عناصر في المفضلة بعد!",
-        "emptyMessage":"الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
-        "browseCTA":" تصفح الخدمات"
+    "favs": {
+        "favorite": "المفضلة",
+        "empty": "لا عناصر في المفضلة بعد!",
+        "emptyMessage": "الفنيون الذين تتم إضافتهم إلى المفضلة يظهرون هنا",
+        "browseCTA": " تصفح الخدمات"
     },
-     "generalActins":{
-        "add":"إضافة",
-        "delete":"حذف",
-        "update":"تعديل",
-        "select":"تحديد"
+    "generalActins": {
+        "add": "إضافة",
+        "delete": "حذف",
+        "update": "تعديل",
+        "select": "تحديد"
     },
-     "newsletter":{
-        "pagetitle":"إرسال بريد موجز الأخبار",
-        "pagedescription":"كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
-        "subj":"الموضوع",
-        "publish":"إرسال",
-        "pre":"معاينة",
-        "subPre":"موضوع البريد هنا ...",
-        "content":"المحتوى"
-  
+    "newsletter": {
+        "pagetitle": "إرسال بريد موجز الأخبار",
+        "pagedescription": "كتابة موجز الأخبار لتنسيقه ومعاينته قبل النشر",
+        "subj": "الموضوع",
+        "publish": "إرسال",
+        "pre": "معاينة",
+        "subPre": "موضوع البريد هنا ...",
+        "content": "المحتوى"
     },
-     "newslettersubscribe":{
-        "subscribe":"اشترك",
-        "description":"اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
-
+    "newslettersubscribe": {
+        "subscribe": "اشترك",
+        "description": "اشترك في نشرة الموجز ليصلك أحدث العروض وأكواد الخصم!"
     },
-     "favorites": {
+    "favorites": {
         "add": "أضف إلى المفضلة",
         "remove": "إزالة من المفضلة",
         "added": "تمت الإضافة إلى المفضلة",

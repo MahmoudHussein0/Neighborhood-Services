@@ -1,12 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -15,6 +17,7 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
 
   readonly isSubmitting = signal(false);
   readonly apiError = signal<string | null>(null);
@@ -88,7 +91,7 @@ export class LoginComponent {
       }
     }
 
-    return 'Unable to sign in. Please check your email and password.';
+    return this.translate.instant('login.submitError');
   }
 
   private isHttpError(error: unknown): error is {

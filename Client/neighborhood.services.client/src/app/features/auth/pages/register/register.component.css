@@ -1,105 +1,130 @@
-.auth-page {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 45%, #4f46e5 80%, #7c3aed 100%);
-  min-height: 100vh;
+/* Base auth theme (.auth-page/.auth-panel/etc.) lives in global styles.css.
+   This file only carries the role-choice cards. */
+
+.role-card {
   display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  padding: 2rem 0;
-}
-
-.auth-page::before,
-.auth-page::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(72px);
-  opacity: 0.4;
-}
-
-.auth-page::before {
-  width: 520px;
-  height: 520px;
-  background: #7c3aed;
-  top: -160px;
-  right: -160px;
-}
-
-.auth-page::after {
-  width: 420px;
-  height: 420px;
-  background: #06b6d4;
-  bottom: -120px;
-  left: -120px;
-}
-
-.auth-panel {
+  flex-direction: column;
+  height: 100%;
   border-radius: 1rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
-  position: relative;
-  z-index: 1;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s, background 0.18s;
 }
 
-.auth-home-btn {
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(30, 41, 59, 0.18);
+}
+
+/* Tinted frosted glass so each card is distinct and stands out on the light page. */
+.role-card--customer {
+  background: rgba(167, 139, 250, 0.22);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.role-card--customer:hover {
+  background: rgba(167, 139, 250, 0.32);
+  border-color: rgba(139, 92, 246, 0.65);
+}
+
+.role-card--technician {
+  background: rgba(34, 211, 238, 0.20);
+  border-color: rgba(8, 145, 178, 0.4);
+}
+
+.role-card--technician:hover {
+  background: rgba(34, 211, 238, 0.30);
+  border-color: rgba(8, 145, 178, 0.65);
+}
+
+.role-card h2 {
+  color: #0f172a;
+}
+
+.role-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.9rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #475569;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.auth-home-btn:hover {
-  color: #1d4ed8;
-}
-
-.auth-kicker {
-  color: #1d4ed8;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.register-tabs {
-  background-color: rgba(241, 245, 249, 0.8);
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  display: grid;
-  gap: 0.35rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 0.35rem;
-}
-
-.register-tab {
-  align-items: center;
-  background-color: transparent;
-  border: 0;
-  border-radius: 0.4rem;
-  color: #4b5563;
-  display: inline-flex;
-  gap: 0.5rem;
   justify-content: center;
-  min-height: 2.75rem;
-  font-weight: 700;
-}
-
-.register-tab.active {
-  background-color: #1d4ed8;
+  font-size: 1.5rem;
   color: #fff;
-  box-shadow: 0 0.35rem 0.9rem rgb(29 78 216 / 0.18);
+  margin-bottom: 1.1rem;
 }
 
-@media (max-width: 575.98px) {
-  .auth-panel {
-    padding: 1.25rem;
-  }
+.role-icon--customer {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4);
+}
+
+.role-icon--technician {
+  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  box-shadow: 0 10px 24px rgba(8, 145, 178, 0.4);
+}
+
+.role-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.role-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #475569;
+  margin-bottom: 0.55rem;
+}
+
+.role-features li i {
+  color: #10b981;
+  margin-top: 0.15rem;
+}
+
+/* CTA link with arrow (matches the reference). Scoped under .role-card so it
+   beats the global `.auth-panel p a` link colour. */
+.role-card .role-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.role-card .role-cta i {
+  transition: transform 0.15s;
+}
+
+.role-card .role-cta:hover i {
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .role-card .role-cta i {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .role-card .role-cta:hover i {
+  transform: scaleX(-1) translateX(3px);
+}
+
+.role-card .role-cta--customer {
+  color: #7c3aed;
+}
+
+.role-card .role-cta--customer:hover {
+  color: #6d28d9;
+}
+
+.role-card .role-cta--technician {
+  color: #0891b2;
+}
+
+.role-card .role-cta--technician:hover {
+  color: #0e7490;
 }

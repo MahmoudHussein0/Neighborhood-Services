@@ -5,6 +5,9 @@ import { PagedResult } from '../../../core/models/paged-result.model';
 
 export type StaffBookingStatus = 'Pending' | 'Quoted' | 'Confirmed' | 'Completed' | 'Cancelled' | 'Disputed';
 
+// Mirrors the backend BookingSortBy enum (names sent verbatim as the `sort` query param).
+export type BookingSort = 'NewestCreated' | 'OldestCreated' | 'SoonestScheduled' | 'LatestScheduled';
+
 // Mirrors StaffBookingDto (GET /api/bookings/staff)
 export interface StaffBooking {
   id: number;
@@ -24,6 +27,7 @@ export interface GetStaffBookingsParams {
   search?: string;
   page?: number;
   pageSize?: number;
+  sort?: BookingSort;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,6 +41,7 @@ export class StaffBookingService {
     if (params.search?.trim()) q.set('search', params.search.trim());
     q.set('page', String(params.page ?? 1));
     q.set('pageSize', String(params.pageSize ?? 10));
+    if (params.sort) q.set('sort', params.sort);
     return this.api.get<PagedResult<StaffBooking>>(`/bookings/staff?${q.toString()}`);
   }
 

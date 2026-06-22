@@ -15,6 +15,8 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Invoices
             builder.Property(x => x.Amount).HasColumnType("decimal(18,2)");
             builder.Property(x => x.Tax).HasColumnType("decimal(18,2)");
             builder.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
+            builder.Property(x => x.BaseAmount).HasColumnType("decimal(18,2)");
+            builder.Property(x => x.DiscountAmount).HasColumnType("decimal(18,2)");
             builder.Property(x => x.Status)
                 .HasConversion<string>()
                 .HasDefaultValue(InvoiceStatus.Unpaid);

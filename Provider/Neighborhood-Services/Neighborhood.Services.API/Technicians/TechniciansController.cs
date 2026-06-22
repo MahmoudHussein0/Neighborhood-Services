@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Neighborhood.Services.Application.Bookings.Queries.GetTechnicianAvailableSlots;
+using Neighborhood.Services.Application.Bookings.Queries.GetTechnicianBusySlots;
 using Neighborhood.Services.Application.Technicians.Commands;
 using Neighborhood.Services.Application.Technicians.Queries;
 using Neighborhood.Services.Domain.Technicians;
@@ -66,6 +68,28 @@ namespace Neighborhood.Services.API.Technicians
         public async Task<IActionResult> Browse()
         {
             var result = await _mediator.Send(new GetTechniciansForBrowseQuery());
+            return Ok(result);
+        }
+
+        // GET /api/technicians/{id}/busy-slots?from=2026-06-20T00:00&to=2026-06-27T00:00
+        // The tech's confirmed-booking windows in the range, so the booking time-picker can
+        // grey out times they're already booked. Returns [] when free.
+        [Authorize]
+        [HttpGet("{id:int}/busy-slots")]
+        public async Task<IActionResult> GetBusySlots(int id, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        {
+            var result = await _mediator.Send(new GetTechnicianBusySlotsQuery { TechnicianId = id, From = from, To = to });
+            return Ok(result);
+        }
+
+        // GET /api/technicians/{id}/available-slots?date=2026-06-22&slotMinutes=30
+        // Free start-times the customer can book on that date (working hours − busy − past),
+        // ready to render as clickable chips in the booking modal.
+        [Authorize]
+        [HttpGet("{id:int}/available-slots")]
+        public async Task<IActionResult> GetAvailableSlots(int id, [FromQuery] DateTime date, [FromQuery] int slotMinutes = 30)
+        {
+            var result = await _mediator.Send(new GetTechnicianAvailableSlotsQuery { TechnicianId = id, Date = date, SlotMinutes = slotMinutes });
             return Ok(result);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Neighborhood.Services.Application.Bookings.DTOs;
+using Neighborhood.Services.Application.Bookings.Enums;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.BookingImages;
@@ -19,7 +20,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             
         }
 
-        public async Task<PagedResult<StaffBookingDto>> GetBookingsForStaffPagedAsync(BookingStatus? status, string? search, int page, int pageSize)
+        public async Task<PagedResult<StaffBookingDto>> GetBookingsForStaffPagedAsync(BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated)
         {
             var query =
                 from b in _context.Bookings.AsNoTracking()
@@ -46,8 +47,15 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
 
             var total = await query.CountAsync();
 
+            query = sort switch
+            {
+                BookingSortBy.OldestCreated    => query.OrderBy(x => x.b.CreatedAt),
+                BookingSortBy.SoonestScheduled => query.OrderBy(x => x.b.ScheduledAt),
+                BookingSortBy.LatestScheduled  => query.OrderByDescending(x => x.b.ScheduledAt),
+                _                              => query.OrderByDescending(x => x.b.CreatedAt),
+            };
+
             var items = await query
-                .OrderByDescending(x => x.b.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(x => new StaffBookingDto
@@ -107,7 +115,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
                 .ToListAsync();
         }
 
-        public async Task<PagedResult<Booking>> GetCustomerBookingsPagedAsync(int customerId, BookingStatus? status, string? search, int page, int pageSize)
+        public async Task<PagedResult<Booking>> GetCustomerBookingsPagedAsync(int customerId, BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated)
         {
             var query = _context.Bookings
                 .Where(b => b.CustomerId == customerId && !b.IsDeleted);
@@ -127,8 +135,9 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
 
             var total = await query.CountAsync();
 
+            query = ApplyBookingSort(query, sort);
+
             var items = await query
-                .OrderByDescending(b => b.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -136,7 +145,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
             return new PagedResult<Booking>(items, total, page, pageSize);
         }
 
-        public async Task<PagedResult<Booking>> GetTechnicianBookingsPagedAsync(int technicianId, BookingStatus? status, string? search, int page, int pageSize)
+        public async Task<PagedResult<Booking>> GetTechnicianBookingsPagedAsync(int technicianId, BookingStatus? status, string? search, int page, int pageSize, BookingSortBy sort = BookingSortBy.NewestCreated)
         {
             var query = _context.Bookings
                 .Where(b => b.TechnicianId == technicianId && !b.IsDeleted);
@@ -156,14 +165,24 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
 
             var total = await query.CountAsync();
 
+            query = ApplyBookingSort(query, sort);
+
             var items = await query
-                .OrderByDescending(b => b.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             return new PagedResult<Booking>(items, total, page, pageSize);
         }
+
+        // Shared ordering for the customer/technician "mine" lists.
+        private static IQueryable<Booking> ApplyBookingSort(IQueryable<Booking> query, BookingSortBy sort) => sort switch
+        {
+            BookingSortBy.OldestCreated    => query.OrderBy(b => b.CreatedAt),
+            BookingSortBy.SoonestScheduled => query.OrderBy(b => b.ScheduledAt),
+            BookingSortBy.LatestScheduled  => query.OrderByDescending(b => b.ScheduledAt),
+            _                              => query.OrderByDescending(b => b.CreatedAt),
+        };
 
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
         {
@@ -190,6 +209,19 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Bookings
                     && b.ScheduledAt == scheduledAt
                     && b.Status == BookingStatus.Confirmed
                     && !b.IsDeleted);
+        }
+
+        public async Task<IEnumerable<Booking>> GetConfirmedBookingsInRangeAsync(int technicianId, DateTime from, DateTime to)
+        {
+            return await _context.Bookings
+                .Where(b => b.TechnicianId == technicianId
+                    && b.Status == BookingStatus.Confirmed
+                    && !b.IsDeleted
+                    && b.DurationMinutes != null
+                    && b.ScheduledAt >= from
+                    && b.ScheduledAt < to)
+                .OrderBy(b => b.ScheduledAt)
+                .ToListAsync();
         }
 
         public async Task<bool> HasOverlappingConfirmedBookingAsync(int technicianId, DateTime start, DateTime end, int? excludeBookingId = null)

@@ -7,6 +7,7 @@ using Neighborhood.Services.Application.PromoCodes.Commands.CreatePromoCode;
 using Neighborhood.Services.Application.PromoCodes.Commands.DeletePromoCode;
 using Neighborhood.Services.Application.PromoCodes.Queries.GetAllPromoCodes;
 using Neighborhood.Services.Application.PromoCodes.Queries.GetPromoCodeByCode;
+using Neighborhood.Services.Application.PromoCodes.Queries.PreviewPromoCode;
 using Neighborhood.Services.Application.PromoCodes.Queries.ValidatePromoCode;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Staffs;
@@ -47,6 +48,18 @@ namespace Neighborhood.Services.API.PromoCodes
         public async Task<IActionResult> Validate(string code)
         {
             var result = await _mediator.Send(new ValidatePromoCodeQuery { Code = code });
+            return Ok(result);
+        }
+
+        // Preview a code for the current user (valid + not already used by them) without consuming it.
+        [HttpGet("preview/{code}")]
+        public async Task<IActionResult> Preview(string code)
+        {
+            var result = await _mediator.Send(new PreviewPromoCodeQuery
+            {
+                Code = code,
+                UserId = _currentUser.UserId ?? string.Empty
+            });
             return Ok(result);
         }
         [HasPermission(PermissionType.ManagePromos)]

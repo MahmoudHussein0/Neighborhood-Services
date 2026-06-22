@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { JobService } from '../../services/job.service';
+import { JobService, BookingSort } from '../../services/job.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { MyBookingSummary, BookingStatus, DisputeType } from '../../../customer/models/booking.model';
 import { QuoteJobModalComponent } from '../../components/quote-job-modal/quote-job-modal.component';
@@ -40,14 +40,17 @@ export class TechnicianJobsComponent implements OnInit {
     { value: 'Completed' },
     { value: 'Cancelled' },
   ];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<MyBookingSummary> | null>(null);
   activeTab = signal<'All' | BookingStatus>('All');
   searchTerm = signal('');
+  sort = signal<BookingSort>('NewestCreated');
   page = signal(1);
   busyId = signal<number | null>(null);
+
+  readonly sortOptions: BookingSort[] = ['NewestCreated', 'OldestCreated', 'SoonestScheduled', 'LatestScheduled'];
 
   protected readonly mapsUrl = googleMapsUrl;
 
@@ -77,6 +80,7 @@ export class TechnicianJobsComponent implements OnInit {
       .getMyJobs({
         status: this.activeTab() === 'All' ? undefined : (this.activeTab() as BookingStatus),
         search: this.searchTerm(),
+        sort: this.sort(),
         page: this.page(),
         pageSize: this.pageSize,
       })
@@ -91,6 +95,12 @@ export class TechnicianJobsComponent implements OnInit {
 
   selectTab(value: 'All' | BookingStatus) {
     this.activeTab.set(value);
+    this.page.set(1);
+    this.load();
+  }
+
+  changeSort(value: string) {
+    this.sort.set(value as BookingSort);
     this.page.set(1);
     this.load();
   }

@@ -49,6 +49,12 @@
                   <span class="fw-bold">{{ 'staffFlagged.budget' | translate }}: {{ sr.budget | currency: 'EGP ' }}</span>
                   <span class="text-muted">{{ 'staffFlagged.posted' | translate }} {{ sr.createdAt | date: 'short' }}</span>
                 </div>
+                @if (sr.reason) {
+                  <div class="alert alert-warning d-flex align-items-start gap-2 py-2 px-3 mb-0 mt-2 small">
+                    <i class="bi bi-robot mt-1"></i>
+                    <span><strong>{{ 'staffFlagged.reason' | translate }}:</strong> {{ sr.reason }}</span>
+                  </div>
+                }
               </div>
             </div>
 
@@ -69,7 +75,7 @@
       }
     </div>
 
-    @if (res.totalPages > 1) {
+    @if (res.totalCount > 0) {
       <div class="d-flex align-items-center justify-content-between mt-4">
         <span class="text-muted small">
           {{ 'common.pageInfo' | translate:{ page: res.page, total: res.totalPages, count: res.totalCount } }}

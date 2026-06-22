@@ -72,25 +72,28 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CancelRec
             await _recurringBookingRepository.UpdateAsync(recurringBooking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Notify the other party that the recurring booking was cancelled — best effort.
+            // Notify the other party that the recurring booking was cancelled, and remind the
+            // customer to check My Bookings — occurrences already generated for the next few days
+            // stay live (with their payment held) until cancelled individually. Best effort.
             try
             {
-                string? otherUserId;
-                if (isCancelledByCustomer)
-                {
-                    var otherTechnician = await _technicianRepository.GetByIdAsync(recurringBooking.TechnicianId);
-                    otherUserId = otherTechnician?.ApplicationUserId;
-                }
-                else
-                {
-                    var otherCustomer = await _customerRepository.GetByIdAsync(recurringBooking.CustomerId);
-                    otherUserId = otherCustomer?.ApplicationUserId;
-                }
+                string? customerUserId = isCancelledByCustomer
+                    ? userId
+                    : (await _customerRepository.GetByIdAsync(recurringBooking.CustomerId))?.ApplicationUserId;
+                string? technicianUserId = isCancelledByTechnician
+                    ? userId
+                    : (await _technicianRepository.GetByIdAsync(recurringBooking.TechnicianId))?.ApplicationUserId;
 
+                var otherUserId = isCancelledByCustomer ? technicianUserId : customerUserId;
                 if (!string.IsNullOrEmpty(otherUserId))
                     await _notificationService.SendNotificationToUser(
                         otherUserId,
                         $"Recurring booking #{recurringBooking.Id} was cancelled.");
+
+                if (!string.IsNullOrEmpty(customerUserId))
+                    await _notificationService.SendNotificationToUser(
+                        customerUserId,
+                        $"Recurring booking #{recurringBooking.Id} was cancelled. Please check My Bookings — any visits already scheduled for the next few days are still booked, so cancel them there if you don't want them.");
             }
             catch (Exception ex)
             {

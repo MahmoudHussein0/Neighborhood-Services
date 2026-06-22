@@ -38,7 +38,7 @@ export class TechnicianRecurringJobsComponent implements OnInit {
     { value: 'Paused' },
     { value: 'Cancelled' },
   ];
-  readonly pageSize = 10;
+  readonly pageSize = 5;
 
   loading = signal(false);
   result = signal<PagedResult<RecurringBooking> | null>(null);

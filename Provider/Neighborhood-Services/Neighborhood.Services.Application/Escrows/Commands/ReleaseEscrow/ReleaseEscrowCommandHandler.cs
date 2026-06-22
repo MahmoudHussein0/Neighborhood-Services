@@ -72,7 +72,23 @@ namespace Neighborhood.Services.Application.Escrows.Commands.ReleaseEscrow
                 await _transactionRepository.AddAsync(transaction);
 
                 // Calculate promo discount for the invoice line items
-                var baseAmount = escrow.Booking.EstimatedPrice > 0 ? escrow.Booking.EstimatedPrice : escrow.Amount;
+                var baseAmount = escrow.Booking.FinalPrice > 0 ? escrow.Booking.FinalPrice : (escrow.Booking.EstimatedPrice > 0 ? escrow.Booking.EstimatedPrice : escrow.Amount);
+                
+                if (escrow.Booking.PromoCode != null)
+                {
+                    var pct = escrow.Booking.PromoCode.DiscountPercentage;
+                    if (pct > 0 && pct < 100)
+                    {
+                        // Reverse calculate the original quoted price before the percentage discount
+                        baseAmount = Math.Round(escrow.Amount / (1m - (pct / 100m)), 2);
+                    }
+                    else if (pct >= 100)
+                    {
+                        // Fallback if it's a 100% discount, because Escrow Amount is 0
+                        baseAmount = escrow.Booking.EstimatedPrice;
+                    }
+                }
+
                 var discountAmount = Math.Round(baseAmount - escrow.Amount, 2);
                 if (discountAmount < 0) discountAmount = 0;
 
