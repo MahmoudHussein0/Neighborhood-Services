@@ -26,6 +26,7 @@ namespace Neighborhood.Services.API.Controllers.Message
         }
 
         [HttpPost]
+        //create message on booking
         public async Task<ActionResult> Add(CreateMessageCommand command)
         {
             var result = await _mediator.Send(command);

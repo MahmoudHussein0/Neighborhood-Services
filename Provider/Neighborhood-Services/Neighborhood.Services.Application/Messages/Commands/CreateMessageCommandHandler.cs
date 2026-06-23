@@ -47,7 +47,9 @@ namespace Neighborhood.Services.Application.Messages.Commands
                 content = request.content,
                 isRead = false,
                 createdAt = DateTime.UtcNow,
-                IsDeleted = false
+                IsDeleted = false,
+                hasImage=request.hasImage??false,
+                imageUrl=request.imageUrl
             };
 
             //Verfiy There is a booking with this iD
@@ -86,18 +88,30 @@ namespace Neighborhood.Services.Application.Messages.Commands
                 
             }
             //قبل ما نعمل سيند لمسدج معينة هيكون البوكنج اتكريت والناس انضافت للجروب
-            await chatService.SendGroupMessage(request.BookingId.ToString(), msg.content);
+          
 
             await _messageRepository.AddAsync(msg);
             
             await _unitOfWork.SaveChangesAsync();
-            //sending notifications
+
+            await chatService.SendGroupMessage(request.BookingId.ToString(), new MessageCreatedDto()
+            {
+                id = msg.Id,
+
+                content = msg.content,
+
+                hasImage = msg.hasImage,
+                imageUrl=msg.imageUrl
+            });
+            
 
             return new MessageCreatedDto() { 
                 id=msg.Id,
                 senderId = msg.SenderId,
                 content=msg.content,
                 BookingId=conv.BookingId,
+                hasImage=msg.hasImage,
+                imageUrl=msg.imageUrl
             };
             //return msg.Id;
         }

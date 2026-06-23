@@ -81,6 +81,20 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Users
             return res?.Photo??null!;
         }
 
+        public async Task<List<string>> GetAdminsIdsAsync()
+        {
+
+            var res = await _context.Users.Where(e => e.ApplicationUserRole == ApplicationUserRole.Staff).Select(e => e.Id).ToListAsync();
+            return res;
+        }
+
+        public async Task<List<string>> GetTechniciansIdsAsync()
+        {
+
+            var res = await _context.Users.Where(e => e.ApplicationUserRole == ApplicationUserRole.Technician).Select(e => e.Id).ToListAsync();
+            return res;
+        }
+
     }
     }
 

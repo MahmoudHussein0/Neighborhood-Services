@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Observable, switchMap, map } from 'rxjs';
+import { Observable, switchMap, map,EMPTY } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 
 // Mirrors CloudinarySignatureDto from POST /api/files/signature
@@ -49,4 +49,40 @@ export class UploadService {
       map((res) => res.secure_url)
     );
   }
+
+  uploadArwaEdit(file: File|null): Observable<string> {
+    return this.api.post<CloudinarySignature>('/files/signature', {}).pipe(
+      switchMap((sig) => {
+        // Only the params the backend signed (just timestamp) — nothing extra.
+        const form = new FormData();
+        form.append('file', file!);
+        form.append('api_key', sig.apiKey);
+        form.append('timestamp', String(sig.timestamp));
+        form.append('signature', sig.signature);
+
+        const url = `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`;
+        return this.rawHttp.post<CloudinaryUploadResponse>(url, form);
+      }),
+      map((res) => res.secure_url)
+    );
+  }
+//   uploadArwa(myfile: File | null): Observable<any> {
+//   if (!myfile) return EMPTY; 
+
+//   const formData = new FormData();
+//   formData.append('file', myfile);
+//   //formData.append('id', publicId.toString());
+
+//   return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
+// }
+
+//   uploadArwwa(myfile: File | null, publicId: number): Observable<any> {
+//   if (!myfile) return of(null);
+
+//   const formData = new FormData();
+//   formData.append('file', myfile);           
+//   formData.append('id', publicId.toString()); 
+
+//   return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
+// }
 }

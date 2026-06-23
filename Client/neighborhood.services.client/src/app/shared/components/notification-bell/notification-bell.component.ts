@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationMessage } from './../../../core/models/notification-message';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import {  NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../features/auth/services/auth.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -15,7 +15,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-notification-bell',
-  imports: [CommonModule, NgbDropdownModule,RouterLink, RouterLinkActive],
+  imports: [CommonModule,RouterLink, RouterLinkActive, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem],
   templateUrl: './notification-bell.component.html',
   styleUrl: './notification-bell.component.css',
 

@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { AfterViewInit,ViewChild, ViewChildren, ElementRef,   QueryList, HostListener
  } from '@angular/core';
+ import { UploadService } from '../../../../shared/services/upload.service';
 
 
 
@@ -106,11 +107,13 @@ private ngZone = inject(NgZone);
     "senderId": '',
     "content": '',
     "bookingId": this.bookingId
+   
   }
 
 
   constructor(private conversationService: ConversationService,
-    private chatService: ChatService, private messagesService: MessagesService,private cdr: ChangeDetectorRef) {
+    private chatService: ChatService, private messagesService: MessagesService,private cdr: ChangeDetectorRef,
+  private uploadService:UploadService) {
       this.isLoading = signal(false);
     this.AllMessagesForBooking = this.chatService.AllMessagesForBooking;
     this.CurrentConversationMessages=this.AllMessagesForBooking;
@@ -224,6 +227,17 @@ getMyId(): void {
     });
   }
 
+     selectedFile = signal<File | null>(null);
+
+
+  onFileSelected(event: Event) {
+   const input = event.target as HTMLInputElement;
+   if (input.files && input.files.length > 0) {
+     this.selectedFile.set(input.files[0]);
+    this.MessageToBeSent.hasImage=true;
+   }
+ }
+
   public sendMessage(message: MessageDto): void {
     this.isLoading.set(false);
     console.log('Attempting to send message:', message);
@@ -250,15 +264,69 @@ getMyId(): void {
 
     //هنا بنجربها بالمسدج سيرفس
 
-    if (message.content.trim()) {
+    if (message.content||this.selectedFile()) {
       this.MessageToBeSent.bookingId=this.bookingId;
       this.MessageToBeSent.senderId=this.myId;
-      this.messagesService.CreateMessagesOnBooking(this.MessageToBeSent).subscribe({
-        next: () => {
+       if(this.selectedFile()!=null){
+            this.MessageToBeSent.hasImage=true;
+            if(message.content?.trim().length==0){message.content="image"}
+        
+            this.uploadService.uploadArwaEdit(this.selectedFile()).subscribe({
+             next: (res) => {
+             this.MessageToBeSent.imageUrl=res;
+             console.log(res)
+              console.log(res)
+              this.messagesService.CreateMessagesOnBooking(this.MessageToBeSent).subscribe({
+        next: (res) => {
           this.ngZone.run(() => {  
             console.log("message sent!");
-            
-          //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
+            console.log(res);
+         
+          this.AllMessagesForBooking=this.chatService.AllMessagesForBooking;
+          this.AllMessagesForBooking=this.chatService.AllMessagesForBooking;
+           console.log("after send");
+           console.log(this.AllMessagesForBooking())
+          this.MessageToBeSent.content = '';
+          this.selectedFile.set(null);
+
+           this.cdr.detectChanges();
+        
+            // this.ngZone.run(() => {
+           
+              
+            //         //this.AllMessagesForBooking.update(msgs => [...msgs, this.MessageToBeSent]);
+            //     });
+            //this.AllMessagesForBooking().push(this.MessageToBeSent);
+             this.isLoading.set(false);
+             
+            this.messageContent = '';
+            this.MessageToBeSent = new MessageDto();
+            this.isLoading.set(true);
+          });
+        },
+        error: (err) => {
+          this.ngZone.run(() => {
+            console.error("send failed:", err);
+            this.isLoading.set(false);
+          });
+        }
+      }); //end of subs
+               },
+             error: (err) => {
+             console.error('Upload failed:', err);
+                 }
+                  });
+             
+      
+    }
+    else{
+      this.messagesService.CreateMessagesOnBooking(this.MessageToBeSent).subscribe({
+        next: (res) => {
+          this.ngZone.run(() => {  
+            console.log("message sent!");
+            console.log(res);
+         
+          this.AllMessagesForBooking=this.chatService.AllMessagesForBooking;
           this.AllMessagesForBooking=this.chatService.AllMessagesForBooking;
            console.log("after send");
            console.log(this.AllMessagesForBooking())
@@ -285,7 +353,9 @@ getMyId(): void {
             this.isLoading.set(false);
           });
         }
-      });
+      }); //end of subs
+
+    }
     }}
 
 }

@@ -13,5 +13,9 @@ namespace Neighborhood.Services.Application.Messages.DTOs
         public string content { set; get; }
 
         public int BookingId { set; get; }
+
+        public bool? hasImage { set; get; }
+
+        public string? imageUrl { set; get; }
     }
 }

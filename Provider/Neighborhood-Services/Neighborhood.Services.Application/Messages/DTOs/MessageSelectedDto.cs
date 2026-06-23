@@ -17,5 +17,9 @@ namespace Neighborhood.Services.Application.Messages.DTOs
 
         public DateTime sentAt { set; get; } = DateTime.UtcNow;
 
+        public bool? hasImage { set; get; }=false;
+
+        public string? imageUrl { set; get; } 
+
     }
 }

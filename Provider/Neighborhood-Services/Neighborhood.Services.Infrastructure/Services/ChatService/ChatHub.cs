@@ -75,6 +75,11 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
             await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
         }
 
+        public async Task SendGroupMessageExceptforCaller(string groupName, string message)
+        {
+            await Clients.GroupExcept(groupName,Context.ConnectionId).SendAsync(message);
+        }
+
         public async Task SendGroupMessageDto(string groupName, MessageCreatedDto message)
         {
             await Clients.Group(groupName).SendAsync("ReceiveMessage", message);

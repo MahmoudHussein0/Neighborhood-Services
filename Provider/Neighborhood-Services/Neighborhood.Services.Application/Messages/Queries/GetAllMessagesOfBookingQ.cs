@@ -31,7 +31,9 @@ namespace Neighborhood.Services.Application.Messages.Queries
                 content = item.content,
                 read = item.isRead,
                 deleted = item.IsDeleted,
-                sentAt = item.createdAt
+                sentAt = item.createdAt,
+                hasImage=item.hasImage,
+                imageUrl=item.imageUrl,
 
             }).ToList();
 

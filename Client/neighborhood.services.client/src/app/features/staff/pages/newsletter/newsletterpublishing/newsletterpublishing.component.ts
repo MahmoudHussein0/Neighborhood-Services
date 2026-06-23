@@ -37,7 +37,7 @@ export class NewsletterpublishingComponent {
       "content":this.rawHtml
     }
   this.myService.publish(obj).subscribe({
-    next: ()=>this.tostr.success("Email Sent Successfully"),
+    next: ()=>this.tostr.success("Newsletter Sent Successfully"),
     error: err =>this.tostr.error(err)
   });
   }

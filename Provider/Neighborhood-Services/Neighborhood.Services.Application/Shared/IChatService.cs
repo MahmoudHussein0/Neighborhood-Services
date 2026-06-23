@@ -11,7 +11,10 @@ namespace Neighborhood.Services.Application.Shared
     {   public  Task SendPrivateMessage(string userId, string message);
         public  Task SendPrivateMessageDto(string userId, MessageCreatedDto message);
         public Task SendGroupMessage(string groupName, string message);
-        public  Task SendGroupMessageDto(string groupName, MessageCreatedDto message);
+
+        public Task SendGroupMessage(string groupName, MessageCreatedDto message);
+
+        public Task SendGroupMessageDto(string groupName, MessageCreatedDto message);
         public  Task SendBroadcastMessage(string message);
         public Task SendBroadcastMessageDto(MessageCreatedDto message);
 

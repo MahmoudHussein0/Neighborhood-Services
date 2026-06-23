@@ -20,7 +20,8 @@ import {CustomerSupportFormComponent} from'../../features/public/pages/customer-
     ChatRoomComponent,
     NewsletterpublishingComponent,
     NewsletterSubscribeComponent,
-    CustomerSupportFormComponent
+    CustomerSupportFormComponent,
+   
     
   ],
   template: `
@@ -31,7 +32,6 @@ import {CustomerSupportFormComponent} from'../../features/public/pages/customer-
 
       <router-outlet />
     </main>
-     <app-customer-support-form/>
 
     <app-newsletter-subscribe/>
     <app-footer />
