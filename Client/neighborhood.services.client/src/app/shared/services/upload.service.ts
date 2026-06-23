@@ -49,15 +49,32 @@ export class UploadService {
       map((res) => res.secure_url)
     );
   }
-  uploadArwa(myfile: File | null): Observable<any> {
-  if (!myfile) return EMPTY; 
 
-  const formData = new FormData();
-  formData.append('file', myfile);
-  //formData.append('id', publicId.toString());
+  uploadArwaEdit(file: File|null): Observable<string> {
+    return this.api.post<CloudinarySignature>('/files/signature', {}).pipe(
+      switchMap((sig) => {
+        // Only the params the backend signed (just timestamp) — nothing extra.
+        const form = new FormData();
+        form.append('file', file!);
+        form.append('api_key', sig.apiKey);
+        form.append('timestamp', String(sig.timestamp));
+        form.append('signature', sig.signature);
 
-  return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
-}
+        const url = `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`;
+        return this.rawHttp.post<CloudinaryUploadResponse>(url, form);
+      }),
+      map((res) => res.secure_url)
+    );
+  }
+//   uploadArwa(myfile: File | null): Observable<any> {
+//   if (!myfile) return EMPTY; 
+
+//   const formData = new FormData();
+//   formData.append('file', myfile);
+//   //formData.append('id', publicId.toString());
+
+//   return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
+// }
 
 //   uploadArwwa(myfile: File | null, publicId: number): Observable<any> {
 //   if (!myfile) return of(null);

@@ -271,11 +271,11 @@ getMyId(): void {
             this.MessageToBeSent.hasImage=true;
             if(message.content?.trim().length==0){message.content="image"}
         
-            this.uploadService.uploadArwa(this.selectedFile()).subscribe({
+            this.uploadService.uploadArwaEdit(this.selectedFile()).subscribe({
              next: (res) => {
-             this.MessageToBeSent.imageUrl=res.url;
+             this.MessageToBeSent.imageUrl=res;
              console.log(res)
-              console.log(res.url)
+              console.log(res)
               this.messagesService.CreateMessagesOnBooking(this.MessageToBeSent).subscribe({
         next: (res) => {
           this.ngZone.run(() => {  
