@@ -9,6 +9,8 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.UpdateRec
     public class UpdateRecurringBookingCommand : IRequest<bool>
     {
         public int RecurringBookingId { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public string Address { get; set; } = string.Empty;
         public RecurringPattern Pattern { get; set; }
         public DayOfWeek? DayOfWeek { get; set; }

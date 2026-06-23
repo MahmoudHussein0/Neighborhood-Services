@@ -5,6 +5,12 @@ export interface Offer {
   id: number;
   serviceRequestId: number;
   technicianId: number;
+  // The customer who posted the service request — lets the Offers page link to their public profile.
+  customerId: number;
+  customerName: string;
+  // A brief of the request the offer is on, so the tech can see what they bid on.
+  serviceRequestDescription: string;
+  serviceRequestAddress: string;
   price: number;
   estimatedDuration: number;
   message: string;

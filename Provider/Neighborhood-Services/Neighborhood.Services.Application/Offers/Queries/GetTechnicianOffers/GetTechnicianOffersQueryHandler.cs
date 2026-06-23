@@ -33,24 +33,8 @@ namespace Neighborhood.Services.Application.Offers.Queries.GetTechnicianOffers
             var page = request.Page < 1 ? 1 : request.Page;
             var pageSize = request.PageSize is < 1 or > 100 ? 10 : request.PageSize;
 
-            var paged = await _offerRepository.GetTechnicianOffersPagedAsync(technician.Id, request.Status, page, pageSize);
-
-            return new PagedResult<OfferDto>(
-                paged.Items.Select(o => new OfferDto
-                {
-                    Id = o.Id,
-                    ServiceRequestId = o.ServiceRequestId,
-                    TechnicianId = o.TechnicianId,
-                    Price = o.Price,
-                    EstimatedDuration = o.EstimatedDuration,
-                    Message = o.Message,
-                    ScheduledAt = o.ScheduledAt,
-                    Status = o.Status,
-                    CreatedAt = o.CreatedAt
-                }).ToList(),
-                paged.TotalCount,
-                paged.Page,
-                paged.PageSize);
+            // The repo projects straight to OfferDto (customer name + service-request brief included).
+            return await _offerRepository.GetTechnicianOffersPagedAsync(technician.Id, request.Status, page, pageSize);
         }
     }
 }

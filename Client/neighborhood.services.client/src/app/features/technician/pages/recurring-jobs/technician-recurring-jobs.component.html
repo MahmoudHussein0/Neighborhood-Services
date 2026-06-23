@@ -39,37 +39,57 @@
 
     <div class="d-flex flex-column gap-3">
       @for (rb of res.items; track rb.id) {
-        <div class="card border-0 shadow-sm rounded-3">
-          <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
-              <div>
-                <div class="fw-semibold">{{ scheduleText(rb) }}</div>
-                <div class="text-muted small">{{ rb.address }} · {{ rb.durationMinutes }} {{ 'technician.recurring.min' | translate }}</div>
+        <div class="ns-card card border-0 shadow-sm rounded-4" [attr.data-status]="rb.status">
+          <div class="card-body p-4">
+
+            <!-- Header: photo/icon + job description/meta · status badge -->
+            <div class="d-flex align-items-start gap-3">
+              @if (rb.imageUrl) {
+                <img [src]="rb.imageUrl" alt="" (click)="lightbox.open(rb.imageUrl)"
+                     class="rounded-3 border flex-shrink-0" style="width:3rem;height:3rem;object-fit:cover;cursor:zoom-in;" />
+              } @else {
+                <div class="icon-box"><i class="bi bi-arrow-repeat"></i></div>
+              }
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <h3 class="ns-card-title fw-semibold mb-1">{{ rb.description || scheduleText(rb) }}</h3>
+                  <span class="badge rounded-pill flex-shrink-0" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
+                </div>
+                <div class="text-muted small d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+                  <span><i class="bi bi-arrow-repeat me-1"></i>{{ scheduleText(rb) }}</span>
+                  <span><i class="bi bi-geo-alt me-1"></i>{{ rb.address }}</span>
+                  <span><i class="bi bi-clock me-1"></i>{{ rb.durationMinutes }} {{ 'technician.recurring.min' | translate }}</span>
+                </div>
               </div>
-              <span class="badge rounded-pill" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
             </div>
 
             <!-- Price call-outs -->
             @if (rb.status === 'PendingApproval') {
-              <div class="alert alert-secondary py-2 px-3 mt-3 mb-0 small">
-                {{ 'technician.recurring.needsPrice' | translate }}
-              </div>
+              <div class="ns-note ns-note-muted mt-3">{{ 'technician.recurring.needsPrice' | translate }}</div>
             } @else if (rb.status === 'PendingCustomerApproval' && rb.agreedPrice != null) {
-              <div class="alert alert-primary py-2 px-3 mt-3 mb-0 small">
-                {{ 'technician.recurring.awaitingCustomer' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}
-              </div>
-            } @else if (rb.agreedPrice != null) {
-              <div class="text-muted small mt-2">{{ 'technician.recurring.agreedPrice' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}</div>
+              <div class="ns-note ns-note-info mt-3">{{ 'technician.recurring.awaitingCustomer' | translate: { price: (rb.agreedPrice | currency: 'EGP ') } }}</div>
             }
 
-            <!-- Actions -->
-            <div class="d-flex justify-content-end gap-2 mt-3">
-              @if (rb.status === 'PendingApproval') {
-                <button class="btn btn-sm btn-primary" [disabled]="busyId() === rb.id" (click)="setPrice(rb)">{{ 'technician.recurring.setPrice' | translate }}</button>
-              }
-              @if (rb.status === 'Active' || rb.status === 'Paused') {
-                <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === rb.id" (click)="cancel(rb)">{{ 'technician.recurring.cancel' | translate }}</button>
-              }
+            <!-- Footer: agreed price · actions -->
+            <div class="ns-card-footer d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 pt-3">
+              <div class="d-flex align-items-baseline gap-2">
+                @if (rb.agreedPrice != null) {
+                  <span class="text-muted small">{{ 'technician.recurring.agreedPriceLabel' | translate }}:</span>
+                  <span class="ns-price fw-bold">{{ rb.agreedPrice | currency: 'EGP ' }}</span>
+                } @else {
+                  <span class="text-muted small">{{ 'technician.recurring.noPriceYet' | translate }}</span>
+                }
+              </div>
+
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" (click)="details(rb)">{{ 'bookings.details' | translate }}</button>
+                @if (rb.status === 'PendingApproval') {
+                  <button class="btn btn-sm btn-primary" [disabled]="busyId() === rb.id" (click)="setPrice(rb)">{{ 'technician.recurring.setPrice' | translate }}</button>
+                }
+                @if (rb.status === 'Active' || rb.status === 'Paused') {
+                  <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === rb.id" (click)="cancel(rb)">{{ 'technician.recurring.cancel' | translate }}</button>
+                }
+              </div>
             </div>
           </div>
         </div>

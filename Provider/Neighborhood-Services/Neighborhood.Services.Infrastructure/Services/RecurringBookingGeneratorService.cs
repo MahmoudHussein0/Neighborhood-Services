@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
 using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Wallets.Interfaces;
+using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.RecurringBookings;
 
@@ -15,6 +17,7 @@ namespace Neighborhood.Services.Infrastructure.Services
     {
         IRecurringBookingRepository _recurringBookingRepository;
         IBookingRepository _bookingRepository;
+        IBookingImageRepository _bookingImageRepository;
         IWalletRepository _walletRepository;
         IMediator _mediator;
         INotificationService _notificationService;
@@ -23,6 +26,7 @@ namespace Neighborhood.Services.Infrastructure.Services
         public RecurringBookingGeneratorService(
             IRecurringBookingRepository recurringBookingRepository,
             IBookingRepository bookingRepository,
+            IBookingImageRepository bookingImageRepository,
             IWalletRepository walletRepository,
             IMediator mediator,
             INotificationService notificationService,
@@ -31,6 +35,7 @@ namespace Neighborhood.Services.Infrastructure.Services
         {
             _recurringBookingRepository = recurringBookingRepository;
             _bookingRepository = bookingRepository;
+            _bookingImageRepository = bookingImageRepository;
             _walletRepository = walletRepository;
             _mediator = mediator;
             _notificationService = notificationService;
@@ -107,7 +112,11 @@ namespace Neighborhood.Services.Infrastructure.Services
                         ProblemTypeId = recurring.ProblemTypeId,
                         RecurringBookingId = recurring.Id,
                         BookingType = BookingType.Recurring,
-                        Description = "Auto-generated recurring booking",
+                        // Carry over the description the customer gave at setup so the technician
+                        // sees the real job; fall back to a placeholder for legacy rows with none.
+                        Description = string.IsNullOrWhiteSpace(recurring.Description)
+                            ? "Auto-generated recurring booking"
+                            : recurring.Description,
                         Address = recurring.Address,
                         ScheduledAt = start,
                         DurationMinutes = recurring.DurationMinutes,
@@ -134,6 +143,21 @@ namespace Neighborhood.Services.Infrastructure.Services
                             WalletId = wallet.Id,
                             Amount = price
                         });
+
+                        // Copy the customer's reference photo onto the confirmed booking as a
+                        // "Before" image, so it shows up on the technician's job like any other.
+                        if (!string.IsNullOrWhiteSpace(recurring.ImageUrl))
+                        {
+                            await _bookingImageRepository.AddAsync(new BookingImage
+                            {
+                                BookingId = booking.Id,
+                                ImageUrl = recurring.ImageUrl!,
+                                Type = BookingImageType.Before,
+                                UploadedBy = customerUserId,
+                                UploadedAt = DateTime.UtcNow
+                            });
+                            await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+                        }
                     }
                     catch (Exception ex)
                     {

@@ -14,5 +14,8 @@ namespace Neighborhood.Services.Application.Customers.Interfaces
 
         // Public profile (details + stats + approved reviews with reviewer name/photo) for a customer.
         Task<PublicProfileDto?> GetPublicProfileAsync(int customerId);
+
+        // Maps customer ids -> display name (ApplicationUser.FullName). Used to label bookings/jobs lists.
+        Task<Dictionary<int, string>> GetNamesByIdsAsync(IReadOnlyCollection<int> customerIds);
     }
 }

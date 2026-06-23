@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { RecurringBooking, RecurringBookingStatus } from '../../models/recurring-booking.model';
 import { BookingSummary, BookingStatus } from '../../models/booking.model';
 import { BookingService } from '../../services/booking.service';
+import { LightboxService } from '../../../../shared/services/lightbox.service';
 import { nextOccurrences } from '../../utils/recurrence.util';
 
 @Component({
@@ -16,6 +17,7 @@ import { nextOccurrences } from '../../utils/recurrence.util';
 export class RecurringBookingDetailsModalComponent {
   private readonly activeModal = inject(NgbActiveModal);
   private readonly bookingService = inject(BookingService);
+  protected readonly lightbox = inject(LightboxService);
 
   private _booking!: RecurringBooking;
 

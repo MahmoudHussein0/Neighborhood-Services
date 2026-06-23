@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Application.Offers.Interfaces;
+﻿using Neighborhood.Services.Application.Offers.DTOs;
+using Neighborhood.Services.Application.Offers.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Infrastructure.Persistence.Context;
@@ -31,7 +32,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Offers
                 .ToListAsync();
         }
 
-        public async Task<PagedResult<Offer>> GetTechnicianOffersPagedAsync(int technicianId, OfferStatus? status, int page, int pageSize)
+        public async Task<PagedResult<OfferDto>> GetTechnicianOffersPagedAsync(int technicianId, OfferStatus? status, int page, int pageSize)
         {
             var query = _context.Offers
                 .Where(o => o.TechnicianId == technicianId && !o.IsDeleted);
@@ -41,13 +42,34 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Offers
 
             var total = await query.CountAsync();
 
+            // Project straight to the DTO: the service-request brief comes off the nav for free,
+            // and the customer name is a join to Users (FullName lives on ApplicationUser, not Customer).
             var items = await query
                 .OrderByDescending(o => o.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .Select(o => new OfferDto
+                {
+                    Id = o.Id,
+                    ServiceRequestId = o.ServiceRequestId,
+                    TechnicianId = o.TechnicianId,
+                    CustomerId = o.ServiceRequest.CustomerId,
+                    CustomerName = _context.Users
+                        .Where(u => u.Id == o.ServiceRequest.Customer.ApplicationUserId)
+                        .Select(u => u.FullName)
+                        .FirstOrDefault() ?? string.Empty,
+                    ServiceRequestDescription = o.ServiceRequest.Description,
+                    ServiceRequestAddress = o.ServiceRequest.Address,
+                    Price = o.Price,
+                    EstimatedDuration = o.EstimatedDuration,
+                    Message = o.Message,
+                    ScheduledAt = o.ScheduledAt,
+                    Status = o.Status,
+                    CreatedAt = o.CreatedAt
+                })
                 .ToListAsync();
 
-            return new PagedResult<Offer>(items, total, page, pageSize);
+            return new PagedResult<OfferDto>(items, total, page, pageSize);
         }
 
 

@@ -11,6 +11,9 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CreateRec
         // CustomerId resolved from current user service
         public int TechnicianId { get; set; }
         public int ProblemTypeId { get; set; }
+        // What the job is + an optional reference photo — copied onto each generated booking.
+        public string Description { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public string Address { get; set; } = string.Empty;
         public double Latitude { get; set; }
         public double Longitude { get; set; }

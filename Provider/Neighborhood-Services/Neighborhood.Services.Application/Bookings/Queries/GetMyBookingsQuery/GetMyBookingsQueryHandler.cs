@@ -65,6 +65,13 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
             var ids = source.Items.Select(b => b.Id).ToList();
             var reviewed = await _reviewRepository.GetBookingIdsReviewedByAsync(ids, userId, cancellationToken);
 
+            // Resolve both parties' display names so each side can show the other (customer's page
+            // shows the technician, technician's page shows the customer). Names are public.
+            var customerNames = await _customerRepository.GetNamesByIdsAsync(
+                source.Items.Select(b => b.CustomerId).Distinct().ToList());
+            var technicianNames = await _technicianRepository.GetNamesByIdsAsync(
+                source.Items.Select(b => b.TechnicianId).Distinct().ToList());
+
             return new PagedResult<MyBookingSummaryDto>(
                 source.Items.Select(b => new MyBookingSummaryDto
                 {
@@ -80,6 +87,9 @@ namespace Neighborhood.Services.Application.Bookings.Queries.GetMyBookingsQuery
                     ClientConfirmed = b.ClientConfirmed,
                     CreatedAt = b.CreatedAt,
                     TechnicianId = b.TechnicianId,
+                    TechnicianName = technicianNames.GetValueOrDefault(b.TechnicianId, string.Empty),
+                    CustomerId = b.CustomerId,
+                    CustomerName = customerNames.GetValueOrDefault(b.CustomerId, string.Empty),
                     ProblemTypeId = b.ProblemTypeId,
                     Latitude = b.Location?.Y ?? 0,
                     Longitude = b.Location?.X ?? 0,

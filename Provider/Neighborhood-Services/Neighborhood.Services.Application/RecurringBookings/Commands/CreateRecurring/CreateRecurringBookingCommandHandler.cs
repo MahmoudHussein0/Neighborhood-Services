@@ -46,6 +46,9 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CreateRec
 
             if (request.DurationMinutes <= 0)
                 throw new ValidationException("Duration must be greater than zero.");
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+                throw new ValidationException("Description is required.");
             // validate if the tech exists && is active ?
              var technician = await _technicianRepository.GetByIdAsync(request.TechnicianId)
                  ?? throw new NotFoundException("Technician", request.TechnicianId);
@@ -62,6 +65,8 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CreateRec
                 CustomerId = customer.Id,
                 TechnicianId = request.TechnicianId,
                 ProblemTypeId = request.ProblemTypeId,
+                Description = request.Description.Trim(),
+                ImageUrl = request.ImageUrl,
                 Address = request.Address,
                 Location = new Point(request.Longitude, request.Latitude) { SRID = 4326 },
                 Pattern = request.Pattern,

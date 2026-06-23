@@ -1,4 +1,5 @@
-﻿using Neighborhood.Services.Application.Shared;
+﻿using Neighborhood.Services.Application.Offers.DTOs;
+using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Domain.Offers;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Neighborhood.Services.Application.Offers.Interfaces
     {
         Task<IEnumerable<Offer>> GetOffersByServiceRequestAsync(int serviceRequestId);
         Task<IEnumerable<Offer>> GetTechnicianOffersAsync(int technicianId);
-        Task<PagedResult<Offer>> GetTechnicianOffersPagedAsync(int technicianId, OfferStatus? status, int page, int pageSize);
+        Task<PagedResult<OfferDto>> GetTechnicianOffersPagedAsync(int technicianId, OfferStatus? status, int page, int pageSize);
         Task<Offer?> GetAcceptedOfferAsync(int serviceRequestId);
         Task<Offer?> GetOfferWithDetailsAsync(int offerId);
     }

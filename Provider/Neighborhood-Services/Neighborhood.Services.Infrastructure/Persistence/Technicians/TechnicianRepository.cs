@@ -192,5 +192,18 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
 
             profile.ReviewCount = profile.Reviews.Count;
         }
+
+        public async Task<Dictionary<int, string>> GetNamesByIdsAsync(IReadOnlyCollection<int> technicianIds)
+        {
+            if (technicianIds is null || technicianIds.Count == 0)
+                return new Dictionary<int, string>();
+
+            return await (
+                from technician in _context.Technicians.AsNoTracking()
+                where technicianIds.Contains(technician.Id)
+                join user in _context.Users on technician.ApplicationUserId equals user.Id
+                select new { technician.Id, user.FullName }
+            ).ToDictionaryAsync(x => x.Id, x => x.FullName);
+        }
     }
 }

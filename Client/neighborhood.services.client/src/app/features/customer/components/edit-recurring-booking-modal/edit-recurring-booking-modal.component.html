@@ -95,12 +95,40 @@
         }
       </div>
 
+      <!-- Description (required) — what the job is; copied onto each generated booking -->
+      <div class="col-12">
+        <label class="form-label">{{ 'recurring.form.description' | translate }}</label>
+        <textarea class="form-control" rows="3" formControlName="description"
+                  [placeholder]="'recurring.form.descriptionPlaceholder' | translate"></textarea>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <div class="text-danger small mt-1">{{ 'recurring.form.errDescription' | translate }}</div>
+        }
+      </div>
+
+      <!-- Reference photo (optional) -->
+      <div class="col-12">
+        <label class="form-label d-block">{{ 'recurring.form.photo' | translate }} <span class="text-muted">{{ 'common.optional' | translate }}</span></label>
+        @if (imageUrl(); as url) {
+          <div class="d-flex align-items-center gap-2">
+            <img [src]="url" alt="" class="rounded border" style="width:72px;height:72px;object-fit:cover;" />
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeImage()">
+              <i class="bi bi-trash"></i> {{ 'recurring.form.removePhoto' | translate }}
+            </button>
+          </div>
+        } @else {
+          <input type="file" accept="image/*" class="form-control" (change)="onFileSelected($event)" [disabled]="uploading()" />
+          @if (uploading()) {
+            <div class="text-muted small mt-1"><span class="spinner-border spinner-border-sm me-1"></span>{{ 'recurring.form.uploading' | translate }}</div>
+          }
+        }
+      </div>
+
     </div>
   </div>
 
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.cancel' | translate }}</button>
-    <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+    <button type="submit" class="btn btn-primary" [disabled]="submitting() || uploading()">
       {{ (submitting() ? 'common.creating' : 'recurring.save') | translate }}
     </button>
   </div>

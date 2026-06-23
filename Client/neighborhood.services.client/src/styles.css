@@ -427,3 +427,9 @@ app-staff-sidebar {
     animation: none;
   }
 }
+/* Floating image lightbox (LightboxService) — transparent panel so the image appears to float. */
+.ns-lightbox-window .modal-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}

@@ -1,3 +1,10 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Shared "ns-card" list-card design system.
+   Mirrors the customer Bookings page so the technician Jobs / Offers / Recurring
+   pages share one visual language. Referenced via styleUrls from each component
+   (Angular scopes it per component, so the class names stay collision-free).
+   ─────────────────────────────────────────────────────────────────────────── */
+
 .icon-box {
   width: 3rem;
   height: 3rem;
@@ -26,7 +33,7 @@
   box-shadow: 0 0.75rem 1.75rem rgba(15, 23, 42, 0.1) !important;
 }
 
-/* Left status accent bar */
+/* Left status accent bar (logical side → flips for RTL) */
 .ns-card::before {
   content: '';
   position: absolute;
@@ -37,12 +44,23 @@
   background-color: #adb5bd;
 }
 
+/* Booking statuses */
 .ns-card[data-status='Confirmed']::before { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
 .ns-card[data-status='Completed']::before { background: linear-gradient(180deg, #22c55e, #15803d); }
 .ns-card[data-status='Pending']::before   { background: linear-gradient(180deg, #fbbf24, #d97706); }
 .ns-card[data-status='Quoted']::before    { background: linear-gradient(180deg, #38bdf8, #0284c7); }
 .ns-card[data-status='Cancelled']::before { background: linear-gradient(180deg, #f87171, #dc2626); }
 .ns-card[data-status='Disputed']::before  { background: linear-gradient(180deg, #94a3b8, #475569); }
+/* Offer statuses */
+.ns-card[data-status='Accepted']::before  { background: linear-gradient(180deg, #22c55e, #15803d); }
+.ns-card[data-status='Rejected']::before  { background: linear-gradient(180deg, #f87171, #dc2626); }
+.ns-card[data-status='Expired']::before   { background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
+.ns-card[data-status='Withdrawn']::before { background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
+/* Recurring statuses */
+.ns-card[data-status='Active']::before                  { background: linear-gradient(180deg, #22c55e, #15803d); }
+.ns-card[data-status='Paused']::before                  { background: linear-gradient(180deg, #fbbf24, #d97706); }
+.ns-card[data-status='PendingApproval']::before         { background: linear-gradient(180deg, #94a3b8, #475569); }
+.ns-card[data-status='PendingCustomerApproval']::before { background: linear-gradient(180deg, #38bdf8, #0284c7); }
 
 .ns-card-title {
   font-size: 1.05rem;
@@ -59,26 +77,33 @@
 /* Meta row spacing helpers */
 .gap-x-3 { column-gap: 1rem; }
 .gap-y-1 { row-gap: 0.25rem; }
-
 .min-w-0 { min-width: 0; }
 
-/* Divider above the footer */
-.ns-card-footer {
-  border-top: 1px solid #f0f1f3;
-}
-
-/* Inline links in the meta row (e.g. view technician) */
+/* Customer-profile link (and similar inline links) */
 .ns-link {
   font-weight: 600;
   color: #1d4ed8;
 }
 .ns-link:hover { color: #1e40af; text-decoration: underline; }
 
+/* Divider above the footer */
+.ns-card-footer { border-top: 1px solid #f0f1f3; }
+
 .badge.rounded-pill {
   padding: 0.45em 0.85em;
   font-weight: 600;
   letter-spacing: 0.01em;
 }
+
+/* Soft inline call-out (awaiting customer / needs price / agreed price) */
+.ns-note {
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+}
+.ns-note-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+.ns-note-muted   { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; }
+.ns-note-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
 
 /* ── Buttons: pill-shaped, elevated, with smooth hover ───────────────────── */
 .ns-card .btn {
@@ -106,7 +131,6 @@
   color: #475569;
   background: #fff;
 }
-
 .ns-card .btn-outline-secondary:hover {
   background: #f1f5f9;
   border-color: #cbd5e1;
@@ -119,99 +143,13 @@
   border: none;
   box-shadow: 0 3px 10px rgba(22, 163, 74, 0.28);
 }
-
 .ns-card .btn-success:hover {
   box-shadow: 0 5px 16px rgba(22, 163, 74, 0.4);
   transform: translateY(-1px);
 }
 
-/* ── Progress timeline ───────────────────────────────────────────────────── */
-.ns-progress {
-  display: flex;
-  align-items: flex-start;
-  padding: 0.25rem 0 0.5rem;
-}
-
-.ns-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.ns-step-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #cbd5e1;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.ns-step.done .ns-step-dot  { background: #22c55e; }
-.ns-step.active .ns-step-dot {
-  background: #1d4ed8;
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.18);
-}
-
-.ns-step-label {
-  font-size: 10px;
-  color: #94a3b8;
-  white-space: nowrap;
-}
-
-.ns-step.done .ns-step-label   { color: #64748b; }
-.ns-step.active .ns-step-label { color: #1d4ed8; font-weight: 600; }
-
-.ns-step-line {
-  flex: 1;
-  height: 2px;
-  background: #e2e8f0;
-  margin-top: 3px;
-  transition: background 0.2s;
-}
-
-.ns-step-line.done { background: #22c55e; }
-
-/* ── Quote callout ───────────────────────────────────────────────────────── */
-.ns-quote-callout {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-}
-
-.ns-quote-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #1d4ed8;
-}
-
-.ns-promo-input {
-  font-size: 0.8125rem;
-  padding: 0.3rem 0.65rem;
-  width: 140px;
-  border-radius: 999px;
-  border: 1px solid #bfdbfe;
-  background: #fff;
-  color: #1e293b;
-  outline: none;
-}
-
-.ns-promo-input:focus {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.12);
-}
-
-/* Dropdown menu polish */
-.ns-card .dropdown-menu {
-  border: 1px solid #eef1f6;
-  border-radius: 0.85rem;
-  padding: 0.35rem;
-}
-
-.ns-card .dropdown-item {
-  border-radius: 0.55rem;
-  padding: 0.5rem 0.75rem;
-  font-weight: 500;
+.ns-card .btn-outline-primary:hover,
+.ns-card .btn-outline-danger:hover,
+.ns-card .btn-outline-success:hover {
+  transform: translateY(-1px);
 }

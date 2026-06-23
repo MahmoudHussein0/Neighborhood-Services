@@ -107,5 +107,18 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Customers
 
             return profile;
         }
+
+        public async Task<Dictionary<int, string>> GetNamesByIdsAsync(IReadOnlyCollection<int> customerIds)
+        {
+            if (customerIds is null || customerIds.Count == 0)
+                return new Dictionary<int, string>();
+
+            return await (
+                from customer in _context.Customers.AsNoTracking()
+                where customerIds.Contains(customer.Id)
+                join user in _context.Users on customer.ApplicationUserId equals user.Id
+                select new { customer.Id, user.FullName }
+            ).ToDictionaryAsync(x => x.Id, x => x.FullName);
+        }
     }
 }

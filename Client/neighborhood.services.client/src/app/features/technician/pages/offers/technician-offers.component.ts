@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
@@ -17,8 +18,9 @@ interface Tab {
 
 @Component({
   selector: 'app-technician-offers',
-  imports: [CurrencyPipe, DatePipe, TranslatePipe],
+  imports: [CurrencyPipe, DatePipe, TranslatePipe, RouterLink],
   templateUrl: './technician-offers.component.html',
+  styleUrl: '../../../../shared/styles/ns-card.css',
 })
 export class TechnicianOffersComponent implements OnInit {
   private readonly service = inject(OfferService);

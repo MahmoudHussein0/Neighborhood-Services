@@ -47,15 +47,21 @@
         <div class="ns-card card border-0 shadow-sm rounded-4" [attr.data-status]="rb.status">
           <div class="card-body p-4">
 
-            <!-- Header: icon + schedule/meta · status badge -->
+            <!-- Header: photo/icon + job description/meta · status badge -->
             <div class="d-flex align-items-start gap-3">
-              <div class="icon-box"><i class="bi bi-arrow-repeat"></i></div>
+              @if (rb.imageUrl) {
+                <img [src]="rb.imageUrl" alt="" (click)="lightbox.open(rb.imageUrl)"
+                     class="rounded-3 border flex-shrink-0" style="width:3rem;height:3rem;object-fit:cover;cursor:zoom-in;" />
+              } @else {
+                <div class="icon-box"><i class="bi bi-arrow-repeat"></i></div>
+              }
               <div class="flex-grow-1 min-w-0">
                 <div class="d-flex align-items-start justify-content-between gap-2">
-                  <h3 class="ns-card-title fw-semibold mb-1">{{ scheduleText(rb) }}</h3>
+                  <h3 class="ns-card-title fw-semibold mb-1">{{ rb.description || scheduleText(rb) }}</h3>
                   <span class="badge rounded-pill flex-shrink-0" [class]="badgeClass(rb.status)">{{ ('recurring.status.' + rb.status) | translate }}</span>
                 </div>
                 <div class="ns-meta text-muted small d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+                  <span><i class="bi bi-arrow-repeat me-1"></i>{{ scheduleText(rb) }}</span>
                   <span><i class="bi bi-geo-alt me-1"></i>{{ rb.address }}</span>
                   <span><i class="bi bi-clock me-1"></i>{{ rb.durationMinutes }} {{ 'recurring.min' | translate }}</span>
                   @if (nextVisit(rb); as nv) {

@@ -11,7 +11,15 @@
     </span>
   </div>
 
+  @if (booking.imageUrl) {
+    <img [src]="booking.imageUrl" alt="" (click)="lightbox.open(booking.imageUrl)"
+         class="img-fluid rounded-3 border mb-3" style="max-height:220px;cursor:zoom-in;" />
+  }
+
   <dl class="row mb-0 small">
+    <dt class="col-5 text-muted">{{ 'recurring.form.description' | translate }}</dt>
+    <dd class="col-7">{{ booking.description || '—' }}</dd>
+
     <dt class="col-5 text-muted">{{ 'recurring.form.repeat' | translate }}</dt>
     <dd class="col-7">{{ ('recurring.form.pattern.' + booking.pattern) | translate }}</dd>
 

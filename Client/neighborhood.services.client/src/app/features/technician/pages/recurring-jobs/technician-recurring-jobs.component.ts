@@ -12,6 +12,8 @@ import { RecurringBooking, RecurringBookingStatus } from '../../../customer/mode
 import { SetPriceModalComponent } from '../../components/set-price-modal/set-price-modal.component';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
+import { LightboxService } from '../../../../shared/services/lightbox.service';
+import { RecurringBookingDetailsModalComponent } from '../../../customer/components/recurring-booking-details-modal/recurring-booking-details-modal.component';
 
 interface Tab {
   value: 'All' | RecurringBookingStatus;
@@ -21,6 +23,7 @@ interface Tab {
   selector: 'app-technician-recurring-jobs',
   imports: [CurrencyPipe, TranslatePipe],
   templateUrl: './technician-recurring-jobs.component.html',
+  styleUrl: '../../../../shared/styles/ns-card.css',
 })
 export class TechnicianRecurringJobsComponent implements OnInit {
   private readonly service = inject(RecurringJobService);
@@ -29,6 +32,7 @@ export class TechnicianRecurringJobsComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly confirm = inject(ConfirmService);
   private readonly notificationService = inject(NotificationServiceService);
+  protected readonly lightbox = inject(LightboxService);
 
   readonly tabs: Tab[] = [
     { value: 'All' },
@@ -103,11 +107,18 @@ export class TechnicianRecurringJobsComponent implements OnInit {
 
   // --- actions ---
 
+  details(rb: RecurringBooking) {
+    const ref = this.modal.open(RecurringBookingDetailsModalComponent, { size: 'lg', scrollable: true });
+    ref.componentInstance.booking = rb;
+  }
+
   setPrice(rb: RecurringBooking) {
     const ref = this.modal.open(SetPriceModalComponent);
     ref.componentInstance.address = rb.address;
     ref.componentInstance.scheduleText = this.scheduleText(rb);
     ref.componentInstance.durationMinutes = rb.durationMinutes;
+    ref.componentInstance.description = rb.description;
+    ref.componentInstance.imageUrl = rb.imageUrl ?? null;
     ref.result.then(
       (price: number) =>
         this.run(rb.id, this.service.setPrice(rb.id, price), this.translate.instant('technician.recurring.priceSent')),

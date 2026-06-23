@@ -22,7 +22,12 @@ namespace Neighborhood.Services.Application.Bookings.DTOs
         // Used to hide the "Confirm completed" action after it's done.
         public bool ClientConfirmed { get; set; }
         public DateTime CreatedAt { get; set; }
+        // Both parties' ids + display names. Each side of /bookings/mine shows the OTHER party:
+        // the technician's Jobs page shows the customer, the customer's Bookings page the technician.
         public int TechnicianId { get; set; }
+        public string TechnicianName { get; set; } = string.Empty;
+        public int CustomerId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
         public int ProblemTypeId { get; set; }
         // From Location (Point): Y = latitude, X = longitude. Lets the UI open the spot in Maps.
         public double Latitude { get; set; }

@@ -63,6 +63,11 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.UpdateRec
             if (request.DurationMinutes <= 0)
                 throw new ValidationException("Duration must be greater than zero.");
 
+            if (string.IsNullOrWhiteSpace(request.Description))
+                throw new ValidationException("Description is required.");
+
+            recurringBooking.Description = request.Description.Trim();
+            recurringBooking.ImageUrl = request.ImageUrl;
             recurringBooking.Address = request.Address;
             recurringBooking.Pattern = request.Pattern;
             recurringBooking.DayOfWeek = request.DayOfWeek;

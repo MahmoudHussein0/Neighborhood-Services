@@ -16,6 +16,7 @@ import { RecurringBookingDetailsModalComponent } from '../../components/recurrin
 import { nextOccurrence } from '../../utils/recurrence.util';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
+import { LightboxService } from '../../../../shared/services/lightbox.service';
 
 interface Tab {
   value: 'All' | RecurringBookingStatus;
@@ -36,6 +37,7 @@ export class RecurringBookingsComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly confirm = inject(ConfirmService);
   private readonly notificationService = inject(NotificationServiceService);
+  protected readonly lightbox = inject(LightboxService);
 
   readonly tabs: Tab[] = [
     { value: 'All', label: 'All' },

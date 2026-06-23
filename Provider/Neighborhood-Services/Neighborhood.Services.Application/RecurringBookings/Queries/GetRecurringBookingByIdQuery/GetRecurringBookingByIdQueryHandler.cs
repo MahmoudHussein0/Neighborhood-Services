@@ -27,6 +27,8 @@ namespace Neighborhood.Services.Application.RecurringBookings.Queries.GetRecurri
         internal static RecurringBookingDto MapToDto(RecurringBooking rb) => new()
         {
             Id = rb.Id,
+            Description = rb.Description,
+            ImageUrl = rb.ImageUrl,
             Address = rb.Address,
             Pattern = rb.Pattern,
             DayOfWeek = rb.DayOfWeek,

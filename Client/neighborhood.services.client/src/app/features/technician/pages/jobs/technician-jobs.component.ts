@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -13,6 +14,7 @@ import { QuoteJobModalComponent } from '../../components/quote-job-modal/quote-j
 import { CompleteJobModalComponent } from '../../components/complete-job-modal/complete-job-modal.component';
 import { RaiseDisputeModalComponent } from '../../../customer/components/raise-dispute-modal/raise-dispute-modal.component';
 import { LeaveReviewModalComponent } from '../../../customer/components/leave-review-modal/leave-review-modal.component';
+import { BookingDetailsModalComponent } from '../../../customer/components/booking-details-modal/booking-details-modal.component';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
 import { NotificationServiceService } from '../../../../shared/services/notification-service.service';
 
@@ -22,8 +24,9 @@ interface Tab {
 
 @Component({
   selector: 'app-technician-jobs',
-  imports: [CurrencyPipe, DatePipe, TranslatePipe],
+  imports: [CurrencyPipe, DatePipe, TranslatePipe, RouterLink],
   templateUrl: './technician-jobs.component.html',
+  styleUrl: '../../../../shared/styles/ns-card.css',
 })
 export class TechnicianJobsComponent implements OnInit {
   private readonly service = inject(JobService);
@@ -116,6 +119,11 @@ export class TechnicianJobsComponent implements OnInit {
   }
 
   // --- actions ---
+
+  details(job: MyBookingSummary) {
+    const ref = this.modal.open(BookingDetailsModalComponent, { size: 'lg', scrollable: true });
+    ref.componentInstance.bookingId = job.id;
+  }
 
   // Pending: first quote.  Quoted: tech can edit the existing quote (same modal, prefilled).
   quote(job: MyBookingSummary) {

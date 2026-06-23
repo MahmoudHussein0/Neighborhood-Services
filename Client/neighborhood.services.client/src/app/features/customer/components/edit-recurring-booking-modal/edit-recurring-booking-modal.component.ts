@@ -1,9 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { RecurringBookingService } from '../../services/recurring-booking.service';
+import { UploadService } from '../../../../shared/services/upload.service';
 import { RecurringBooking, RecurringPattern, UpdateRecurringBooking } from '../../models/recurring-booking.model';
 
 @Component({
@@ -15,11 +17,18 @@ export class EditRecurringBookingModalComponent {
   private readonly fb = inject(FormBuilder);
   private readonly activeModal = inject(NgbActiveModal);
   private readonly service = inject(RecurringBookingService);
+  private readonly upload = inject(UploadService);
+  private readonly toastr = inject(ToastrService);
+  private readonly translate = inject(TranslateService);
 
   readonly daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   readonly patterns: RecurringPattern[] = ['Daily', 'Weekly', 'Monthly'];
 
   submitting = signal(false);
+
+  // Customer-supplied reference photo (Cloudinary URL) — optional.
+  imageUrl = signal<string | null>(null);
+  uploading = signal(false);
 
   // Earliest selectable date (local "today") for the min attribute — "yyyy-MM-dd".
   readonly minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -35,6 +44,7 @@ export class EditRecurringBookingModalComponent {
     startDate: ['', Validators.required],
     endDate: [''],
     address: ['', Validators.required],
+    description: ['', [Validators.required, Validators.maxLength(500)]],
   });
 
   private bookingId = 0;
@@ -51,8 +61,37 @@ export class EditRecurringBookingModalComponent {
       startDate: rb.startDate,
       endDate: rb.endDate ?? '',
       address: rb.address,
+      description: rb.description ?? '',
     });
+    this.imageUrl.set(rb.imageUrl ?? null);
     this.applyPatternValidators(rb.pattern);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.toastr.error(this.translate.instant('recurring.form.errImageType'));
+      input.value = '';
+      return;
+    }
+    this.uploading.set(true);
+    this.upload.upload(file).subscribe({
+      next: (url) => {
+        this.imageUrl.set(url);
+        this.uploading.set(false);
+      },
+      error: () => {
+        this.uploading.set(false);
+        this.toastr.error(this.translate.instant('recurring.form.errImageUpload'));
+      },
+    });
+    input.value = '';
+  }
+
+  removeImage() {
+    this.imageUrl.set(null);
   }
 
   onPatternChange() {
@@ -78,6 +117,8 @@ export class EditRecurringBookingModalComponent {
 
     const v = this.form.getRawValue();
     const payload: UpdateRecurringBooking = {
+      description: v.description!.trim(),
+      imageUrl: this.imageUrl(),
       address: v.address!,
       pattern: v.pattern!,
       dayOfWeek: v.pattern === 'Weekly' ? v.dayOfWeek! : null,

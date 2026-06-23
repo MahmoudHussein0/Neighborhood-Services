@@ -5,6 +5,9 @@ namespace Neighborhood.Services.Application.RecurringBookings.DTOs
     public class RecurringBookingDto
     {
         public int Id { get; set; }
+        // Customer-supplied job description + optional reference photo (shown to the technician).
+        public string Description { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public string Address { get; set; } = string.Empty;
         public RecurringPattern Pattern { get; set; }
         public DayOfWeek? DayOfWeek { get; set; }

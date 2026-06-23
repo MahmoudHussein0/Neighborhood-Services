@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { RecurringBookingService } from '../../services/recurring-booking.service';
 import { CatalogService } from '../../../../shared/services/catalog.service';
+import { UploadService } from '../../../../shared/services/upload.service';
 import { Category, ProblemType } from '../../../../core/models/catalog.model';
 import { TechnicianCardCategory } from '../../../../core/models/technician-card.model';
 import { CreateRecurringBooking, RecurringPattern } from '../../models/recurring-booking.model';
@@ -20,6 +21,7 @@ export class CreateRecurringBookingModalComponent {
   private readonly activeModal = inject(NgbActiveModal);
   private readonly service = inject(RecurringBookingService);
   private readonly catalog = inject(CatalogService);
+  private readonly upload = inject(UploadService);
   private readonly toastr = inject(ToastrService);
   private readonly translate = inject(TranslateService);
 
@@ -34,6 +36,10 @@ export class CreateRecurringBookingModalComponent {
   lng = signal<number | null>(null);
   locating = signal(false);
 
+  // Customer-supplied reference photo (Cloudinary URL) — optional.
+  imageUrl = signal<string | null>(null);
+  uploading = signal(false);
+
   // Set once the user tries to submit, so the (required) location error can show inline.
   submitAttempted = signal(false);
 
@@ -46,6 +52,7 @@ export class CreateRecurringBookingModalComponent {
     technicianId: this.fb.control<number | null>(null, Validators.required),
     categoryId: this.fb.control<number | null>(null, Validators.required),
     problemTypeId: this.fb.control<number | null>(null, Validators.required),
+    description: ['', [Validators.required, Validators.maxLength(500)]],
     address: ['', Validators.required],
     pattern: this.fb.control<RecurringPattern | null>(null, Validators.required),
     dayOfWeek: this.fb.control<string | null>(null),
@@ -120,6 +127,33 @@ export class CreateRecurringBookingModalComponent {
     );
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.toastr.error(this.translate.instant('recurring.form.errImageType'));
+      input.value = '';
+      return;
+    }
+    this.uploading.set(true);
+    this.upload.upload(file).subscribe({
+      next: (url) => {
+        this.imageUrl.set(url);
+        this.uploading.set(false);
+      },
+      error: () => {
+        this.uploading.set(false);
+        this.toastr.error(this.translate.instant('recurring.form.errImageUpload'));
+      },
+    });
+    input.value = '';
+  }
+
+  removeImage() {
+    this.imageUrl.set(null);
+  }
+
   submit() {
     this.submitAttempted.set(true);
     if (this.form.invalid) {
@@ -135,6 +169,8 @@ export class CreateRecurringBookingModalComponent {
     const payload: CreateRecurringBooking = {
       technicianId: v.technicianId!,
       problemTypeId: v.problemTypeId!,
+      description: v.description!.trim(),
+      imageUrl: this.imageUrl(),
       address: v.address!,
       latitude: this.lat()!,
       longitude: this.lng()!,

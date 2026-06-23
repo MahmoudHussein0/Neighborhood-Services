@@ -12,7 +12,11 @@ namespace Neighborhood.Services.Domain.RecurringBookings
 {
     public class RecurringBooking :BaseEntity<int>
     {
-        //------------------------ Self Prop 
+        //------------------------ Self Prop
+        // What the job actually is + an optional reference photo, supplied by the customer at setup.
+        // Copied onto every Booking the generator creates so the technician can see/price the work.
+        public string Description { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public string Address { get; set; } = string.Empty;
         public Point Location { get; set; } = null!;
         public RecurringPattern Pattern { get; set; }

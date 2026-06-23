@@ -11,6 +11,9 @@ export type RecurringBookingStatus =
 export interface CreateRecurringBooking {
   technicianId: number;
   problemTypeId: number;
+  // What the job is + an optional reference photo — copied onto each generated booking.
+  description: string;
+  imageUrl?: string | null;
   address: string;
   latitude: number;
   longitude: number;
@@ -26,6 +29,8 @@ export interface CreateRecurringBooking {
 // Body for PUT /api/recurringbookings/{id} — schedule + address only
 // (technician, problem type and location are NOT editable). Editing resets to PendingApproval.
 export interface UpdateRecurringBooking {
+  description: string;
+  imageUrl?: string | null;
   address: string;
   pattern: RecurringPattern;
   dayOfWeek?: string | null;   // required when pattern = Weekly
@@ -39,6 +44,8 @@ export interface UpdateRecurringBooking {
 // Mirrors RecurringBookingDto (GET /api/recurringbookings/mine)
 export interface RecurringBooking {
   id: number;
+  description: string;
+  imageUrl?: string | null;
   address: string;
   pattern: RecurringPattern;
   dayOfWeek?: string | null;   // e.g. "Monday" (System.DayOfWeek serialized as string)

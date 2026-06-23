@@ -88,7 +88,11 @@ export interface MyBookingSummary {
   status: BookingStatus;
   clientConfirmed: boolean;
   createdAt: string;
+  // Both parties — each side shows the other (customer page → technician, jobs page → customer).
   technicianId: number;
+  technicianName: string;
+  customerId: number;
+  customerName: string;
   problemTypeId: number;
   latitude: number;
   longitude: number;

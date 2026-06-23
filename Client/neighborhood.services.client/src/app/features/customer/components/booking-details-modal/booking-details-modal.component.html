@@ -55,11 +55,11 @@
       <h6 class="mb-2">{{ 'bookings.detailsModal.photos' | translate }}</h6>
       <div class="d-flex flex-wrap gap-3">
         @for (img of images(); track img.id) {
-          <a [href]="img.imageUrl" target="_blank" rel="noopener" class="text-center text-decoration-none">
-            <img [src]="img.imageUrl" [alt]="img.type" class="rounded d-block"
-                 style="width: 100px; height: 100px; object-fit: cover;" />
+          <div class="text-center">
+            <img [src]="img.imageUrl" [alt]="img.type" (click)="lightbox.open(img.imageUrl)" class="rounded d-block"
+                 style="width: 100px; height: 100px; object-fit: cover; cursor: zoom-in;" />
             <span class="small text-muted">{{ ('bookings.detailsModal.photoType.' + img.type) | translate }}</span>
-          </a>
+          </div>
         }
       </div>
     }

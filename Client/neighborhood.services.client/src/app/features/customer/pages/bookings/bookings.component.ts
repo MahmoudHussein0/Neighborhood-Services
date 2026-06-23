@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -23,7 +24,7 @@ type StatusTab = 'All' | BookingStatus;
 
 @Component({
   selector: 'app-bookings',
-  imports: [DatePipe, CurrencyPipe, FormsModule, NgbDropdownModule, TranslatePipe],
+  imports: [DatePipe, CurrencyPipe, FormsModule, NgbDropdownModule, TranslatePipe, RouterLink],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.css',
 })

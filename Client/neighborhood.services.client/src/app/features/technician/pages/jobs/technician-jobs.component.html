@@ -50,61 +50,70 @@
 
     <div class="d-flex flex-column gap-3">
       @for (job of res.items; track job.id) {
-        <div class="card border-0 shadow-sm rounded-3">
-          <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
-              <div>
-                <div class="fw-semibold">{{ job.description }}</div>
-                <div class="text-muted small">
-                  {{ job.address }} · {{ job.scheduledAt | date: 'medium' }}
-                  @if (mapsUrl(job.latitude, job.longitude); as url) {
-                    <a [href]="url" target="_blank" rel="noopener" class="ms-1 text-decoration-none"><i class="bi bi-geo-alt-fill me-1"></i>{{ 'common.openInMaps' | translate }}</a>
-                  }
+        <div class="ns-card card border-0 shadow-sm rounded-4" [attr.data-status]="job.status">
+          <div class="card-body p-4">
+
+            <!-- Header: icon + title/meta · status badge -->
+            <div class="d-flex align-items-start gap-3">
+              <div class="icon-box"><i class="bi bi-tools"></i></div>
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <h3 class="ns-card-title fw-semibold mb-1">{{ job.description }}</h3>
+                  <span class="badge rounded-pill flex-shrink-0" [class]="badgeClass(job.status)">{{ ('bookings.status.' + job.status) | translate }}</span>
                 </div>
-                <div class="text-muted small mt-1">
-                  <span class="badge text-bg-light border me-1">{{ ('bookings.bookingType.' + job.bookingType) | translate }}</span>
-                  @if (job.finalPrice > 0) {
-                    {{ 'technician.jobs.yourPrice' | translate }}: {{ job.finalPrice | currency: 'EGP ' }}
-                    @if (job.durationMinutes) {
-                      · {{ job.durationMinutes }} {{ 'technician.jobs.min' | translate }}
-                    }
-                  } @else {
-                    {{ 'technician.jobs.estimated' | translate }}: {{ job.estimatedPrice | currency: 'EGP ' }}
+                <div class="text-muted small d-flex align-items-center flex-wrap gap-x-3 gap-y-1">
+                  <span><i class="bi bi-geo-alt me-1"></i>{{ job.address }}</span>
+                  <span><i class="bi bi-calendar-event me-1"></i>{{ job.scheduledAt | date: 'medium' }}</span>
+                  <span class="badge text-bg-light border">{{ ('bookings.bookingType.' + job.bookingType) | translate }}</span>
+                  @if (mapsUrl(job.latitude, job.longitude); as url) {
+                    <a [href]="url" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-map me-1"></i>{{ 'common.openInMaps' | translate }}</a>
+                  }
+                  @if (job.customerId) {
+                    <a [routerLink]="['/technician/customer', job.customerId]" class="ns-link text-decoration-none"><i class="bi bi-person-circle me-1"></i>{{ job.customerName || ('technician.browse.viewCustomer' | translate) }}</a>
                   }
                 </div>
               </div>
-              <span class="badge rounded-pill" [class]="badgeClass(job.status)">{{ ('bookings.status.' + job.status) | translate }}</span>
             </div>
 
-            <!-- Status-specific call-outs -->
+            <!-- Status-specific call-out -->
             @if (job.status === 'Quoted') {
-              <div class="alert alert-info py-2 px-3 mt-3 mb-0 small">
-                <i class="bi bi-hourglass-split me-1"></i>{{ 'technician.jobs.awaitingCustomer' | translate }}
-              </div>
+              <div class="ns-note ns-note-info mt-3"><i class="bi bi-hourglass-split me-1"></i>{{ 'technician.jobs.awaitingCustomer' | translate }}</div>
             }
 
-            <!-- Actions -->
-            <div class="d-flex justify-content-end gap-2 mt-3">
-              @if (job.status === 'Pending') {
-                <button class="btn btn-sm btn-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.setPrice' | translate }}</button>
-              }
-              @if (job.status === 'Quoted') {
-                <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.editQuote' | translate }}</button>
-              }
-              @if (job.status === 'Confirmed') {
-                <button class="btn btn-sm btn-outline-success" [disabled]="busyId() === job.id" (click)="complete(job)">{{ 'technician.jobs.complete' | translate }}</button>
-              }
-              @if (canDispute(job.status)) {
-                <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === job.id" (click)="raiseDispute(job)">{{ 'dispute.raise' | translate }}</button>
-              }
-              @if (canReview(job)) {
-                <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="leaveReview(job)">
-                  <i class="bi bi-star me-1"></i>{{ 'review.leave' | translate }}
-                </button>
-              }
-              @if (job.status === 'Completed' && job.clientConfirmed && job.hasReview) {
-                <span class="badge text-bg-light border align-self-center"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.done' | translate }}</span>
-              }
+            <!-- Footer: price · actions -->
+            <div class="ns-card-footer d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 pt-3">
+              <div class="d-flex align-items-baseline gap-2 flex-wrap">
+                @if (job.finalPrice > 0) {
+                  <span class="ns-price fw-bold">{{ job.finalPrice | currency: 'EGP ' }}</span>
+                  @if (job.durationMinutes) {
+                    <span class="text-muted small">· {{ job.durationMinutes }} {{ 'technician.jobs.min' | translate }}</span>
+                  }
+                } @else {
+                  <span class="text-muted small">{{ 'technician.jobs.estimated' | translate }}: {{ job.estimatedPrice | currency: 'EGP ' }}</span>
+                }
+                @if (job.status === 'Completed' && job.clientConfirmed && job.hasReview) {
+                  <span class="badge text-bg-light border"><i class="bi bi-star-fill text-warning me-1"></i>{{ 'review.done' | translate }}</span>
+                }
+              </div>
+
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" (click)="details(job)">{{ 'bookings.details' | translate }}</button>
+                @if (job.status === 'Pending') {
+                  <button class="btn btn-sm btn-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.setPrice' | translate }}</button>
+                }
+                @if (job.status === 'Quoted') {
+                  <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="quote(job)">{{ 'technician.jobs.editQuote' | translate }}</button>
+                }
+                @if (job.status === 'Confirmed') {
+                  <button class="btn btn-sm btn-outline-success" [disabled]="busyId() === job.id" (click)="complete(job)">{{ 'technician.jobs.complete' | translate }}</button>
+                }
+                @if (canDispute(job.status)) {
+                  <button class="btn btn-sm btn-outline-danger" [disabled]="busyId() === job.id" (click)="raiseDispute(job)">{{ 'dispute.raise' | translate }}</button>
+                }
+                @if (canReview(job)) {
+                  <button class="btn btn-sm btn-outline-primary" [disabled]="busyId() === job.id" (click)="leaveReview(job)"><i class="bi bi-star me-1"></i>{{ 'review.leave' | translate }}</button>
+                }
+              </div>
             </div>
           </div>
         </div>

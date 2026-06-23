@@ -26,5 +26,8 @@ namespace Neighborhood.Services.Application.Technicians.Interfaces
 
         // Public profile (details + stats + approved reviews with reviewer name/photo) for a technician.
         Task<PublicProfileDto?> GetPublicProfileAsync(int technicianId);
+
+        // Maps technician ids -> display name (ApplicationUser.FullName). Used to label bookings lists.
+        Task<Dictionary<int, string>> GetNamesByIdsAsync(IReadOnlyCollection<int> technicianIds);
     }
 }

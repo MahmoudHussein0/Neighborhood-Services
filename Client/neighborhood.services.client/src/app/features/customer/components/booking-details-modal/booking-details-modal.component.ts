@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { BookingService } from '../../services/booking.service';
 import { BookingDetails, BookingImage } from '../../models/booking.model';
 import { googleMapsUrl } from '../../../../core/utils/maps.util';
+import { LightboxService } from '../../../../shared/services/lightbox.service';
 
 @Component({
   selector: 'app-booking-details-modal',
@@ -17,6 +18,7 @@ export class BookingDetailsModalComponent implements OnInit {
 
   private readonly activeModal = inject(NgbActiveModal);
   private readonly bookingService = inject(BookingService);
+  protected readonly lightbox = inject(LightboxService);
 
   loading = signal(true);
   details = signal<BookingDetails | null>(null);
