@@ -38,6 +38,13 @@ namespace Neighborhood.Services.Infrastructure.Services.ChatService
             await _hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", new {content=message, senderId = _current.UserId});
         }
 
+        public async Task SendGroupMessage(string groupName, MessageCreatedDto message)
+        {
+            await _hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", new { content = message.content, senderId = _current.UserId,hasImage=message.hasImage, messageId = message.id,imageUrl=message.imageUrl });
+
+        }
+
+
         public async Task SendGroupMessageDto(string groupName, MessageCreatedDto message)
         {
             await _hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", message);

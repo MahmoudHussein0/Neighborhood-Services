@@ -1,4 +1,4 @@
-import { LOCALE_ID } from '@angular/core';
+import { LOCALE_ID ,provideZoneChangeDetection } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeAr from '@angular/common/locales/ar';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -22,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor, langInterceptor])),
     provideAnimations(),
     provideToastr(),
+   provideHttpClient(),
     // Locale for DatePipe/CurrencyPipe, taken from the saved language (applies on load/refresh)
     { provide: LOCALE_ID, useFactory: () => localStorage.getItem('lang') ?? 'en' },
     provideTranslateService({

@@ -9,9 +9,111 @@
   <div class="container py-5">
 
     <div class="row">
+      <div class="col-md-6 col-lg-7 col-xl-8 order-sm-2 order-lg-1" >
+
+        <ul class="list-unstyled"  (scroll)="scrolled($event)" #scrollframe style="border:1px solid black" style="overflow-y: scroll;max-height:50vh">
+          
+          <div *ngFor="let mssg of AllMessagesForBooking(); " class="item" #item>
+
+  @if (mssg.senderId!=myId){
+                 <div class="d-flex flex-row justify-content-start mb-4 pt-1">
+  <div style="max-width: 65%;">
+
+ 
+    @if (mssg.content) {
+      <p class="small p-2 mb-1 text-white rounded-3 bg-info"
+         style="word-break: break-word; margin-bottom: 4px !important;">
+        {{ mssg.content }}
+      </p>
+    }
+
+   
+    @if (mssg.hasImage) {
+      <div class="rounded-3 overflow-hidden mb-1"
+           style="max-width: 220px; margin-left: auto;">
+        <img [src]="mssg.imageUrl"
+             alt="attachment"
+             class="img-fluid d-block"
+             style="border-radius: 12px; max-height: 200px; object-fit: cover; width: 100%;" />
+      </div>
+    }
+
+    <!-- Timestamp -->
+    <p class="small mb-0 text-muted d-flex justify-content-end"
+       style="font-size: 11px !important;">
+      {{ mssg.sentAt | date:'shortTime' }}
+    </p>
+
+  </div>
+</div>
+              }
+              @else{
+
+              <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+  <div style="max-width: 65%;">
+
+ 
+    @if (mssg.content) {
+      <p class="small p-2 mb-1 text-white rounded-3 bg-primary"
+         style="word-break: break-word; margin-bottom: 4px !important;">
+        {{ mssg.content }}
+      </p>
+    }
+
+   
+    @if (mssg.hasImage) {
+      <div class="rounded-3 overflow-hidden mb-1"
+           style="max-width: 220px; margin-left: auto;">
+        <img [src]="mssg.imageUrl"
+             alt="attachment"
+             class="img-fluid d-block"
+             style="border-radius: 12px; max-height: 200px; object-fit: cover; width: 100%;" />
+      </div>
+    }
+
+    <!-- Timestamp -->
+    <p class="small mb-0 text-muted d-flex justify-content-end"
+       style="font-size: 11px !important;">
+      {{ mssg.sentAt | date:'shortTime' }}
+    </p>
+
+  </div>
+</div>}
+
+  </div>
+          
+          
+
+        </ul>
+<div>
+          <li class="bg-white mb-3">
+            <div data-mdb-input-init class="form-outline">
+              <input class="form-control bg-body-tertiary" id="textAreaExample2" rows="4" 
+              placeholder="Write Your Message Here"
+              [(ngModel)]="MessageToBeSent.content" (keydown.enter)="sendMessage(MessageToBeSent)">
+              <!-- <label class="form-label" for="textAreaExample2">Message</label> -->
+                <label class="upload-box">
+                <input type="file" (change)="onFileSelected($event)" hidden />
+                <p>Click to upload or drag & drop</p>
+               </label>
+               @if (selectedFile(); as file) {
+     <div class="file-info">
+       Selected: {{ file.name }}
+     </div>
+   }
+            </div>
+          </li>
+          <button type="button" data-mdb-button-init data-mdb-ripple-init
+          (click)="sendMessage(MessageToBeSent)"
+            class="btn btn-info btn-rounded float-end">Send</button>
+            </div>
+      </div>
+
+      <!-- End of CurrentConversation -->
+
       <!-- allConversations -->
 
-      <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0" style="overflow-y: scroll;height:80vh" >
+      <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0 order-sm-1 order-lg-0" style="overflow-y: scroll;height:80vh" >
 
         <div class="card">
           <div class="card-body" >
@@ -54,60 +156,7 @@
 
       <!-- CurrentConversation -->
 
-      <div class="col-md-6 col-lg-7 col-xl-8" >
-
-        <ul class="list-unstyled"  (scroll)="scrolled($event)" #scrollframe style="border:1px solid black" style="overflow-y: scroll;max-height:50vh">
-          
-          <div *ngFor="let mssg of AllMessagesForBooking(); " class="item" #item>
-
-  @if (mssg.senderId!=myId){
-              <div class="d-flex flex-row justify-content-start " >
-               
-                <div>
-                  <!-- ms-3 -->
-                  <p class="small p-2 mb-1 rounded-3 bg-info">{{mssg.content}}</p>
-
- <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ mssg.sentAt | date:'shortTime' :'+6' }}</p>
-
-                </div>
-                
-              </div>
-              }
-              @else{
-
-               <div class="d-flex flex-row justify-content-end mb-4 pt-1">
-                <div>
-                  <!-- me-3 -->
-                  <p class="small p-2  mb-1 text-white rounded-3 bg-primary">{{mssg.content}}</p>
-
-                
-                  <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ mssg.sentAt | date:'shortTime' :'+6' }}</p>
-                </div>
-                
-              </div>}
-
-  </div>
-          
-          
-
-        </ul>
-<div>
-          <li class="bg-white mb-3">
-            <div data-mdb-input-init class="form-outline">
-              <input class="form-control bg-body-tertiary" id="textAreaExample2" rows="4" 
-              placeholder="Write Your Message Here"
-              [(ngModel)]="MessageToBeSent.content" (keydown.enter)="sendMessage(MessageToBeSent)">
-              <!-- <label class="form-label" for="textAreaExample2">Message</label> -->
-            </div>
-          </li>
-          <button type="button" data-mdb-button-init data-mdb-ripple-init
-          (click)="sendMessage(MessageToBeSent)"
-            class="btn btn-info btn-rounded float-end">Send</button>
-            </div>
-      </div>
-
-      <!-- End of CurrentConversation -->
-
+      
     </div>
 
   </div>

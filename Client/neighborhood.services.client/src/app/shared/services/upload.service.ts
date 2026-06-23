@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Observable, switchMap, map } from 'rxjs';
+import { Observable, switchMap, map,EMPTY } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 
 // Mirrors CloudinarySignatureDto from POST /api/files/signature
@@ -49,4 +49,23 @@ export class UploadService {
       map((res) => res.secure_url)
     );
   }
+  uploadArwa(myfile: File | null): Observable<any> {
+  if (!myfile) return EMPTY; 
+
+  const formData = new FormData();
+  formData.append('file', myfile);
+  //formData.append('id', publicId.toString());
+
+  return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
+}
+
+//   uploadArwwa(myfile: File | null, publicId: number): Observable<any> {
+//   if (!myfile) return of(null);
+
+//   const formData = new FormData();
+//   formData.append('file', myfile);           
+//   formData.append('id', publicId.toString()); 
+
+//   return this.api.post<any>(`/ChatTest/UploadImage`, formData); 
+// }
 }

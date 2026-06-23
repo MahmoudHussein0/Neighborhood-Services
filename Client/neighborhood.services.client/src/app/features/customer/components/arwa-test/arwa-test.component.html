@@ -1,0 +1,16 @@
+<p>arwa-test works!</p>
+<div class="container">
+   <h2>Upload an Image</h2>
+    <label class="upload-box">
+     <input type="file" (change)="onFileSelected($event)" hidden />
+     <p>Click to upload or drag & drop</p>
+   </label>
+    <button (click)="onUpload()" class="upload-button" [disabled]="!selectedFile()">
+     Upload
+   </button>
+    @if (selectedFile(); as file) {
+     <div class="file-info">
+       Selected: {{ file.name }}
+     </div>
+   }
+ </div>

@@ -16,6 +16,10 @@ namespace Neighborhood.Services.Application.Messages.Commands
         public bool isRead { get; set; } = false;
 
         public DateTime createdAt = DateTime.UtcNow;
+
+        public bool? hasImage { set; get; }=false;
+        public string? imageUrl { set; get; }
+
     }
 }
 //احنا نكريت المسدج بالبوكنج أيدي ونشوف لو البوكنج ده له كونفرزيشن نضيف لها المسدج لو ملهوش يبقى 
