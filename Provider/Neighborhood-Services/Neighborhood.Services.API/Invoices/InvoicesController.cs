@@ -8,6 +8,7 @@ using Neighborhood.Services.Application.Invoices.Queries.GetInvoiceByCustomerId;
 using Neighborhood.Services.Application.Invoices.Queries.GetInvoicesByTechnicianId;
 using Neighborhood.Services.Application.Invoices.Services;
 using Neighborhood.Services.Application.Invoices.Commands.CreateInvoice;
+using Neighborhood.Services.Application.Invoices.Queries.GetMyInvoices;
 using Neighborhood.Services.Domain.Staffs;
 
 namespace Neighborhood.Services.API.Invoices
@@ -26,6 +27,13 @@ namespace Neighborhood.Services.API.Invoices
             _invoicePdfService = invoicePdfService;
         }
 
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMyInvoices()
+        {
+            var result = await _mediator.Send(new GetMyInvoicesQuery());
+            return Ok(result);
+        }
+
         [HttpGet("booking/{bookingId:int}")]
         public async Task<IActionResult> GetByBookingId(int bookingId)
         {
@@ -33,6 +41,7 @@ namespace Neighborhood.Services.API.Invoices
             return Ok(result);
         }
 
+        [HasPermission(PermissionType.FullAccess)]
         [HttpGet("customer/{customerId:int}")]
         public async Task<IActionResult> GetByCustomerId(int customerId)
         {
@@ -40,6 +49,7 @@ namespace Neighborhood.Services.API.Invoices
             return Ok(result);
         }
 
+        [HasPermission(PermissionType.FullAccess)]
         [HttpGet("technician/{technicianId:int}")]
         public async Task<IActionResult> GetByTechnicianId(int technicianId)
         {

@@ -10,7 +10,7 @@ export class TechnicianEarningsService {
 
   constructor(private api: ApiService) {}
 
-  getMyInvoices(technicianId: number): Observable<Invoice[]> {
-    return this.api.get<Invoice[]>(`/invoices/technician/${technicianId}`);
+  getMyInvoices(): Observable<Invoice[]> {
+    return this.api.get<Invoice[]>(`/invoices/me`);
   }
 }

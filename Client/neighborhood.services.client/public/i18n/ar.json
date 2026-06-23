@@ -154,9 +154,9 @@
     "earnings": {
         "title": "الأرباح والفواتير",
         "totalEarned": "إجمالي الأرباح",
-        "pendingAmount": "المبلغ المعلق",
-        "totalInvoices": "إجمالي الفواتير",
-        "invoices": "الفواتير",
+        "totalInvoices": "فواتير",
+        "invoices": "سجل الفواتير",
+        "invoiceHistory": "سجل الفواتير",
         "invoiceNo": "رقم الفاتورة",
         "bookingNo": "رقم الحجز",
         "date": "التاريخ",
@@ -165,7 +165,18 @@
         "total": "الإجمالي",
         "status": "الحالة",
         "actions": "إجراءات",
-        "noInvoices": "لا توجد فواتير."
+        "view": "عرض",
+        "download": "PDF",
+        "noInvoices": "لا توجد فواتير.",
+        "noInvoicesFound": "لا توجد فواتير.",
+        "noInvoicesDescription": "ستظهر الحجوزات المكتملة هنا بعد معالجة الدفع.",
+        "allStatuses": "جميع الحالات",
+        "statusType": {
+            "paid": "مدفوعة",
+            "unpaid": "غير مدفوعة",
+            "refunded": "مُستردّة",
+            "voided": "ملغاة"
+        }
     },
     "promoCodes": {
         "title": "أكواد الخصم",
