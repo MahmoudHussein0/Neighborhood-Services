@@ -16,6 +16,10 @@ namespace Neighborhood.Services.Application.Users.Interfaces
         Task<List<ApplicationUser>> GetUsersByRoleAsync(ApplicationUserRole role);
         Task<List<ApplicationUser>> GetNearbyUsersAsync(Point location, double distanceInMeters);
         Task<string?> GetTechnicianPhotoAsync(int techId);
+        public Task<List<string>> GetAdminsIdsAsync();
+
+        public Task<List<string>> GetTechniciansIdsAsync();
+       
 
     }
 }

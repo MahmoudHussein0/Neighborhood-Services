@@ -8,6 +8,7 @@ using Neighborhood.Services.Application.Notifications;
 using Neighborhood.Services.Application.Notifications.Push_inApp.DTOs;
 using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Users.Interfaces;
 using Neighborhood.Services.Domain.ApplicationUsers;
 using Neighborhood.Services.Domain.Message;
 using Neighborhood.Services.Domain.Notifications;
@@ -25,13 +26,15 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _current;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRepository _userRepo;
 
         public NotificationService(IHubContext<NotificationHub> hubContext,
             ILogger<NotificationService> logger,
             INotificationsRepository NotificationsRepository,
             IUnitOfWork unitOfWork,
             ICurrentUserService current,
-            IHttpContextAccessor http)
+            IHttpContextAccessor http,
+            IUserRepository userRepo)
         {
             _hubContext = hubContext; ;
             _logger = logger;
@@ -39,6 +42,7 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
             _unitOfWork = unitOfWork;
             _current = current;
             _httpContextAccessor = http;
+            _userRepo = userRepo;
 
 
         }
@@ -75,11 +79,25 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
         {
 
             //for real time 
-            await _hubContext.Clients.Group("Staff").SendAsync("ReceiveNotification", new { mssg });
-            _logger.LogInformation($"sending to Admins: {mssg}");
+            try
+            {
+                await _hubContext.Clients.Group("Staff").SendAsync("ReceiveNotification", new { mssg });
+                _logger.LogInformation($"Sending to Admins: {mssg}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SignalR push failed but data will be saved");
+            }
+            var adminIds = await _userRepo.GetAdminsIdsAsync();
 
-         
-                //for retreiving after being online again
+            if (adminIds == null || !adminIds.Any())
+            {
+                _logger.LogWarning("No admins found to notify.");
+                return new PushNotificationDto { Message = "No admins found" };
+            }
+
+            foreach (var adminId in adminIds)
+            {
                 var notf = new Notification()
                 {
                     channel = NotificationChannels.push,
@@ -87,25 +105,28 @@ namespace Neighborhood.Services.Infrastructure.Services.NotificationService
                     message = mssg,
                     IsDeleted = false,
                     isRead = false,
-                    UserId = "7d466805-6429-4940-9434-4990d80263b7",
+                    UserId = adminId,
                     refrenceId = 2, //2 for admins
                     type = Domain.Notifications.NotificationTypes.general
                 };
                 await _notificationsRepository.AddAsync(notf);
-                await _unitOfWork.SaveChangesAsync();
 
-                return new PushNotificationDto()
-                {
-                    Id = notf.Id,
-                    UserId = notf.UserId,
-                    Message = notf.message,
-                    CreatedDate = notf.createdAt,
-                    IsRead = notf.isRead,
-                };
             }
-          
+
+            //for retreiving after being online again
             
-        
+            await _unitOfWork.SaveChangesAsync();
+
+            return new PushNotificationDto()
+            {
+                Message="pushed to admins"
+            };
+        }
+    
+
+
+
+
 
 
 
