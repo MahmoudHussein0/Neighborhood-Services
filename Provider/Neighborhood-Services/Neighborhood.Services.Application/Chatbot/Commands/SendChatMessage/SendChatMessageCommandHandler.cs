@@ -159,15 +159,33 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
             // 5. Build the system prompt. RAG context is unchanged. If we have a grounded
             //    estimate, we hoist it to the TOP as a strict pricing directive so the model
             //    doesn't default to the wider range that's also present inside Context.
-            var pricingDirective = priceContext is null ? "" : $"""
+            // When we know the user's city, the estimate is authoritative — quote it. When the city
+            // is UNKNOWN (general average), we deliberately do NOT quote yet: prices vary by area,
+            // so the bot must ask for the city first (the rough figure stays only as a fallback if
+            // the user insists). This keeps the "ask which city first" behaviour reliable instead
+            // of letting a general-average number get quoted straight away.
+            var hasKnownCity = !string.IsNullOrWhiteSpace(resolvedRegion);
+            var pricingDirective =
+                priceContext is null ? ""
+                : hasKnownCity ? $"""
 
                 === AUTHORITATIVE PRICING (use this exact number when the user asks about price) ===
                 {priceContext}
-                When the user asks about price, you MUST use the number above. Name a city ONLY if the line
-                above says "(based on <city>)" — then use exactly that city. If it says "(general average)",
-                do NOT mention or invent any city; keep the estimate general.
-                Do NOT quote the wider min-max range from the Context section instead. Phrase it as approximate
-                (e.g. "around X EGP, depending on your specifics"), never as a fixed quote.
+                When the user asks about price, you MUST use the number above, for the city named in
+                that line — use exactly that city. Do NOT quote the wider min-max range from the
+                Context section instead. Phrase it as approximate (e.g. "around X EGP, depending on
+                your specifics"), never as a fixed quote.
+                ===============================================================================
+                """
+                : $"""
+
+                === PRICING (city UNKNOWN — ASK FIRST, do NOT quote yet) ===
+                A rough general figure is available ({priceContext}) but the user's city is unknown and
+                prices vary by area. When the user asks about price, do NOT give a number yet. FIRST
+                ask which city they're in (e.g. Cairo, Giza, Alexandria, Tanta, Mahalla) and mention
+                they can tap "share location". ONLY if they decline or insist on a number without
+                giving a city, then give the figure above as an approximate general estimate, and do
+                NOT name or invent any city.
                 ===============================================================================
                 """;
 
@@ -194,7 +212,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
                   - If the user attaches an IMAGE, examine it and describe the likely home-service problem you see (what's wrong, rough severity), then help with next steps (which service, approximate price, how to book). If the image clearly isn't a home-service issue, say you can only help with home-service problems.
                   - When a user wants to book, GUIDE them step by step (choose a service, pick a technician, choose a time, confirm) and tell them to use the booking page to complete it. Do NOT claim you booked anything yourself.
                   - If a user who is not logged in wants to book or do account actions, tell them they need to log in first.
-                  - When asked about prices and no AUTHORITATIVE PRICING block is present above, use the price range from the context. Phrase estimates as approximate.
+                  - When asked about prices and no AUTHORITATIVE PRICING block is present above: if you don't yet know the user's city, ask for it first (see the city rule below) before quoting; only once you know it (or they decline to give it) use the price range from the context, phrased as approximate.
                   - NEVER invent, assume, or guess the user's city/region. Only name a city if the user explicitly told you, the USER LOCATION block above gives one, or the AUTHORITATIVE PRICING line above names one. Otherwise keep it general.
                   - When the user asks about price and you don't yet know their city (no USER LOCATION block above and they haven't told you), politely ask which city they're in (e.g. Cairo, Giza, Alexandria, Tanta, Mahalla) before quoting, since prices vary by area. They can also tap "share location". If the USER LOCATION block is present, do NOT ask — use that city.
                   - If the user writes in Arabic, reply in Arabic. If in English, reply in English. Keep replies concise and friendly.
