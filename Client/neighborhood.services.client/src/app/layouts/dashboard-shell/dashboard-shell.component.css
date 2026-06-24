@@ -80,7 +80,18 @@
 }
 
 .user-summary {
-  line-height: 1.15;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+/* Keep the full name on one line (it was wrapping past the fixed-height topbar and
+   getting clipped). Smaller font fits typical names; very long names ellipsize. */
+.user-name {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 16rem;
 }
 
 .user-role {

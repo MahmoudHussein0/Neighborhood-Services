@@ -4,10 +4,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MyTranslateService } from '../../../core/services/my-translate.service';
 import { LangService } from '../../../core/services/lang.service';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, LogoComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })

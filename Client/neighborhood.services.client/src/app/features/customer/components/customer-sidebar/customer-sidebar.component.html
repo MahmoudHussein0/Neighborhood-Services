@@ -4,8 +4,8 @@
   <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
     @if (!collapsed()) {
       <div class="d-flex align-items-center gap-2">
-        <span class="logo-badge">NS</span>
-        <span class="fw-bold">NeighborServ</span>
+        <app-logo />
+        <span class="fw-bold" style="line-height:1.15;">Neighborhood Services</span>
       </div>
     }
     <button class="btn btn-sm btn-light d-none d-lg-inline-flex" type="button" (click)="toggle()">
