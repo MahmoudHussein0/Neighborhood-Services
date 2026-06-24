@@ -2,11 +2,11 @@
 
   <div class="dash-header">
     <div>
-      <h2 class="dash-title">Hi {{ firstName() }} 👋</h2>
-      <p class="dash-subtitle">Your work at a glance</p>
+      <h2 class="dash-title">{{ 'dashboard.hi' | translate: { name: firstName() } }} 👋</h2>
+      <p class="dash-subtitle">{{ 'dashboard.glanceTech' | translate }}</p>
     </div>
     <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
-      <span class="refresh-icon" [class.spinning]="loading()">↻</span> Refresh
+      <span class="refresh-icon" [class.spinning]="loading()">↻</span> {{ 'dashboard.refresh' | translate }}
     </button>
   </div>
 
@@ -23,8 +23,8 @@
         <div class="stat-icon" style="background:#3b82f6"><i class="bi bi-briefcase"></i></div>
         <div class="stat-body">
           <span class="stat-value">{{ totalJobs() }}</span>
-          <span class="stat-label">Total Jobs</span>
-          <span class="stat-sub">{{ completed() }} completed</span>
+          <span class="stat-label">{{ 'dashboard.totalJobs' | translate }}</span>
+          <span class="stat-sub">{{ 'dashboard.nCompleted' | translate: { n: completed() } }}</span>
         </div>
         <div class="stat-accent" style="background:#3b82f6"></div>
       </a>
@@ -33,8 +33,8 @@
         <div class="stat-icon" style="background:#8b5cf6"><i class="bi bi-lightning-charge-fill"></i></div>
         <div class="stat-body">
           <span class="stat-value">{{ active() }}</span>
-          <span class="stat-label">Active</span>
-          <span class="stat-sub">In progress</span>
+          <span class="stat-label">{{ 'dashboard.active' | translate }}</span>
+          <span class="stat-sub">{{ 'dashboard.inProgress' | translate }}</span>
         </div>
         <div class="stat-accent" style="background:#8b5cf6"></div>
       </a>
@@ -43,8 +43,8 @@
         <div class="stat-icon" style="background:#f59e0b"><i class="bi bi-hourglass-split"></i></div>
         <div class="stat-body">
           <span class="stat-value">{{ needsQuote() }}</span>
-          <span class="stat-label">Needs Quote</span>
-          <span class="stat-sub">Awaiting your price</span>
+          <span class="stat-label">{{ 'dashboard.needsQuote' | translate }}</span>
+          <span class="stat-sub">{{ 'dashboard.awaitingYourPrice' | translate }}</span>
         </div>
         <div class="stat-accent" style="background:#f59e0b"></div>
       </a>
@@ -53,8 +53,8 @@
         <div class="stat-icon" style="background:#10b981"><i class="bi bi-tag-fill"></i></div>
         <div class="stat-body">
           <span class="stat-value">{{ pendingOffers() }}</span>
-          <span class="stat-label">Pending Offers</span>
-          <span class="stat-sub">Awaiting customer</span>
+          <span class="stat-label">{{ 'dashboard.pendingOffers' | translate }}</span>
+          <span class="stat-sub">{{ 'dashboard.awaitingCustomer' | translate }}</span>
         </div>
         <div class="stat-accent" style="background:#10b981"></div>
       </a>
@@ -63,8 +63,8 @@
         <div class="stat-icon" style="background:#f43f5e"><i class="bi bi-check2-circle"></i></div>
         <div class="stat-body">
           <span class="stat-value">{{ completed() }}</span>
-          <span class="stat-label">Completed</span>
-          <span class="stat-sub">Finished jobs</span>
+          <span class="stat-label">{{ 'dashboard.completed' | translate }}</span>
+          <span class="stat-sub">{{ 'dashboard.finishedJobs' | translate }}</span>
         </div>
         <div class="stat-accent" style="background:#f43f5e"></div>
       </a>
@@ -73,28 +73,28 @@
     <!-- Insights: earnings + completion donut + status bars -->
     <div class="insights-row">
       <a routerLink="/technician/wallet" class="wallet-card">
-        <span class="wallet-top"><i class="bi bi-wallet2"></i> Earnings balance</span>
+        <span class="wallet-top"><i class="bi bi-wallet2"></i> {{ 'dashboard.earningsBalance' | translate }}</span>
         <span class="wallet-balance">{{ walletBalance() | currency: 'EGP ' }}</span>
-        <span class="wallet-cta">View wallet →</span>
+        <span class="wallet-cta">{{ 'dashboard.viewWallet' | translate }} →</span>
       </a>
 
       <div class="panel-card panel-pad donut-card">
-        <h3 class="panel-title" style="margin-bottom:0">Completion</h3>
+        <h3 class="panel-title" style="margin-bottom:0">{{ 'dashboard.completion' | translate }}</h3>
         <div class="mini-donut" [style]="donutStyle()">
           <div class="hole">
             <span class="pct">{{ completionPct() }}%</span>
-            <span class="lbl">Completed</span>
+            <span class="lbl">{{ 'dashboard.completed' | translate }}</span>
           </div>
         </div>
       </div>
 
       <div class="panel-card panel-pad">
-        <h3 class="panel-title">Jobs by Status</h3>
+        <h3 class="panel-title">{{ 'dashboard.jobsByStatus' | translate }}</h3>
         <div class="bar-list">
           @for (bar of bars(); track bar.status) {
             <div class="bar-item">
               <div class="bar-meta">
-                <span class="bar-label">{{ bar.status }}</span>
+                <span class="bar-label">{{ ('bookings.status.' + bar.status) | translate }}</span>
                 <span class="bar-count">{{ bar.count }}</span>
               </div>
               <div class="bar-track">
@@ -109,26 +109,26 @@
     <!-- Recent jobs -->
     <div class="panel-card">
         <div class="table-head-row">
-          <h3 class="panel-title" style="margin-bottom:0">Recent Jobs</h3>
-          <a routerLink="/technician/jobs" class="view-all">View all →</a>
+          <h3 class="panel-title" style="margin-bottom:0">{{ 'dashboard.recentJobs' | translate }}</h3>
+          <a routerLink="/technician/jobs" class="view-all">{{ 'dashboard.viewAll' | translate }} →</a>
         </div>
         <div class="table-scroll">
           <table class="dash-table">
             <thead>
-              <tr><th>#</th><th>Service</th><th>Type</th><th>Status</th><th>Scheduled</th><th>Price</th></tr>
+              <tr><th>#</th><th>{{ 'dashboard.colService' | translate }}</th><th>{{ 'dashboard.colType' | translate }}</th><th>{{ 'dashboard.colStatus' | translate }}</th><th>{{ 'dashboard.colScheduled' | translate }}</th><th>{{ 'dashboard.colPrice' | translate }}</th></tr>
             </thead>
             <tbody>
               @for (b of recent(); track b.id) {
                 <tr>
                   <td class="muted">{{ b.id }}</td>
                   <td class="text-truncate" style="max-width:220px">{{ b.description }}</td>
-                  <td><span class="type-badge">{{ b.bookingType }}</span></td>
-                  <td><span [class]="'sbadge sbadge-' + b.status.toLowerCase()">{{ b.status }}</span></td>
+                  <td><span class="type-badge">{{ ('bookings.bookingType.' + b.bookingType) | translate }}</span></td>
+                  <td><span [class]="'sbadge sbadge-' + b.status.toLowerCase()">{{ ('bookings.status.' + b.status) | translate }}</span></td>
                   <td class="muted">{{ b.scheduledAt | date: 'dd MMM, HH:mm' }}</td>
                   <td>{{ (b.finalPrice || b.estimatedPrice) | currency: 'EGP ' }}</td>
                 </tr>
               } @empty {
-                <tr><td colspan="6" class="empty-row">No jobs yet</td></tr>
+                <tr><td colspan="6" class="empty-row">{{ 'dashboard.noJobs' | translate }}</td></tr>
               }
             </tbody>
           </table>

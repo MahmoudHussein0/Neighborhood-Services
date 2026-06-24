@@ -10,27 +10,28 @@ import {
 } from '../../models/technician-profile.model';
 import { TechnicianProfileService } from '../../services/technician-profile.service';
 import { UploadService } from '../../../../shared/services/upload.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-technician-profile',
-  imports: [ReactiveFormsModule, ChangePasswordModalComponent],
+  imports: [ReactiveFormsModule, ChangePasswordModalComponent, TranslatePipe],
   template: `
     <div class="d-flex flex-column gap-4">
       <section class="bg-white border rounded-3 shadow-sm p-4">
         <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
           <div>
-            <h2 class="h4 fw-bold mb-1">Technician profile</h2>
-            <p class="text-muted mb-0">Manage your account and public work profile.</p>
+            <h2 class="h4 fw-bold mb-1">{{ 'profile.techTitle' | translate }}</h2>
+            <p class="text-muted mb-0">{{ 'profile.techSubtitle' | translate }}</p>
           </div>
           @if (technician()) {
             <span class="badge align-self-start" [class.text-bg-success]="technician()?.isAvailable" [class.text-bg-secondary]="!technician()?.isAvailable">
-              {{ technician()?.isAvailable ? 'Available' : 'Unavailable' }}
+              {{ (technician()?.isAvailable ? 'profile.available' : 'profile.unavailable') | translate }}
             </span>
           }
         </div>
 
         @if (loading()) {
-          <div class="text-muted">Loading technician profile...</div>
+          <div class="text-muted">{{ 'profile.loadingTech' | translate }}</div>
         } @else {
           @if (error()) {
             <div class="alert alert-danger">{{ error() }}</div>
@@ -60,31 +61,31 @@ import { UploadService } from '../../../../shared/services/upload.service';
               />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="fullName">Full name</label>
+              <label class="form-label" for="fullName">{{ 'profile.fullName' | translate }}</label>
               <input id="fullName" class="form-control" formControlName="fullName" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="email">Email</label>
+              <label class="form-label" for="email">{{ 'profile.email' | translate }}</label>
               <input id="email" class="form-control" formControlName="email" readonly />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="age">Age</label>
+              <label class="form-label" for="age">{{ 'profile.age' | translate }}</label>
               <input id="age" type="number" class="form-control" formControlName="age" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="rating">Rating</label>
+              <label class="form-label" for="rating">{{ 'profile.rating' | translate }}</label>
               <input id="rating" class="form-control" [value]="technician()?.rating ?? 0" readonly />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="nationalId">National ID</label>
+              <label class="form-label" for="nationalId">{{ 'profile.nationalId' | translate }}</label>
               <input id="nationalId" class="form-control" formControlName="nationalId" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="maxTravelDistance">Max travel distance</label>
+              <label class="form-label" for="maxTravelDistance">{{ 'profile.maxTravelDistance' | translate }}</label>
               <input id="maxTravelDistance" type="number" class="form-control" formControlName="maxTravelDistance" />
             </div>
             <div class="col-12">
-              <label class="form-label" for="experience">Experience</label>
+              <label class="form-label" for="experience">{{ 'profile.experience' | translate }}</label>
               <textarea id="experience" class="form-control" rows="4" formControlName="experience"></textarea>
             </div>
             <div class="col-12 d-flex flex-wrap gap-2">
@@ -92,11 +93,11 @@ import { UploadService } from '../../../../shared/services/upload.service';
                 @if (saving()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                 }
-                Save profile
+                {{ 'profile.saveProfile' | translate }}
               </button>
               <button class="btn btn-outline-primary" type="button" (click)="openChangePasswordModal()">
                 <i class="bi bi-shield-lock me-2" aria-hidden="true"></i>
-                Change password
+                {{ 'profile.changePassword' | translate }}
               </button>
             </div>
           </form>

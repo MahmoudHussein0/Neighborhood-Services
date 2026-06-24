@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -23,7 +24,7 @@ const STATUS_COLOR: Record<BookingStatus, string> = {
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [RouterLink, DecimalPipe, CurrencyPipe, DatePipe],
+  imports: [RouterLink, DecimalPipe, CurrencyPipe, DatePipe, TranslatePipe],
   templateUrl: './customer-dashboard.component.html',
 })
 export class CustomerDashboardComponent implements OnInit {

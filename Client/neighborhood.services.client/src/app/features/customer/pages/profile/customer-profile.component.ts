@@ -12,10 +12,11 @@ import {
 } from '../../models/customer-profile.model';
 import { CustomerProfileService } from '../../services/customer-profile.service';
 import { UploadService } from '../../../../shared/services/upload.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-customer-profile',
-  imports: [ReactiveFormsModule, ChangePasswordModalComponent],
+  imports: [ReactiveFormsModule, ChangePasswordModalComponent, TranslatePipe],
   styles: `
     .profile-avatar-picker {
       align-items: center;
@@ -61,18 +62,18 @@ import { UploadService } from '../../../../shared/services/upload.service';
       <section class="bg-white border rounded-3 shadow-sm p-4">
         <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
           <div>
-            <h2 class="h4 fw-bold mb-1">Profile</h2>
-            <p class="text-muted mb-0">Manage your account details and saved service addresses.</p>
+            <h2 class="h4 fw-bold mb-1">{{ 'profile.title' | translate }}</h2>
+            <p class="text-muted mb-0">{{ 'profile.subtitle' | translate }}</p>
           </div>
           @if (profile()) {
             <span class="badge align-self-start" [class.text-bg-success]="profile()?.isActive" [class.text-bg-secondary]="!profile()?.isActive">
-              {{ profile()?.isActive ? 'Active' : 'Inactive' }}
+              {{ (profile()?.isActive ? 'profile.active' : 'profile.inactive') | translate }}
             </span>
           }
         </div>
 
         @if (loading()) {
-          <div class="text-muted">Loading profile...</div>
+          <div class="text-muted">{{ 'profile.loading' | translate }}</div>
         } @else {
           @if (error()) {
             <div class="alert alert-danger">{{ error() }}</div>
@@ -102,25 +103,25 @@ import { UploadService } from '../../../../shared/services/upload.service';
               />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="fullName">Full name</label>
+              <label class="form-label" for="fullName">{{ 'profile.fullName' | translate }}</label>
               <input id="fullName" class="form-control" formControlName="fullName" [class.is-invalid]="profileForm.controls.fullName.touched && profileForm.controls.fullName.invalid" />
               @if (profileForm.controls.fullName.touched && profileForm.controls.fullName.invalid) {
-                <div class="invalid-feedback">Full name is required.</div>
+                <div class="invalid-feedback">{{ 'profile.fullNameRequired' | translate }}</div>
               }
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="email">Email</label>
+              <label class="form-label" for="email">{{ 'profile.email' | translate }}</label>
               <input id="email" class="form-control" formControlName="email" readonly />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="age">Age</label>
+              <label class="form-label" for="age">{{ 'profile.age' | translate }}</label>
               <input id="age" type="number" class="form-control" formControlName="age" [class.is-invalid]="profileForm.controls.age.touched && profileForm.controls.age.invalid" />
               @if (profileForm.controls.age.touched && profileForm.controls.age.invalid) {
-                <div class="invalid-feedback">Age must be between 13 and 120.</div>
+                <div class="invalid-feedback">{{ 'profile.ageRange' | translate }}</div>
               }
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label" for="role">Role</label>
+              <label class="form-label" for="role">{{ 'profile.role' | translate }}</label>
               <input id="role" class="form-control" [value]="profile()?.applicationUserRole || 'Customer'" readonly />
             </div>
             <div class="col-12 d-flex flex-wrap gap-2">
@@ -128,11 +129,11 @@ import { UploadService } from '../../../../shared/services/upload.service';
                 @if (savingProfile()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                 }
-                Save profile
+                {{ 'profile.saveProfile' | translate }}
               </button>
               <button class="btn btn-outline-primary" type="button" (click)="openChangePasswordModal()">
                 <i class="bi bi-shield-lock me-2" aria-hidden="true"></i>
-                Change password
+                {{ 'profile.changePassword' | translate }}
               </button>
             </div>
           </form>
@@ -142,84 +143,84 @@ import { UploadService } from '../../../../shared/services/upload.service';
       <section class="bg-white border rounded-3 shadow-sm p-4">
         <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
           <div>
-            <h2 class="h5 fw-bold mb-1">Saved addresses</h2>
-            <p class="text-muted mb-0">Enter a specific address and we will locate it automatically.</p>
+            <h2 class="h5 fw-bold mb-1">{{ 'profile.savedAddresses' | translate }}</h2>
+            <p class="text-muted mb-0">{{ 'profile.addressesSubtitle' | translate }}</p>
           </div>
         </div>
 
         <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="row g-3 mb-4">
           <div class="col-12 col-md-3">
-            <label class="form-label" for="label">Label</label>
+            <label class="form-label" for="label">{{ 'profile.label' | translate }}</label>
             <select id="label" class="form-select" formControlName="label">
               @for (label of addressLabels; track label) {
-                <option [value]="label">{{ label }}</option>
+                <option [value]="label">{{ ('profile.addressLabels.' + label) | translate }}</option>
               }
             </select>
           </div>
           <div class="col-12 col-md-9">
-            <label class="form-label" for="address">Address</label>
+            <label class="form-label" for="address">{{ 'profile.address' | translate }}</label>
             <div class="input-group">
               <input id="address" class="form-control" formControlName="address" [class.is-invalid]="addressForm.controls.address.touched && addressForm.controls.address.invalid" />
               <button
                 class="btn btn-outline-primary"
                 type="button"
-                title="Use my current location"
+                [title]="'profile.useMyLocationTitle' | translate"
                 [disabled]="locatingCurrentAddress()"
                 (click)="useCurrentLocation()"
               >
                 @if (locatingCurrentAddress()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                  Locating...
+                  {{ 'profile.locating' | translate }}
                 } @else {
                   <i class="bi bi-crosshair me-2" aria-hidden="true"></i>
-                  Use my location
+                  {{ 'profile.useMyLocation' | translate }}
                 }
               </button>
             </div>
             @if (addressForm.controls.address.touched && addressForm.controls.address.invalid) {
-              <div class="text-danger small mt-1">Enter a specific address, area, and city.</div>
+              <div class="text-danger small mt-1">{{ 'profile.addressError' | translate }}</div>
             }
-            <div class="form-text">Example: 15 Tahrir Street, Dokki, Giza</div>
+            <div class="form-text">{{ 'profile.addressExample' | translate }}</div>
           </div>
           <div class="col-12">
             <div class="form-check">
               <input id="isDefault" class="form-check-input" type="checkbox" formControlName="isDefault" />
-              <label class="form-check-label" for="isDefault">Default address</label>
+              <label class="form-check-label" for="isDefault">{{ 'profile.defaultAddress' | translate }}</label>
             </div>
           </div>
           <div class="col-12 d-flex gap-2">
             <button class="btn btn-primary" type="submit" [disabled]="savingAddress() || !customer()">
               @if (savingAddress()) {
                 <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                Locating address...
+                {{ 'profile.locatingAddress' | translate }}
               } @else {
-                {{ editingAddressId() ? 'Update address' : 'Add address' }}
+                {{ (editingAddressId() ? 'profile.updateAddress' : 'profile.addAddress') | translate }}
               }
             </button>
             @if (editingAddressId()) {
-              <button class="btn btn-outline-secondary" type="button" (click)="resetAddressForm()">Cancel</button>
+              <button class="btn btn-outline-secondary" type="button" (click)="resetAddressForm()">{{ 'common.cancel' | translate }}</button>
             }
           </div>
         </form>
 
         @if (addresses().length === 0) {
-          <div class="text-muted">No addresses yet.</div>
+          <div class="text-muted">{{ 'profile.noAddresses' | translate }}</div>
         } @else {
           <div class="row g-3">
             @for (address of addresses(); track address.id) {
               <div class="col-12 col-lg-6">
                 <div class="border rounded-3 p-3 h-100">
                   <div class="d-flex justify-content-between gap-2 mb-2">
-                    <strong>{{ address.label }}</strong>
+                    <strong>{{ ('profile.addressLabels.' + address.label) | translate }}</strong>
                     @if (address.isDefault) {
-                      <span class="badge text-bg-primary">Default</span>
+                      <span class="badge text-bg-primary">{{ 'profile.default' | translate }}</span>
                     }
                   </div>
                   <p class="mb-2">{{ address.address }}</p>
                   <div class="d-flex flex-wrap gap-2">
-                    <button class="btn btn-sm btn-outline-primary" type="button" (click)="editAddress(address)">Edit</button>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="setDefault(address)" [disabled]="address.isDefault">Set default</button>
-                    <button class="btn btn-sm btn-outline-danger" type="button" (click)="openDeleteModal(address)">Delete</button>
+                    <button class="btn btn-sm btn-outline-primary" type="button" (click)="editAddress(address)">{{ 'profile.edit' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="setDefault(address)" [disabled]="address.isDefault">{{ 'profile.setDefault' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-danger" type="button" (click)="openDeleteModal(address)">{{ 'profile.delete' | translate }}</button>
                   </div>
                 </div>
               </div>
@@ -239,8 +240,8 @@ import { UploadService } from '../../../../shared/services/upload.service';
                   <i class="bi bi-trash3" aria-hidden="true"></i>
                 </span>
                 <div>
-                  <h2 class="modal-title fs-5 fw-bold" id="deleteAddressTitle">Delete address?</h2>
-                  <p class="text-muted small mb-0">This action cannot be undone.</p>
+                  <h2 class="modal-title fs-5 fw-bold" id="deleteAddressTitle">{{ 'profile.deleteTitle' | translate }}</h2>
+                  <p class="text-muted small mb-0">{{ 'profile.deleteWarning' | translate }}</p>
                 </div>
               </div>
               <button class="btn-close" type="button" aria-label="Close" [disabled]="deletingAddress()" (click)="closeDeleteModal()"></button>
@@ -252,14 +253,14 @@ import { UploadService } from '../../../../shared/services/upload.service';
               </div>
             </div>
             <div class="modal-footer border-0 pt-0">
-              <button class="btn btn-outline-secondary" type="button" [disabled]="deletingAddress()" (click)="closeDeleteModal()">Cancel</button>
+              <button class="btn btn-outline-secondary" type="button" [disabled]="deletingAddress()" (click)="closeDeleteModal()">{{ 'common.cancel' | translate }}</button>
               <button class="btn btn-danger" type="button" [disabled]="deletingAddress()" (click)="confirmDeleteAddress()">
                 @if (deletingAddress()) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                  Deleting...
+                  {{ 'profile.deleting' | translate }}
                 } @else {
                   <i class="bi bi-trash3 me-2" aria-hidden="true"></i>
-                  Delete address
+                  {{ 'profile.deleteAddress' | translate }}
                 }
               </button>
             </div>
