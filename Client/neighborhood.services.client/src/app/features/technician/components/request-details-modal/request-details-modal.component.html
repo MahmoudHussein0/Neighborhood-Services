@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ 'technician.browse.detailsTitle' | translate }}</h5>
+  <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } @else if (details(); as d) {
+
+    <!-- Image (click to open full screen) -->
+    @if (d.image) {
+      <img [src]="d.image" alt="" (click)="lightbox.open(d.image)"
+           class="rounded-3 mb-3 d-block border"
+           style="max-width: 220px; width: 100%; max-height: 200px; object-fit: cover; cursor: zoom-in;" />
+    } @else {
+      <div class="bg-light text-muted rounded-3 text-center py-4 mb-3 small">
+        <i class="bi bi-image fs-3 d-block mb-1"></i>{{ 'technician.browse.noImage' | translate }}
+      </div>
+    }
+
+    <!-- Full description -->
+    <h6 class="text-muted small text-uppercase mb-1">{{ 'technician.browse.description' | translate }}</h6>
+    <p class="mb-3" style="white-space: pre-wrap;">{{ d.description }}</p>
+
+    <!-- Meta grid -->
+    <div class="row g-3 small">
+      <div class="col-sm-6">
+        <div class="text-muted">{{ 'technician.browse.budget' | translate }}</div>
+        <div class="fw-semibold">{{ d.budget | currency: 'EGP ' }}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted">{{ 'technician.browse.scheduled' | translate }}</div>
+        <div class="fw-semibold">{{ d.scheduledAt | date: 'medium' }}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted">{{ 'technician.browse.postedBy' | translate }}</div>
+        <a [routerLink]="['/technician/customer', d.customerId]" (click)="dismiss()" class="fw-semibold text-decoration-none">
+          <i class="bi bi-person-circle me-1"></i>{{ summary.customerName || ('technician.browse.viewCustomer' | translate) }}
+        </a>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted">{{ 'technician.browse.offers' | translate: { count: d.offerCount } }}</div>
+      </div>
+      <div class="col-12">
+        <div class="text-muted">{{ 'technician.browse.address' | translate }}</div>
+        <div class="fw-semibold">
+          <i class="bi bi-geo-alt me-1"></i>{{ d.address }}
+          <a [href]="mapUrl" target="_blank" rel="noopener" class="ms-2 text-decoration-none">
+            <i class="bi bi-map me-1"></i>{{ 'technician.browse.showOnMap' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="text-center text-muted py-4">{{ 'technician.browse.detailsError' | translate }}</div>
+  }
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">{{ 'common.close' | translate }}</button>
+  @if (summary.canOffer === false) {
+    <span class="badge rounded-pill text-bg-light border align-self-center">
+      <i class="bi bi-lock me-1"></i>{{ 'technician.browse.notYourCategory' | translate }}
+    </span>
+  } @else {
+    <button type="button" class="btn btn-primary" (click)="makeOffer()">
+      <i class="bi bi-tag me-1"></i>{{ 'technician.browse.makeOffer' | translate }}
+    </button>
+  }
+</div>

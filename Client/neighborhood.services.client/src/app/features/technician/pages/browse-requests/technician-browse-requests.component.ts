@@ -9,12 +9,13 @@ import { RequestBrowseService } from '../../services/request-browse.service';
 import { ServiceRequestSummary } from '../../../customer/models/service-request.model';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { MakeOfferModalComponent } from '../../components/make-offer-modal/make-offer-modal.component';
+import { RequestDetailsModalComponent } from '../../components/request-details-modal/request-details-modal.component';
 
 @Component({
   selector: 'app-technician-browse-requests',
   imports: [CurrencyPipe, DatePipe, RouterLink, TranslatePipe],
   templateUrl: './technician-browse-requests.component.html',
-  styleUrl: '../../../../shared/styles/ns-card.css',
+  styleUrls: ['../../../../shared/styles/ns-card.css', './technician-browse-requests.component.css'],
 })
 export class TechnicianBrowseRequestsComponent implements OnInit {
   private readonly service = inject(RequestBrowseService);
@@ -86,6 +87,18 @@ export class TechnicianBrowseRequestsComponent implements OnInit {
     } else {
       this.locateAndLoad();
     }
+  }
+
+  openDetails(req: ServiceRequestSummary) {
+    const ref = this.modal.open(RequestDetailsModalComponent, { size: 'lg' });
+    ref.componentInstance.summary = req;
+    ref.result.then(
+      (action: string) => {
+        // The details modal resolves with 'offer' when the tech taps Make Offer there.
+        if (action === 'offer') this.makeOffer(req);
+      },
+      () => {},
+    );
   }
 
   setScope(scope: 'mine' | 'all') {

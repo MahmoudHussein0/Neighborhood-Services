@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Neighborhood.Services.Application.BookingImages.Interface;
 using Neighborhood.Services.Application.Bookings.Interface;
 using Neighborhood.Services.Application.Conversations.Commands;
 using Neighborhood.Services.Application.Escrows.Commands.CreateEscrow;
@@ -14,6 +15,7 @@ using Neighborhood.Services.Application.ServiceRequests.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Application.Wallets.Interfaces;
+using Neighborhood.Services.Domain.BookingImages;
 using Neighborhood.Services.Domain.Bookings;
 using Neighborhood.Services.Domain.Offers;
 using Neighborhood.Services.Domain.ServiceRequests;
@@ -33,6 +35,7 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
         private readonly INotificationService _notificationService;
         private readonly IPromoCodeRepository _promoCodeRepository;
         private readonly IPromoCodeUsageRepository _promoCodeUsageRepository;
+        private readonly IBookingImageRepository _bookingImageRepository;
         private readonly ILogger<AcceptOfferCommandHandler> _logger;
 
         public AcceptOfferCommandHandler(
@@ -47,6 +50,7 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             INotificationService notificationService,
             IPromoCodeRepository promoCodeRepository,
             IPromoCodeUsageRepository promoCodeUsageRepository,
+            IBookingImageRepository bookingImageRepository,
             ILogger<AcceptOfferCommandHandler> logger)
         {
             _offerRepository = offerRepository;
@@ -60,6 +64,7 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
             _notificationService = notificationService;
             _promoCodeRepository = promoCodeRepository;
             _promoCodeUsageRepository = promoCodeUsageRepository;
+            _bookingImageRepository = bookingImageRepository;
             _logger = logger;
         }
 
@@ -213,6 +218,29 @@ namespace Neighborhood.Services.Application.Offers.Commands.AcceptOffer
                 Amount = booking.FinalPrice
             }, cancellationToken);
             await _mediator.Send(new CreateConversationCommandDTO { BookingId = booking.Id }, cancellationToken);
+
+            // Best effort: copy the customer's reference photo from the request onto the confirmed
+            // booking as a "Before" image, so it shows on the technician's job (mirrors the recurring
+            // flow). Never blocks the accept if it fails.
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(serviceRequest.Image))
+                {
+                    await _bookingImageRepository.AddAsync(new BookingImage
+                    {
+                        BookingId = booking.Id,
+                        ImageUrl = serviceRequest.Image!,
+                        Type = BookingImageType.Before,
+                        UploadedBy = serviceRequest.Customer.ApplicationUserId,
+                        UploadedAt = DateTime.UtcNow
+                    });
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Copying request photo as Before image failed for booking {Id}.", booking.Id);
+            }
 
             // Seed a short greeting from each side so the conversation shows up for both parties
             // with the other person's name/avatar populated (best effort — never blocks the accept).

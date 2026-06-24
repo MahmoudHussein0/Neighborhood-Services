@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
-import { ServiceRequestSummary } from '../../customer/models/service-request.model';
+import { ServiceRequestSummary, ServiceRequestDetails } from '../../customer/models/service-request.model';
 import { PagedResult } from '../../../core/models/paged-result.model';
 
 @Injectable({
@@ -31,5 +31,10 @@ export class RequestBrowseService {
       pageSize: String(pageSize),
     });
     return this.api.get<PagedResult<ServiceRequestSummary>>(`/servicerequests/open?${query.toString()}`);
+  }
+
+  /** GET /api/servicerequests/{id} — full details (full description + image) for one request. */
+  getById(id: number): Observable<ServiceRequestDetails> {
+    return this.api.get<ServiceRequestDetails>(`/servicerequests/${id}`);
   }
 }

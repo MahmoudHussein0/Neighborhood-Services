@@ -65,7 +65,7 @@
               <div class="icon-box"><i class="bi bi-clipboard-check"></i></div>
               <div class="flex-grow-1 min-w-0">
                 <div class="d-flex align-items-start justify-content-between gap-2">
-                  <h3 class="ns-card-title fw-semibold mb-1">{{ req.description }}</h3>
+                  <h3 class="ns-card-title fw-semibold mb-1 clamp-2 clickable" (click)="openDetails(req)">{{ req.description }}</h3>
                   <span class="badge rounded-pill text-bg-light border flex-shrink-0">
                     {{ 'technician.browse.offers' | translate: { count: req.offerCount } }}
                   </span>
@@ -89,15 +89,20 @@
                 <span class="text-muted small">{{ 'technician.browse.budget' | translate }}:</span>
                 <span class="ns-price fw-bold">{{ req.budget | currency: 'EGP ' }}</span>
               </div>
-              @if (req.canOffer === false) {
-                <span class="badge rounded-pill text-bg-light border">
-                  <i class="bi bi-lock me-1"></i>{{ 'technician.browse.notYourCategory' | translate }}
-                </span>
-              } @else {
-                <button class="btn btn-sm btn-primary" (click)="makeOffer(req)">
-                  <i class="bi bi-tag me-1"></i>{{ 'technician.browse.makeOffer' | translate }}
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" (click)="openDetails(req)">
+                  <i class="bi bi-eye me-1"></i>{{ 'technician.browse.viewDetails' | translate }}
                 </button>
-              }
+                @if (req.canOffer === false) {
+                  <span class="badge rounded-pill text-bg-light border">
+                    <i class="bi bi-lock me-1"></i>{{ 'technician.browse.notYourCategory' | translate }}
+                  </span>
+                } @else {
+                  <button class="btn btn-sm btn-primary" (click)="makeOffer(req)">
+                    <i class="bi bi-tag me-1"></i>{{ 'technician.browse.makeOffer' | translate }}
+                  </button>
+                }
+              </div>
             </div>
           </div>
         </div>
