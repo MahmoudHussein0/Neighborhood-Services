@@ -28,10 +28,11 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
         private readonly ICustomerRepository _customerRepository;
         private readonly ITechnicianRepository _technicianRepository;
         private readonly INotificationService _notificationService;
+        private readonly IRegionResolver _regionResolver;
         private readonly ILogger<CreateBookingCommandHandler> _logger;
         // trying to handle concurrency
         private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
-        public CreateBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork, IPriceEstimationService priceEstimationService, ITechnicianAvailabilityRepository technicianAvailabilityRepository, IPromoCodeRepository promoCodeRepository, ICurrentUserService currentUserService, ICustomerRepository customerRepository, ITechnicianRepository technicianRepository, INotificationService notificationService, ILogger<CreateBookingCommandHandler> logger)
+        public CreateBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork, IPriceEstimationService priceEstimationService, ITechnicianAvailabilityRepository technicianAvailabilityRepository, IPromoCodeRepository promoCodeRepository, ICurrentUserService currentUserService, ICustomerRepository customerRepository, ITechnicianRepository technicianRepository, INotificationService notificationService, IRegionResolver regionResolver, ILogger<CreateBookingCommandHandler> logger)
         {
             _bookingRepository = bookingRepository;
             _unitOfWork = unitOfWork;
@@ -42,6 +43,7 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
             _customerRepository = customerRepository;
             _technicianRepository = technicianRepository;
             _notificationService = notificationService;
+            _regionResolver = regionResolver;
             _logger = logger;
         }
 
@@ -55,14 +57,23 @@ namespace Neighborhood.Services.Application.Bookings.Commands.CreateBookingComma
             var customer = await _customerRepository.GetByUserIdAsync(userId)
                 ?? throw new NotFoundException("Customer", userId);
 
+            // Resolve the region (from the booking's coords or explicit region) and the estimate
+            // BEFORE taking the slot lock. They depend only on the request — not on anything the
+            // lock guards — so there's no reason to hold the per-technician+slot lock across the
+            // Geoapify call. The resolver is fail-open (null => general average), so it never
+            // blocks a booking even if geocoding is down.
+            var region = await _regionResolver.ResolveAsync(
+                request.Latitude, request.Longitude, regionOverride: request.Region,
+                cancellationToken: cancellationToken);
+            var estimatedPrice = await _priceEstimationService.EstimateAsync(request.ProblemTypeId, region);
+
             // Trying the Lock : Per technician + time slot lock
             var lockKey = $"{request.TechnicianId}_{request.ScheduledAt:yyyyMMddHHmm}";
             var semaphore = _locks.GetOrAdd(lockKey, _ => new SemaphoreSlim(1, 1));
             await semaphore.WaitAsync(cancellationToken);
             try
             {
-                var estimatedPrice = await _priceEstimationService.EstimateAsync(request.ProblemTypeId , request.Region );
-            // validating the date 
+            // validating the date
             if (request.ScheduledAt <= DateTime.UtcNow)
                 throw new ValidationException("Scheduled time cannot be in the past");
             // Validating if he works at that day at all ??

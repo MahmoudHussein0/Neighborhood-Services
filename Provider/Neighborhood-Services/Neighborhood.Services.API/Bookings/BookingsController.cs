@@ -235,11 +235,18 @@ namespace Neighborhood.Services.API.Bookings
             return Ok(result);
         }
 
-        // GET /api/bookings/estimate/{problemTypeId}?region=cairo  (optional, on-demand price estimate)
+        // GET /api/bookings/estimate/{problemTypeId}?region=cairo&lat=..&lng=..  (on-demand price estimate)
+        // Pass lat/lng to get a localized estimate; region (if given) takes priority over coords.
         [HttpGet("estimate/{problemTypeId:int}")]
-        public async Task<IActionResult> Estimate(int problemTypeId, [FromQuery] string? region)
+        public async Task<IActionResult> Estimate(int problemTypeId, [FromQuery] string? region, [FromQuery] double? lat, [FromQuery] double? lng)
         {
-            var price = await _mediator.Send(new EstimateBookingPriceQuery { ProblemTypeId = problemTypeId, Region = region });
+            var price = await _mediator.Send(new EstimateBookingPriceQuery
+            {
+                ProblemTypeId = problemTypeId,
+                Region = region,
+                Latitude = lat,
+                Longitude = lng
+            });
             return Ok(new { estimatedPrice = price });
         }
 

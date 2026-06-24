@@ -74,9 +74,17 @@ export class BookingService {
     return this.api.post<TechnicianMatchResult>('/bookings/match', body);
   }
 
-  /** GET /api/bookings/estimate/{problemTypeId} — optional on-demand price estimate */
-  estimate(problemTypeId: number, region?: string | null): Observable<{ estimatedPrice: number }> {
-    const q = region?.trim() ? `?region=${encodeURIComponent(region.trim())}` : '';
+  /** GET /api/bookings/estimate/{problemTypeId} — optional on-demand price estimate.
+   *  Pass lat/lng so the backend localizes the estimate to the customer's city. */
+  estimate(
+    problemTypeId: number,
+    opts?: { region?: string | null; lat?: number | null; lng?: number | null },
+  ): Observable<{ estimatedPrice: number }> {
+    const params = new URLSearchParams();
+    if (opts?.region?.trim()) params.set('region', opts.region.trim());
+    if (opts?.lat != null) params.set('lat', String(opts.lat));
+    if (opts?.lng != null) params.set('lng', String(opts.lng));
+    const q = params.toString() ? `?${params.toString()}` : '';
     return this.api.get<{ estimatedPrice: number }>(`/bookings/estimate/${problemTypeId}${q}`);
   }
 

@@ -170,7 +170,7 @@ export class CreateBookingModalComponent {
     const problemTypeId = this.form.controls.problemTypeId.value;
     if (problemTypeId == null) return;
     this.estimating.set(true);
-    this.service.estimate(problemTypeId).subscribe({
+    this.service.estimate(problemTypeId, { lat: this.lat(), lng: this.lng() }).subscribe({
       next: (r) => {
         this.estimatedPrice.set(r.estimatedPrice);
         this.estimating.set(false);

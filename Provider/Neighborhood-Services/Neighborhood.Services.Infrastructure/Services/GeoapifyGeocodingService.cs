@@ -58,7 +58,10 @@ namespace Neighborhood.Services.Infrastructure.Services
             {
                 FormattedAddress = result.Properties.Formatted,
                 Latitude = latitude.Value,
-                Longitude = longitude.Value
+                Longitude = longitude.Value,
+                City = result.Properties.City,
+                County = result.Properties.County,
+                State = result.Properties.State
             };
         }
 
@@ -94,6 +97,9 @@ namespace Neighborhood.Services.Infrastructure.Services
             public string Formatted { get; set; } = string.Empty;
             public double? Lat { get; set; }
             public double? Lon { get; set; }
+            public string? City { get; set; }
+            public string? County { get; set; }
+            public string? State { get; set; }
         }
 
         private sealed class GeoapifyGeometry

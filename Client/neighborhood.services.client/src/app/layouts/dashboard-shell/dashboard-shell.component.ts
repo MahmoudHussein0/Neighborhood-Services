@@ -5,10 +5,11 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
 import { AuthService } from '../../features/auth/services/auth.service';
 import { LayoutService } from '../../core/services/layout.service';
 import { environment } from '../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard-shell',
-  imports: [RouterOutlet, NotificationBellComponent, LanguageSwitcherComponent],
+  imports: [RouterOutlet, NotificationBellComponent, LanguageSwitcherComponent, TranslateModule],
   templateUrl: './dashboard-shell.component.html',
   styleUrl: './dashboard-shell.component.css',
 })
