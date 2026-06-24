@@ -1,8 +1,11 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Shared;
+using Neighborhood.Services.Application.Technicians.Interfaces;
 using Neighborhood.Services.Domain.RecurringBookings;
 using System;
 using System.Collections.Generic;
@@ -14,19 +17,28 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.UpdateRec
     {
         private readonly IRecurringBookingRepository _recurringBookingRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly ITechnicianRepository _technicianRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<UpdateRecurringBookingCommandHandler> _logger;
 
         public UpdateRecurringBookingCommandHandler(
             IRecurringBookingRepository recurringBookingRepository,
             ICustomerRepository customerRepository,
+            ITechnicianRepository technicianRepository,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            INotificationService notificationService,
+            ILogger<UpdateRecurringBookingCommandHandler> logger)
         {
             _recurringBookingRepository = recurringBookingRepository;
             _customerRepository = customerRepository;
+            _technicianRepository = technicianRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(UpdateRecurringBookingCommand request, CancellationToken cancellationToken)
@@ -83,6 +95,21 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.UpdateRec
 
             await _recurringBookingRepository.UpdateAsync(recurringBooking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // The edit reset the arrangement to PendingApproval, so the technician must re-price.
+            // Let them know. Best effort — a failed notification must not fail the update.
+            try
+            {
+                var technician = await _technicianRepository.GetByIdAsync(recurringBooking.TechnicianId);
+                if (!string.IsNullOrEmpty(technician?.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        technician.ApplicationUserId,
+                        $"Recurring booking #{recurringBooking.Id} was updated — open Recurring Jobs to review and set a price.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Update-recurring-booking notification failed for recurring booking {Id}.", recurringBooking.Id);
+            }
 
             return true;
         }

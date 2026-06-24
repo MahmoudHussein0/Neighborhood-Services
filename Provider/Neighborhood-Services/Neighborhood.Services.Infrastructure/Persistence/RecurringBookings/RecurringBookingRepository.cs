@@ -54,6 +54,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.RecurringBookings
 
             var total = await query.CountAsync();
             var items = await query
+                .Include(rb => rb.ProblemType) // so the DTO can show the problem-type name, not just its id
                 .OrderByDescending(rb => rb.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -71,6 +72,7 @@ namespace Neighborhood.Services.Infrastructure.Persistence.RecurringBookings
 
             var total = await query.CountAsync();
             var items = await query
+                .Include(rb => rb.ProblemType) // so the DTO can show the problem-type name, not just its id
                 .OrderByDescending(rb => rb.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

@@ -70,7 +70,7 @@
                   <span><i class="bi bi-geo-alt me-1"></i>{{ b.address }}</span>
                   <span><i class="bi bi-calendar-event me-1"></i>{{ b.scheduledAt | date: 'mediumDate' }}</span>
                   @if (b.technicianId) {
-                    <a [routerLink]="['/technician', b.technicianId]" class="ns-link text-decoration-none"><i class="bi bi-person-badge me-1"></i>{{ b.technicianName || ('bookings.viewTechnician' | translate) }}</a>
+                    <a [routerLink]="['/customer/technician', b.technicianId]" class="ns-link text-decoration-none"><i class="bi bi-person-badge me-1"></i>{{ b.technicianName || ('bookings.viewTechnician' | translate) }}</a>
                   }
                   @if (mapsUrl(b.latitude, b.longitude); as url) {
                     <a [href]="url" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-map me-1"></i>{{ 'common.openInMaps' | translate }}</a>

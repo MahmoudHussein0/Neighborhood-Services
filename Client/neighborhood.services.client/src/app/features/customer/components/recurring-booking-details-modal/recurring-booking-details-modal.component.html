@@ -51,10 +51,13 @@
     <dd class="col-7">{{ booking.agreedPrice != null ? (booking.agreedPrice | currency: 'EGP ') : '—' }}</dd>
 
     <dt class="col-5 text-muted">{{ 'recurring.form.technician' | translate }}</dt>
-    <dd class="col-7">#{{ booking.technicianId }}</dd>
+    <dd class="col-7">{{ booking.technicianName || ('#' + booking.technicianId) }}</dd>
+
+    <dt class="col-5 text-muted">{{ 'recurring.form.customer' | translate }}</dt>
+    <dd class="col-7">{{ booking.customerName || ('#' + booking.customerId) }}</dd>
 
     <dt class="col-5 text-muted">{{ 'recurring.form.problemType' | translate }}</dt>
-    <dd class="col-7">#{{ booking.problemTypeId }}</dd>
+    <dd class="col-7">{{ problemTypeName() || ('#' + booking.problemTypeId) }}</dd>
 
     <dt class="col-5 text-muted">{{ 'recurring.createdLabel' | translate }}</dt>
     <dd class="col-7">{{ booking.createdAt | date: 'medium' }}</dd>

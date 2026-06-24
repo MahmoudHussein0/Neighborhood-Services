@@ -19,8 +19,13 @@ namespace Neighborhood.Services.Application.RecurringBookings.DTOs
         public RecurringBookingStatus Status { get; set; }
         public decimal? AgreedPrice { get; set; }
         public int CustomerId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
         public int TechnicianId { get; set; }
+        public string TechnicianName { get; set; } = string.Empty;
         public int ProblemTypeId { get; set; }
+        // Resolved problem-type name (both languages) so the details view shows it instead of "#5".
+        public string ProblemTypeNameEn { get; set; } = string.Empty;
+        public string ProblemTypeNameAr { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
 }

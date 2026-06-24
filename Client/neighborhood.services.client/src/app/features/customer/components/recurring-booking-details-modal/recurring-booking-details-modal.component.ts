@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { RecurringBooking, RecurringBookingStatus } from '../../models/recurring-booking.model';
 import { BookingSummary, BookingStatus } from '../../models/booking.model';
@@ -17,7 +17,15 @@ import { nextOccurrences } from '../../utils/recurrence.util';
 export class RecurringBookingDetailsModalComponent {
   private readonly activeModal = inject(NgbActiveModal);
   private readonly bookingService = inject(BookingService);
+  private readonly translate = inject(TranslateService);
   protected readonly lightbox = inject(LightboxService);
+
+  /** Problem-type name in the active language (empty if the backend didn't resolve it). */
+  problemTypeName(): string {
+    const rb = this._booking;
+    if (!rb) return '';
+    return (this.translate.currentLang || 'en') === 'ar' ? rb.problemTypeNameAr : rb.problemTypeNameEn;
+  }
 
   private _booking!: RecurringBooking;
 

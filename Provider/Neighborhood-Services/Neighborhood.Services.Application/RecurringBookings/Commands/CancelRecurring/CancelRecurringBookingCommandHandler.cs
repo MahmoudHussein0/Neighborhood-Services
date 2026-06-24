@@ -84,16 +84,21 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CancelRec
                     ? userId
                     : (await _technicianRepository.GetByIdAsync(recurringBooking.TechnicianId))?.ApplicationUserId;
 
-                var otherUserId = isCancelledByCustomer ? technicianUserId : customerUserId;
-                if (!string.IsNullOrEmpty(otherUserId))
-                    await _notificationService.SendNotificationToUser(
-                        otherUserId,
-                        $"Recurring booking #{recurringBooking.Id} was cancelled.");
-
+                // Inform the customer exactly once (cancellation + the My-Bookings reminder).
+                // Note: this single message also covers the "other party was notified" case when
+                // the technician cancels — so we must NOT also send the generic message below, or
+                // the customer would receive two notifications for one cancellation.
                 if (!string.IsNullOrEmpty(customerUserId))
                     await _notificationService.SendNotificationToUser(
                         customerUserId,
                         $"Recurring booking #{recurringBooking.Id} was cancelled. Please check My Bookings — any visits already scheduled for the next few days are still booked, so cancel them there if you don't want them.");
+
+                // Inform the technician only when they didn't trigger the cancel themselves
+                // (i.e. the customer cancelled). A self-initiated cancel already shows them a toast.
+                if (isCancelledByCustomer && !string.IsNullOrEmpty(technicianUserId))
+                    await _notificationService.SendNotificationToUser(
+                        technicianUserId,
+                        $"Recurring booking #{recurringBooking.Id} was cancelled.");
             }
             catch (Exception ex)
             {

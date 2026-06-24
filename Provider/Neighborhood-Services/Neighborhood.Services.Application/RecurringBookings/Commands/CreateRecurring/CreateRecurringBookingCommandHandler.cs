@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.Notifications.Services;
 using Neighborhood.Services.Application.RecurringBookings.Interfaces;
 using Neighborhood.Services.Application.Shared;
 using Neighborhood.Services.Application.Technicians.Interfaces;
@@ -19,13 +21,17 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CreateRec
         private readonly ICurrentUserService _currentUserService;
         private readonly ITechnicianRepository _technicianRepository;
         private readonly ICustomerRepository _customerRepository;
-        public CreateRecurringBookingCommandHandler(IUnitOfWork unitOfWork, IRecurringBookingRepository recurringBookingRepository, ICurrentUserService currentUserService, ITechnicianRepository technicianRepository, ICustomerRepository customerRepository)
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<CreateRecurringBookingCommandHandler> _logger;
+        public CreateRecurringBookingCommandHandler(IUnitOfWork unitOfWork, IRecurringBookingRepository recurringBookingRepository, ICurrentUserService currentUserService, ITechnicianRepository technicianRepository, ICustomerRepository customerRepository, INotificationService notificationService, ILogger<CreateRecurringBookingCommandHandler> logger)
         {
             _recurringBookingRepository = recurringBookingRepository;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
             _technicianRepository = technicianRepository;
             _customerRepository = customerRepository;
+            _notificationService = notificationService;
+            _logger = logger;
         }
         public async Task<int> Handle(CreateRecurringBookingCommand request, CancellationToken cancellationToken)
         {
@@ -82,6 +88,20 @@ namespace Neighborhood.Services.Application.RecurringBookings.Commands.CreateRec
 
             await _recurringBookingRepository.AddAsync(recurringBooking);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Let the technician know a customer set up a recurring arrangement that needs a price.
+            // Best effort — a failed notification must not fail the creation.
+            try
+            {
+                if (!string.IsNullOrEmpty(technician.ApplicationUserId))
+                    await _notificationService.SendNotificationToUser(
+                        technician.ApplicationUserId,
+                        $"New recurring booking request #{recurringBooking.Id} — open Recurring Jobs to set a price.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Create-recurring-booking notification failed for recurring booking {Id}.", recurringBooking.Id);
+            }
 
             return recurringBooking.Id;
         }

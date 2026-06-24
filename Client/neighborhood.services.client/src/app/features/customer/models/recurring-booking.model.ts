@@ -57,7 +57,11 @@ export interface RecurringBooking {
   status: RecurringBookingStatus;
   agreedPrice?: number | null;
   customerId: number;
+  customerName: string;
   technicianId: number;
+  technicianName: string;
   problemTypeId: number;
+  problemTypeNameEn: string;
+  problemTypeNameAr: string;
   createdAt: string;
 }

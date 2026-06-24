@@ -42,6 +42,8 @@ namespace Neighborhood.Services.Application.RecurringBookings.Queries.GetRecurri
             CustomerId = rb.CustomerId,
             TechnicianId = rb.TechnicianId,
             ProblemTypeId = rb.ProblemTypeId,
+            ProblemTypeNameEn = rb.ProblemType != null ? rb.ProblemType.NameEn : string.Empty,
+            ProblemTypeNameAr = rb.ProblemType != null ? rb.ProblemType.NameAr : string.Empty,
             CreatedAt = rb.CreatedAt
         };
     }

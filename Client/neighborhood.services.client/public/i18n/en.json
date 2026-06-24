@@ -539,6 +539,7 @@
         "form": {
             "title": "New Recurring Arrangement",
             "technician": "Technician",
+            "customer": "Customer",
             "chooseTechnician": "Choose a technician",
             "category": "Category",
             "chooseCategory": "Choose a category",
