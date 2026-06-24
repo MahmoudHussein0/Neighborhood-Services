@@ -29,5 +29,8 @@ namespace Neighborhood.Services.Application.Technicians.Interfaces
 
         // Maps technician ids -> display name (ApplicationUser.FullName). Used to label bookings lists.
         Task<Dictionary<int, string>> GetNamesByIdsAsync(IReadOnlyCollection<int> technicianIds);
+
+        // Category ids this technician is assigned to — used to gate which requests they can offer on.
+        Task<List<int>> GetCategoryIdsAsync(int technicianId);
     }
 }

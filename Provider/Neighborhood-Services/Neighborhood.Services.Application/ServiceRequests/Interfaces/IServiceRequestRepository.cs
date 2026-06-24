@@ -14,7 +14,9 @@ namespace Neighborhood.Services.Application.ServiceRequests.Interfaces
 
         // Paged + optional status filter + search (used by "my service requests")
         Task<PagedResult<ServiceRequest>> GetCustomerServiceRequestsPagedAsync(int customerId, ServiceRequestStatus? status, string? search, int page, int pageSize);
-        Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters);
+        // Paged open requests near the technician. radiusInMeters <= 0 means "All" (no distance filter).
+        // categoryIds != null restricts results to those categories (null = whole market, no category filter).
+        Task<PagedResult<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters, IReadOnlyCollection<int>? categoryIds, int page, int pageSize);
         Task<ServiceRequest?> GetServiceRequestWithOffersAsync(int serviceRequestId);
 
 

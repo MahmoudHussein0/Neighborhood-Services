@@ -63,14 +63,33 @@ namespace Neighborhood.Services.Infrastructure.Persistence.ServiceRequests
 
             return new PagedResult<ServiceRequest>(items, total, page, pageSize);
         }
-        public async Task<IEnumerable<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters)
+        public async Task<PagedResult<ServiceRequest>> GetOpenServiceRequestsAsync(double latitude, double longitude, double radiusInMeters, IReadOnlyCollection<int>? categoryIds, int page, int pageSize)
         {
-            var location = new Point(longitude, latitude) { SRID = 4326 };
-            return await _context.ServiceRequests
-                .Where(sr => sr.Status == ServiceRequestStatus.Open
-                    && !sr.IsDeleted
-                    && sr.Location.IsWithinDistance(location, radiusInMeters))
+            var query = _context.ServiceRequests
+                .Include(sr => sr.Offers)
+                .Where(sr => sr.Status == ServiceRequestStatus.Open && !sr.IsDeleted);
+
+            // radiusInMeters <= 0 means "All requests" — skip the distance filter.
+            if (radiusInMeters > 0)
+            {
+                var location = new Point(longitude, latitude) { SRID = 4326 };
+                query = query.Where(sr => sr.Location.IsWithinDistance(location, radiusInMeters));
+            }
+
+            // categoryIds != null restricts to those categories ("my categories" view).
+            // null = whole market (no category filter).
+            if (categoryIds != null)
+                query = query.Where(sr => categoryIds.Contains(sr.CategoryId));
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(sr => sr.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedResult<ServiceRequest>(items, total, page, pageSize);
         }
         public async Task<ServiceRequest?> GetServiceRequestWithOffersAsync(int serviceRequestId)
         {

@@ -78,6 +78,11 @@ namespace Neighborhood.Services.Application.Offers.Commands.CreateOffer
             if (serviceRequest.Status != ServiceRequestStatus.Open)
                 throw new BadRequestException("This service request is no longer open for offers.");
 
+            // A technician may only offer on requests within their assigned service categories.
+            var technicianCategoryIds = await _technicianRepository.GetCategoryIdsAsync(technician.Id);
+            if (!technicianCategoryIds.Contains(serviceRequest.CategoryId))
+                throw new ForbiddenException("You can only make offers on requests within your service categories.");
+
             // One pending offer per technician per service request
             var existingOffers = await _offerRepository.GetOffersByServiceRequestAsync(request.ServiceRequestId);
             if (existingOffers.Any(o => o.TechnicianId == technician.Id && o.Status == OfferStatus.Pending))

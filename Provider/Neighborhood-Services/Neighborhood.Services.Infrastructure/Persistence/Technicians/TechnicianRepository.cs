@@ -205,5 +205,14 @@ namespace Neighborhood.Services.Infrastructure.Persistence.Technicians
                 select new { technician.Id, user.FullName }
             ).ToDictionaryAsync(x => x.Id, x => x.FullName);
         }
+
+        public async Task<List<int>> GetCategoryIdsAsync(int technicianId)
+        {
+            return await _context.TechnicianCategories
+                .AsNoTracking()
+                .Where(tc => tc.TechnicianId == technicianId)
+                .Select(tc => tc.CategoryId)
+                .ToListAsync();
+        }
     }
 }

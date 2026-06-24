@@ -1,0 +1,15 @@
+/* Clamp long request descriptions on the card; full text lives in the details modal. */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Make the title feel tappable (opens details). */
+.ns-card-title.clickable {
+  cursor: pointer;
+}
+.ns-card-title.clickable:hover {
+  color: #1d4ed8;
+}

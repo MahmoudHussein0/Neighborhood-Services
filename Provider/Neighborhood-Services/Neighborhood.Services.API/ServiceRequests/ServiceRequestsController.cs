@@ -124,13 +124,19 @@ namespace Neighborhood.Services.API.ServiceRequests
         public async Task<IActionResult> GetOpen(
             [FromQuery] double latitude,
             [FromQuery] double longitude,
-            [FromQuery] double radiusInMeters = 5000)
+            [FromQuery] double radiusInMeters = 5000,
+            [FromQuery] bool onlyMyCategories = true,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             var result = await _mediator.Send(new GetOpenServiceRequestsQuery
             {
                 Latitude = latitude,
                 Longitude = longitude,
-                RadiusInMeters = radiusInMeters
+                RadiusInMeters = radiusInMeters,
+                OnlyMyCategories = onlyMyCategories,
+                Page = page,
+                PageSize = pageSize
             });
             return Ok(result);
         }

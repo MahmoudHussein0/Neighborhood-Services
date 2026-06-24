@@ -10,6 +10,7 @@ export interface ServiceRequestSummary {
   status: ServiceRequestStatus;
   scheduledAt: string;
   customerId: number;
+  customerName?: string;
   problemTypeId: number;
   createdAt: string;
   expiresAt: string;
@@ -17,6 +18,7 @@ export interface ServiceRequestSummary {
   latitude: number;
   longitude: number;
   categoryId: number;
+  canOffer?: boolean;
 }
 
 // Mirrors ServiceRequestDetailsDto (GET /api/servicerequests/{id})

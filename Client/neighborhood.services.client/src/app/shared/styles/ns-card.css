@@ -56,6 +56,8 @@
 .ns-card[data-status='Rejected']::before  { background: linear-gradient(180deg, #f87171, #dc2626); }
 .ns-card[data-status='Expired']::before   { background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
 .ns-card[data-status='Withdrawn']::before { background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
+/* Service-request statuses */
+.ns-card[data-status='Open']::before       { background: linear-gradient(180deg, #38bdf8, #0284c7); }
 /* Recurring statuses */
 .ns-card[data-status='Active']::before                  { background: linear-gradient(180deg, #22c55e, #15803d); }
 .ns-card[data-status='Paused']::before                  { background: linear-gradient(180deg, #fbbf24, #d97706); }
