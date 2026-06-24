@@ -14,30 +14,31 @@ import { KnowledgeService } from '../../services/knowledge.service';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { ConfirmService } from '../../../../shared/services/confirm.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-staff-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, DecimalPipe, CurrencyPipe, DatePipe],
+  imports: [CommonModule, RouterModule, DecimalPipe, CurrencyPipe, DatePipe, TranslatePipe],
   template: `
     <div class="dash-root">
 
       <!-- Header -->
       <div class="dash-header mb-4">
         <div>
-          <h2 class="dash-title">Staff Overview</h2>
-          <p class="dash-subtitle">Real-time snapshot of platform activity</p>
+          <h2 class="dash-title">{{ 'dashboard.staffOverview' | translate }}</h2>
+          <p class="dash-subtitle">{{ 'dashboard.glanceStaff' | translate }}</p>
         </div>
         <div class="header-actions">
           @if (can('FullAccess')) {
           <button class="btn-refresh btn-reindex" (click)="reindexKnowledge()" [disabled]="reindexing()">
             <span class="refresh-icon" [class.spinning]="reindexing()">{{ reindexing() ? '↻' : '🧠' }}</span>
-            {{ reindexing() ? 'Reindexing…' : 'Reindex Knowledge' }}
+            {{ (reindexing() ? 'dashboard.reindexing' : 'dashboard.reindexKnowledge') | translate }}
           </button>
           }
           <button class="btn-refresh" (click)="loadAll()" [disabled]="loading()">
             <span class="refresh-icon" [class.spinning]="loading()">↻</span>
-            Refresh
+            {{ 'dashboard.refresh' | translate }}
           </button>
         </div>
       </div>
@@ -59,8 +60,8 @@ import { ToastrService } from 'ngx-toastr';
       <!-- Error -->
       @else if (error()) {
         <div class="error-banner">
-          <span>⚠️ فشل تحميل بيانات الـ Dashboard</span>
-          <button class="btn-retry" (click)="loadAll()">إعادة المحاولة</button>
+          <span>⚠️ {{ 'dashboard.loadError' | translate }}</span>
+          <button class="btn-retry" (click)="loadAll()">{{ 'dashboard.retry' | translate }}</button>
         </div>
       }
 
@@ -74,8 +75,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">📋</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#3b82f6">{{ totalBookings() }}</span>
-              <span class="stat-label">Total Bookings</span>
-              <span class="stat-sub">{{ completedBookings() }} completed</span>
+              <span class="stat-label">{{ 'dashboard.totalBookings' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.nCompleted' | translate: { n: completedBookings() } }}</span>
             </div>
             <div class="stat-accent" style="background:#3b82f6"></div>
           </a>
@@ -86,8 +87,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">👥</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#8b5cf6">{{ totalUsers() }}</span>
-              <span class="stat-label">Users</span>
-              <span class="stat-sub">Registered accounts</span>
+              <span class="stat-label">{{ 'dashboard.users' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.registeredAccounts' | translate }}</span>
             </div>
             <div class="stat-accent" style="background:#8b5cf6"></div>
           </a>
@@ -98,8 +99,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">🎫</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#f59e0b">{{ totalTickets() }}</span>
-              <span class="stat-label">Support Tickets</span>
-              <span class="stat-sub">All tickets</span>
+              <span class="stat-label">{{ 'dashboard.supportTickets' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.allTickets' | translate }}</span>
             </div>
             <div class="stat-accent" style="background:#f59e0b"></div>
           </a>
@@ -110,8 +111,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">⚖️</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#ef4444">{{ openDisputes() }}</span>
-              <span class="stat-label">Open Disputes</span>
-              <span class="stat-sub">Need resolution</span>
+              <span class="stat-label">{{ 'dashboard.openDisputesLabel' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.needResolution' | translate }}</span>
             </div>
             <div class="stat-accent" style="background:#ef4444"></div>
           </a>
@@ -122,8 +123,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">⭐</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#10b981">{{ totalReviews() }}</span>
-              <span class="stat-label">Reviews</span>
-              <span class="stat-sub">{{ flaggedReviews() }} flagged</span>
+              <span class="stat-label">{{ 'dashboard.reviews' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.nFlagged' | translate: { n: flaggedReviews() } }}</span>
             </div>
             <div class="stat-accent" style="background:#10b981"></div>
           </a>
@@ -134,8 +135,8 @@ import { ToastrService } from 'ngx-toastr';
             <div class="stat-icon">🚨</div>
             <div class="stat-body">
               <span class="stat-value" style="color:#f43f5e">{{ disputedBookings() }}</span>
-              <span class="stat-label">Disputed Bookings</span>
-              <span class="stat-sub">Active disputes</span>
+              <span class="stat-label">{{ 'dashboard.disputedBookings' | translate }}</span>
+              <span class="stat-sub">{{ 'dashboard.activeDisputes' | translate }}</span>
             </div>
             <div class="stat-accent" style="background:#f43f5e"></div>
           </a>
@@ -149,12 +150,12 @@ import { ToastrService } from 'ngx-toastr';
           <!-- Bookings by Status -->
           @if (can('ManageBookings')) {
           <div class="chart-card">
-            <h3 class="chart-title">Bookings by Status</h3>
+            <h3 class="chart-title">{{ 'dashboard.bookingsByStatus' | translate }}</h3>
             <div class="bar-list">
               @for (bar of bookingBars(); track bar.status) {
                 <div class="bar-item">
                   <div class="bar-meta">
-                    <span class="bar-label">{{ bar.status }}</span>
+                    <span class="bar-label">{{ ('bookings.status.' + bar.status) | translate }}</span>
                     <span class="bar-count">{{ bar.count }}</span>
                   </div>
                   <div class="bar-track">
@@ -174,28 +175,28 @@ import { ToastrService } from 'ngx-toastr';
           <!-- Open Issues Donut -->
           @if (canIssues()) {
           <div class="chart-card center-content">
-            <h3 class="chart-title">Open Issues</h3>
+            <h3 class="chart-title">{{ 'dashboard.openIssues' | translate }}</h3>
             <div class="donut-wrap">
               <div class="donut" [style]="donutGradient()">
                 <div class="donut-hole">
                   <span class="donut-num">{{ openDisputes() + totalTickets() }}</span>
-                  <span class="donut-sub">Total</span>
+                  <span class="donut-sub">{{ 'dashboard.total' | translate }}</span>
                 </div>
               </div>
               <div class="donut-legend">
                 <div class="legend-item">
                   <span class="dot" style="background:#f59e0b"></span>
-                  <span class="leg-label">Tickets</span>
+                  <span class="leg-label">{{ 'dashboard.tickets' | translate }}</span>
                   <span class="leg-val">{{ totalTickets() }}</span>
                 </div>
                 <div class="legend-item">
                   <span class="dot" style="background:#ef4444"></span>
-                  <span class="leg-label">Disputes</span>
+                  <span class="leg-label">{{ 'dashboard.disputes' | translate }}</span>
                   <span class="leg-val">{{ openDisputes() }}</span>
                 </div>
                 <div class="legend-item">
                   <span class="dot" style="background:#f43f5e"></span>
-                  <span class="leg-label">Flagged Reviews</span>
+                  <span class="leg-label">{{ 'dashboard.flaggedReviewsLabel' | translate }}</span>
                   <span class="leg-val">{{ flaggedReviews() }}</span>
                 </div>
               </div>
@@ -207,7 +208,7 @@ import { ToastrService } from 'ngx-toastr';
           <!-- Reviews Rings -->
           @if (can('MangeReviews')) {
           <div class="chart-card">
-            <h3 class="chart-title">Reviews Breakdown</h3>
+            <h3 class="chart-title">{{ 'dashboard.reviewsBreakdown' | translate }}</h3>
             <div class="rings-wrap">
               @for (ring of reviewRings(); track ring.label) {
                 <div class="ring-item">
@@ -224,7 +225,7 @@ import { ToastrService } from 'ngx-toastr';
                   </svg>
                   <div class="ring-meta">
                     <span class="ring-pct">{{ ring.pct | number:'1.0-0' }}%</span>
-                    <span class="ring-label">{{ ring.label }}</span>
+                    <span class="ring-label">{{ ('dashboard.ring.' + ring.label) | translate }}</span>
                     <span class="ring-count">{{ ring.count }}</span>
                   </div>
                 </div>
@@ -239,20 +240,20 @@ import { ToastrService } from 'ngx-toastr';
         @if (can('ManageBookings')) {
         <div class="table-card">
           <div class="table-head-row">
-            <h3 class="chart-title mb-0">Recent Bookings</h3>
-            <a routerLink="/staff/bookings" class="view-all">View all →</a>
+            <h3 class="chart-title mb-0">{{ 'dashboard.recentBookings' | translate }}</h3>
+            <a routerLink="/staff/bookings" class="view-all">{{ 'dashboard.viewAll' | translate }} →</a>
           </div>
           <div class="table-scroll">
             <table class="dash-table">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Customer</th>
-                  <th>Technician</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Scheduled</th>
-                  <th>Price</th>
+                  <th>{{ 'dashboard.colCustomer' | translate }}</th>
+                  <th>{{ 'dashboard.colTechnician' | translate }}</th>
+                  <th>{{ 'dashboard.colType' | translate }}</th>
+                  <th>{{ 'dashboard.colStatus' | translate }}</th>
+                  <th>{{ 'dashboard.colScheduled' | translate }}</th>
+                  <th>{{ 'dashboard.colPrice' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -261,13 +262,13 @@ import { ToastrService } from 'ngx-toastr';
                     <td class="muted">{{ b.id }}</td>
                     <td>{{ b.customerName }}</td>
                     <td>{{ b.technicianName }}</td>
-                    <td><span class="type-badge">{{ b.bookingType }}</span></td>
-                    <td><span [class]="'sbadge sbadge-' + b.status.toLowerCase()">{{ b.status }}</span></td>
+                    <td><span class="type-badge">{{ ('bookings.bookingType.' + b.bookingType) | translate }}</span></td>
+                    <td><span [class]="'sbadge sbadge-' + b.status.toLowerCase()">{{ ('bookings.status.' + b.status) | translate }}</span></td>
                     <td class="muted">{{ b.scheduledAt | date:'dd MMM, HH:mm' }}</td>
                     <td>{{ (b.finalPrice || b.estimatedPrice) | currency:'EGP':'symbol':'1.0-0' }}</td>
                   </tr>
                 } @empty {
-                  <tr><td colspan="7" class="empty-row">No bookings found</td></tr>
+                  <tr><td colspan="7" class="empty-row">{{ 'dashboard.noBookingsFound' | translate }}</td></tr>
                 }
               </tbody>
             </table>

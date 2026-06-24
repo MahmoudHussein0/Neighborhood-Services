@@ -6,10 +6,11 @@ import {CustomerSupportService} from '../../../public/services/customer-support.
 import {TicketDto} from '../../../public/models/ticket-dto';
 
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
   selector: 'app-staff-sidebar',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, HasPermissionDirective],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, HasPermissionDirective, LogoComponent],
   templateUrl: './staff-sidebar.component.html',
   styleUrl: './staff-sidebar.component.css',
 })
