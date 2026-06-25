@@ -71,6 +71,51 @@ namespace Neighborhood.Services.Infrastructure.Services.AI
 
         }
 
+        public async Task<string> ChatWithToolsAsync(ChatHistory history, string systemPrompt, IEnumerable<object> tools, AiCallContext? log = null)
+        {
+            // Clone the shared kernel so the per-request tools don't leak into other requests,
+            // then register each tool object's [KernelFunction] methods on the clone.
+            var kernel = _kernel.Clone();
+            foreach (var tool in tools)
+                kernel.Plugins.AddFromObject(tool);
+
+            var chatService = kernel.GetRequiredService<IChatCompletionService>();
+            history.Insert(0, new ChatMessageContent(AuthorRole.System, systemPrompt));
+
+            // Auto = the model decides when to call a tool, SK runs it, feeds the result back,
+            // and loops until the model produces a final text answer.
+            var settings = new PromptExecutionSettings
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+            };
+
+            var result = await chatService.GetChatMessageContentAsync(history, settings, kernel);
+
+            if (log != null)
+            {
+                int? tokensUsed = null;
+                if (result.Metadata?.TryGetValue("Usage", out var usage) == true && usage is OpenAI.Chat.ChatTokenUsage tokenUsage)
+                    tokensUsed = tokenUsage.TotalTokenCount;
+
+                try
+                {
+                    await _mediator.Send(new CreateAgentLogCommand
+                    {
+                        AgentType = log.AgentType,
+                        Action = log.Action,
+                        Input = history.LastOrDefault(m => m.Role == AuthorRole.User)?.Content ?? "",
+                        Output = result.Content ?? "",
+                        ReferenceType = log.ReferenceType,
+                        ReferenceId = log.ReferenceId,
+                        TokensUsed = tokensUsed
+                    });
+                }
+                catch { }
+            }
+
+            return result.Content ?? string.Empty;
+        }
+
         public async Task<string> ChatAsync(ChatHistory history, string systemPrompt, AiCallContext? log = null)
         {
             var chatService = _kernel.GetRequiredService<IChatCompletionService>();

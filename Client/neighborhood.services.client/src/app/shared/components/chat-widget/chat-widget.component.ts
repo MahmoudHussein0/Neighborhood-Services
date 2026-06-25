@@ -85,6 +85,12 @@ export class ChatWidgetComponent {
     const image = this.attachedImage();
     if ((!text && !image) || this.sending() || this.uploadingImage()) return;
 
+    // Snapshot the conversation BEFORE adding this message — these prior turns are replayed
+    // to the backend so the chat has memory (cap to the last 20 to bound the payload/tokens).
+    const history = this.messages()
+      .slice(-20)
+      .map((m) => ({ role: m.role, content: m.content }));
+
     this.messages.update((m) => [...m, { role: 'User', content: text, imageUrl: image ?? undefined }]);
     this.draft = '';
     this.attachedImage.set(null);
@@ -98,6 +104,7 @@ export class ChatWidgetComponent {
         latitude: c?.lat ?? null,
         longitude: c?.lng ?? null,
         imageUrl: image,
+        history,
       })
       .subscribe({
         next: (r) => {

@@ -41,6 +41,8 @@ namespace Neighborhood.Services.Application.Chatbot.Queries.GetSessionMessages
                 Title = session.Title,
                 CreatedAt = session.CreatedAt,
                 Messages = session.Messages
+                    // Tool messages are internal context (replayed to the model), not shown in chat.
+                    .Where(m => m.Role != ChatbotRole.Tool)
                     .OrderBy(m => m.CreatedAt)
                     .Select(m => new ChatMessageDto
                     {

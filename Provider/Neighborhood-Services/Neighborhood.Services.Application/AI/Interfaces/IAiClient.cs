@@ -11,5 +11,10 @@ namespace Neighborhood.Services.Application.AI.Interfaces
     {
         Task<string> CompleteAsync(string systemprompt, string userprompt, string? imageUrl = null, AiCallContext? log=null);
         Task<string> ChatAsync(ChatHistory history, string systemPromp, AiCallContext? log=null);
+
+        // Like ChatAsync, but the model may CALL the supplied tools (Semantic Kernel plugin
+        // objects) on its own — function calling is auto-invoked. Each object's [KernelFunction]
+        // methods become callable. Used to make the chatbot a real tool-using agent.
+        Task<string> ChatWithToolsAsync(ChatHistory history, string systemPrompt, IEnumerable<object> tools, AiCallContext? log = null);
     }
 }
