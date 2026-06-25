@@ -89,10 +89,13 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
                 "PricingTool: result — problemTypeId={ProblemTypeId} region='{Region}' price={Price:0.##} EGP",
                 problemTypeId, region ?? "(general)", estimate);
 
-            return string.IsNullOrWhiteSpace(region)
+            // Prefix the matched service id so the model can carry it to create_booking (skips
+            // re-classifying the problem at booking time).
+            var prefix = $"matched service #{problemTypeId}. ";
+            return prefix + (string.IsNullOrWhiteSpace(region)
                 ? $"Estimated price: approximately {estimate:0.##} EGP (general average — the user's " +
                   "city is unknown, so ask which city they're in for a more accurate figure)."
-                : $"Estimated price: approximately {estimate:0.##} EGP (based on {region}).";
+                : $"Estimated price: approximately {estimate:0.##} EGP (based on {region}).");
         }
     }
 }

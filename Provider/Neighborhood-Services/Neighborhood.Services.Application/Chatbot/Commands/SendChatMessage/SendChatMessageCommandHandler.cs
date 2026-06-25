@@ -8,6 +8,7 @@ using Neighborhood.Services.Application.Bookings.Services;
 using Neighborhood.Services.Application.Chatbot.DTOs;
 using Neighborhood.Services.Application.Chatbot.Interfaces;
 using Neighborhood.Services.Application.Chatbot.Tools;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
 using Neighborhood.Services.Application.ProblemTypes.Interface;
 using Neighborhood.Services.Application.Shared;
@@ -35,6 +36,8 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
         private readonly IMediator _mediator;
         // recommend_technician classifies free text -> problemTypeId, then reads its CategoryId here.
         private readonly IProblemTypeRepository _problemTypeRepository;
+        // create_booking checks the signed-in user has a customer record (only customers can book).
+        private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<SendChatMessageCommandHandler> _logger;
 
 
@@ -48,6 +51,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
                                                 IGeocodingService geocodingService,
                                                 IMediator mediator,
                                                 IProblemTypeRepository problemTypeRepository,
+                                                ICustomerRepository customerRepository,
                                                 ILogger<SendChatMessageCommandHandler> logger)
         {
             _chatbotRepository= chatbotRepository;
@@ -60,6 +64,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
             _geocodingService = geocodingService;
             _mediator = mediator;
             _problemTypeRepository = problemTypeRepository;
+            _customerRepository = customerRepository;
             _logger = logger;
         }
 
@@ -151,6 +156,7 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
                   - BOOKING (create_booking): this places a Direct booking for the user.
                       • Only for LOGGED-IN users. If the user isn't logged in, tell them to log in first — do not call the tool.
                       • You need: the technician's id (from find_technicians/recommend_technician), the service description, and a start time the user picked from check_availability. Pass the time as 'YYYY-MM-DD HH:mm'.
+                      • If you already identified the service earlier (recommend_technician / estimate_price output starts with "matched service #<id>"), pass that id as problemTypeId so the service is NOT re-classified. Only ask the user to describe the problem again if no service was ever identified.
                       • ALWAYS call create_booking with confirmed=false FIRST. It returns a summary (technician, service, time, a suggested address). Show that summary to the user, ask them to confirm the details and confirm or correct the address, and make clear the booking will be PENDING — the technician then reviews it and sends a price quote, and nothing is charged now.
                       • Only after the user explicitly agrees, call create_booking again with confirmed=true and the final address they accepted or gave.
                       • If the tool returns SLOT_TAKEN, the chosen time is no longer free — offer the free times it lists and let the user pick another. For NO_LOCATION, ask the user to tap 'share location'. For NO_MATCH/CANNOT_BOOK/NEED_ADDRESS, follow the instruction in the tool's message.
@@ -234,8 +240,8 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
                 request.Latitude, request.Longitude);
             // The only WRITE tool — carries whether the caller is logged in (guests can't book).
             var bookingTool = new BookingTool(
-                _mediator, _memory, _geocodingService, _logger,
-                request.Latitude, request.Longitude, isLoggedIn: userId is not null);
+                _mediator, _memory, _geocodingService, _problemTypeRepository, _customerRepository, _logger,
+                request.Latitude, request.Longitude, currentUserId: userId);
             var reply = await _aiClient.ChatWithToolsAsync(
                 history, systemPrompt,
                 new object[] { pricingTool, technicianTool, matchmakingTool, bookingTool });

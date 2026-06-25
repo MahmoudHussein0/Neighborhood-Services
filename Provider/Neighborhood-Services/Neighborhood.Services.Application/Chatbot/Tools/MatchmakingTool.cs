@@ -113,7 +113,10 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
                      + $"reason: {m.Reason}";
             });
 
-            return "Recommended technicians (best first):\n" + string.Join("\n", lines);
+            // Surface the matched service id so the model can pass it straight to create_booking
+            // (skips re-classifying the problem at booking time).
+            return $"matched service #{problemTypeId}: {problemType.NameEn}\n"
+                 + "Recommended technicians (best first):\n" + string.Join("\n", lines);
         }
     }
 }

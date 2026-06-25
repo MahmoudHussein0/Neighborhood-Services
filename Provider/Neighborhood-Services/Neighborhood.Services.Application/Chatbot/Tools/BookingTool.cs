@@ -4,7 +4,9 @@ using Microsoft.SemanticKernel;
 using Neighborhood.Services.Application.AI.Interfaces;
 using Neighborhood.Services.Application.Bookings.Commands.CreateBookingCommands;
 using Neighborhood.Services.Application.Bookings.Queries.GetTechnicianAvailableSlots;
+using Neighborhood.Services.Application.Customers.Interfaces;
 using Neighborhood.Services.Application.Exceptions;
+using Neighborhood.Services.Application.ProblemTypes.Interface;
 using Neighborhood.Services.Application.Shared;
 using System.ComponentModel;
 using System.Globalization;
@@ -30,31 +32,41 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
         private readonly IMediator _mediator;
         private readonly IVectorMemory _memory;
         private readonly IGeocodingService _geocodingService;
+        private readonly IProblemTypeRepository _problemTypeRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly ILogger _logger;
         private readonly double? _latitude;
         private readonly double? _longitude;
-        private readonly bool _isLoggedIn;
+        // The authenticated user's id (null = guest). A customer record for it is what makes the
+        // user eligible to book — checked lazily only when create_booking is actually called.
+        private readonly string? _currentUserId;
 
         // A booking pins one EXACT problem type (drives category + price range), so a wrong match is
-        // worse than asking again — keep this STRICT (same threshold the pricing tool uses).
+        // worse than asking again — keep this STRICT (same threshold the pricing tool uses). This
+        // only applies to the FALLBACK classification; a problemTypeId the model carries from an
+        // earlier recommend_technician/estimate_price result is reused directly (no re-classify).
         private const float ClassifierConfidenceThreshold = 0.5f;
 
         public BookingTool(
             IMediator mediator,
             IVectorMemory memory,
             IGeocodingService geocodingService,
+            IProblemTypeRepository problemTypeRepository,
+            ICustomerRepository customerRepository,
             ILogger logger,
             double? latitude,
             double? longitude,
-            bool isLoggedIn)
+            string? currentUserId)
         {
             _mediator = mediator;
             _memory = memory;
             _geocodingService = geocodingService;
+            _problemTypeRepository = problemTypeRepository;
+            _customerRepository = customerRepository;
             _logger = logger;
             _latitude = latitude;
             _longitude = longitude;
-            _isLoggedIn = isLoggedIn;
+            _currentUserId = currentUserId;
         }
 
         [KernelFunction("create_booking")]
@@ -79,16 +91,29 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
             string? address = null,
             [Description("Set to true ONLY after the user has seen the summary and explicitly agreed " +
                 "to book. Defaults to false, which returns a summary WITHOUT booking.")]
-            bool confirmed = false)
+            bool confirmed = false,
+            [Description("The problem type id from an earlier recommend_technician or estimate_price " +
+                "result (their output includes 'matched service #<id>'). Pass it to reuse the service " +
+                "already identified — this skips re-classifying the description. Leave 0 if unknown.")]
+            int problemTypeId = 0)
         {
             _logger.LogInformation(
-                "BookingTool: create_booking CALLED — tech={Tech} desc='{Desc}' at='{At}' confirmed={Confirmed} loggedIn={LoggedIn}",
-                technicianId, serviceDescription, scheduledAt, confirmed, _isLoggedIn);
+                "BookingTool: create_booking CALLED — tech={Tech} desc='{Desc}' problemTypeId={Ptid} at='{At}' confirmed={Confirmed} userId={UserId}",
+                technicianId, serviceDescription, problemTypeId, scheduledAt, confirmed, _currentUserId ?? "(guest)");
 
-            // 1. WRITE actions are for logged-in customers only.
-            if (!_isLoggedIn)
+            // 1. WRITE actions are for logged-in CUSTOMERS only.
+            if (string.IsNullOrWhiteSpace(_currentUserId))
                 return "NOT_LOGGED_IN: The user must be logged in to book. Ask them to log in first, " +
                        "then try again.";
+
+            // Only a CUSTOMER account can place a booking. We detect this by whether the signed-in
+            // user has a customer record — technicians/staff don't, so block them cleanly here
+            // (otherwise it fails deeper with a confusing "customer not found" error).
+            var customer = await _customerRepository.GetByUserIdAsync(_currentUserId);
+            if (customer is null)
+                return "ONLY_CUSTOMERS: Bookings can only be placed from a CUSTOMER account. If the " +
+                       "user is signed in as a technician or staff member, tell them they need a " +
+                       "customer account to book a service.";
 
             // 2. A booking needs a real location point. We require shared GPS coords so the booking
             //    has accurate Location — and we can reverse-geocode them into a suggested address.
@@ -96,17 +121,30 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
                 return "NO_LOCATION: We don't have the user's location. Ask them to tap 'share location' " +
                        "first so we can book with an accurate address, then try again.";
 
-            // 3. Classify the free-text problem into a known problemTypeId.
-            var hits = await _memory.SearchDetailedAsync("problem-types", serviceDescription, topK: 1);
-            var top = hits.FirstOrDefault();
-            if (top is null
-                || top.Score < ClassifierConfidenceThreshold
-                || !top.Fields.TryGetValue("problemTypeId", out var idStr)
-                || !int.TryParse(idStr, out var problemTypeId))
+            // 3. Determine the problem type. PREFER one the model carried from an earlier
+            //    recommend_technician/estimate_price result — the service was already established
+            //    when we picked the technician, so don't make the user describe it again. Only if no
+            //    (valid) id was passed do we fall back to classifying the free text.
+            int resolvedProblemTypeId;
+            if (problemTypeId > 0 && await _problemTypeRepository.GetByIdAsync(problemTypeId) is not null)
             {
-                _logger.LogInformation("BookingTool: NO_MATCH — topScore={Score}", top?.Score);
-                return "NO_MATCH: Could not confidently identify the service from that description. " +
-                       "Ask the user to describe the problem more specifically before booking.";
+                resolvedProblemTypeId = problemTypeId;
+            }
+            else
+            {
+                var hits = await _memory.SearchDetailedAsync("problem-types", serviceDescription, topK: 1);
+                var top = hits.FirstOrDefault();
+                if (top is null
+                    || top.Score < ClassifierConfidenceThreshold
+                    || !top.Fields.TryGetValue("problemTypeId", out var idStr)
+                    || !int.TryParse(idStr, out resolvedProblemTypeId))
+                {
+                    _logger.LogInformation("BookingTool: NO_MATCH — topScore={Score}", top?.Score);
+                    return "NO_MATCH: Could not confidently identify the service from that description. " +
+                           "Ask the user to describe the problem more specifically before booking. " +
+                           "(If you already recommended a technician for this problem, pass the " +
+                           "matched problemTypeId so re-classification is skipped.)";
+                }
             }
 
             // 4. Parse the chosen time.
@@ -183,7 +221,7 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
                 var bookingId = await _mediator.Send(new CreateBookingCommand
                 {
                     TechnicianId = technicianId,
-                    ProblemTypeId = problemTypeId,
+                    ProblemTypeId = resolvedProblemTypeId,
                     Description = serviceDescription,
                     Address = finalAddress,
                     Latitude = _latitude.Value,
@@ -211,6 +249,13 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
             catch (NotFoundException ex)
             {
                 return $"NOT_FOUND: {ex.Message} Ask the user to re-check the technician or service.";
+            }
+            catch (Exception ex)
+            {
+                // Safety net — never surface a raw 500 to the chat. Relay a generic failure.
+                _logger.LogError(ex, "BookingTool: create_booking unexpected failure");
+                return "CANNOT_BOOK: Something went wrong placing the booking. Ask the user to try " +
+                       "again shortly or use the booking page.";
             }
         }
     }
