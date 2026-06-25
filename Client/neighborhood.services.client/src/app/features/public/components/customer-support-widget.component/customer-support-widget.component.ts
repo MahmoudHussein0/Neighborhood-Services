@@ -123,31 +123,48 @@ export class CustomerSupportWidgetComponent implements AfterViewChecked, OnDestr
   }
 
   // ── Step 2: chat ──────────────────────────────────────────────────────
+private connectChat(ticketId: number) {
+  this.messagesService.getMessages(ticketId).pipe(takeUntil(this.destroy$)).subscribe({
+    next: (msgs) => {
+      const sorted = [...(msgs ?? [])].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
 
-  private connectChat(ticketId: number) {
-    this.messagesService.getMessages(ticketId).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (msgs) => {
-        this.messages.set(
-          [...(msgs ?? [])].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-        );
-        this.shouldScrollToBottom = true;
-      },
-    });
+      // ── رسالة الترحيب التلقائية ──────────────────────────────────────
+      const welcomeMsg: SupportMessage = {
+        id: -1,                          // id وهمي — مش هيتبعت للـ API
+        ticketId,
+        senderId: 'system',
+        senderType: 'Staff',             // يظهر على الشمال كأنه من الدعم
+        message: this.translate.instant('supportWidget.welcomeMessage'),
+        channel: MessageChannel.Chat.toString(),
+        createdAt: new Date().toISOString(),
+        attachments: [],
+      };
 
-    this.chat.startConnection()
-      .then(() => this.chat.joinTicket(ticketId))
-      .catch(() => {});
-
-    this.chat.connectionState$.pipe(takeUntil(this.destroy$)).subscribe(state => this.connectionState.set(state));
-
-    this.chat.message$.pipe(takeUntil(this.destroy$)).subscribe((msg: ChatMessage) => {
-      if (msg.ticketId !== ticketId) return;
-      const current = this.messages();
-      if (msg.id != null && current.some(m => m.id === msg.id)) return;
-      this.messages.set([...current, msg as SupportMessage]);
+      this.messages.set([welcomeMsg, ...sorted]);
       this.shouldScrollToBottom = true;
-    });
-  }
+    },
+  });
+
+  // ... باقي الكود زي ما هو
+  this.chat.startConnection()
+    .then(() => this.chat.joinTicket(ticketId))
+    .catch(() => {});
+
+  this.chat.connectionState$.pipe(takeUntil(this.destroy$))
+    .subscribe(state => this.connectionState.set(state));
+
+  this.chat.message$.pipe(takeUntil(this.destroy$)).subscribe((msg: ChatMessage) => {
+    if (msg.ticketId !== ticketId) return;
+    const current = this.messages();
+    // تجاهل الرسالة الترحيبية الوهمية عند المقارنة
+    if (msg.id != null && msg.id !== -1 && current.some(m => m.id === msg.id)) return;
+    this.messages.set([...current, msg as SupportMessage]);
+    this.shouldScrollToBottom = true;
+  });
+}
+  
 
   private leaveChat() {
     const id = this.ticket()?.id;
