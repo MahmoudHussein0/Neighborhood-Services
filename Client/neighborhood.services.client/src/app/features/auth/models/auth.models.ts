@@ -36,6 +36,10 @@ export interface GeocodingResult {
   formattedAddress: string;
   latitude: number;
   longitude: number;
+  // Structured place fields from reverse-geocoding (any may be null).
+  city?: string | null;
+  county?: string | null;
+  state?: string | null;
 }
 
 export interface AuthResponse {

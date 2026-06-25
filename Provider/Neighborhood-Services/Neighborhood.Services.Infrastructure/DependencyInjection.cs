@@ -216,7 +216,7 @@ namespace Neighborhood.Services.Infrastructure
                 services.AddSingleton(sp => {
                     var apiKey = configuration["OpenAI:ApiKey"] ?? "dummy-key";
                     return Kernel.CreateBuilder()
-                        .AddOpenAIChatCompletion("gpt-4o", apiKey)
+                        .AddOpenAIChatCompletion("gpt-5.4-mini", apiKey)
                         .Build();
                 });
                 services.AddScoped<IAiClient, SemanticKernelClient>();

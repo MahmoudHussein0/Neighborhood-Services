@@ -26,5 +26,18 @@ namespace Neighborhood.Services.Application.Chatbot.Commands.SendChatMessage
         // address to a known region key for a localized price estimate.
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+
+        // The recent conversation turns BEFORE this message, sent by the frontend so the chat
+        // has memory even for guests (who have no saved session). Excludes the current Message.
+        // When empty, the handler falls back to a logged-in user's saved session messages.
+        public List<ChatHistoryTurn> History { get; set; } = new();
+    }
+
+    // One prior conversation turn the frontend replays for context.
+    public class ChatHistoryTurn
+    {
+        // "User" or "Assistant".
+        public string Role { get; set; } = "User";
+        public string Content { get; set; } = string.Empty;
     }
 }

@@ -2,6 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
+// One prior conversation turn replayed for context (mirrors backend ChatHistoryTurn).
+export interface ChatHistoryTurn {
+  role: 'User' | 'Assistant';
+  content: string;
+}
+
 // Body for POST /api/chatbot. sessionId null = start a new chat; otherwise continue.
 export interface SendChatMessageRequest {
   sessionId: number | null;
@@ -10,6 +16,7 @@ export interface SendChatMessageRequest {
   latitude?: number | null;
   longitude?: number | null;
   imageUrl?: string | null;   // optional photo of the problem (vision)
+  history?: ChatHistoryTurn[]; // recent turns BEFORE this message, so the chat has memory
 }
 
 // Mirrors ChatReplyDto
