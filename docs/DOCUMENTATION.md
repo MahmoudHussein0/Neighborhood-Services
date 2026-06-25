@@ -341,7 +341,7 @@ All methods extract **token usage** from the response metadata and, when an `AiC
 supplied, persist an **AgentLog** entry (agent type, action, input, output, tokens, reference
 entity). Logging is wrapped in try/catch so an audit-write failure never breaks the AI call.
 
-`AgentType` enum: `Matching`, `Pricing`, `Booking`, `QA`, `Moderation`.
+`AgentType` enum: `Matching`, `Pricing`, `Booking`, `QA`, `Moderation`, `Chatbot`.
 
 ### 8.2 RAG (Retrieval-Augmented Generation)
 
@@ -431,9 +431,22 @@ button and the chatbot's authoritative-pricing path.
 
 ### 8.4 Auditing — AgentLog
 Every agent decision is recorded via `CreateAgentLogCommand` with agent type, action, input,
-output, token usage, and the referenced entity. Exposed through `AgentLogsController` for an
-admin-facing agent activity log. This makes the AI layer **observable and explainable** — a key
-requirement for a trust-centric marketplace.
+output, token usage, and the referenced entity. The **chatbot** logs one row per turn (input =
+user message, output = final reply, + tokens) under `AgentType.Chatbot`, and when it **places a
+booking** it writes an additional `CreateBooking` audit row that references the real booking
+(`ReferenceType=Booking`) so the action is traceable to the entity it created.
+
+Logs are surfaced two ways through `AgentLogsController`:
+
+- **By reference** — `GET /agentlogs/reference/{type}/{id}` returns all agent activity on one
+  entity (e.g. every AI touch on Booking #42).
+- **Admin viewer** — a full-access staff page (`/staff/agent-logs`) with **tabs per agent type**,
+  full-text **search** over input/output, **pagination**, and a **row-details modal** that shows
+  the complete input/output (scrollable). Backed by a paged, filtered query
+  (`GET /agentlogs?type=&search=&from=&to=&page=&pageSize=`, gated by `[HasPermission(FullAccess)]`).
+
+This makes the AI layer **observable and explainable** — a key requirement for a trust-centric
+marketplace.
 
 ---
 
