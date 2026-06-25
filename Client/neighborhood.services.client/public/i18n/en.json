@@ -1300,6 +1300,7 @@
     "supportTeam": "Support Team",
     "you": "You",
     "waitingFirstReply": "Waiting for the first reply",
-    "resolvedNotice": "This ticket has been resolved"    
+    "resolvedNotice": "This ticket has been resolved",
+    "welcomeMessage": "👋 Thanks for reaching out! A support agent will be with you shortly. Please wait a moment."   
   }
 }

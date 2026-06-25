@@ -1314,6 +1314,7 @@
     "supportTeam": "فريق الدعم",
     "you": "أنت",
     "waitingFirstReply": "في انتظار أول رد",
-    "resolvedNotice": "تم حل هذه التذكرة"
+    "resolvedNotice": "تم حل هذه التذكرة" ,
+  "welcomeMessage": "👋 شكراً لتواصلك معنا! سيرد عليك أحد موظفي الدعم قريباً. يرجى الانتظار ."
   }
 }

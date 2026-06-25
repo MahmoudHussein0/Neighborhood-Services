@@ -51,8 +51,7 @@ import { PublicProfileComponent } from './shared/components/public-profile/publi
 import { categoriesResolver } from './core/resolvers/categories-resolver';
 import {FavoriteListComponent} from '../app/features/customer/pages/favorite-list/favorite-list.component';
 import {CustomerChatsComponent} from '../app/features/customer/pages/customer-chats/customer-chats.component'
-import {CustomerSupportComponent} from '../app/features/public/pages/customersupport/customer-support/customer-support.component'
-import {CustomerSupportStaffComponent} from '../app/features/staff/pages/customer-support-staff/customer-support-staff.component'
+
 import { TechnicianCategoriesComponent } from './features/technician/pages/Technician-categories/Technician-categories.component';
 import { NewsletterpublishingComponent } from '../app/features/staff/pages/newsletter/newsletterpublishing/newsletterpublishing.component'
 
@@ -152,7 +151,6 @@ export const routes: Routes = [
       { path: 'details/:categoryId', component: CategoryDetailsComponent, title: 'Category Details ', data: { permission: 'ManageCategories' } },
       { path: 'policies', component: PoliciesComponent, title: 'Staff Policies', data: { permission: 'ManagePolicies' } },
       { path: 'promo-codes', component: StaffPromoCodesComponent, data: { permission: 'ManagePromos' } },
-      {path:'CustomerSupport',component:CustomerSupportStaffComponent},
       {
         path: 'staff-management',
         data: { permission: 'FullAccess' },
