@@ -7,6 +7,7 @@ import {TicketMessageDto} from '../../public/models/ticket-message-dto';
 
 
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
@@ -31,7 +32,7 @@ export class CustomerSupportService {
 userEmail:string="";
 constructor() {
 this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7228/customerServiceHub')
+      .withUrl(`${environment.apiUrl}/customerServiceHub`)
       .build();
 
  this.hubConnection.start().catch(err => console.error('SignalR error: ', err));

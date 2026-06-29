@@ -25,11 +25,18 @@ export class NotificationServiceService {
 
   startConnection() {
 
+    // Singleton service: build the hub connection only ONCE. The notification bell
+    // calls this on every (re)mount; without this guard each call spins up a new
+    // connection + a new 'ReceiveNotification' handler, so every push fires N times.
+    if (this.hubConnection) {
+      return;
+    }
+
     //Assuming tokens are stored in local storage under 'AccessToken'
-    const token = localStorage.getItem('AccessToken'); 
+    const token = localStorage.getItem('AccessToken');
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7228/notificationHub', {
+      .withUrl(`${environment.apiUrl}/notificationHub`, {
         accessTokenFactory: () => token || '',
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
       })

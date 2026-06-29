@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -26,6 +26,8 @@ export class ChatWidgetComponent {
   private readonly translate = inject(TranslateService);
   private readonly uploadService = inject(UploadService);
 
+  @ViewChild('chatBody') private chatBody?: ElementRef<HTMLDivElement>;
+
   isOpen = signal(false);
   view = signal<'chat' | 'history'>('chat');
 
@@ -51,6 +53,15 @@ export class ChatWidgetComponent {
 
   toggle() {
     this.isOpen.update((v) => !v);
+  }
+
+  // Scroll the message list to the newest message. Deferred a tick so the new
+  // message is rendered into the DOM before we measure scrollHeight.
+  private scrollToBottom() {
+    setTimeout(() => {
+      const el = this.chatBody?.nativeElement;
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }, 0);
   }
 
   close() {
@@ -95,6 +106,7 @@ export class ChatWidgetComponent {
     this.draft = '';
     this.attachedImage.set(null);
     this.sending.set(true);
+    this.scrollToBottom();
 
     const c = this.coords();
     this.chatbot
@@ -112,6 +124,7 @@ export class ChatWidgetComponent {
           // 0 = guest (nothing persisted) — keep sessionId null so we never echo 0 back.
           if (r.sessionId && r.sessionId > 0) this.sessionId.set(r.sessionId);
           this.sending.set(false);
+          this.scrollToBottom();
         },
         error: () => {
           this.messages.update((m) => [
@@ -119,6 +132,7 @@ export class ChatWidgetComponent {
             { role: 'Assistant', content: this.translate.instant('chatbot.error') },
           ]);
           this.sending.set(false);
+          this.scrollToBottom();
         },
       });
   }
@@ -156,6 +170,7 @@ export class ChatWidgetComponent {
         this.sessionId.set(d.id);
         this.messages.set((d.messages ?? []).map((m) => ({ role: m.role, content: m.content })));
         this.view.set('chat');
+        this.scrollToBottom();
       },
     });
   }

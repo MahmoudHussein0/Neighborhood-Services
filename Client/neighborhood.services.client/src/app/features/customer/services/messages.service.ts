@@ -3,7 +3,7 @@ import{MessageSelectedDto} from '../../../core/models/message-selected-dto';
 import { MessageDto } from '../../../core/models/message-dto';
 import { ApiService } from '../../../core/services/api.service';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
 
@@ -30,11 +30,11 @@ export class MessagesService {
   }
 
    getCurrentUserId1(): Observable<any> {
-    return this.http.get(`https://localhost:7228/api/Message/CurrentUserId`, { responseType: 'text' });
+    return this.http.get(`${environment.apiUrl}/api/Message/CurrentUserId`, { responseType: 'text' });
   }
 
 //   getCurrentUserId1(): void {
-//   this.http.get(`https://localhost:7228/api/Message/CurrentUserId`, { responseType: 'text' })
+//   this.http.get(`${environment.apiUrl}/api/Message/CurrentUserId`, { responseType: 'text' })
 //     .subscribe({
 //       next: (raw) => console.log('Raw response:', raw),
 //       error: (err) => console.error('Error:', err)

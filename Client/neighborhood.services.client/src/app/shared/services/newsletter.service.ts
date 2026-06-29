@@ -29,7 +29,7 @@ objectTosend={
 
 subscribbe(email: string) {
   return this.http.post(
-    'https://localhost:7228/api/Newsletter',
+    `${environment.apiUrl}/api/Newsletter`,
     JSON.stringify(email),
     {
       headers: {
