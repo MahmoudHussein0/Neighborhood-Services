@@ -7,6 +7,7 @@ import { MessagesService } from '../../customer/services/messages.service';
 
 
 import { from, Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
@@ -30,7 +31,7 @@ export class ChatService {
 
 constructor(private apiService: ApiService,private messagesService: MessagesService) { 
   this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7228/chatHub')
+      .withUrl(`${environment.apiUrl}/chatHub`)
      
       .build();
 
@@ -100,7 +101,7 @@ deinitializeChat(): Observable<void> {
 }
  initializeChat(bookingId: number) {
    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7228/chatHub')
+      .withUrl(`${environment.apiUrl}/chatHub`)
       .withAutomaticReconnect()
       .build();
 

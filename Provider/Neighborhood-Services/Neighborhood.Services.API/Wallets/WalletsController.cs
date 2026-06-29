@@ -151,7 +151,7 @@ namespace Neighborhood.Services.API.Wallets
                 return Forbid();
 
             if (transaction.Status != TransactionStatus.Pending)
-                return Ok(new { message = "Transaction already processed.", status = transaction.Status.ToString() });
+                return Ok(new { message = "Transaction already processed.", status = transaction.Status.ToString(), success = transaction.Status == TransactionStatus.Completed });
 
             // Query Paymob's order API to get the real payment status
             var paymobOptions = options.Value;

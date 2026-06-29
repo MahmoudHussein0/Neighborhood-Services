@@ -31,13 +31,16 @@ import { Component } from '@angular/core';
 
         <!-- the sweep: a faint wide trail + a bright leading beam, turning slowly -->
         <g class="ns-sweep">
-          <path d="M24,24 L24,7.5 A16.5 16.5 0 0 1 34.6,36.9 Z" fill="#fff" opacity=".10" />
-          <path d="M24,24 L24,7.5 A16.5 16.5 0 0 1 39.5,18.6 Z" fill="#fff" opacity=".30" />
-          <line x1="24" y1="24" x2="24" y2="7.5" stroke="#fff" stroke-width="1.4" stroke-opacity=".9" />
+          <path d="M24,24 L24,7.5 A16.5 16.5 0 0 1 34.6,36.9 Z" fill="#fff" opacity=".08" />
+          <path d="M24,24 L24,7.5 A16.5 16.5 0 0 1 39.5,18.6 Z" fill="#fff" opacity=".22" />
+          <line x1="24" y1="24" x2="24" y2="7.5" stroke="#fff" stroke-width="1.3" stroke-opacity=".6" />
         </g>
 
-        <!-- a "found service" blip pinging on the grid -->
-        <circle class="ns-blip" cx="33.5" cy="16.5" r="1.7" fill="#fff" />
+        <!-- a "found service" blip: steady breathing dot + a soft expanding ping ring -->
+        <g>
+          <circle class="ns-ping" cx="33.5" cy="16.5" r="1.7" fill="none" stroke="#fff" stroke-width="1" />
+          <circle class="ns-blip" cx="33.5" cy="16.5" r="1.7" fill="#fff" />
+        </g>
 
         <!-- home at the centre -->
         <polygon points="24,19 28.6,23 19.4,23" fill="#fff" />
@@ -63,16 +66,29 @@ import { Component } from '@angular/core';
     }
     @keyframes nsSweep { to { transform: rotate(360deg); } }
 
-    .ns-blip { animation: nsBlip 2.6s ease-in-out infinite; }
+    /* Breathing dot — never drops to 0, so it pulses softly instead of flashing. */
+    .ns-blip { animation: nsBlip 3.2s ease-in-out infinite; }
     @keyframes nsBlip {
-      0%, 100% { opacity: 0; }
-      40%      { opacity: 1; }
-      70%      { opacity: 0.2; }
+      0%, 100% { opacity: 0.45; }
+      50%      { opacity: 1; }
+    }
+
+    /* Smooth radar "ping" expanding out of the dot, then fading away. */
+    .ns-ping {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: nsPing 3.2s ease-out infinite;
+    }
+    @keyframes nsPing {
+      0%   { transform: scale(0.6); opacity: 0.5; }
+      70%  { opacity: 0; }
+      100% { transform: scale(3); opacity: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .ns-sweep, .ns-blip { animation: none; }
+      .ns-sweep, .ns-blip, .ns-ping { animation: none; }
       .ns-blip { opacity: 0.9; }
+      .ns-ping { opacity: 0; }
     }
   `],
 })

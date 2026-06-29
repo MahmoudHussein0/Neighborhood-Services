@@ -1,5 +1,7 @@
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -157,12 +159,13 @@ namespace Neighborhood.Services.API
                             return Task.CompletedTask;
                         }
                     };
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
                 });
-                //.AddGoogle(options =>
-                //{
-                //    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
-                //    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
-                //});
             // Add authorization policies for each permission type (Amira)
             builder.Services.AddAuthorization(options =>
             {
