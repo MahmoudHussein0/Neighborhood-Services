@@ -1,0 +1,49 @@
+<svg viewBox="0 0 760 800" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+    <linearGradient id="gPres" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="gInfra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="gApp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <radialGradient id="gDom" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#5b21b6"/><stop offset="1" stop-color="#4c1d95"/>
+    </radialGradient>
+  </defs>
+
+  <g filter="url(#soft)" transform="translate(0,8)">
+    <path d="M 30,380 A 350,350 0 0 1 730,380 Z" fill="url(#gPres)"/>
+    <path d="M 30,380 A 350,350 0 0 0 730,380 Z" fill="url(#gInfra)"/>
+    <circle cx="380" cy="380" r="350" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.5"/>
+    <circle cx="380" cy="380" r="255" fill="url(#gApp)" stroke="#ffffff" stroke-width="6"/>
+    <circle cx="380" cy="380" r="160" fill="url(#gDom)" stroke="#ffffff" stroke-width="6"/>
+  </g>
+
+  <g fill="#ffffff" fill-opacity="0.92">
+    <polygon points="362,114 398,114 380,140"/>
+    <polygon points="362,208 398,208 380,234"/>
+    <polygon points="362,648 398,648 380,622"/>
+  </g>
+
+  <g text-anchor="middle">
+    <text x="380" y="74" fill="#ffffff" font-size="29" font-weight="700">Presentation / API</text>
+    <text x="380" y="100" fill="#dbeafe" font-size="16">Controllers &#183; SignalR</text>
+
+    <text x="380" y="688" fill="#ffffff" font-size="29" font-weight="700">Infrastructure</text>
+    <text x="380" y="714" fill="#ccfbf1" font-size="15">EF Core &#183; Hangfire &#183; Qdrant &#183; OpenAI</text>
+
+    <text x="380" y="170" fill="#ffffff" font-size="25" font-weight="700">Application</text>
+    <text x="380" y="194" fill="#ede9fe" font-size="15">CQRS &#183; MediatR</text>
+
+    <text x="380" y="372" fill="#ffffff" font-size="34" font-weight="800">Domain</text>
+    <text x="380" y="402" fill="#e9d5ff" font-size="16">Entities &#183; Rules</text>
+
+    <text x="380" y="788" fill="#94a3b8" font-size="15">Dependencies point inward &#8594; toward the Domain</text>
+  </g>
+</svg>
