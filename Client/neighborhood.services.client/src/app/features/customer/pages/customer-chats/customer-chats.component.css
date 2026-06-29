@@ -30,3 +30,12 @@
    background-color: #f3f4f6;
  }
 
+/* Keep the conversation avatar a perfect circle regardless of the
+   source image's aspect ratio (was stretching oval with width only). */
+.conv-avatar {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+

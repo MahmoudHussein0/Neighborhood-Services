@@ -246,7 +246,7 @@ namespace Neighborhood.Services.API.Controllers
             var encodedQuery = string.Join("&", query.Select(item =>
                 $"{UrlEncoder.Default.Encode(item.Key)}={UrlEncoder.Default.Encode(item.Value ?? string.Empty)}"));
 
-            return $"{frontendBaseUrl.TrimEnd('/')}/auth/external-callback?{encodedQuery}";
+            return $"{frontendBaseUrl.TrimEnd('/')}/#/auth/external-callback?{encodedQuery}";
         }
 
         private string BuildExternalErrorUrl(string message)
@@ -255,7 +255,7 @@ namespace Neighborhood.Services.API.Controllers
                 ?? _configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()?.FirstOrDefault()
                 ?? "http://localhost:4200";
 
-            return $"{frontendBaseUrl.TrimEnd('/')}/auth/login?externalError={UrlEncoder.Default.Encode(message)}";
+            return $"{frontendBaseUrl.TrimEnd('/')}/#/auth/login?externalError={UrlEncoder.Default.Encode(message)}";
         }
     }
 }

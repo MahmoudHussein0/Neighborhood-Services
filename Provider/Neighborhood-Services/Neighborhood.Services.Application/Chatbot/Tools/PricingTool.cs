@@ -24,9 +24,11 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
         private readonly double? _longitude;
 
         // Pricing needs the exact problem type (each has its own price range), so a wrong match
-        // returns a wrong price. The threshold stays strict; if colloquial phrasings fail to match,
-        // normalize the query before the search rather than lowering this.
-        private const float ClassifierConfidenceThreshold = 0.5f;
+        // returns a wrong price. Kept moderately strict — but 0.5 was too high for natural phrasings
+        // ("paint the whole living room" vs the short label "Interior Painting"), so the bot kept
+        // bouncing the user for clarification. 0.35 matches normal descriptions while still rejecting
+        // genuinely unrelated text.
+        private const float ClassifierConfidenceThreshold = 0.35f;
 
         public PricingTool(
             IVectorMemory memory,
@@ -76,10 +78,13 @@ namespace Neighborhood.Services.Application.Chatbot.Tools
                        "description. Ask the user to describe the problem more specifically.";
             }
 
-            // 2. Resolve the region: prefer a city the user stated (passed by the model), else the
-            //    GPS coords captured this request. Null is fine => general (non-localized) average.
+            // 2. Resolve the region. GPS coords (captured this request) are authoritative; the
+            //    model-supplied `city` is only a TEXT fallback for when there are no coords.
+            //    It must NOT be passed as regionOverride — that short-circuits ahead of GPS, so a
+            //    city the model *guessed* (e.g. "Giza" when the user never said it) would wrongly
+            //    win over the user's real location.
             var region = await _regionResolver.ResolveAsync(
-                _latitude, _longitude, text: city, regionOverride: city);
+                _latitude, _longitude, text: city);
 
             // 3. Grounded estimate from history/rules, region-adjusted.
             var estimate = await _priceService.EstimateAsync(problemTypeId, region);

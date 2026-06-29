@@ -47,10 +47,12 @@
       <i class="bi bi-chat-dots"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.chat' | translate }}</span> }
     </a>
-    <a routerLink="/customer/notifications" routerLinkActive="active" class="sidebar-link">
+    <!-- Notifications page is not built yet (empty placeholder) — hidden until implemented.
+         In-app notifications are still available via the bell in the top bar. -->
+    <!-- <a routerLink="/customer/notifications" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-bell"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.notifications' | translate }}</span> }
-    </a>
+    </a> -->
     <a routerLink="/customer/profile" routerLinkActive="active" class="sidebar-link">
       <i class="bi bi-person"></i>
       @if (!collapsed()) { <span>{{ 'sidebar.profile' | translate }}</span> }
