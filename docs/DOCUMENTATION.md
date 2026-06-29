@@ -706,11 +706,11 @@ schema (its own tables + Hangfire's) and seeds demo data into the cloud database
 
 ## 15. Future Work
 
-- **Move synchronous AI calls off the request thread** for review analysis (to Hangfire), matching
-  the moderation pattern.
-- **Withdrawal / payout flow** (mock external wallet) — designed, not yet built.
-- **Payment concurrency hardening** — atomic wallet debit and unique indexes on
-  `Escrow.BookingId` and `PromoCodeUsage(UserId, PromoCodeId)`.
-- **Restore endpoints** for soft-deleted catalog items re-embedding via the same indexer hooks.
+- **Payment System Hardening** — robust concurrency hardening across all payment operations, plus a
+  secure, user-friendly withdrawal/payout flow for technicians.
+- **Live Technician Tracking** — real-time location & ETA on a map while a technician is on the way.
+- **CI/CD Pipeline + Containerization (Docker)** — automated build/test/deploy and reproducible
+  container images for the API and frontend.
+- **Loyalty / Subscription Plans** — recurring-customer perks and subscription tiers.
 
 ---

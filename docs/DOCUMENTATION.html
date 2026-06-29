@@ -1,0 +1,903 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  font-size: 11pt; line-height: 1.55; color: #1f2937; max-width: 100%;
+}
+h1 { font-size: 23pt; color: #1e3a8a; border-bottom: 3px solid #2563eb; padding-bottom: 6px; }
+h2 { font-size: 16pt; color: #1e40af; margin-top: 26px; border-bottom: 1px solid #dbeafe; padding-bottom: 4px; page-break-after: avoid; }
+h3 { font-size: 13pt; color: #1d4ed8; margin-top: 18px; page-break-after: avoid; }
+h4 { font-size: 11.5pt; color: #374151; page-break-after: avoid; }
+h1, h2, h3, h4 { page-break-after: avoid; }
+p, li { orphans: 2; widows: 2; }
+a { color: #2563eb; text-decoration: none; }
+blockquote { border-left: 4px solid #93c5fd; background: #eff6ff; margin: 10px 0; padding: 6px 14px; color: #334155; }
+code { font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 9.5pt; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; color: #0f172a; }
+pre { background: #f4f4f5; color: #1f2937; padding: 10px 12px; border: 1px solid #e4e4e7; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; font-size: 9pt; line-height: 1.45; }
+pre code { background: transparent; color: inherit; padding: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 9px; text-align: left; vertical-align: top; }
+th { background: #1e40af; color: #ffffff; font-weight: 600; }
+/* zebra striping removed — lighter to render, smoother scrolling */
+hr { border: none; border-top: 2px solid #e2e8f0; margin: 22px 0; }
+ul, ol { padding-left: 22px; }
+strong { color: #111827; }
+</style></head><body><h1 id="neighborhood-services-technical-documentation">Neighborhood Services — Technical Documentation</h1>
+<blockquote>
+<p>A full-stack home-services marketplace for the Egyptian market, connecting customers
+with local technicians across three booking models, with an AI layer for moderation,
+matchmaking, visual problem analysis, pricing guidance, and a customer chatbot.</p>
+</blockquote>
+<p><strong>Stack at a glance:</strong> .NET 10 · Clean Architecture · MediatR (CQRS) · EF Core 10 (SQL Server) ·
+Hangfire · Redis · Semantic Kernel + Qdrant (RAG) · SignalR · Angular 21</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-project-overview">Project Overview</a></li>
+<li><a href="#2-problem-statement--objectives">Problem Statement &amp; Objectives</a></li>
+<li><a href="#3-what-the-system-does">What the System Does</a></li>
+<li><a href="#4-technology-stack">Technology Stack</a></li>
+<li><a href="#5-system-architecture">System Architecture</a></li>
+<li><a href="#6-domain-model--data">Domain Model &amp; Data</a></li>
+<li><a href="#7-functional-modules">Functional Modules</a></li>
+<li><a href="#8-the-ai-subsystem">The AI Subsystem</a></li>
+<li><a href="#9-background-processing-hangfire">Background Processing (Hangfire)</a></li>
+<li><a href="#10-frontend-angular">Frontend (Angular)</a></li>
+<li><a href="#11-cross-cutting-concerns">Cross-Cutting Concerns</a></li>
+<li><a href="#12-team-contributions">Team Contributions</a></li>
+<li><a href="#13-setup-run--configuration">Setup, Run &amp; Configuration</a></li>
+<li><a href="#14-deployment-production">Deployment (Production)</a></li>
+<li><a href="#15-future-work">Future Work</a></li>
+</ol>
+<hr />
+<h2 id="1-project-overview">1. Project Overview</h2>
+<p><strong>Neighborhood Services</strong> is a two-sided marketplace web application that links customers who
+need home maintenance and repair work (plumbing, electrical, appliances, cleaning, etc.) with
+verified local technicians. It is built as an ITI graduation project by a team of seven, with a
+.NET 10 backend following Clean Architecture and an Angular 21 single-page frontend.</p>
+<p>The platform supports three distinct ways to get work done — <strong>direct booking</strong>, <strong>competitive
+bidding</strong>, and <strong>recurring scheduled service</strong> — and layers an <strong>AI subsystem</strong> on top for content
+moderation, technician matchmaking, image-based problem analysis, price guidance, review/dispute
+analysis, and a knowledge-grounded customer chatbot.</p>
+<hr />
+<h2 id="2-problem-statement-objectives">2. Problem Statement &amp; Objectives</h2>
+<p><strong>Problem.</strong> Finding a trustworthy technician for a home problem is slow and opaque: customers
+don't know who is qualified, who is nearby, what a fair price is, or whether a provider is
+reliable. Providers, in turn, lack a structured channel to receive jobs, quote prices, and build
+a reputation.</p>
+<p><strong>Objectives.</strong></p>
+<ul>
+<li>Provide a single platform where customers can describe a problem (in Arabic or English, with a
+  photo) and reach the right technician quickly.</li>
+<li>Offer flexible engagement models: book a specific technician directly, post a request and accept
+  competing offers, or set up a repeating schedule.</li>
+<li>Use AI to reduce friction and increase trust — auto-moderate user content, recommend the best
+  technician for a problem, estimate prices, analyze an uploaded photo, and answer questions via a
+  chatbot.</li>
+<li>Handle the full commercial loop: wallets, escrow, promo codes, invoices, reviews, and disputes.</li>
+<li>Be bilingual (Arabic / English with RTL) and production-shaped (caching, background jobs,
+  notifications, structured logging of every AI decision).</li>
+</ul>
+<hr />
+<h2 id="3-what-the-system-does">3. What the System Does</h2>
+<h3 id="three-marketplace-flows-all-closed-two-sided">Three marketplace flows (all closed two-sided)</h3>
+<table>
+<thead>
+<tr>
+<th>Flow</th>
+<th>Customer side</th>
+<th>Technician side</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Direct booking</strong></td>
+<td>Picks a technician, books a service, confirms completion</td>
+<td>Accepts job (sets duration), marks complete</td>
+</tr>
+<tr>
+<td><strong>Competitive bidding</strong></td>
+<td>Posts a service request, reviews incoming offers, accepts one</td>
+<td>Browses nearby open requests (geo radius), makes an offer</td>
+</tr>
+<tr>
+<td><strong>Recurring service</strong></td>
+<td>Sets up a recurring schedule, approves the quoted price</td>
+<td>Sets the recurring price; the system auto-generates bookings</td>
+</tr>
+</tbody>
+</table>
+<h3 id="supporting-capabilities">Supporting capabilities</h3>
+<ul>
+<li><strong>Identity &amp; profiles</strong> — registration/login (local + Google OAuth), customer addresses,
+  technician profiles, photos/portfolio, categories, availability, and per-service pricing.</li>
+<li><strong>Money</strong> — wallet top-up (Paymob/PayPal), escrow on bookings, promo codes applied at accept
+  time, invoices (PDF), and technician payouts/earnings.</li>
+<li><strong>Trust &amp; support</strong> — reviews (AI-analyzed), disputes (raise/resolve), support tickets, and a
+  staff oversight back office.</li>
+<li><strong>Communication</strong> — real-time customer↔technician chat (SignalR), in-app notifications with a
+  topbar bell, email, and newsletter.</li>
+<li><strong>AI</strong> — moderation, matchmaking, image analysis, price guidance, review/dispute analysis, and
+  a RAG-grounded <strong>tool-using chatbot</strong> (text + image/vision) that can recommend technicians, check
+  availability, estimate prices, and <strong>place a booking</strong> end-to-end in the chat.</li>
+</ul>
+<hr />
+<h2 id="4-technology-stack">4. Technology Stack</h2>
+<h3 id="backend">Backend</h3>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime / language</td>
+<td>.NET 10, C#</td>
+</tr>
+<tr>
+<td>Architecture</td>
+<td>Clean Architecture (4 projects) + CQRS</td>
+</tr>
+<tr>
+<td>Mediator / CQRS</td>
+<td>MediatR 14</td>
+</tr>
+<tr>
+<td>ORM / DB</td>
+<td>Entity Framework Core 10 · SQL Server</td>
+</tr>
+<tr>
+<td>Geospatial</td>
+<td>NetTopologySuite (distance / geo queries)</td>
+</tr>
+<tr>
+<td>Identity &amp; auth</td>
+<td>ASP.NET Core Identity, JWT Bearer (httpOnly cookie), Google OAuth</td>
+</tr>
+<tr>
+<td>Background jobs</td>
+<td>Hangfire 1.8 (SQL Server storage)</td>
+</tr>
+<tr>
+<td>Caching</td>
+<td>Redis (StackExchange.Redis)</td>
+</tr>
+<tr>
+<td>AI orchestration</td>
+<td>Microsoft Semantic Kernel 1.77 (OpenAI chat + vision + embeddings)</td>
+</tr>
+<tr>
+<td>Vector store (RAG)</td>
+<td>Qdrant 1.18</td>
+</tr>
+<tr>
+<td>Real-time</td>
+<td>SignalR</td>
+</tr>
+<tr>
+<td>Object mapping</td>
+<td>Mapster</td>
+</tr>
+<tr>
+<td>PDF generation</td>
+<td>QuestPDF</td>
+</tr>
+<tr>
+<td>Media storage</td>
+<td>Cloudinary</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>MailKit / MimeKit</td>
+</tr>
+<tr>
+<td>API docs</td>
+<td>Swagger / Swashbuckle</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontend">Frontend</h3>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Framework</td>
+<td>Angular 21 (standalone components, feature-based structure)</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>Bootstrap 5, ng-bootstrap, Bootstrap Icons, FontAwesome</td>
+</tr>
+<tr>
+<td>i18n</td>
+<td>ngx-translate (Arabic / English, full RTL)</td>
+</tr>
+<tr>
+<td>Real-time</td>
+<td>@microsoft/signalr</td>
+</tr>
+<tr>
+<td>Charts</td>
+<td>chart.js</td>
+</tr>
+<tr>
+<td>Alerts / toasts</td>
+<td>SweetAlert2, ngx-toastr</td>
+</tr>
+<tr>
+<td>Carousel</td>
+<td>ngx-owl-carousel-o</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-system-architecture">5. System Architecture</h2>
+<p>The backend follows <strong>Clean Architecture</strong> with four projects and a strict dependency rule
+(dependencies point inward; the Domain has no outward dependencies):</p>
+<pre><code>Neighborhood.Services.API            → Controllers, DI composition root, Program.cs, Hangfire dashboard
+Neighborhood.Services.Application    → CQRS (Commands/Queries + Handlers via MediatR), DTOs, interfaces, business rules
+Neighborhood.Services.Domain         → Entities, enums, domain exceptions (pure, no framework deps)
+Neighborhood.Services.Infrastructure → EF Core, repositories, external services (AI, payments, email, Cloudinary, Hangfire)
+</code></pre>
+<h3 id="key-patterns">Key patterns</h3>
+<ul>
+<li><strong>CQRS via MediatR.</strong> Every use case is a <code>Command</code> or <code>Query</code> with a dedicated handler. This
+  keeps controllers thin (they just <code>Send</code> a request) and makes each operation independently
+  testable. Example: <code>SendChatMessageCommand</code> → <code>SendChatMessageCommandHandler</code>.</li>
+<li><strong>Repository + Unit of Work.</strong> Data access is behind repository interfaces in Application,
+  implemented in Infrastructure; <code>IUnitOfWork.SaveChangesAsync</code> commits transactions.</li>
+<li><strong>Seams over direct dependencies.</strong> The Application layer never references Hangfire, Qdrant, or
+  OpenAI directly — it talks to interfaces (<code>IBackgroundJobScheduler</code>, <code>IVectorMemory</code>,
+  <code>IAiClient</code>, <code>IKnowledgeIndexer</code>) that Infrastructure implements. This keeps the core portable
+  and the AI/infrastructure swappable.</li>
+<li><strong>Fail-open AI.</strong> Every AI call is wrapped so that an outage (bad key, quota, Qdrant down) never
+  breaks the user-facing flow — the request proceeds without the AI enhancement.</li>
+</ul>
+<h3 id="request-lifecycle-example-post-a-service-request">Request lifecycle (example: post a service request)</h3>
+<pre><code>Controller → MediatR Command → Handler (validate, persist) → SaveChanges
+   → enqueue Hangfire moderation job (returns immediately)
+   → [worker] AI moderation → set Open/Flagged → notify customer/staff
+</code></pre>
+<hr />
+<h2 id="6-domain-model-data">6. Domain Model &amp; Data</h2>
+<p>Entities are grouped by bounded context / owner. (~44 entity types, EF Core code-first with
+migrations.)</p>
+<table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Entities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Booking / Marketplace</strong></td>
+<td><code>SERVICE_REQUEST</code>, <code>OFFER</code>, <code>BOOKING</code>, <code>RECURRING_BOOKING</code>, <code>BOOKING_IMAGE</code>, <code>CANCELLATION_POLICY</code>, <code>AI_ANALYSIS</code>, <code>AGENT_LOG</code></td>
+</tr>
+<tr>
+<td><strong>Identity</strong></td>
+<td><code>USER</code>, <code>CUSTOMER</code>, <code>TECHNICIAN</code>, <code>CUSTOMER_ADDRESS</code>, <code>TECHNICIAN_PHOTO</code></td>
+</tr>
+<tr>
+<td><strong>Payments</strong></td>
+<td><code>WALLET</code>, <code>TRANSACTION</code>, <code>ESCROW</code>, <code>PAYMENT_METHOD</code>, <code>INVOICE</code>, <code>PROMO_CODE</code>, <code>PROMO_CODE_USAGE</code></td>
+</tr>
+<tr>
+<td><strong>Support &amp; Trust</strong></td>
+<td><code>STAFF</code>, <code>STAFF_PERMISSION</code>, <code>SUPPORT_TICKET</code>, <code>SUPPORT_MESSAGE</code>, <code>DISPUTE</code>, <code>REVIEW</code>, <code>REVIEW_ANALYSIS</code></td>
+</tr>
+<tr>
+<td><strong>Communication</strong></td>
+<td><code>CONVERSATION</code>, <code>MESSAGE</code>, <code>NOTIFICATION</code>, <code>NEWSLETTER</code>, <code>FAVORITE</code></td>
+</tr>
+<tr>
+<td><strong>Catalog &amp; Config</strong></td>
+<td><code>CATEGORY</code>, <code>PROBLEM_TYPE</code>, <code>TECHNICIAN_CATEGORY</code>, <code>TECHNICIAN_PRICING</code>, <code>TECHNICIAN_AVAILABILITY</code>, <code>AVAILABILITY_EXCEPTION</code>, <code>HISTORICAL_PRICES</code></td>
+</tr>
+<tr>
+<td><strong>Chatbot</strong></td>
+<td><code>CHATBOT_SESSION</code>, <code>CHATBOT_MESSAGE</code></td>
+</tr>
+</tbody>
+</table>
+<p>Notable design points:</p>
+<ul>
+<li><strong>Bilingual catalog.</strong> <code>CATEGORY</code> and <code>PROBLEM_TYPE</code> carry <code>NameEn</code> / <code>NameAr</code>; the same problem
+  type is embedded into the vector store so the chatbot/classifier works in both languages.</li>
+<li><strong>Pricing data, not in RAG.</strong> <code>HISTORICAL_PRICES</code> lives in SQL and drives the price-estimation
+  service; only catalog text is embedded in Qdrant.</li>
+<li><strong>AI is auditable.</strong> Every AI decision writes an <code>AGENT_LOG</code> row (agent type, action, input,
+  output, token usage, and the entity it refers to). <code>AI_ANALYSIS</code> stores structured image-analysis
+  results.</li>
+</ul>
+<hr />
+<h2 id="7-functional-modules">7. Functional Modules</h2>
+<p>Each module is a vertical slice — domain entities, CQRS commands/queries, repository, controller,
+and the matching Angular feature. (See §12 for which team member owns each module.)</p>
+<h3 id="identity-authentication">Identity &amp; Authentication</h3>
+<p><strong>Controllers:</strong> <code>AuthController</code>, <code>UsersController</code>.</p>
+<p>The authentication backbone every other module depends on. Local login/registration and
+<strong>Google OAuth</strong> (<code>google-login</code> / <code>google-callback</code>) are issued as a JWT in an httpOnly cookie on
+top of ASP.NET Core Identity. The user lifecycle is covered end-to-end: profile and location
+updates, activate/deactivate, role queries, and a <code>nearby</code> user lookup.</p>
+<h3 id="technician-customer-profiles">Technician &amp; Customer Profiles</h3>
+<p><strong>Controllers:</strong> <code>TechniciansController</code>, <code>TechnicianPhotosController</code>,
+<code>CustomerAddressesController</code>, <code>GeocodingController</code>.</p>
+<p>Rich technician profiles — public profile cards, a verification-status workflow
+(<code>PATCH verification-status</code>), availability toggles, browse listing, photo/portfolio management,
+and <strong>available/busy time-slot</strong> computation that feeds the booking flow. Customer addresses
+support defaults, soft-delete and restore. The <strong><code>IGeocodingService</code></strong> (forward <code>search</code> +
+<code>reverse</code> geocoding) underpins distance-based browse, matchmaking, and the chatbot's region
+resolution.</p>
+<h3 id="marketplace-core-bookings-requests-offers-recurring">Marketplace Core (Bookings, Requests, Offers, Recurring)</h3>
+<p><strong>Controllers:</strong> <code>BookingsController</code>, <code>ServiceRequestsController</code>, <code>OffersController</code>,
+<code>RecurringBookingsController</code>, <code>CancellationPoliciesController</code>.</p>
+<p>The heart of the platform — the three marketplace flows, each closed two-sided:</p>
+<ul>
+<li><strong>Direct booking</strong> — book → accept (set duration) → complete → confirm.</li>
+<li><strong>Competitive bidding</strong> — post request → browse nearby requests → offer → accept.</li>
+<li><strong>Recurring service</strong> — set up schedule → set price → approve → auto-generate occurrences.</li>
+</ul>
+<p>It also covers cancellation policies and the paged "mine" listings on both the customer and
+technician sides.</p>
+<h3 id="ai-knowledge">AI &amp; Knowledge</h3>
+<p><strong>Controllers:</strong> <code>ChatbotController</code>, <code>AiAnalysisController</code>, <code>KnowledgeController</code>,
+<code>AgentLogsController</code>.</p>
+<p>The customer-facing AI surface: the RAG-grounded <strong>chatbot</strong>, image-based <strong>problem analysis</strong>,
+the <strong>knowledge (RAG) reindex</strong> endpoint, and the <strong>AgentLog</strong> audit trail that records every AI
+decision. The agents themselves and the foundation behind them are detailed in §8.</p>
+<h3 id="background-processing">Background Processing</h3>
+<p><strong>Components:</strong> <code>IBackgroundJobScheduler</code>, <code>BackgroundJobScheduler</code>, <code>RecurringBookingGeneratorService</code>,
+<code>ServiceRequestExpiryService</code>, <code>ServiceRequestModerationJob</code>, <code>KnowledgeIndexJob</code>.</p>
+<p>A <strong>Hangfire</strong>-backed background-job layer (SQL Server storage, dashboard at <code>/hangfire</code>) that
+pushes slow or failure-prone work off the request path. It runs the daily <strong>recurring-booking
+generator</strong> and <strong>request-expiry</strong> sweeps, and handles fire-and-forget jobs for <strong>AI moderation</strong>
+and <strong>RAG index synchronization</strong>. The Application layer enqueues through a thin
+<code>IBackgroundJobScheduler</code> seam so it never depends on Hangfire directly. Full job catalogue in §9.</p>
+<h3 id="payments-wallets">Payments &amp; Wallets</h3>
+<p><strong>Controllers:</strong> <code>WalletsController</code>, <code>TransactionsController</code>, <code>PaymentsController</code>,
+<code>PaymentMethodsController</code>.</p>
+<p>The money rails. The <strong>Paymob</strong> gateway is integrated through a clean three-step server flow
+(<code>PaymentGatewayService</code>: authenticate → create order → request payment key) with a
+<code>paymob/callback</code> webhook to confirm and finalize wallet top-ups; PayPal is also supported.
+Wallets support top-up, withdrawal, and payment verification/finalization; transactions are typed
+and queryable per wallet.</p>
+<h3 id="escrow-promo-codes-invoicing">Escrow, Promo Codes &amp; Invoicing</h3>
+<p><strong>Controllers:</strong> <code>EscrowsController</code>, <code>PromoCodesController</code>, <code>InvoicesController</code>.</p>
+<p><strong>Escrow</strong> holds a booking's funds and exposes explicit <code>release</code> / <code>refund</code> operations — the
+mechanism that makes the marketplace trustworthy, since the customer's money is held until the job
+is done. <strong>Promo codes</strong> offer validate / preview / apply semantics and are applied at accept-time
+against the final price. <strong>Invoices</strong> are generated as polished <strong>PDFs via QuestPDF</strong>, retrievable
+per booking / customer / technician, with inline-view and download endpoints and a void operation.</p>
+<h3 id="service-catalog-technician-configuration">Service Catalog &amp; Technician Configuration</h3>
+<p><strong>Controllers:</strong> <code>CategoriesController</code>, <code>ProblemTypesController</code>, <code>TechnicianCategoryController</code>,
+<code>TechnicianPricingController</code>, <code>TechnitianAvailabilityController</code>, <code>AvilabilityExceptionController</code>,
+<code>HistoricalPricesController</code>.</p>
+<p>The <strong>service catalog</strong> the whole marketplace is built on: bilingual categories and problem types
+(each carrying a min/max price band), the technician↔category mapping, per-service technician
+pricing, weekly availability plus one-off availability <strong>exceptions</strong>, and the <strong>historical-prices</strong>
+dataset that grounds price estimation.</p>
+<h3 id="caching">Caching</h3>
+<p><strong>Components:</strong> <code>IResponseCacheService</code>, <code>ResponseCacheService</code>, <code>[Cache(ttl)]</code> action filter.</p>
+<p>An application-wide caching layer — a Redis-backed cache service plus an action filter that
+transparently caches read-heavy endpoints (categories, problem types) keyed by request path +
+query string, and degrades gracefully when Redis is unavailable.</p>
+<h3 id="trust-safety-reviews-disputes-support">Trust &amp; Safety (Reviews, Disputes, Support)</h3>
+<p><strong>Controllers:</strong> <code>ReviewsController</code>, <code>ReviewAnalysisController</code>, <code>DisputesController</code>,
+<code>SupportTicketsController</code>, <code>SupportMessagesController</code>.</p>
+<p><strong>Reviews</strong> support reviewer / reviewee / status / flagged queries and are surfaced alongside their
+AI <strong>review-analysis</strong> records. <strong>Disputes</strong> are filterable by status / type / user. <strong>Support
+tickets</strong> carry threaded messages (nested <code>…/messages</code> route, read-receipts, priority and status
+workflow). Together these power the staff oversight pages: bookings oversight, the flagged-request
+queue, dispute resolution, and review moderation.</p>
+<h3 id="staff-file-service">Staff &amp; File Service</h3>
+<p><strong>Controllers:</strong> <code>StaffController</code>, <code>FilesController</code>.</p>
+<p><strong>Staff management</strong> with role-based permissions. The <strong>File / Image service</strong> is a
+Cloudinary-backed upload-signature endpoint used across the app for secure direct-to-cloud uploads.</p>
+<h3 id="communication-chat-notifications">Communication (Chat &amp; Notifications)</h3>
+<p><strong>Controllers:</strong> <code>ConversationController</code>, <code>MessagesController</code>, <code>NotificationsController</code>, plus the
+SignalR <code>ChatHub</code>.</p>
+<p>Real-time <strong>conversations + messages</strong> power customer↔technician chat over a SignalR <strong><code>ChatHub</code></strong>
+(private, group and broadcast sends, join/leave groups, connect/disconnect tracking), with messages
+also queryable per booking. The <strong>notification service</strong> delivers in-app notifications (per-user,
+directive, mark-as-read, mark-all-read) through a dedicated <code>NotificationHub</code> feeding the topbar
+bell.</p>
+<h3 id="engagement-email-newsletter-favorites">Engagement (Email, Newsletter, Favorites)</h3>
+<p><strong>Controllers:</strong> <code>EmailController</code>, <code>NewsletterController</code>, <code>FavoritesController</code>.</p>
+<p>The outbound-engagement layer: an <strong>email service</strong> (MailKit/MimeKit with templated content), a
+<strong>newsletter</strong> signup + send, and <strong>favorites</strong> so customers can save technicians.</p>
+<hr />
+<h2 id="8-the-ai-subsystem">8. The AI Subsystem</h2>
+<p>The AI layer is one of the project's most distinctive features: a shared foundation over which a
+set of focused agents each handle one job. The sections below describe each part by capability.</p>
+<h3 id="81-foundation">8.1 Foundation</h3>
+<p>A thin, provider-agnostic abstraction (<code>IAiClient</code>) over Microsoft <strong>Semantic Kernel</strong>, so every
+agent talks to one interface and the underlying model provider (OpenAI) is swappable.</p>
+<p><code>SemanticKernelClient</code> (Infrastructure) implements three methods:</p>
+<ul>
+<li><code>CompleteAsync(systemPrompt, userPrompt, imageUrl?, log?)</code> — single-shot completion, with
+  <strong>vision support</strong> (an image URL is sent as an <code>ImageContent</code> alongside the text).</li>
+<li><code>ChatAsync(history, systemPrompt, log?)</code> — multi-turn completion driven by a <code>ChatHistory</code>.</li>
+<li><code>ChatWithToolsAsync(history, systemPrompt, tools, log?)</code> — <strong>tool-calling</strong> completion. It clones
+  the kernel per request, registers the supplied tool objects (<code>Plugins.AddFromObject</code>), and runs
+  with <code>FunctionChoiceBehavior.Auto()</code> so the model can <strong>decide to call tools on its own</strong>,
+  Semantic Kernel executes them, feeds the results back, and loops until a final answer. This is
+  what powers the agentic chatbot (§8.3).</li>
+</ul>
+<p>All methods extract <strong>token usage</strong> from the response metadata and, when an <code>AiCallContext</code> is
+supplied, persist an <strong>AgentLog</strong> entry (agent type, action, input, output, tokens, reference
+entity). Logging is wrapped in try/catch so an audit-write failure never breaks the AI call.</p>
+<p><code>AgentType</code> enum: <code>Matching</code>, <code>Pricing</code>, <code>Booking</code>, <code>QA</code>, <code>Moderation</code>, <code>Chatbot</code>.</p>
+<h3 id="82-rag-retrieval-augmented-generation">8.2 RAG (Retrieval-Augmented Generation)</h3>
+<ul>
+<li><strong>Vector store:</strong> Qdrant, behind <code>IVectorMemory</code> (<code>UpsertAsync/UpsertManyAsync</code>, <code>SearchAsync</code>,
+  <code>SearchDetailedAsync</code> returning <code>SearchHit(Text, Score, Fields)</code>, plus <code>RemoveAsync</code> /
+  <code>RemoveExceptAsync</code> for pruning).</li>
+<li><strong>Indexer:</strong> <code>KnowledgeSeeder</code> implements <code>IKnowledgeIndexer</code>. It reads the catalog <strong>from the
+  database</strong>, embeds each category and problem type, and is:</li>
+<li><strong>Idempotent</strong> — each Qdrant document stores a <code>_hash</code>; only changed docs are re-embedded.</li>
+<li><strong>Batched</strong> — embeddings sent via <code>UpsertManyAsync</code>.</li>
+<li><strong>Self-cleaning</strong> — <code>RemoveExceptAsync</code> prunes vectors whose source rows no longer exist.</li>
+<li><strong>Off the boot path</strong> — rebuilt deliberately via CLI (<code>-- reindex-knowledge</code>) or
+    <code>POST /api/knowledge/reindex</code> (staff-only).</li>
+<li><strong>Event-driven sync:</strong> catalog CRUD enqueues Hangfire jobs that keep the index live (see §9).</li>
+</ul>
+<p>Two collections are maintained: <code>platform-knowledge</code> (general Q&amp;A grounding) and <code>problem-types</code>
+(each embedded <strong>with its <code>problemTypeId</code> payload</strong>, enabling free-text → problem-type
+classification).</p>
+<h3 id="83-the-agents">8.3 The Agents</h3>
+<h4 id="1-customer-chatbot-sendchatmessagecommandhandler">(1) Customer Chatbot — <code>SendChatMessageCommandHandler</code></h4>
+<p>The flagship agent: a RAG-grounded, <strong>tool-using</strong> assistant. Rather than pre-computing answers in
+code, the chatbot is given a set of <strong>callable tools</strong> and the model itself <strong>decides which to call
+(and chains them)</strong> to walk a customer from a vague problem all the way to a placed booking — e.g.
+<em>"my kitchen tap is leaking, who's near me?"</em> → recommend → <em>"is Khaled free tomorrow?"</em> → check
+availability → <em>"how much?"</em> → estimate → <em>"book the 4 pm"</em> → create booking.</p>
+<p><strong>The tools</strong> (Semantic Kernel functions in <code>Application/Chatbot/Tools/</code>, run via
+<code>ChatWithToolsAsync</code> with auto function-calling):</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>estimate_price(service, city?)</code></td>
+<td>Classifies the problem to a <code>problemTypeId</code> and returns a grounded, region-localized estimate from the <strong>price-estimation service</strong>.</td>
+</tr>
+<tr>
+<td><code>recommend_technician(problem)</code></td>
+<td>Classifies the problem, then calls the existing <strong>Matchmaking agent</strong> (§8.3.4) to return the best-fit technicians by need.</td>
+</tr>
+<tr>
+<td><code>find_technicians(name, category?)</code></td>
+<td>Looks a technician up by name (tolerant, token-based matching), returning a short candidate list to disambiguate.</td>
+</tr>
+<tr>
+<td><code>check_availability(technicianId, date)</code></td>
+<td>Returns a technician's free start-times for a day (wraps the available-slots query).</td>
+</tr>
+<tr>
+<td><code>create_booking(...)</code></td>
+<td>The only <strong>write</strong> tool — places a Direct booking. <strong>Customers only</strong>, requires shared location, and uses a two-step <strong>confirmation gate</strong> (returns a summary first; only books on an explicit confirm). The booking is created <strong>PENDING</strong> — the technician still reviews and quotes; nothing is charged. It re-checks live availability at book time so a stale slot is never booked.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conversation memory.</strong> Logged-in users have their context rebuilt from a persisted
+<code>ChatbotSession</code> (server-authoritative, capped to the recent window); guests get memory too via the
+frontend replaying the recent turns with each message. Tool results (e.g. the ids a tool returned)
+are persisted as <code>Tool</code>-role messages and replayed as context, so the agent "remembers" what it
+found across turns without re-searching.</p>
+<p><strong>Still RAG-grounded &amp; multimodal.</strong> It injects top hits from <code>platform-knowledge</code>, accepts an
+attached <strong>image</strong> (vision) to describe the likely problem, resolves the user's region from GPS or
+text via the shared region resolver, and is wrapped by a hardened system prompt (strictly on-topic,
+prompt-injection resistant, never invents a city, replies in the user's language). Every tool and
+external step is independently wrapped so the bot degrades gracefully to a plain RAG answer.</p>
+<h4 id="2-image-analysis-agent-analyzebookingcommandhandler">(2) Image Analysis Agent — <code>AnalyzeBookingCommandHandler</code></h4>
+<p>Vision agent that takes a problem description + photo and returns <strong>structured JSON</strong>
+(<code>detectedProblem</code>, <code>confidenceScore</code>, <code>estimatedMin/MaxPrice</code>, <code>severityLevel</code>). Results are
+persisted to <code>AI_ANALYSIS</code> and logged. Powers the customer chatbot's "what's wrong in this photo"
+and the technician's "Detect from photo" feature.</p>
+<h4 id="3-content-moderation-agent-moderateservicerequestcommandhandler">(3) Content Moderation Agent — <code>ModerateServiceRequestCommandHandler</code></h4>
+<p>Runs on a Hangfire worker after a service request is posted. A vision-capable moderation prompt
+classifies the text + photo as appropriate/inappropriate (tuned <strong>not</strong> to flag normal messy
+repair photos). Sets the request to <code>Open</code> or <code>Flagged</code>, then notifies the customer or staff.
+<strong>Fails open</strong> — any AI failure lets the post go live. <strong>Idempotent</strong> — safe if Hangfire re-runs.</p>
+<h4 id="4-matchmaking-agent-gettechnicianmatchesqueryhandler">(4) Matchmaking Agent — <code>GetTechnicianMatchesQueryHandler</code></h4>
+<p>A hybrid <strong>rules → LLM → rules-fallback</strong> recommender powering the "Smart Match" feature:</p>
+<ol>
+<li><strong>Rules filter</strong> — hard-filters technicians to the right category and within travel range,
+   scores them by a weighted composite (rating 40%, distance 30% via Haversine, verification 20%,
+   availability 10%), and shortlists the top 15.</li>
+<li><strong>LLM rank</strong> — the shortlist + the customer's own problem text are handed to the model, which
+   re-ranks best-first and writes a one-line reason per technician (language-aware).</li>
+<li><strong>Fallback</strong> — if the LLM fails or returns nothing usable, it falls back to the rule order and
+   records <em>why</em> in <code>AgentLog</code>. The response flags <code>RankedByAi</code> so the UI knows which ranking it
+   got.</li>
+</ol>
+<h4 id="5-qa-agent-qaagent">(5) QA Agent — <code>QaAgent</code></h4>
+<p>Analyzes <strong>reviews</strong> (sentiment, 0–100 quality score, abuse flag → persisted as <code>REVIEW_ANALYSIS</code>,
+and auto-flips the review's status to Approved/Flagged) and <strong>disputes</strong> (severity + whether human
+review is required). Returns structured JSON; logs to <code>AgentLog</code>.</p>
+<h4 id="6-price-estimation-agent-priceestimationservice">(6) Price-Estimation Agent — <code>PriceEstimationService</code></h4>
+<p>Produces a single grounded estimate for a problem type and optional region. It averages
+<code>HISTORICAL_PRICES</code> (region-specific if available, else overall); when no history exists it falls
+back to the problem type's <code>[MinPrice, MaxPrice]</code> midpoint, scaled by a per-region multiplier
+(Cairo 1.3× … Mahalla 1.0×). Rule-based and deterministic — consumed by both the "Get Estimate"
+button and the chatbot's authoritative-pricing path.</p>
+<h3 id="84-auditing-agentlog">8.4 Auditing — AgentLog</h3>
+<p>Every agent decision is recorded via <code>CreateAgentLogCommand</code> with agent type, action, input,
+output, token usage, and the referenced entity. The <strong>chatbot</strong> logs one row per turn (input =
+user message, output = final reply, + tokens) under <code>AgentType.Chatbot</code>, and when it <strong>places a
+booking</strong> it writes an additional <code>CreateBooking</code> audit row that references the real booking
+(<code>ReferenceType=Booking</code>) so the action is traceable to the entity it created.</p>
+<p>Logs are surfaced two ways through <code>AgentLogsController</code>:</p>
+<ul>
+<li><strong>By reference</strong> — <code>GET /agentlogs/reference/{type}/{id}</code> returns all agent activity on one
+  entity (e.g. every AI touch on Booking #42).</li>
+<li><strong>Admin viewer</strong> — a full-access staff page (<code>/staff/agent-logs</code>) with <strong>tabs per agent type</strong>,
+  full-text <strong>search</strong> over input/output, <strong>pagination</strong>, and a <strong>row-details modal</strong> that shows
+  the complete input/output (scrollable). Backed by a paged, filtered query
+  (<code>GET /agentlogs?type=&amp;search=&amp;from=&amp;to=&amp;page=&amp;pageSize=</code>, gated by <code>[HasPermission(FullAccess)]</code>).</li>
+</ul>
+<p>This makes the AI layer <strong>observable and explainable</strong> — a key requirement for a trust-centric
+marketplace.</p>
+<hr />
+<h2 id="9-background-processing-hangfire">9. Background Processing (Hangfire)</h2>
+<p>Background work runs on <strong>Hangfire</strong> with <strong>SQL Server storage</strong> and a dashboard at <code>/hangfire</code>.
+The Application layer enqueues work through a thin seam (<code>IBackgroundJobScheduler</code>) so it never
+depends on Hangfire directly.</p>
+<h3 id="recurring-jobs-registered-in-programcs">Recurring jobs (registered in <code>Program.cs</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Schedule</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RecurringBookingGeneratorService.GenerateBookings</code></td>
+<td><code>Cron.Daily</code></td>
+<td>Looks ahead 7 days and generates concrete bookings for every due recurring schedule (daily/weekly/monthly pattern matching).</td>
+</tr>
+<tr>
+<td><code>ServiceRequestExpiryService.ExpireOpenRequestAndOffer</code></td>
+<td><code>Cron.Daily</code></td>
+<td>Expires stale open service requests and their offers.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fire-and-forget-jobs-enqueued-on-demand-via-backgroundjobscheduler">Fire-and-forget jobs (enqueued on demand via <code>BackgroundJobScheduler</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Trigger</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ServiceRequestModerationJob.Run</code></td>
+<td>After a service request is created</td>
+<td>Runs the AI moderation agent off the request thread.</td>
+</tr>
+<tr>
+<td><code>KnowledgeIndexJob.IndexCategory / RemoveCategory</code></td>
+<td>Category CRUD</td>
+<td>Re-embeds (or removes) a category <strong>and cascades to its problem types</strong> (the category name is embedded in each child).</td>
+</tr>
+<tr>
+<td><code>KnowledgeIndexJob.IndexProblemType / RemoveProblemType</code></td>
+<td>Problem-type CRUD</td>
+<td>Re-embeds (or removes) a single problem type's vectors.</td>
+</tr>
+</tbody>
+</table>
+<p><code>KnowledgeIndexJob</code> caps retries at <strong>3 attempts over 1 / 5 / 15 minutes</strong> — if embedding fails
+because of quota/Qdrant downtime, retrying the default 10× just burns a worker; the row stays in
+the DB and a later <code>/reindex</code> re-syncs it. All index jobs are enqueued <strong>after</strong> the DB write
+commits, so a slow AI call never blocks (or fails) the admin's CRUD request.</p>
+<p><strong>Why this matters:</strong> the heavy/slow/failure-prone work (LLM moderation, embeddings, recurring
+generation) is pushed off the request path, keeping the API responsive and resilient.</p>
+<hr />
+<h2 id="10-frontend-angular">10. Frontend (Angular)</h2>
+<p>Angular 21, standalone components, organized by <strong>feature</strong> with role-based layouts. The app is
+fully bilingual (Arabic/English) with RTL support via ngx-translate.</p>
+<pre><code>src/app/
+  core/        guards, interceptors (auth, language, error), resolvers, services, models
+  layouts/     public · auth · customer · technician · staff · dashboard-shell
+  features/
+    public/    home, services (catalog), about, contact, customer-support
+    auth/      login, register (customer/technician), forgot-password, OAuth callback
+    customer/  bookings, service-requests, recurring-bookings, find-technician, wallet,
+               favorites, chats, notifications, profile, dashboard
+    technician/ jobs, browse-requests, offers, recurring-jobs, availabilities, pricing,
+               categories, gallery, earnings, wallet, reviews, chats, profile, dashboard
+    staff/     dashboard, bookings (oversight), categories, problem types, disputes,
+               flagged-requests, reviews (+ analysis), support-tickets, promo-codes,
+               policies, users, staff-management, newsletter
+  shared/      reusable components (e.g. favorite button), pipes, utilities
+</code></pre>
+<p>Cross-cutting frontend concerns: a cookie-based auth interceptor (<code>withCredentials</code>), a language
+interceptor, a centralized error interceptor, a reactive navbar, route guards (auth + guest),
+SignalR clients for chat and the notification bell, and a shared <code>ApiService</code> that prefixes <code>/api</code>.</p>
+<hr />
+<h2 id="11-cross-cutting-concerns">11. Cross-Cutting Concerns</h2>
+<ul>
+<li><strong>Authentication.</strong> Cookie-based JWT (<code>access_token</code>, httpOnly, <code>SameSite=None; Secure</code>) so the
+  Angular SPA (<code>localhost:4200</code>) can call the API (<code>localhost:7228</code>) cross-site. Google OAuth
+  supported. ASP.NET Core Identity backs user management. The same cross-site cookie setup applies
+  in production between the deployed frontend and API (see §14); because it is a third-party cookie
+  across those domains, strict browser privacy settings can block it.</li>
+<li><strong>Caching.</strong> Redis via a <code>[Cache]</code> attribute on read-heavy endpoints (e.g. categories), with a
+  response-cache service.</li>
+<li><strong>Notifications.</strong> Domain-wide in-app notifications (SignalR) with a topbar bell, plus email and
+  newsletter. Notification sends are best-effort (wrapped in try/catch) so they never undo a
+  business action.</li>
+<li><strong>Internationalization.</strong> Full Arabic/English with RTL across all dashboards; the catalog and AI
+  responses are bilingual.</li>
+<li><strong>Geospatial.</strong> NetTopologySuite + Haversine for distance-based browse/matchmaking; browser
+  geolocation on the customer side.</li>
+<li><strong>Observability.</strong> Structured logging throughout, plus the AgentLog audit trail for AI.</li>
+<li><strong>Resilience.</strong> Fail-open AI, idempotent background jobs, capped retries, and graceful
+  degradation when Redis/Qdrant/OpenAI are unavailable.</li>
+</ul>
+<hr />
+<h2 id="12-team-contributions">12. Team Contributions</h2>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Service ownership</th>
+<th>Controllers / domain</th>
+<th>Frontend area</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ahmed</strong></td>
+<td>Background-job service (Hangfire), AI foundation &amp; agents</td>
+<td>Bookings, ServiceRequests, Offers, RecurringBookings, CancellationPolicies, AgentLogs, Chatbot, AiAnalysis, Knowledge</td>
+<td>Customer marketplace flows, technician job flows, AI Analysis / Agent Log + chatbot UI</td>
+</tr>
+<tr>
+<td><strong>Mahmoud</strong></td>
+<td>Authentication + Google OAuth, Geocoding service (<code>IGeocodingService</code>)</td>
+<td>Auth, Users, Technicians, CustomerAddresses, TechnicianPhotos, Geocoding</td>
+<td>Auth pages, customer &amp; technician profiles, technician public profile card</td>
+</tr>
+<tr>
+<td><strong>Ziad</strong></td>
+<td>Payment gateway (Paymob/PayPal) + escrow, PDF/invoice service</td>
+<td>Wallets, Transactions, Payments, PaymentMethods, Invoices, PromoCodes, Escrows</td>
+<td>Customer &amp; technician wallets, earnings/invoices, checkout, staff promo codes</td>
+</tr>
+<tr>
+<td><strong>Alaa</strong></td>
+<td>Caching service, QA agent + price-estimation agent</td>
+<td>Categories, ProblemTypes, TechnicianPricing, TechnicianAvailability, AvailabilityExceptions, TechnicianCategories, HistoricalPrices</td>
+<td>Staff catalog &amp; policies, technician availability &amp; pricing, public services catalog</td>
+</tr>
+<tr>
+<td><strong>Amira</strong></td>
+<td>File / image service (Cloudinary)</td>
+<td>Staff, SupportTickets, SupportMessages, Disputes, Reviews, ReviewAnalysis, Files</td>
+<td>Staff back office: staff-management, support tickets, disputes, reviews &amp; analysis, bookings oversight; leave-a-review UI</td>
+</tr>
+<tr>
+<td><strong>Arwa</strong></td>
+<td>Email service, notification service (SignalR)</td>
+<td>Conversation, Messages, Notifications, Favorites, Newsletter, ChatHub</td>
+<td>Customer/technician chat, notifications + bell, favorites, newsletter, public home/support</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-setup-run-configuration">13. Setup, Run &amp; Configuration</h2>
+<h3 id="131-prerequisites">13.1 Prerequisites</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version / notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>.NET SDK</td>
+<td><strong>10.0</strong></td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>LTS (18+)</td>
+</tr>
+<tr>
+<td>Angular CLI</td>
+<td><strong>21.x</strong> (<code>npm i -g @angular/cli</code>)</td>
+</tr>
+<tr>
+<td>SQL Server</td>
+<td>any recent edition (Express works) — hosts the app DB <strong>and</strong> Hangfire storage</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>required for <code>[Cache]</code> endpoints (locally on Windows, run via WSL; production uses a managed <strong>Redis Cloud</strong> instance — see §14)</td>
+</tr>
+<tr>
+<td>Qdrant</td>
+<td>optional — only needed for the RAG chatbot / knowledge search</td>
+</tr>
+<tr>
+<td>EF Core tools</td>
+<td><code>dotnet tool install --global dotnet-ef</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>External service keys</strong> are read from configuration. The committed <code>appsettings.json</code> already
+contains the SQL connection string, Redis, Cloudinary and email settings; the <strong>secret</strong> keys are
+supplied via .NET <strong>user-secrets</strong> (the API project has a <code>UserSecretsId</code>):</p>
+<pre><code class="language-bash"># from Neighborhood.Services.API
+dotnet user-secrets set &quot;OpenAI:ApiKey&quot; &quot;&lt;key&gt;&quot;
+dotnet user-secrets set &quot;Qdrant:...&quot; &quot;&lt;...&gt;&quot;
+dotnet user-secrets set &quot;Authentication:Google:ClientId&quot; &quot;&lt;...&gt;&quot;
+dotnet user-secrets set &quot;Authentication:Google:ClientSecret&quot; &quot;&lt;...&gt;&quot;
+dotnet user-secrets set &quot;PaymentGateway:Paymob...&quot; &quot;&lt;...&gt;&quot;
+</code></pre>
+<blockquote>
+<p>The app boots even without OpenAI/Qdrant (dummy fallbacks) — AI features simply fail per-call
+until the keys are present.</p>
+</blockquote>
+<h3 id="132-run-the-backend">13.2 Run the backend</h3>
+<pre><code class="language-bash"># from Provider/Neighborhood-Services
+dotnet ef database update -p Neighborhood.Services.Infrastructure -s Neighborhood.Services.API
+dotnet run --project Neighborhood.Services.API
+</code></pre>
+<ul>
+<li>API runs at <strong>https://localhost:7228</strong> (HTTP <strong>5001</strong>). Swagger UI is served in Development.</li>
+<li><strong>Hangfire dashboard:</strong> <code>/hangfire</code>. Recurring jobs register on startup.</li>
+<li>Make sure <strong>Redis</strong> is running first (Windows/WSL: <code>sudo service redis-server start</code>, verify with
+  <code>redis-cli ping</code> → <code>PONG</code>), otherwise <code>[Cache]</code> endpoints fail.</li>
+</ul>
+<p>Build the RAG knowledge index once (deliberate — it is <strong>off</strong> the boot path):</p>
+<pre><code class="language-bash">dotnet run --project Neighborhood.Services.API -- reindex-knowledge
+# equivalent to POST /api/knowledge/reindex (staff-only)
+</code></pre>
+<h3 id="133-run-the-frontend">13.3 Run the frontend</h3>
+<pre><code class="language-bash">cd Client/neighborhood.services.client
+npm install
+ng serve        # http://localhost:4200  →  API https://localhost:7228
+</code></pre>
+<blockquote>
+<p>The SPA calls the API cross-site with credentials (cookie auth), so both must be running and the
+API's CORS policy must allow <code>http://localhost:4200</code>.</p>
+</blockquote>
+<h3 id="134-seed-data">13.4 Seed data</h3>
+<p>The DB seeder runs automatically <strong>on an empty database</strong>, creating sample customers / technicians
+(password <code>Pass@123</code>), the service catalog, and demo marketplace data. To re-seed, drop and
+recreate the database:</p>
+<pre><code class="language-bash">dotnet ef database drop -f -p Neighborhood.Services.Infrastructure -s Neighborhood.Services.API
+# then run the API again
+</code></pre>
+<p>Browse-requests use <strong>real browser geolocation</strong>; seeded requests are in Alexandria
+(lat 31.2001, lng 29.9187) — set DevTools → Sensors → Location to those coordinates to test.</p>
+<hr />
+<h2 id="14-deployment-production">14. Deployment (Production)</h2>
+<p>The application runs as a fully managed, <strong>zero-cost</strong> cloud stack. Frontend and backend are
+hosted separately and talk over HTTPS; every stateful service is a managed cloud offering.</p>
+<h3 id="141-hosting-topology">14.1 Hosting topology</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Host</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend (Angular SPA)</td>
+<td><strong>Vercel</strong></td>
+<td>Static build, deployed via the Vercel CLI (<code>vercel --prod</code>). SPA routing via <code>vercel.json</code> rewrites.</td>
+</tr>
+<tr>
+<td>Backend API</td>
+<td><strong>MonsterASP.NET</strong></td>
+<td>.NET 10 on Windows/IIS, deployed via Visual Studio <strong>Web Deploy</strong> (publish profile). HTTPS via free Let's Encrypt + force-redirect.</td>
+</tr>
+<tr>
+<td>SQL Server <strong>+ Hangfire</strong></td>
+<td><strong>MonsterASP.NET MSSQL</strong></td>
+<td>One database serves both EF Core and Hangfire (<code>UseSqlServerStorage</code>). The app <strong>auto-migrates and seeds on first boot</strong> — no manual migration step.</td>
+</tr>
+<tr>
+<td>Cache (Redis)</td>
+<td><strong>Redis Cloud</strong> (managed, free tier)</td>
+<td>Backs the <code>[Cache]</code> response cache. The connection string carries <code>abortConnect=False</code> so a transient cache outage never blocks startup. Replaces the local WSL Redis used in development.</td>
+</tr>
+<tr>
+<td>Vector store (RAG)</td>
+<td><strong>Qdrant Cloud</strong></td>
+<td>Backs the chatbot / knowledge search.</td>
+</tr>
+<tr>
+<td>Media storage</td>
+<td><strong>Cloudinary</strong></td>
+<td>Direct-to-cloud uploads, so the host needs no writable disk.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live URLs</strong>
+- Frontend — <code>https://neighborhood-services.vercel.app</code>
+- API — <code>https://neighborhoodservices.runasp.net</code></p>
+<h3 id="142-configuration-environment-variables-not-files">14.2 Configuration — environment variables, not files</h3>
+<p>Production secrets are <strong>never committed</strong>. They are supplied as <strong>host environment variables</strong>,
+which ASP.NET Core's configuration layer reads and which <strong>override</strong> the values in
+<code>appsettings.json</code>. Nested keys use a <strong>double-underscore (<code>__</code>)</strong> separator (ASP.NET Core maps
+<code>Section__Key</code> → <code>Section:Key</code>). Locally these same keys come from .NET <strong>user-secrets</strong> (§13.1) —
+<em>same code, different source per environment.</em></p>
+<p>The keys the deployed API expects (names only — values live in the host's config panel):</p>
+<pre><code>ASPNETCORE_ENVIRONMENT
+ConnectionStrings__DefaultConnection                     # cloud SQL Server
+ConnectionStrings__Redis                                 # Redis Cloud: host:port,password=...,abortConnect=False
+Jwt__Key   Jwt__Issuer   Jwt__Audience   Jwt__DurationInMinutes
+Authentication__Google__ClientId   Authentication__Google__ClientSecret
+OpenAI__ApiKey
+Qdrant__ApiKey   Qdrant__Endpoint
+Geoapify__ApiKey   Geoapify__BaseUrl
+PaymentGateway__PaymobApiKey         PaymentGateway__PaymobIntegrationId
+PaymentGateway__PaymobIframeId       PaymentGateway__PaymobHmacSecret      PaymentGateway__PaymobBaseUrl
+Cloudinary__CloudName   Cloudinary__ApiKey   Cloudinary__ApiSecret
+EmailSettings__Username   EmailSettings__Password   EmailSettings__SmtpServer
+Cors__AllowedOrigins__0                                  # the deployed frontend origin
+AppUrl                                                   # public API base URL
+</code></pre>
+<h3 id="143-frontend-build-deploy">14.3 Frontend build &amp; deploy</h3>
+<p>The Angular app is environment-aware: on a production build, <code>environment.ts</code> (dev → <code>localhost</code>)
+is swapped for <code>environment.prod.ts</code> (production → the live API) via Angular's <code>fileReplacements</code>.
+The API base URL is <strong>baked in at build time</strong> (it is not a secret).</p>
+<pre><code class="language-bash">cd Client/neighborhood.services.client
+npm run build          # production build (uses environment.prod.ts)
+vercel --prod          # upload the build output (dist/.../browser) to Vercel
+</code></pre>
+<p><code>vercel.json</code> defines the build command, output directory, and the SPA rewrite (<code>/* → /index.html</code>).</p>
+<h3 id="144-backend-deploy">14.4 Backend deploy</h3>
+<p>In Visual Studio: right-click <code>Neighborhood.Services.API</code> → <strong>Publish</strong> → the MonsterASP.NET
+<strong>publish profile</strong> (Web Deploy). Re-publish to ship changes. On first boot the app creates the
+schema (its own tables + Hangfire's) and seeds demo data into the cloud database.</p>
+<h3 id="145-operational-notes">14.5 Operational notes</h3>
+<ul>
+<li><strong>CORS.</strong> The API allows exactly the deployed frontend origin via <code>Cors__AllowedOrigins__0</code>; the
+  local default <code>http://localhost:4200</code> stays in <code>appsettings.json</code> for development.</li>
+<li><strong>Auth cookie.</strong> <code>access_token</code> is <code>SameSite=None; Secure</code>. Across the Vercel↔Monster domains it
+  is a third-party cookie; most browsers allow it, but strict privacy settings (Safari, hardened
+  Brave) can block it. A custom domain (making both same-site) or header-based tokens removes the risk.</li>
+<li><strong>Hangfire dashboard.</strong> <code>/hangfire</code> uses Hangfire's default <strong>local-requests-only</strong> authorization,
+  so it is not publicly reachable in production (remote requests get <code>401</code>). Scheduled jobs still run
+  on the server regardless.</li>
+<li><strong>Regional note.</strong> <code>*.netlify.app</code> is blocked by some Egyptian ISPs, so the frontend is hosted on
+  Vercel (<code>*.vercel.app</code>), which is reachable; <code>github.io</code> / <code>pages.dev</code> are alternative reachable hosts.</li>
+</ul>
+<hr />
+<h2 id="15-future-work">15. Future Work</h2>
+<ul>
+<li><strong>Payment System Hardening</strong> — robust concurrency hardening across all payment operations, plus a
+  secure, user-friendly withdrawal/payout flow for technicians.</li>
+<li><strong>Live Technician Tracking</strong> — real-time location &amp; ETA on a map while a technician is on the way.</li>
+<li><strong>CI/CD Pipeline + Containerization (Docker)</strong> — automated build/test/deploy and reproducible
+  container images for the API and frontend.</li>
+<li><strong>Loyalty / Subscription Plans</strong> — recurring-customer perks and subscription tiers.</li>
+</ul>
+<hr /></body></html>
