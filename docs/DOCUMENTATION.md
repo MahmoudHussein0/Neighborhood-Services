@@ -33,7 +33,7 @@ Hangfire · Redis · Semantic Kernel + Qdrant (RAG) · SignalR · Angular 21
 
 **Neighborhood Services** is a two-sided marketplace web application that links customers who
 need home maintenance and repair work (plumbing, electrical, appliances, cleaning, etc.) with
-verified local technicians. It is built as an ITI graduation project by a team of seven, with a
+verified local technicians. It is built as an ITI graduation project by a team of six, with a
 .NET 10 backend following Clean Architecture and an Angular 21 single-page frontend.
 
 The platform supports three distinct ways to get work done — **direct booking**, **competitive
